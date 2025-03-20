@@ -1,0 +1,32 @@
+<div class="d-flex justify-content-between">
+    <div>
+        <img src="assets/images/svg/crss_logo_topbar.svg" alt="logo" />
+        <button nz-button nzType="text">ABOUT</button>
+        <button nz-button nzType="text">HOW</button>
+        <button nz-button nzType="text">FAQs</button>
+    </div>
+    <div class="d-flex align-items-center">
+        <app-bell class="px-4"></app-bell>
+        <button
+            nz-button
+            nz-popover
+            nzType="text"
+            nzSize="large"
+            nzPopoverTrigger="click"
+            [nzPopoverContent]="contentTemplate"
+            [nzPopoverVisible]="visible"
+            nzPopoverPlacement="bottomRight"
+            >
+            Account name
+        </button
+        >
+    </div>
+</div>
+
+<ng-template #contentTemplate>
+    <div class="d-flex flex-column">
+        <button nz-button nzType="text"> Close me </button>
+        <button nz-button nzType="text"> Close me </button>
+        <button nz-button nzType="text"> Close me </button>
+    </div>
+</ng-template>

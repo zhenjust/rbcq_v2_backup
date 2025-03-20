@@ -1,0 +1,18 @@
+<button
+    nz-button
+    nz-popover
+    nzType="text"
+    nzSize="large"
+    nzPopoverTrigger="click"
+    [nzPopoverContent]="contentTemplate"
+    [nzPopoverVisible]="visible"
+    nzPopoverPlacement="bottomRight"
+>
+    <img src="assets/images/svg/icon_notif.svg" alt="bell" />
+</button>
+
+<ng-template #contentTemplate>
+    <div class="d-flex flex-column">
+        test
+    </div>
+</ng-template>
