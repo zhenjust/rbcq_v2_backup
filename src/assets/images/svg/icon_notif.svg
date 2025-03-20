@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="23.813" height="29.75" viewBox="0 0 23.813 29.75">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #8c9aaf;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 3px;
+        fill-rule: evenodd;
+      }
+    </style>
+  </defs>
+  <path class="cls-1" d="M37.754,80.757s2.167,0.313,2.167-5.407-0.087-12.224,8.235-12.224,8.322,6.817,8.322,12.224,2.081,5.407,2.081,5.407h-20.8Z" transform="translate(-36.25 -57)"/>
+  <path id="Shape_62_copy" data-name="Shape 62 copy" class="cls-1" d="M45.23,71.481c0-1.49-.023-3.185,2.224-3.185" transform="translate(-36.25 -57)"/>
+  <path class="cls-1" d="M50.006,61.276V57.01" transform="translate(-36.25 -57)"/>
+  <path class="cls-1" d="M50.743,83.327a2.134,2.134,0,0,1-4.248,0" transform="translate(-36.25 -57)"/>
+</svg>
