@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { HEADER_ROUTES } from '@shared/constants';
 
 @Component({
   selector: 'app-header',
@@ -7,8 +8,13 @@ import { Component, OnInit } from '@angular/core';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent implements OnInit{
-  visible = false;
-
+  visible: boolean = false;
+  headerLinks = [
+    { label: 'ABOUT', url: HEADER_ROUTES.ABOUT_US },
+    { label: 'HOW', url: HEADER_ROUTES.HOW },
+    { label: 'FAQs', url: HEADER_ROUTES.FAQ }
+  ];
+  
   ngOnInit(): void {
       
   }

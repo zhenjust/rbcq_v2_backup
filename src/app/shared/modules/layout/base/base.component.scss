@@ -1,0 +1,12 @@
+.sidebar-container {
+  transition: all 0.3s ease;
+  overflow: hidden;
+  
+  &.collapsed {
+    width: 80px !important;
+  }
+  
+  &.expanded {
+    width: 340px !important;
+  }
+}

@@ -11,7 +11,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
-
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [
@@ -28,7 +28,8 @@ import { NzSpaceModule } from 'ng-zorro-antd/space';
     NzDropDownModule,
     NzIconModule,
     NzPopoverModule,
-    NzSpaceModule
+    NzSpaceModule,
+    FontAwesomeModule
   ]
 })
 export class LayoutModule { }

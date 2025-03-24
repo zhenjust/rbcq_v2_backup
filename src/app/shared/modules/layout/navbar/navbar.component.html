@@ -1,1 +1,16 @@
-<p class="text-white">navbar works!</p>
+<div class="navbar-container">
+    <div class="menu-container">
+        <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed && !isHovered">
+            <li nz-menu-item *ngFor="let item of navItems">
+                <span nz-icon [nzType]="item.icon"></span>
+                <span class="nav-text">{{ item.title }}</span>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="logo-container">
+        <img src="assets/images/iemop_logo_1.png" 
+             class="logo-image" 
+             alt="Logo" />
+    </div>
+</div>

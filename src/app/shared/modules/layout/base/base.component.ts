@@ -4,9 +4,23 @@ import { Component, OnInit } from '@angular/core';
   selector: 'app-base',
   standalone: false,
   templateUrl: './base.component.html',
-  styleUrl: './base.component.scss'
+  styleUrls: ['./base.component.scss']
 })
 export class BaseComponent implements OnInit {
+  isCollapsed: boolean = true;
+  isHovered: boolean = false;
+  
   ngOnInit(): void {
+    console.log('Base component initialized');
+  }
+  
+  handleSiderHover(hovered: boolean): void {
+    this.isHovered = hovered;
+    // When mouse enters the sider, temporarily un-collapse it
+    // When mouse leaves, return to previous state
+  }
+  
+  toggleCollapse(): void {
+    this.isCollapsed = !this.isCollapsed;
   }
 }

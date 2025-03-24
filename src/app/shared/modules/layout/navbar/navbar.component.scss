@@ -1,0 +1,48 @@
+.navbar-container {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  
+  .menu-container {
+    margin: 12px 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  
+  .toggle-container {
+    margin: 12px 0;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .logo-image {
+    padding-left: 14px;
+    width: 230px;
+    height: auto;
+    object-fit: cover;
+    transition: all 0.3s;
+  }
+  
+  :host ::ng-deep {
+    .ant-layout-sider-children {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    
+    .ant-menu-dark {
+      background: transparent;
+    }
+    
+    .ant-menu-item {
+      margin: 0;
+    }
+    
+    .ant-menu-inline-collapsed {
+      .ant-menu-item {
+        padding: 0 calc(50% - 16px / 2) !important;
+      }
+    }
+  }
