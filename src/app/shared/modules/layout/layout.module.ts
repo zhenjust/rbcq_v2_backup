@@ -12,6 +12,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
   ],
   imports: [
     CommonModule,
+    RouterModule,
     NzLayoutModule,
     NzMenuModule,
     NzButtonModule,

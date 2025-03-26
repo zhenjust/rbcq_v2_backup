@@ -1,11 +1,13 @@
 .sidebar-container {
+  height: calc(100dvh - 64px);
   transition: all 0.3s ease;
   overflow: hidden;
-  
+  background-color: #3e4a58 !important;
+
   &.collapsed {
     width: 80px !important;
   }
-  
+
   &.expanded {
     width: 340px !important;
   }
