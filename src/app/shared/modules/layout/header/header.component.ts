@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { faEllipsisVertical, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { HEADER_ROUTES } from '@shared/constants';
 
 @Component({
@@ -9,6 +10,7 @@ import { HEADER_ROUTES } from '@shared/constants';
 })
 export class HeaderComponent implements OnInit{
   visible: boolean = false;
+  ellipsisIcon: IconDefinition = faEllipsisVertical;
   headerLinks = [
     { label: 'ABOUT', url: HEADER_ROUTES.ABOUT_US },
     { label: 'HOW', url: HEADER_ROUTES.HOW },

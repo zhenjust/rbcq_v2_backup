@@ -5,7 +5,7 @@ export interface navItems {
     icon?: IconDefinition,
     path?: string,
     externalLink?: string,
-    permission?: Permissions[],
+    permission?: string[],
     children?: childNavItems[]
 }
 
@@ -14,6 +14,6 @@ export interface childNavItems {
     icon?: IconDefinition,
     path?: string,
     externalLink?: string,
-    permission?: Permissions[],
+    permission?: string[],
     children?: childNavItems[]
 }

@@ -411,4 +411,7 @@ export const PHASE_ONE_AUTHORITIES = {
 
     // Process transaction allocation
     PROCESS_TRANSACTION_ALLOCATION: 'PROCESS_TRANSACTION_ALLOCATION',
+
+    VIEW_WORKSPACE: 'VIEW_WORKSPACE', //manually added
+    VIEW_QUEUE: 'VIEW_QUEUE'
 };
