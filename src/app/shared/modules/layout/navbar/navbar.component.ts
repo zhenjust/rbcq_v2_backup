@@ -5,6 +5,8 @@ import { faBell, faHome, faChevronDown, faChevronRight, faAddressCard, faBuildin
 import { Router } from '@angular/router';
 import { PHASE_ONE_AUTHORITIES, PHASE_TWO_AUTHORITIES } from '@shared/constants';
 import { isAuthorizedAny } from '@shared/validators';
+import { AuthorizationService } from '@core/services/authorization.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-navbar',
@@ -21,14 +23,57 @@ export class NavbarComponent implements OnInit {
   faChevronRight = faChevronRight;
   navItems!: navItems[];
   openDropdowns: Record<string, boolean | Record<string, boolean>> = {};
-
-  constructor(private r: Router) {}
-
+  userData: any | null = null; //TODO make the userData type defined once sure class or interface
+  isLoading: boolean = true;
+  
+  constructor(
+    private r: Router, 
+    private authorizationService: AuthorizationService,
+    private toast: ToastrService
+  ) {}
+  
   ngOnInit(): void {
-    this.getMenuItems();
+    this.loadUserData();
+  }
+  
+  private loadUserData(): void {
+    this.isLoading = true;
+    
+    this.authorizationService.getUser().subscribe({
+      next: (data) => {
+        console.log('User data loaded:', data);
+        this.userData = {
+          name: data.principal?.name || 'Unknown User',
+          email: data.principal?.email || '',
+          permissions: data.principal?.privileges || [],
+          roles: data.principal?.roles || []
+        };
+        
+        this.getMenuItems();
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading user data:', err);
+        this.toast.error('Failed to load user data. Please refresh or try again later.');
+        this.isLoading = false;
+        this.userData = { permissions: [] };
+        this.getMenuItems();
+      }
+    });
   }
 
   private getMenuItems(): void {
+    this.authorizationService.getUser().subscribe({
+      next: (data) => {
+        console.log(data);
+        this.userData = data;
+      },
+      error: (err) => {
+        this.toast.show(err);
+      }
+    });
+
+
     this.navItems = [
       {
         title: 'Notifications',
@@ -958,16 +1003,18 @@ export class NavbarComponent implements OnInit {
         externalLink: externalRoutes.JOB_QUEUE
       }
     ];
+
+    this.navItems = this.navItems.filter(item => this.hasPermission(item)); //for checking
   }
   
   toggleCollapse(): void {
     this.toggle.emit();
   }
-
+  
   shouldShowText(): boolean {
     return !this.isCollapsed || this.isHovered;
   }
-
+  
   navigateTo(item: navItems): void {
     if (item.externalLink) {
       window.location.href = item.externalLink;
@@ -975,7 +1022,7 @@ export class NavbarComponent implements OnInit {
       this.r.navigate([item.path]);
     }
   }
-
+  
   toggleDropdown(item: navItems, isOpen: boolean): void {
     this.openDropdowns[item.title] = isOpen;
   }
@@ -983,26 +1030,27 @@ export class NavbarComponent implements OnInit {
   isDropdownOpen(item: navItems): boolean {
     return this.openDropdowns[item.title] as boolean || false;
   }
-
+  
   toggleChildDropdown(parent: navItems, child: navItems, isOpen: boolean): void {
     if (!this.openDropdowns[parent.title] || typeof this.openDropdowns[parent.title] !== 'object') {
       this.openDropdowns[parent.title] = {};
     }
     (this.openDropdowns[parent.title] as Record<string, boolean>)[child.title] = isOpen;
   }
-
+  
   isChildDropdownOpen(parent: navItems, child: navItems): boolean {
     return (this.openDropdowns[parent.title] as Record<string, boolean>)?.[child.title] || false;
   }
-
+  
   hasPermission(item: navItems): boolean {
-    // return true;
-    if(!item.permission){
-      return true; //forcing empty permissions to display
-    }else{
-      //return isAuthorizedAny( ,item.permission); //will validate all as any
+    if (!item.permission || item.permission.length === 0) {
+      return true;
     }
-
-    return true;
+  
+    if (!this.userData || !this.userData.permissions) {
+      return false;
+    }
+    
+    return isAuthorizedAny(this.userData.permissions, item.permission);
   }
 }

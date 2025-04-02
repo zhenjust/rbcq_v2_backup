@@ -1,5 +1,5 @@
 .sidebar-container {
-  height: calc(100dvh - 64px);
+  height: calc(100dvh - 64px - 0.5rem);
   transition: all 0.3s ease;
   overflow: hidden;
   background-color: #3e4a58 !important;

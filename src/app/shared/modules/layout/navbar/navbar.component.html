@@ -3,7 +3,7 @@
       <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed && !isHovered">
         <ng-container *ngFor="let item of navItems">
           <ng-container *ngIf="!item.children || item.children.length === 0; else subMenu">
-            <li nz-menu-item (click)="navigateTo(item)">
+            <li nz-menu-item (click)="navigateTo(item)" *ngIf="hasPermission(item)">
               <a class="nav-link">
                 <fa-icon *ngIf="item.icon" [icon]="item.icon" class="nav-icon" size="lg"></fa-icon>
                 <span class="nav-text" *ngIf="shouldShowText()">{{ item.title }}</span>
@@ -20,7 +20,7 @@
               <ul>
                 <ng-container *ngFor="let child of item.children">
                   <ng-container *ngIf="!child.children || child.children.length === 0; else childMenu">
-                    <li nz-menu-item (click)="navigateTo(child)">
+                    <li nz-menu-item (click)="navigateTo(child)" *ngIf="hasPermission(child)">
                       <span>{{ child.title }}</span>
                     </li>
                   </ng-container>
@@ -32,7 +32,7 @@
                       </ng-template>
                       <ul>
                         <ng-container *ngFor="let child2 of child.children">
-                          <li nz-menu-item (click)="navigateTo(child2)">
+                          <li nz-menu-item (click)="navigateTo(child2)" *ngIf="hasPermission(child2)">
                             <span>{{ child2.title }}</span>
                           </li>
                         </ng-container>
