@@ -6,7 +6,11 @@
         </ng-container>
     </nz-space>
     <div class="d-flex align-items-center">
-        <app-bell class="px-4"></app-bell>
+        <app-bell class="px-2"></app-bell>
+        <span *ngIf="userOptions" class="px-2">
+            <!-- username or superusername next time -->
+            account
+        </span>
         <button
             nz-button
             nz-popover
@@ -17,12 +21,7 @@
             [nzPopoverVisible]="visible"
             nzPopoverPlacement="bottomRight"
             >
-            <nz-space>
-                <span *ngIf="userData">
-                    {{userData.principal?.userName}}
-                </span>
                 <fa-icon [icon]="ellipsisIcon"></fa-icon>
-            </nz-space>
         </button
         >
     </div>
@@ -34,8 +33,7 @@
         <button nz-button nzType="text" nzBlock nzSize="large">Change Password</button>
 
         <!-- TODO update this if statement  -->
-        <button 
-            *ngIf="userData" 
+        <button
             nz-button 
             nzType="text" 
             nzBlock 

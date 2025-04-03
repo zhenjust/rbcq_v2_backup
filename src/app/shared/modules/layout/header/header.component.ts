@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { faEllipsisVertical, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { HEADER_ROUTES } from '@shared/constants';
+import { CurrentUser } from '@shared/models';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -11,9 +12,11 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent implements OnInit{
+  private userData: CurrentUser | null = null;
+
+  isLoading: boolean = false;
   visible: boolean = false;
   ellipsisIcon: IconDefinition = faEllipsisVertical;
-  userData: any | null = null;
   userOptions: string = '';
   headerLinks = [
     { label: 'ABOUT', url: HEADER_ROUTES.ABOUT_US },
@@ -31,19 +34,34 @@ export class HeaderComponent implements OnInit{
   }
 
   checkUser(): void {
+    this.isLoading = true;
     this.authServices.userInit().subscribe({
       next: (data) => {
-        if(data.principal?.superUserName){
-          this.userOptions = 'Switch to Normal User';
-        }else{
-          this.userOptions = 'Switch to Super User'
-        }
+        this.userData = {
+          name: data.principal?.name,
+          email: data.principal?.email,
+          privileges: data.principal?.privileges,
+          roles: data.principal?.stringRoles,
+          username: data.principal?.username,
+          superUserName: data.principal?.superUserName
+        };
       },
       error: (err) => {
-        this.toast.error(err);
+        this.toast.error(err.message);
       }
-    })
-    this.userOptions = 'Switch to Super User'; //TODO remove this once CORS is fixed
+    }).add(() => {
+      this.isLoading = false;
+      this.isSuperUser(this.userData);
+    });
+  }
+
+  //TODO update this to based on the user status
+  isSuperUser(data: any): void {
+    if(data?.superUserName){
+      this.userOptions = 'Switch to Normal User';
+    } else {
+      this.userOptions = 'Switch to Super User';
+    }
   }
 
   logoutUser(): void {

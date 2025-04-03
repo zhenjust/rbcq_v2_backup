@@ -7,6 +7,7 @@ import { PHASE_ONE_AUTHORITIES, PHASE_TWO_AUTHORITIES } from '@shared/constants'
 import { isAuthorizedAny } from '@shared/validators';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { ToastrService } from 'ngx-toastr';
+import { CurrentUser } from '@shared/models';
 
 @Component({
   selector: 'app-navbar',
@@ -18,12 +19,13 @@ export class NavbarComponent implements OnInit {
   @Input() isCollapsed: boolean = true;
   @Input() isHovered: boolean = false;
   @Output() toggle: EventEmitter<void> = new EventEmitter<void>();
+
+  private userData: CurrentUser | null = null;
   
   faChevronDown = faChevronDown;
   faChevronRight = faChevronRight;
   navItems!: navItems[];
   openDropdowns: Record<string, boolean | Record<string, boolean>> = {};
-  userData: any | null = null; //TODO make the userData type defined once sure class or interface
   isLoading: boolean = true;
   
   constructor(
@@ -38,40 +40,25 @@ export class NavbarComponent implements OnInit {
   
   private loadUserData(): void {
     this.isLoading = true;
-    
     this.authorizationService.getUser().subscribe({
       next: (data) => {
-        console.log('User data loaded:', data);
         this.userData = {
           name: data.principal?.name || 'Unknown User',
           email: data.principal?.email || '',
-          permissions: data.principal?.privileges || [],
+          privileges: data.principal?.privileges || [],
           roles: data.principal?.stringRoles || []
         };
-        
-        this.getMenuItems();
-        this.isLoading = false;
       },
       error: (err) => {
-        this.toast.error('Failed to load user data. Please refresh or try again later.');
-        this.isLoading = false;
-        this.getMenuItems();
+        this.toast.error(err.message);
       }
+    }).add(() => {
+      this.isLoading = false;
+      this.getMenuItems();
     });
   }
 
   private getMenuItems(): void {
-    this.authorizationService.getUser().subscribe({
-      next: (data) => {
-        console.log(data);
-        this.userData = data;
-      },
-      error: (err) => {
-        this.toast.show(err);
-      }
-    });
-
-
     this.navItems = [
       {
         title: 'Notifications',
@@ -1045,10 +1032,10 @@ export class NavbarComponent implements OnInit {
       return true;
     }
   
-    if (!this.userData || !this.userData.permissions) {
+    if (!this.userData || !this.userData.privileges) {
       return false;
     }
     
-    return isAuthorizedAny(this.userData.permissions, item.permission);
+    return isAuthorizedAny(this.userData.privileges, item.permission);
   }
 }

@@ -14,6 +14,7 @@ import { NzListModule } from 'ng-zorro-antd/list';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RouterModule } from '@angular/router';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { RouterModule } from '@angular/router';
     NzIconModule,
     NzPopoverModule,
     NzSpaceModule,
+    NzDividerModule,
     FontAwesomeModule
   ]
 })
