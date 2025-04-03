@@ -46,17 +46,15 @@ export class NavbarComponent implements OnInit {
           name: data.principal?.name || 'Unknown User',
           email: data.principal?.email || '',
           permissions: data.principal?.privileges || [],
-          roles: data.principal?.roles || []
+          roles: data.principal?.stringRoles || []
         };
         
         this.getMenuItems();
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Error loading user data:', err);
         this.toast.error('Failed to load user data. Please refresh or try again later.');
         this.isLoading = false;
-        this.userData = { permissions: [] };
         this.getMenuItems();
       }
     });
@@ -225,16 +223,16 @@ export class NavbarComponent implements OnInit {
             permission: [PHASE_ONE_AUTHORITIES.IMPORT_IPR_DATA]
           },
           // TP Routes
-          // {
-          //   title: 'Manage Registration',
-          //   externalLink: externalRoutes.REGISTRATION_TP.MANAGE_REGISTRATION,
-          //   permission: []
-          // },
-          // {
-          //   title: 'View GEOP End-Users',
-          //   externalLink: externalRoutes.REGISTRATION_TP.VIEW_GEOP_END_USERS,
-          //   permission: []
-          // },
+          {
+            title: 'Manage Registration',
+            externalLink: externalRoutes.REGISTRATION_TP.MANAGE_REGISTRATION,
+            permission: []
+          },
+          {
+            title: 'View GEOP End-Users',
+            externalLink: externalRoutes.REGISTRATION_TP.VIEW_GEOP_END_USERS,
+            permission: []
+          },
           {
             title: 'Manage Facilities',
             permission: [PHASE_ONE_AUTHORITIES.REQUEST_TRANSFER_FACILITY],
@@ -257,11 +255,11 @@ export class NavbarComponent implements OnInit {
             permission:[PHASE_ONE_AUTHORITIES.VIEW_EXPIRING_EXPIRED_DOCS]
           },
           // MSP Routes
-          // {
-          //   title: 'Manage Registration',
-          //   externalLink: externalRoutes.REGISTRATION_MSP.MANAGE_REGISTRATION,
-          //   permission: []
-          // },
+          {
+            title: 'Manage Registration',
+            externalLink: externalRoutes.REGISTRATION_MSP.MANAGE_REGISTRATION,
+            permission: []
+          },
           {
             title: 'View Expiring / Expired Documents',
             externalLink: externalRoutes.REGISTRATION_MSP.VIEW_EXPIRING_EXPIRED_DOCUMENTS,

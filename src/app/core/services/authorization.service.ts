@@ -27,8 +27,9 @@ export class AuthorizationService {
 
   logout(): void {
     this.http.get(`${this.auth_url}/oauth/invalidate-token`).subscribe();
-    localStorage.removeItem('id_token');
-    localStorage.removeItem('refresh_token');
+    // localStorage.removeItem('id_token');
+    // localStorage.removeItem('refresh_token');
+    localStorage.clear();
     window.location.href = `${this.auth_url}/logout`;
   }
 

@@ -10,6 +10,7 @@ import { BellComponent } from './bell/bell.component';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { NzListModule } from 'ng-zorro-antd/list';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RouterModule } from '@angular/router';
@@ -28,6 +29,7 @@ import { RouterModule } from '@angular/router';
     NzMenuModule,
     NzButtonModule,
     NzDropDownModule,
+    NzListModule,
     NzIconModule,
     NzPopoverModule,
     NzSpaceModule,

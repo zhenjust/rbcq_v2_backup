@@ -11,7 +11,6 @@ export class BaseComponent implements OnInit {
   isHovered: boolean = false;
   
   ngOnInit(): void {
-    console.log('Base component initialized');
   }
   
   handleSiderHover(hovered: boolean): void {

@@ -1,10 +1,10 @@
 <div class="d-flex justify-content-between">
-    <div>
+    <nz-space nzSize="large">
         <img src="assets/images/svg/crss_logo_topbar.svg" alt="logo" />
         <ng-container *ngFor="let link of headerLinks">
-            <a nz-button nzType="link" [href]="link.url">{{ link.label }}</a>
+            <a nz-button nzType="text" [href]="link.url">{{ link.label }}</a>
         </ng-container>
-    </div>
+    </nz-space>
     <div class="d-flex align-items-center">
         <app-bell class="px-4"></app-bell>
         <button
@@ -18,9 +18,9 @@
             nzPopoverPlacement="bottomRight"
             >
             <nz-space>
-                <!-- <span>
-                    Account name
-                </span> -->
+                <span *ngIf="userData">
+                    {{userData.principal?.userName}}
+                </span>
                 <fa-icon [icon]="ellipsisIcon"></fa-icon>
             </nz-space>
         </button
@@ -29,9 +29,17 @@
 </div>
 
 <ng-template #contentTemplate>
-    <div class="d-flex flex-column">
-        <button nz-button nzType="text"> Close me </button>
-        <button nz-button nzType="text"> Close me </button>
-        <button nz-button nzType="text"> Close me </button>
-    </div>
+    <nz-space nzDirection="vertical">
+        <button nz-button nzType="text" nzBlock nzSize="large">Profile</button>
+        <button nz-button nzType="text" nzBlock nzSize="large">Change Password</button>
+
+        <!-- TODO update this if statement  -->
+        <button 
+            *ngIf="userData" 
+            nz-button 
+            nzType="text" 
+            nzBlock 
+            nzSize="large">{{ userOptions }}</button>
+        <button nz-button nzType="text" nzBlock (click)="logoutUser()">Logout</button>        
+    </nz-space>
 </ng-template>

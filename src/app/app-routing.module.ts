@@ -7,7 +7,7 @@ const routes: Routes = [
   {
     path: '',
     component: BaseComponent,
-    canActivate: [AuthorizeGuard]
+    // canActivate: [AuthorizeGuard]
   }
 ];
 

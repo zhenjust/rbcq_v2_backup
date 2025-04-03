@@ -8,12 +8,18 @@
     [nzPopoverVisible]="visible"
     nzPopoverPlacement="bottomRight"
 >
-    <!-- <img src="assets/images/svg/icon_notif.svg" alt="bell" /> -->
      <fa-icon [icon]="bell" size="lg"></fa-icon>
 </button>
 
 <ng-template #contentTemplate>
-    <div class="d-flex flex-column">
-        test
-    </div>
+    <nz-list>
+        <nz-list-item>
+            Content goes here
+            <!-- <ul nz-list-item-actions>
+                <nz-list-item-action>
+                    This an action
+                </nz-list-item-action>
+            </ul> -->
+        </nz-list-item>
+    </nz-list>
 </ng-template>
