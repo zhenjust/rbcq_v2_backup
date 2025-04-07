@@ -1,0 +1,16 @@
+[
+    {
+      "context": [
+        "/uaa",
+        "/reg"
+      ],
+      "target": "https://crss-dev.exist.com.ph",
+      "secure": true,
+      "changeOrigin": true,
+      "logLevel": "debug",
+      "timeout": 300000,
+      "headers": {
+        "Connection": "keep-alive"
+      }
+    }
+  ]

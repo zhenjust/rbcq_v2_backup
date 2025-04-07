@@ -33,7 +33,14 @@ export class AuthorizeGuard implements CanActivate {
     if (code) {
       return this.authService.authorize(code, redirectUrl).pipe(
         map(() => {
-          window.location.href = redirectUrl;
+          // window.location.href = redirectUrl;
+          this.router.navigate(
+            [], 
+            {
+              queryParams: {},
+              replaceUrl: true
+            }
+          );
           return false;
         }),
         catchError(() => {

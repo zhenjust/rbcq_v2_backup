@@ -43,10 +43,10 @@ export class NavbarComponent implements OnInit {
     this.authorizationService.getUser().subscribe({
       next: (data) => {
         this.userData = {
-          name: data.principal?.name || 'Unknown User',
-          email: data.principal?.email || '',
-          privileges: data.principal?.privileges || [],
-          roles: data.principal?.stringRoles || []
+          name: data.principal?.name,
+          email: data.principal?.email,
+          privileges: data.principal?.privileges,
+          roles: data.principal?.stringRoles
         };
       },
       error: (err) => {

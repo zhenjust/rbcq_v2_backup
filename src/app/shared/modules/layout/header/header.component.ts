@@ -31,6 +31,7 @@ export class HeaderComponent implements OnInit{
 
   ngOnInit(): void {
       this.checkUser();
+      this.getLdapUsers();
   }
 
   checkUser(): void {
@@ -53,6 +54,18 @@ export class HeaderComponent implements OnInit{
       this.isLoading = false;
       this.isSuperUser(this.userData);
     });
+  }
+
+  getLdapUsers(): void{
+    this.isLoading = true;
+    this.authServices.userNameList().subscribe({
+      next: (data) => {
+        console.log(data)
+      },
+      error: (err) => {
+        this.toast.error(err.message);
+      }
+    })
   }
 
   //TODO update this to based on the user status
