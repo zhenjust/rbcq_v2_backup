@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, GuardResult, MaybeAsync, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { apiPath } from '@shared/constants';
 import { environment } from 'environments/environment';
@@ -10,6 +10,8 @@ import { catchError, map, Observable, of } from 'rxjs';
 })
 export class AuthorizeGuard implements CanActivate {
   private auth_url: string = environment.__API_URL__ + apiPath.__AUTH_PATH__;
+  private phaseRootUrl: string = environment.__PHASE_ONE_URL__;
+  
   constructor(
     private authService: AuthorizationService,
     private router: Router
@@ -22,51 +24,39 @@ export class AuthorizeGuard implements CanActivate {
     if (route.data['loginNonRequired']) {
       return true;
     }
-
-    // Check for OAuth code in URL
-    // from ui-bsmd
+  
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
-    const redirectUrl = location.protocol + '//' + location.host;
-    const authorizeUrl = `${this.auth_url}/oauth/authorize?response_type=code&client_id=crss&redirect_uri=${redirectUrl}`;
-
+    const baseRedirectUri = `${location.protocol}//${location.host}`;
+    
+    const authorizeUrl = `${this.auth_url}/oauth/authorize?response_type=code&client_id=crss&redirect_uri=${baseRedirectUri}`;
+  
+    //TODO make it in way that if the app reloads it uses the same code in the initial login
     if (code) {
-      return this.authService.authorize(code, redirectUrl).pipe(
+      return this.authService.authorize(code, baseRedirectUri).pipe(
         map(() => {
-          // window.location.href = redirectUrl;
-          this.router.navigate(
-            [], 
-            {
-              queryParams: {},
-              replaceUrl: true
-            }
-          );
-          return false;
+          return true; //forces to redirect
         }),
         catchError(() => {
           window.location.href = authorizeUrl;
           return of(false);
         })
       );
-    } else {
-      return this.authService.getUser().pipe(
-        map(data => {
-          const permissions = route.data['permissions'] || [];
-          if (!this.authService.isAuthorized(permissions)) {
-            this.router.navigate(['/']);
-            return false;
-          }
-          return true;
-        }),
-        catchError(error => {
-          if (error.status === 500) {
-            return of(false);
-          } else {
-            window.location.href = authorizeUrl;
-            return of(false);
-          }
-        })
-      );
     }
+  
+    return this.authService.getUser().pipe(
+      map(() => {
+        const permissions = route.data['permissions'] || [];
+        if (!this.authService.isAuthorized(permissions)) {
+          window.location.href = this.phaseRootUrl;
+          return false;
+        }
+        return true;
+      }),
+      catchError(() => {
+        window.location.href = authorizeUrl;
+        return of(false);
+      })
+    );
   }
 }

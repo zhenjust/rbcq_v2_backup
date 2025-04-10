@@ -10,11 +10,9 @@ import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import { FormsModule } from '@angular/forms';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { HTTP_INTERCEPTORS, provideHttpClient } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
-import { AuthorizationService } from '@core/services/authorization.service';
-import { AuthorizeGuard } from '@core/guards/authorize.guard';
-import { RequestInterceptor } from '@core/interceptors/request.interceptor';
+import { CoreModule } from '@core/core.module';
 
 registerLocaleData(en);
 
@@ -23,23 +21,17 @@ registerLocaleData(en);
     AppComponent,
   ],
   imports: [
+    CoreModule,
     BrowserModule,
     AppRoutingModule,
     LayoutModule,
     FormsModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
   ],
   providers: [
     provideNzI18n(en_US),
     provideAnimationsAsync(),
-    provideHttpClient(),
-    AuthorizationService,
-    AuthorizeGuard,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: RequestInterceptor,
-      multi: true
-    }
+    provideHttpClient()
   ],
   bootstrap: [AppComponent]
 })
