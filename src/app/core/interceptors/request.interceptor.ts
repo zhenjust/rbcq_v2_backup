@@ -16,15 +16,14 @@ export class RequestInterceptor implements HttpInterceptor {
   constructor(private authService: AuthorizationService) {}
   
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    if (request.url.includes('/oauth/token') || request.url.includes('/oauth/authorize')) {
+    //TODO once request is validating, delete this
+    if (request.url.includes('/oauth/token')) {
       return next.handle(request);
     }
     
     // Get token from localStorage
     const token = localStorage.getItem('id_token');
-    console.log('Token from localStorage:', token ? 'exists' : 'missing');
     if (token) {
-      console.log('Adding auth header to:', request.url);
       request = request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`

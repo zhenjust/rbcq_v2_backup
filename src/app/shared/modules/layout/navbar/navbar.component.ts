@@ -271,7 +271,7 @@ export class NavbarComponent implements OnInit {
       {
         title: 'Manage MIRF',
         icon: faCopy,
-        permission: [PHASE_ONE_AUTHORITIES.VIEW_MIRF, PHASE_ONE_AUTHORITIES.MIRF_UPLOAD_VIEW],
+        permission: [PHASE_ONE_AUTHORITIES.VIEW_MIRF, PHASE_ONE_AUTHORITIES.MIRF_UPLOAD_VIEW, PHASE_ONE_AUTHORITIES.MIRF_SUMMARY_VIEW],
         children: [
           {
             title: 'Upload MIRF',

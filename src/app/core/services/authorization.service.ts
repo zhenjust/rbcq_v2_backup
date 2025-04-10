@@ -21,7 +21,6 @@ export class AuthorizationService {
   ) {}
 
   getUser(): Observable<any> {
-    console.log('Calling getUser()');
     return this.http.get<any>(`${apiPath.__AUTH_PATH__}/user`).pipe(
       tap(data => this.currentUser = data.principal),
       catchError(error => throwError(() => error))
@@ -54,7 +53,8 @@ export class AuthorizationService {
 
     const headers = new HttpHeaders({
       'Authorization': 'Basic ' + btoa('crss:crsssecret'),
-      'Content-Type': 'application/x-www-form-urlencoded'
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept': 'application/json'
     });
 
     return this.http.post<any>(

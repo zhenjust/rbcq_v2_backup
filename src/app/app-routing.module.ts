@@ -7,7 +7,14 @@ const routes: Routes = [
   {
     path: '',
     component: BaseComponent,
-    canActivate: [AuthorizeGuard]
+    canActivate: [AuthorizeGuard],
+    canActivateChild: [AuthorizeGuard],
+    children: [
+      {
+        path: 'meter-process-v2',
+        loadChildren: () => import('./modules/meter-process/meter-process.module').then(m => m.MeterProcessModule)
+      }
+    ]
   }
 ];
 

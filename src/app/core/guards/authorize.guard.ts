@@ -13,9 +13,14 @@ export class AuthorizeGuard implements CanActivate {
   private phaseRootUrl: string = environment.__PHASE_ONE_URL__;
   
   constructor(
-    private authService: AuthorizationService,
-    private router: Router
+    private authService: AuthorizationService
   ) {}
+
+  searchCode(): string | any{
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    return code;
+  }
 
   canActivate(
     route: ActivatedRouteSnapshot,
@@ -24,16 +29,13 @@ export class AuthorizeGuard implements CanActivate {
     if (route.data['loginNonRequired']) {
       return true;
     }
-  
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
+
+    const codeAvailable = this.searchCode();
     const baseRedirectUri = `${location.protocol}//${location.host}`;
-    
-    const authorizeUrl = `${this.auth_url}/oauth/authorize?response_type=code&client_id=crss&redirect_uri=${baseRedirectUri}`;
-  
-    //TODO make it in way that if the app reloads it uses the same code in the initial login
-    if (code) {
-      return this.authService.authorize(code, baseRedirectUri).pipe(
+    const authorizeUrl: string = `${this.auth_url}/oauth/authorize?response_type=code&client_id=crss&redirect_uri=${baseRedirectUri}`;
+
+    if (codeAvailable) {
+      return this.authService.authorize(codeAvailable, baseRedirectUri).pipe(
         map(() => {
           return true; //forces to redirect
         }),
@@ -42,21 +44,21 @@ export class AuthorizeGuard implements CanActivate {
           return of(false);
         })
       );
+    } else {
+      return this.authService.getUser().pipe(
+        map(() => {
+          const permissions = route.data['permissions'] || [];
+          if (!this.authService.isAuthorized(permissions)) {
+            window.location.href = this.phaseRootUrl;
+            return false;
+          }
+          return true;
+        }),
+        catchError(() => {
+          window.location.href = authorizeUrl;
+          return of(false);
+        })
+      );
     }
-  
-    return this.authService.getUser().pipe(
-      map(() => {
-        const permissions = route.data['permissions'] || [];
-        if (!this.authService.isAuthorized(permissions)) {
-          window.location.href = this.phaseRootUrl;
-          return false;
-        }
-        return true;
-      }),
-      catchError(() => {
-        window.location.href = authorizeUrl;
-        return of(false);
-      })
-    );
   }
 }
