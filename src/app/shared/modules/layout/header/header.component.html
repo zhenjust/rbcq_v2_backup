@@ -8,8 +8,7 @@
     <div class="d-flex align-items-center">
         <app-bell class="px-2"></app-bell>
         <span *ngIf="userOptions" class="px-2">
-            <!-- username or superusername next time -->
-            account
+            {{ getUserDisplayName() }}
         </span>
         <button
             nz-button

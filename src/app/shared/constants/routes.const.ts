@@ -1,5 +1,9 @@
 import { environment } from "environments/environment";
 
+export const NEW_ROUTES = {
+    METER_PROCESS: 'meter-process-v2',
+}
+
 export const HEADER_ROUTES = {
     ABOUT_US: `${environment.__PHASE_ONE_URL__}/#/about-us`,
     HOW: `${environment.__PHASE_ONE_URL__}/#/`,

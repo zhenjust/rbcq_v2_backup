@@ -16,7 +16,6 @@ export class RequestInterceptor implements HttpInterceptor {
   constructor(private authService: AuthorizationService) {}
   
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    //TODO once request is validating, delete this
     if (request.url.includes('/oauth/token')) {
       return next.handle(request);
     }
@@ -34,8 +33,8 @@ export class RequestInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
+          //TODO modify this
           const refreshToken = localStorage.getItem('refresh_token');
-          
           if(refreshToken){
             this.authService.logout();
           }

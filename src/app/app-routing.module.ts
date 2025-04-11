@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthorizeGuard } from '@core/guards/authorize.guard';
+import { NEW_ROUTES } from '@shared/constants';
 import { BaseComponent } from '@shared/modules/layout/base/base.component';
 
 const routes: Routes = [
@@ -11,7 +12,7 @@ const routes: Routes = [
     canActivateChild: [AuthorizeGuard],
     children: [
       {
-        path: 'meter-process-v2',
+        path: NEW_ROUTES.METER_PROCESS,
         loadChildren: () => import('./modules/meter-process/meter-process.module').then(m => m.MeterProcessModule)
       }
     ]

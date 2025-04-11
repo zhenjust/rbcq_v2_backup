@@ -1,13 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { externalRoutes } from '@shared/constants';
-import { navItems } from '@shared/interfaces';
+import { externalRoutes, NEW_ROUTES } from '@shared/constants';
+import { CurrentUser, navItems } from '@shared/interfaces';
 import { faBell, faHome, faChevronDown, faChevronRight, faAddressCard, faBuilding, faCopy, faUserLarge, faCircleUser, faCalendar, faFileArchive, faAddressBook, faBuildingUn, faTachometer, faTachometerAlt, faBinoculars, faContactCard, faHandHoldingHand, faTachometerAverage, faListCheck, faRoadCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { Router } from '@angular/router';
 import { PHASE_ONE_AUTHORITIES, PHASE_TWO_AUTHORITIES } from '@shared/constants';
 import { isAuthorizedAny } from '@shared/validators';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { ToastrService } from 'ngx-toastr';
-import { CurrentUser } from '@shared/models';
 
 @Component({
   selector: 'app-navbar',
@@ -19,7 +18,6 @@ export class NavbarComponent implements OnInit {
   @Input() isCollapsed: boolean = true;
   @Input() isHovered: boolean = false;
   @Output() toggle: EventEmitter<void> = new EventEmitter<void>();
-
   private userData: CurrentUser | null = null;
   
   faChevronDown = faChevronDown;
@@ -42,12 +40,7 @@ export class NavbarComponent implements OnInit {
     this.isLoading = true;
     this.authorizationService.getUser().subscribe({
       next: (data) => {
-        this.userData = {
-          name: data.principal?.name,
-          email: data.principal?.email,
-          privileges: data.principal?.privileges,
-          roles: data.principal?.stringRoles
-        };
+        this.userData = data;
       },
       error: (err) => {
         this.toast.error(err.message);
@@ -870,6 +863,11 @@ export class NavbarComponent implements OnInit {
             permission: [PHASE_TWO_AUTHORITIES.VIEW_METER_PROCESS]
           },
           {
+            title: 'Calculations v2',
+            path: NEW_ROUTES.METER_PROCESS,
+            permission: [PHASE_TWO_AUTHORITIES.VIEW_METER_PROCESS]
+          },
+          {
             title: 'Meter Streaming Statistics',
             externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.METER_STREAMING_STATISTICS,
             permission: [PHASE_TWO_AUTHORITIES.VIEW_METER_PROCESS]
@@ -1001,9 +999,9 @@ export class NavbarComponent implements OnInit {
   }
   
   navigateTo(item: navItems): void {
-    if (item.externalLink) {
+    if (item.externalLink && item.externalLink.trim() !== '') {
       window.location.href = item.externalLink;
-    } else if (item.path) {
+    } else if (item.path && item.path.trim() !== '') {
       this.r.navigate([item.path]);
     }
   }
@@ -1032,10 +1030,10 @@ export class NavbarComponent implements OnInit {
       return true;
     }
   
-    if (!this.userData || !this.userData.privileges) {
+    if (!this.userData || !this.userData.principal.privileges) {
       return false;
     }
     
-    return isAuthorizedAny(this.userData.privileges, item.permission);
+    return isAuthorizedAny(this.userData.principal.privileges, item.permission);
   }
 }

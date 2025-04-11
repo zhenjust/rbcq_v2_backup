@@ -3,62 +3,65 @@ import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTr
 import { AuthorizationService } from '@core/services/authorization.service';
 import { apiPath } from '@shared/constants';
 import { environment } from 'environments/environment';
-import { catchError, map, Observable, of } from 'rxjs';
+import { catchError, map, Observable, of, switchMap, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthorizeGuard implements CanActivate {
+export class AuthorizeGuard implements CanActivate {  
   private auth_url: string = environment.__API_URL__ + apiPath.__AUTH_PATH__;
-  private phaseRootUrl: string = environment.__PHASE_ONE_URL__;
-  
-  constructor(
-    private authService: AuthorizationService
-  ) {}
 
-  searchCode(): string | any{
+  constructor(private authService: AuthorizationService) {}
+
+  private searchCode(): string | null {
     const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-    return code;
+    return urlParams.get('code');
   }
 
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
-  ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+  ): Observable<boolean> | boolean {
     if (route.data['loginNonRequired']) {
       return true;
     }
 
-    const codeAvailable = this.searchCode();
+    const token = this.authService.getToken();
+    const code = this.searchCode();
     const baseRedirectUri = `${location.protocol}//${location.host}`;
-    const authorizeUrl: string = `${this.auth_url}/oauth/authorize?response_type=code&client_id=crss&redirect_uri=${baseRedirectUri}`;
+    const authorizeUrl = `${this.auth_url}/oauth/authorize?response_type=code&client_id=crss&redirect_uri=${baseRedirectUri}`;
 
-    if (codeAvailable) {
-      return this.authService.authorize(codeAvailable, baseRedirectUri).pipe(
-        map(() => {
-          return true; //forces to redirect
-        }),
-        catchError(() => {
-          window.location.href = authorizeUrl;
-          return of(false);
-        })
-      );
-    } else {
-      return this.authService.getUser().pipe(
-        map(() => {
-          const permissions = route.data['permissions'] || [];
-          if (!this.authService.isAuthorized(permissions)) {
-            window.location.href = this.phaseRootUrl;
-            return false;
-          }
-          return true;
-        }),
-        catchError(() => {
-          window.location.href = authorizeUrl;
-          return of(false);
-        })
-      );
+    if (!token) {
+      if (code) {
+        return this.authService.authorize(code, baseRedirectUri).pipe(
+          switchMap(() => this.authService.userInit()),
+          map(() => true),
+          catchError(() => {
+            window.location.href = authorizeUrl;
+            return of(false);
+          })
+        );
+      } else {
+        window.location.href = authorizeUrl;
+        return false;
+      }
     }
+
+    return this.authService.userInit().pipe(
+      map(() => true),
+      catchError(() => {
+        localStorage.removeItem('id_token');
+        localStorage.removeItem('refresh_token');
+        window.location.href = authorizeUrl;
+        return of(false);
+      })
+    );
+  }
+
+  canActivateChild(
+    childRoute: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    return this.canActivate(childRoute, state);
   }
 }

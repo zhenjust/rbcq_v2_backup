@@ -1,34 +1,30 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { apiPath } from '@shared/constants';
-import { environment } from 'environments/environment';
+import { AuthToken, CurrentUser } from '@shared/interfaces';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, Observable, tap, throwError } from 'rxjs';
+import { catchError, map, Observable, tap, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthorizationService {
-  private currentUser: any | null = null;
-  // private auth_url: string = environment.__API_URL__ + apiPath.__AUTH_PATH__;
-  // private reg_url: string = environment.__API_URL__ + apiPath.__REG_PATH__;
+  private currentUser: CurrentUser | null = null;
   
   constructor(
     private http: HttpClient,
-    private router: Router,
     private toast: ToastrService
   ) {}
 
-  getUser(): Observable<any> {
-    return this.http.get<any>(`${apiPath.__AUTH_PATH__}/user`).pipe(
-      tap(data => this.currentUser = data.principal),
+  getUser(): Observable<CurrentUser> {
+    return this.http.get<CurrentUser>(`${apiPath.__AUTH_PATH__}/user`).pipe(
+      tap(data => this.currentUser = data),
       catchError(error => throwError(() => error))
     );
   }
 
   logout(): void {
-    this.http.get(`${apiPath.__AUTH_PATH__}/oauth/invalidate-token`).subscribe({
+    this.http.get<any>(`${apiPath.__AUTH_PATH__}/oauth/invalidate-token`).subscribe({
       next: () => {
         this.toast.success('Logout successfully!');
         localStorage.clear();
@@ -36,19 +32,19 @@ export class AuthorizationService {
       },
       error: (err) => {
         this.toast.error(err.message);
+        //TODO investigate error message but 200 response
+        localStorage.clear();
+        window.location.href = `${apiPath.__AUTH_PATH__}/logout`;
       }
-    }).add(() => {
-      localStorage.clear();
-      window.location.href = `${apiPath.__AUTH_PATH__}/logout`;
-    });
+    })
   }
 
   // OAuth flow
-  authorize(code: string, redirectUrl: string): Observable<any> {
+  authorize(code: string, redirectUri: string): Observable<boolean> {
     const body = new HttpParams()
       .set('grant_type', 'authorization_code')
       .set('client_id', 'crss')
-      .set('redirect_uri', redirectUrl)
+      .set('redirect_uri', redirectUri)
       .set('code', code);
 
     const headers = new HttpHeaders({
@@ -57,34 +53,29 @@ export class AuthorizationService {
       'Accept': 'application/json'
     });
 
-    return this.http.post<any>(
-      `${apiPath.__AUTH_PATH__}/oauth/token`, 
-      body.toString(), 
-      { headers }
-    ).pipe(
-      tap(response => {
-        localStorage.setItem('id_token', response.access_token);
-        localStorage.setItem('refresh_token', response.refresh_token);
-      }),
-      catchError(error => throwError(() => error))
+    return this.http.post<AuthToken>(`${apiPath.__AUTH_PATH__}/oauth/token`,body.toString(),{ headers }).pipe(
+      tap(
+        response => {
+          localStorage.setItem('id_token', response.access_token);
+          localStorage.setItem('refresh_token', response.refresh_token);
+        }
+      ),
+      map(() => {
+        window.history.replaceState({}, document.title, window.location.pathname)
+        return true;
+      })
     );
   }
 
-  //from ui-bsmd
-  //TODO update this to without remounting id_token
+  //TODO update this change type
   userInit(): Observable<any> {
-    const token = localStorage.getItem('id_token');
-    const params: any = {};
-    
-    if (token) {
-      params.Authorization = `Bearer ${token}`;
-    }
-    
-    return this.http.post(`${apiPath.__AUTH_PATH__}/user/init`, params).pipe(
+    //setting params to empty
+    return this.http.post(`${apiPath.__AUTH_PATH__}/user/init`, {}).pipe(
       catchError(error => throwError(() => error))
     );
   }
 
+  
   changeToSuperUser(user: string): Observable<any> {
     return this.http.post(
       `${apiPath.__AUTH_PATH__}/super-user/init/${user}`, 
@@ -114,7 +105,7 @@ export class AuthorizationService {
   }
 
   isAuthorized(permissions: string | string[]): boolean {
-    if (!this.currentUser || this.currentUser === 'anonymous') {
+    if (!this.currentUser || this.currentUser.principal.username === 'anonymous') {
       return false;
     }
 
@@ -126,7 +117,11 @@ export class AuthorizationService {
     }
 
     return perms.every(permission => 
-      this.currentUser.privileges.includes(permission)
+      this.currentUser?.principal.privileges.includes(permission)
     );
+  }
+
+  getToken(): string | null{
+    return localStorage.getItem('id_token');
   }
 }

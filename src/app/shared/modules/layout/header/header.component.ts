@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { faEllipsisVertical, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { HEADER_ROUTES } from '@shared/constants';
-import { CurrentUser } from '@shared/models';
+import { CurrentUser } from '@shared/interfaces';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -12,7 +12,7 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent implements OnInit{
-  private userData: CurrentUser | null = null;
+  public userData: CurrentUser | null = null;
 
   isLoading: boolean = false;
   visible: boolean = false;
@@ -37,21 +37,14 @@ export class HeaderComponent implements OnInit{
     this.isLoading = true;
     this.authServices.userInit().subscribe({
       next: (data) => {
-        this.userData = {
-          name: data.principal?.name,
-          email: data.principal?.email,
-          privileges: data.principal?.privileges,
-          roles: data.principal?.stringRoles,
-          username: data.principal?.username,
-          superUserName: data.principal?.superUserName
-        };
+        this.userData = data;
+        this.isSuperUser(this.userData);
       },
       error: (err) => {
         this.toast.error(err.message);
       }
     }).add(() => {
       this.isLoading = false;
-      this.isSuperUser(this.userData);
     });
   }
 
@@ -67,9 +60,15 @@ export class HeaderComponent implements OnInit{
     })
   }
 
-  //TODO update this to based on the user status
-  isSuperUser(data: any): void {
-    if(data?.superUserName){
+  getUserDisplayName(): string {
+    if (!this.userData) return '';
+    return this.userData.principal.superUsername || this.userData.principal.username || '';
+  }
+
+
+  isSuperUser(data: CurrentUser | null): void {
+    if(!data) return;
+    if(data.principal.superUsername){
       this.userOptions = 'Switch to Normal User';
     } else {
       this.userOptions = 'Switch to Super User';
