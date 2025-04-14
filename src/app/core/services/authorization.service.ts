@@ -78,10 +78,7 @@ export class AuthorizationService {
   
   changeToSuperUser(user: string): Observable<any> {
     return this.http.post(
-      `${apiPath.__AUTH_PATH__}/super-user/init/${user}`, 
-      {},
-      { headers: new HttpHeaders({ 'Content-Type': undefined as any }) }
-    ).pipe(
+      `${apiPath.__AUTH_PATH__}/super-user/init/${user}`, {}).pipe(
       catchError(error => throwError(() => error))
     );
   }
@@ -90,6 +87,13 @@ export class AuthorizationService {
     return this.http.post(`${apiPath.__AUTH_PATH__}/normal-user/init/${user}`, {}).pipe(
       catchError(error => throwError(() => error))
     );
+  }
+
+  logSuperUserLogin(): Observable<any> {
+    let participant = 0;
+    return this.http.post(`${apiPath.__REG_PATH__}/participant/${participant}/info/audit/log`, {}).pipe(
+      catchError(err => throwError(() => err))
+    )
   }
 
   userNameList(): Observable<any> {

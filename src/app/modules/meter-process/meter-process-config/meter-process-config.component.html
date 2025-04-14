@@ -1,0 +1,73 @@
+<nz-flex nzVertical="true" nzJustify="center" nzAlign="center" class="form-container">
+    <form [formGroup]="meterProcessForm">
+        <div class="form-item">
+            <div class="label-container">
+                <label class="form-label">Meter Process Type:</label>
+                <nz-select 
+                    formControlName="processType"
+                    class="select-size"
+                    nzPlaceHolder="Enter Process Type">
+                    <nz-option 
+                        *ngFor="let option of meterProcessTypeOptions" 
+                        [nzValue]="option.value" 
+                        [nzLabel]="option.label">
+                    </nz-option>
+                </nz-select>
+            </div>
+        </div>
+        <div class="form-item" *ngIf="meterProcessForm.get('processType')?.value === MeterProcessTypes.ADJUSTMENT">
+            <div class="label-container">
+                <label class="form-label">Adjustment Number</label>
+                <nz-input-number formControlName="adjustmentNumber" class="select-size"></nz-input-number>
+            </div>
+        </div>
+        <div class="form-item" *ngIf="meterProcessForm.get('processType')?.value === MeterProcessTypes.DAILY">
+            <div class="label-container">
+                <label class="form-label">Trading Date:</label>
+                <nz-date-picker
+                    formControlName="date"
+                    class="select-size"
+                ></nz-date-picker>
+            </div>
+        </div>
+        <div *ngIf="meterProcessForm.get('processType')?.value !== MeterProcessTypes.DAILY">
+            <div class="form-item">
+                <div class="label-container">
+                    <label class="form-label">Billing Period:</label>
+                    <nz-select
+                        formControlName="billingPeriod"
+                        class="select-size"
+                        nzPlaceHolder="Select Billing Period">
+                        <nz-option></nz-option>
+                    </nz-select>
+                </div>
+            </div>
+            <nz-space>
+                <div class="form-item" *nzSpaceItem>
+                    <label class="form-label">Start Date:</label>
+                    <nz-date-picker
+                    formControlName="startDate"
+                    class="select-size"
+                    ></nz-date-picker>
+                </div>
+                <div class="form-item" *nzSpaceItem>
+                    <label class="form-label">End Date:</label>
+                    <nz-date-picker
+                    formControlName="endDate"
+                    class="select-size"
+                    ></nz-date-picker>
+                </div>
+            </nz-space>
+        </div>
+        <div class="form-item">
+            <div class="label-container">
+                <label class="form-label">Region Group:</label>
+                <nz-select
+                    formControlName="regionGroup"
+                    class="select-size">
+                    <nz-option nzValue="ALL"></nz-option>
+                </nz-select>
+            </div>
+        </div>
+    </form>
+  </nz-flex>

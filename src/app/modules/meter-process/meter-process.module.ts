@@ -2,16 +2,38 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { MeterProcessRoutingModule } from './meter-process-routing.module';
+import { MeterProcessConfigComponent } from './meter-process-config/meter-process-config.component';
 import { BaseComponent } from './base/base.component';
+
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { TableComponent } from './table/table.component';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzFlexModule } from 'ng-zorro-antd/flex';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzSpaceModule } from 'ng-zorro-antd/space';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 
 
 @NgModule({
   declarations: [
-    BaseComponent
+    BaseComponent,
+    TableComponent,
+    MeterProcessConfigComponent
   ],
   imports: [
     CommonModule,
-    MeterProcessRoutingModule
+    MeterProcessRoutingModule,
+    NzCardModule,
+    NzTableModule,
+    NzFlexModule,
+    FormsModule, 
+    NzSelectModule,
+    ReactiveFormsModule,
+    NzDatePickerModule,
+    NzSpaceModule,
+    NzInputNumberModule
   ]
 })
 export class MeterProcessModule { }

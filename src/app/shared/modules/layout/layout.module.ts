@@ -15,6 +15,11 @@ import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RouterModule } from '@angular/router';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { FormsModule } from '@angular/forms';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+
 
 @NgModule({
   declarations: [
@@ -35,7 +40,11 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
     NzPopoverModule,
     NzSpaceModule,
     NzDividerModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    NzSelectModule,
+    NzSpinModule,
+    FormsModule,
+    NzModalModule
   ]
 })
 export class LayoutModule { }

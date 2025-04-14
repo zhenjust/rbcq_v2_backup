@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { faEllipsisVertical, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { HEADER_ROUTES } from '@shared/constants';
 import { CurrentUser } from '@shared/interfaces';
 import { ToastrService } from 'ngx-toastr';
+import { catchError, map } from 'rxjs';
+import { NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
   selector: 'app-header',
@@ -13,11 +16,17 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class HeaderComponent implements OnInit{
   public userData: CurrentUser | null = null;
-
+  isSuper: boolean = false;
   isLoading: boolean = false;
   visible: boolean = false;
   ellipsisIcon: IconDefinition = faEllipsisVertical;
   userOptions: string = '';
+  selectedSuperUser: string = '';
+  userList: any[] = [];
+  isModalReady = false;
+
+  @ViewChild('superUserModal', { static: true }) superUserModal!: TemplateRef<any>;
+
   headerLinks = [
     { label: 'ABOUT', url: HEADER_ROUTES.ABOUT_US },
     { label: 'HOW', url: HEADER_ROUTES.HOW },
@@ -26,7 +35,9 @@ export class HeaderComponent implements OnInit{
 
   constructor(
     private authServices: AuthorizationService,
-    public toast: ToastrService
+    public toast: ToastrService,
+    public router: Router,
+    public modal: NzModalService
   ){}
 
   ngOnInit(): void {
@@ -38,13 +49,15 @@ export class HeaderComponent implements OnInit{
     this.authServices.userInit().subscribe({
       next: (data) => {
         this.userData = data;
-        this.isSuperUser(this.userData);
+        this.isSuper = !!data.principal.superUsername;
+        this.userOptions = this.isSuper ? 'Switch to Normal User' : 'Switch to Super User';
       },
       error: (err) => {
         this.toast.error(err.message);
+      },
+      complete: () => {
+        this.isLoading = false;
       }
-    }).add(() => {
-      this.isLoading = false;
     });
   }
 
@@ -66,16 +79,71 @@ export class HeaderComponent implements OnInit{
   }
 
 
-  isSuperUser(data: CurrentUser | null): void {
-    if(!data) return;
-    if(data.principal.superUsername){
-      this.userOptions = 'Switch to Normal User';
+  //TODO review how to go super user
+  handleSwitchClick(): void {
+    if (this.isSuper) {
+      if (!this.userData) return;
+      const username = this.userData.principal.username;
+      this.authServices.changeToNormalUser(username).subscribe({
+        next: () => {
+          this.toast.success('Switched to Normal User!');
+          // this.router.navigate(['/']);
+        },
+        error: (err) => {
+          this.toast.error(err.message);
+        }
+      });
     } else {
-      this.userOptions = 'Switch to Super User';
+      this.openSuperUserModal();
     }
   }
 
+  openSuperUserModal(): void {
+    this.isModalReady = false;
+    this.authServices.userNameList().subscribe({
+      next: (data) => {
+        this.userList = data;
+        this.isModalReady = true;
+        this.modal.create({
+          nzContent: this.superUserModal,
+          nzFooter: null
+        });
+      },
+      error: (err) => {
+        this.toast.error('Failed to load user list. ->', err.message);
+      }
+    });
+  }
+
+  confirmSuperUser(modalRef: any): void {
+    if (!this.selectedSuperUser) return;
+
+    this.authServices.changeToSuperUser(this.selectedSuperUser).subscribe({
+      next: () => {
+        this.authServices.logSuperUserLogin().subscribe({
+          next: () => {
+            this.toast.success('Switched to Super User!');
+            modalRef.destroy();
+            this.router.navigate(['/']);
+          },
+          error: (err) => {
+            console.log(err.message);
+            return this.toast.error(err.message)
+          },
+        })
+      },
+      error: (err) => {
+        console.log(err);
+        this.toast.error(err.message);
+      }
+    });
+  }
+
+  switchToNormalUser(): void {
+
+  }
+
   logoutUser(): void {
-    return this.authServices.logout();
+    this.authServices.logout();
   }
 }

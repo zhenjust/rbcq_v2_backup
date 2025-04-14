@@ -1,33 +1,33 @@
-<nz-layout class="min-vh-100 bg-white">
-    <nz-layout class="my-1">
-        <nz-header class="bg-white">
-            <app-header></app-header>
-        </nz-header>
+<nz-layout class="main-layout">
+    <nz-header class="custom-header">
+      <app-header></app-header>
+    </nz-header>
+    <nz-layout class="body-layout">
+      <nz-sider
+        [nzWidth]="isHovered || !isCollapsed ? 350 : 70"
+        [nzCollapsedWidth]="80"
+        nzCollapsible
+        [nzCollapsed]="isCollapsed && !isHovered"
+        [nzTrigger]="null"
+        (mouseenter)="handleSiderHover(true)"
+        (mouseleave)="handleSiderHover(false)"
+        class="sidebar-container"
+        [ngClass]="{
+          'collapsed': isCollapsed && !isHovered,
+          'expanded': !isCollapsed || isHovered
+        }"
+      >
+        <app-navbar
+          [isCollapsed]="isCollapsed"
+          [isHovered]="isHovered"
+          (toggle)="toggleCollapse()"
+        ></app-navbar>
+      </nz-sider>
+      <nz-layout class="content-layout">
+        <nz-content class="content">
+          <router-outlet></router-outlet>
+        </nz-content>
+      </nz-layout>
     </nz-layout>
-    <nz-layout>
-        <nz-sider 
-            [nzWidth]="isHovered || !isCollapsed ? 350 : 70" 
-            [nzCollapsedWidth]="80"
-            nzCollapsible 
-            [nzCollapsed]="isCollapsed && !isHovered"
-            [nzTrigger]="null"
-            (mouseenter)="handleSiderHover(true)"
-            (mouseleave)="handleSiderHover(false)"
-            class="sidebar-container"
-            [ngClass]="{
-                'collapsed': isCollapsed && !isHovered,
-                'expanded': !isCollapsed || isHovered
-            }">
-            <app-navbar 
-                [isCollapsed]="isCollapsed" 
-                [isHovered]="isHovered"
-                (toggle)="toggleCollapse()">
-            </app-navbar>
-        </nz-sider>
-        <nz-layout>
-            <nz-content class="content">
-                <router-outlet></router-outlet>
-            </nz-content>
-        </nz-layout>
-    </nz-layout>
-</nz-layout>
+  </nz-layout>
+  

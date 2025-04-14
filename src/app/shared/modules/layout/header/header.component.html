@@ -11,6 +11,7 @@
             {{ getUserDisplayName() }}
         </span>
         <button
+            class="account-dropdown"
             nz-button
             nz-popover
             nzType="text"
@@ -28,48 +29,50 @@
 
 <ng-template #contentTemplate>
     <nz-space nzDirection="vertical">
-        <button nz-button nzType="text" nzBlock nzSize="large">Profile</button>
-        <button nz-button nzType="text" nzBlock nzSize="large">Change Password</button>
-
-        <!-- TODO update this if statement  -->
-        <button
-            nz-button 
-            nzType="text" 
-            nzBlock 
-            nzSize="large">{{ userOptions }}</button>
-        <button nz-button nzType="text" nzBlock (click)="logoutUser()">Logout</button>        
+      <button nz-button nzType="text" nzBlock nzSize="large">Profile</button>
+      <button nz-button nzType="text" nzBlock nzSize="large">Change Password</button>
+  
+      <button
+        nz-button 
+        nzType="text" 
+        nzBlock 
+        nzSize="large"
+        (click)="handleSwitchClick()">
+        {{ userOptions }}
+      </button>
+  
+      <button nz-button nzType="text" nzBlock (click)="logoutUser()">Logout</button>
     </nz-space>
-</ng-template>
-
-
-<!-- <ng-template #superUserModal let-modal>
-    <h3>Select Super User</h3>
+  </ng-template>
+  
+  <!-- Super User Modal -->
+  <ng-template #superUserModal let-modal>
     <nz-spin [nzSpinning]="!isModalReady">
-        <div *ngIf="isModalReady">
+      <div *ngIf="isModalReady">
+        <h3>Select User</h3>
         <nz-select
-            nzShowSearch
-            nzPlaceHolder="Select a user"
-            style="width: 100%;"
-            [(ngModel)]="selectedSuperUser"
+          nzShowSearch
+          nzPlaceHolder="Select a user"
+          style="width: 100%;"
+          [(ngModel)]="selectedSuperUser"
         >
-            <nz-option
+          <nz-option
             *ngFor="let user of userList"
-            [nzValue]="user.label"
-            [nzLabel]="user.label"
-            ></nz-option>
+            [nzValue]="user"
+            [nzLabel]="user"
+          ></nz-option>
         </nz-select>
-
-        <div class="d-flex justify-content-end mt-3">
+  
+        <nz-space nzAlign="end">
             <button nz-button nzType="default" (click)="modal.destroy()">Cancel</button>
             <button
-            nz-button
-            nzType="primary"
-            [disabled]="!selectedSuperUser"
-            (click)="confirmSuperUser(modal)"
-            >
-            Switch
+              nz-button
+              nzType="primary"
+              [disabled]="!selectedSuperUser"
+              (click)="confirmSuperUser(modal)">
+              Switch
             </button>
-        </div>
-        </div>
+        </nz-space>
+      </div>
     </nz-spin>
-</ng-template> -->
+  </ng-template>
