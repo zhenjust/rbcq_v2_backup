@@ -1,12 +1,18 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormatDatePipe } from './pipes/format-date.pipe';
 
 
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    FormatDatePipe
+  ],
   imports: [
     CommonModule,
+  ],
+  exports: [
+    FormatDatePipe
   ]
 })
 export class SharedModule { }

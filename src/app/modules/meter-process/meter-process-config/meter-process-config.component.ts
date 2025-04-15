@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MeterProcessTypes } from '@shared/enums';
+import { MeterProcessTypes, RegionGroup } from '@shared/enums';
 import { meterProcessPayload } from '@shared/interfaces';
 import { debounceTime } from 'rxjs/operators';
 
@@ -12,6 +12,7 @@ import { debounceTime } from 'rxjs/operators';
 })
 export class MeterProcessConfigComponent implements OnInit {
   meterProcessTypeOptions: {label: string, value: MeterProcessTypes}[] = [];
+  meterProcessRegionGroup: {label: string, value: RegionGroup}[] = [];
   meterProcessForm!: FormGroup;
   MeterProcessTypes = MeterProcessTypes;
   
@@ -21,7 +22,7 @@ export class MeterProcessConfigComponent implements OnInit {
   ngOnInit(): void {
     this.meterProcessForm = this.fb.group({
       processType: [MeterProcessTypes.DAILY, Validators.required],
-      date: [''],
+      tradingDate: [''],
       billingPeriod: [''],
       startDate: [''],
       endDate: [''],

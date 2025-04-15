@@ -1,12 +1,19 @@
-import { MeterProcessTypes } from "@shared/enums";
+import { MeterProcessTypes, RegionGroup } from "@shared/enums";
 
-//TODO address the comments
 export interface meterProcessPayload {
-    date: string,
-    endDate: string,
     processType: MeterProcessTypes,
-    regionGroup: string,
+    date: string,
+    regionGroup: RegionGroup
+}
+
+export interface meterProcessPayloadNotDaily extends meterProcessPayload {
     startDate: string,
-    billingPeriod: string,
-    adjustmentNumnber: number
+    endDate: string
+}
+
+export interface meterProcessTableData extends meterProcessPayload {
+    billingPeriod: number,
+    billingPeriodName: string | null,
+    adjNo: string | null,
+    taskExecutionDtoList: []
 }

@@ -15,6 +15,7 @@
           "standalone": false
         },
         "@schematics/angular:pipe": {
+          "skipTests": true,
           "standalone": false
         },
         "@schematics/angular:guard": {

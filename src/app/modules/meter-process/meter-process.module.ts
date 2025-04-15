@@ -15,12 +15,18 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 
+import { SharedModule } from '@shared/shared.module';
+import { RunJobSearchComponent } from './run-job-search/run-job-search.component';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputModule } from 'ng-zorro-antd/input';
+
 
 @NgModule({
   declarations: [
     BaseComponent,
     TableComponent,
-    MeterProcessConfigComponent
+    MeterProcessConfigComponent,
+    RunJobSearchComponent
   ],
   imports: [
     CommonModule,
@@ -33,7 +39,10 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
     ReactiveFormsModule,
     NzDatePickerModule,
     NzSpaceModule,
-    NzInputNumberModule
+    NzInputNumberModule,
+    SharedModule,
+    NzButtonModule,
+    NzInputModule
   ]
 })
 export class MeterProcessModule { }

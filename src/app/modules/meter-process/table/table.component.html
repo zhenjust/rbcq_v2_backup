@@ -1,4 +1,4 @@
-<nz-table>
+<nz-table #nzTable [nzData]="mockMeterProcessData">
     <thead>
         <tr>
             <th nzWidth="60px"></th>
@@ -8,6 +8,32 @@
         </tr>
     </thead>
     <tbody>
-        
+        @for(data of nzTable.data; track data){
+            <tr>
+                <td [nzExpand]="expandSet.has(data.billingPeriod)" (nzExpandChange)="onExpandChange(data.billingPeriod, $event)"></td>
+                <td>{{ data.processType }}</td>
+                <td>{{ data.date | formatDate }}</td>
+                <td></td>
+            </tr>
+            <tr [nzExpand]="expandSet.has(data.billingPeriod)">
+                <nz-table>
+                    <thead>
+                        <th></th>
+                        <th>Job ID</th>
+                        <th>Run Date and Time</th>
+                        <th>Process Type</th>
+                        <th>Trading Date</th>
+                        <th>Region Group</th>
+                        <th>MTN</th>
+                        <th>Status</th>
+                        <th>Progress</th>
+                        <th>Action</th>
+                        <th></th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </nz-table>
+            </tr>
+        }
     </tbody>
 </nz-table>
