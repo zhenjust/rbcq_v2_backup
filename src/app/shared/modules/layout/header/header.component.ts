@@ -5,8 +5,9 @@ import { faEllipsisVertical, IconDefinition } from '@fortawesome/free-solid-svg-
 import { apiPath, HEADER_ROUTES } from '@shared/constants';
 import { CurrentUser } from '@shared/interfaces';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, map, switchMap, tap } from 'rxjs';
+import { switchMap, tap } from 'rxjs';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'app-header',
@@ -25,7 +26,7 @@ export class HeaderComponent implements OnInit{
   userList: string[] = [];
   isModalReady = false;
 
-  @ViewChild('superUserModal', { static: true }) superUserModal!: TemplateRef<any>;
+  @ViewChild('superUserModal', { static: true }) superUserModal!: TemplateRef<HTMLBodyElement>;
 
   headerLinks = [
     { label: 'ABOUT', url: HEADER_ROUTES.ABOUT_US },
@@ -49,7 +50,7 @@ export class HeaderComponent implements OnInit{
     this.authServices.userInit().subscribe({
       next: (data) => {
         this.userData = data;
-        this.isSuper = !!data.principal.superUsername;
+        this.isSuper = !!data.principal.superUserName;
         this.userOptions = this.isSuper ? 'Switch to Normal User' : 'Switch to Super User';
       },
       error: (err) => {
@@ -75,7 +76,7 @@ export class HeaderComponent implements OnInit{
 
   getUserDisplayName(): string {
     if (!this.userData) return '';
-    return this.userData.principal.superUsername || this.userData.principal.username || '';
+    return this.userData.principal.superUserName || this.userData.principal.username || '';
   }
 
 
@@ -83,11 +84,10 @@ export class HeaderComponent implements OnInit{
   handleSwitchClick(): void {
     if (this.isSuper) {
       if (!this.userData) return;
-      const username = this.userData.principal.username;
-      this.authServices.changeToNormalUser(username).subscribe({
+      this.authServices.changeToNormalUser(this.userData.principal.username).subscribe({
         next: () => {
           this.toast.success('Switched to Normal User!');
-          // this.router.navigate(['/']);
+          window.location.href = environment.__PHASE_ONE_URL__;
         },
         error: (err) => {
           this.toast.error(err.message);
@@ -126,7 +126,7 @@ export class HeaderComponent implements OnInit{
       })
     ).subscribe({
       next: () => {
-        this.router.navigate(['/']);
+        window.location.href = environment.__PHASE_ONE_URL__;
       },
       error: (err) => {
         console.log(err);

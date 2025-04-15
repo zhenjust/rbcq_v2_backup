@@ -4,7 +4,7 @@
         "/uaa",
         "/reg"
       ],
-      "target": "",
+      "target": "https://crss-dev.exist.com.ph",
       "secure": true,
       "changeOrigin": true,
       "logLevel": "debug",

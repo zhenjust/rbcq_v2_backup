@@ -1,7 +1,7 @@
 export interface CurrentUser {
     principal: {
         username: string,
-        superUsername: string,
+        superUserName: string,
         privileges: string[],
         email: string,
         roles: string[]
