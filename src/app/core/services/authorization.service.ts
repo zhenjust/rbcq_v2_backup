@@ -17,24 +17,11 @@ export class AuthorizationService {
   ) {}
 
   getUser(): Observable<CurrentUser> {
-    return this.http.get<CurrentUser>(`${apiPath.__AUTH_PATH__}/user`).pipe(
-      tap(data => this.currentUser = data),
-      catchError(error => throwError(() => error))
-    );
+    return this.http.get<CurrentUser>(`${apiPath.__AUTH_PATH__}/user`);
   }
 
-  logout(): void {
-    this.http.get<any>(`${apiPath.__AUTH_PATH__}/oauth/invalidate-token`).subscribe({
-      next: () => {
-        this.toast.success('Logout successfully!');
-        window.location.href = `${apiPath.__AUTH_PATH__}/logout`;
-      },
-      error: (err) => {
-        this.toast.error(err.message);
-        //TODO investigate error message but 200 response
-        window.location.href = `${apiPath.__AUTH_PATH__}/logout`;
-      }
-    }).add(() => localStorage.clear())
+  logout(): Observable<string> {
+    return this.http.get<string>(`${apiPath.__AUTH_PATH__}/oauth/invalidate-token`);
   }
 
   // OAuth flow
@@ -65,44 +52,31 @@ export class AuthorizationService {
     );
   }
 
-  //TODO update this change type
-  userInit(): Observable<any> {
-    //setting params to empty
-    return this.http.post(`${apiPath.__AUTH_PATH__}/user/init`, {}).pipe(
-      catchError(error => throwError(() => error))
-    );
+  //TODO cast proper types to the services
+
+  userInit(): Observable<CurrentUser> {
+    return this.http.post<CurrentUser>(`${apiPath.__AUTH_PATH__}/user/init`, {});
   }
 
   
-  changeToSuperUser(user: string): Observable<any> {
-    return this.http.post(
-      `${apiPath.__AUTH_PATH__}/super-user/init/${user}`, {}).pipe(
-      catchError(error => throwError(() => error))
-    );
+  changeToSuperUser(user: string): Observable<string> {
+    return this.http.post<string>(`${apiPath.__AUTH_PATH__}/super-user/init/${user}`, {});
   }
 
-  changeToNormalUser(user: string): Observable<any> {
-    return this.http.post(`${apiPath.__AUTH_PATH__}/normal-user/init/${user}`, {}).pipe(
-      catchError(error => throwError(() => error))
-    );
+  changeToNormalUser(user: string): Observable<string> {
+    return this.http.post<string>(`${apiPath.__AUTH_PATH__}/normal-user/init/${user}`, {});
   }
 
-  logSuperUserLogin(): Observable<any> {
-    return this.http.post(`${apiPath.__REG_PATH__}/participant/0/info/audit/log`, {}).pipe(
-      catchError(err => throwError(() => err))
-    )
+  logSuperUserLogin(): Observable<string> {
+    return this.http.post<string>(`${apiPath.__REG_PATH__}/participant/0/info/audit/log`, {})
   }
 
-  userNameList(): Observable<any> {
-    return this.http.get(`${apiPath.__REG_PATH__}/applicant/ldap-user`).pipe(
-      catchError(error => throwError(() => error))
-    );
+  userNameList(): Observable<string[]> {
+    return this.http.get<string[]>(`${apiPath.__REG_PATH__}/applicant/ldap-user`);
   }
 
-  auditLog(): Observable<any> {
-    return this.http.post(`${apiPath.__REG_PATH__}/participant/0/info/audit/log`, {}).pipe(
-      catchError(error => throwError(() => error))
-    );
+  auditLog(): Observable<string> {
+    return this.http.post<string>(`${apiPath.__REG_PATH__}/participant/0/info/audit/log`, {});
   }
 
   isAuthorized(permissions: string | string[]): boolean {

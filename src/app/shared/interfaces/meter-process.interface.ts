@@ -2,11 +2,11 @@ import { MeterProcessTypes } from "@shared/enums";
 
 //TODO address the comments
 export interface meterProcessPayload {
-    date: string, //verify this data type
-    endDate: string, //verify this data type
+    date: string,
+    endDate: string,
     processType: MeterProcessTypes,
     regionGroup: string,
-    startDate: string, //verify this data type
+    startDate: string,
     billingPeriod: string,
     adjustmentNumnber: number
 }

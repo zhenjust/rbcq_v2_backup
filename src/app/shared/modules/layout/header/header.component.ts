@@ -2,7 +2,7 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { faEllipsisVertical, IconDefinition } from '@fortawesome/free-solid-svg-icons';
-import { HEADER_ROUTES } from '@shared/constants';
+import { apiPath, HEADER_ROUTES } from '@shared/constants';
 import { CurrentUser } from '@shared/interfaces';
 import { ToastrService } from 'ngx-toastr';
 import { catchError, map, switchMap, tap } from 'rxjs';
@@ -22,7 +22,7 @@ export class HeaderComponent implements OnInit{
   ellipsisIcon: IconDefinition = faEllipsisVertical;
   userOptions: string = '';
   selectedSuperUser: string = '';
-  userList: any[] = [];
+  userList: string[] = [];
   isModalReady = false;
 
   @ViewChild('superUserModal', { static: true }) superUserModal!: TemplateRef<any>;
@@ -136,6 +136,17 @@ export class HeaderComponent implements OnInit{
   }
 
   logoutUser(): void {
-    this.authServices.logout();
+    this.authServices.logout().subscribe({
+      next: () => {
+        return this.toast.success('Logout successfully!');
+      },
+      error: (err) => {
+        return this.toast.error(err.message);
+        //TODO investigate error message but 200 response 
+      }
+    }).add(() => {
+      localStorage.clear();
+      window.location.href = `${apiPath.__AUTH_PATH__}/logout`;
+    });
   }
 }
