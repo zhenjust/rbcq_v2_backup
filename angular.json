@@ -98,7 +98,10 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "port": 8091
+            "port": 8091,
+            "ssl": true,
+            "sslCert": "src/ssl/certificate.pem",
+            "sslKey": "src/ssl/key.pem"
           },
           "configurations": {
             "production": {
