@@ -793,8 +793,18 @@ export class NavbarComponent implements OnInit {
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
               },
               {
+                title: 'Calculate Energey Trading Amounts v2',
+                path: NEW_ROUTES.TRADING_AMOUNTS_CALCULATION,
+                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
+              },
+              {
                 title: 'Calculate Reserve Trading Amounts',
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.CALCULATE_SETTLEMENT_AMOUNTS.CALCULATE_RESERVE_TRADING_AMOUNTS,
+                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
+              },
+              {
+                title: 'Calculate Reserve Trading Amounts v2',
+                path: NEW_ROUTES.RESERVE_TRADING_AMOUNTS_CALCULATION,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
               },
               {
@@ -803,8 +813,18 @@ export class NavbarComponent implements OnInit {
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
               },
               {
+                title: 'Calculate Energy Market Fee v2',
+                path: NEW_ROUTES.ENERGY_MARKET_FEE_CALCULATION,
+                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
+              },
+              {
                 title: 'Calculate Reserve Market Fee',
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.CALCULATE_SETTLEMENT_AMOUNTS.CALCULATE_RESERVE_MARKET_FEE,
+                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
+              },
+              {
+                title: 'Calculate Reserve Market Fee v2',
+                path: NEW_ROUTES.RESERVE_MARKET_FEE_CALCULATION,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
               },
               {

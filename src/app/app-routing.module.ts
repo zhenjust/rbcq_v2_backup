@@ -12,6 +12,10 @@ const routes: Routes = [
     canActivateChild: [AuthorizeGuard],
     children: [
       {
+        path: '', //child modules will handle the routing
+        loadChildren: () => import('./modules/calculate-settlement-amounts/calculate-settlement-amounts.module').then(m => m.CalculateSettlementAmountsModule)
+      },
+      {
         path: NEW_ROUTES.METER_PROCESS,
         loadChildren: () => import('./modules/meter-process/meter-process.module').then(m => m.MeterProcessModule)
       }
