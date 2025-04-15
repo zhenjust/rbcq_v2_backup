@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MeterProcessTypes } from '@shared/enums';
 import { meterProcessPayload } from '@shared/interfaces';
-import { MeterProcessType, MeterProcessTypes } from '@shared/types';
 import { debounceTime } from 'rxjs/operators';
 
 @Component({
@@ -11,7 +11,7 @@ import { debounceTime } from 'rxjs/operators';
   styleUrl: './meter-process-config.component.scss'
 })
 export class MeterProcessConfigComponent implements OnInit {
-  meterProcessTypeOptions: {label: string, value: MeterProcessType}[] = [];
+  meterProcessTypeOptions: {label: string, value: MeterProcessTypes}[] = [];
   meterProcessForm!: FormGroup;
   MeterProcessTypes = MeterProcessTypes;
   

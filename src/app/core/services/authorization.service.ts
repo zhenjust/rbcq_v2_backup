@@ -27,16 +27,14 @@ export class AuthorizationService {
     this.http.get<any>(`${apiPath.__AUTH_PATH__}/oauth/invalidate-token`).subscribe({
       next: () => {
         this.toast.success('Logout successfully!');
-        localStorage.clear();
         window.location.href = `${apiPath.__AUTH_PATH__}/logout`;
       },
       error: (err) => {
         this.toast.error(err.message);
         //TODO investigate error message but 200 response
-        localStorage.clear();
         window.location.href = `${apiPath.__AUTH_PATH__}/logout`;
       }
-    })
+    }).add(() => localStorage.clear())
   }
 
   // OAuth flow
@@ -90,8 +88,7 @@ export class AuthorizationService {
   }
 
   logSuperUserLogin(): Observable<any> {
-    let participant = 0;
-    return this.http.post(`${apiPath.__REG_PATH__}/participant/${participant}/info/audit/log`, {}).pipe(
+    return this.http.post(`${apiPath.__REG_PATH__}/participant/0/info/audit/log`, {}).pipe(
       catchError(err => throwError(() => err))
     )
   }

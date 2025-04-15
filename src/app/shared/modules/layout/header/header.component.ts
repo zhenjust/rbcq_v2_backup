@@ -5,7 +5,7 @@ import { faEllipsisVertical, IconDefinition } from '@fortawesome/free-solid-svg-
 import { HEADER_ROUTES } from '@shared/constants';
 import { CurrentUser } from '@shared/interfaces';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, map } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
@@ -117,30 +117,22 @@ export class HeaderComponent implements OnInit{
 
   confirmSuperUser(modalRef: any): void {
     if (!this.selectedSuperUser) return;
-
-    this.authServices.changeToSuperUser(this.selectedSuperUser).subscribe({
+    const username = this.selectedSuperUser.split(' ')[0];
+    this.authServices.changeToSuperUser(username).pipe(
+      switchMap(() => this.authServices.logSuperUserLogin()),
+      tap(() => {
+        this.toast.success('Switched to Super User!');
+        modalRef.destroy();
+      })
+    ).subscribe({
       next: () => {
-        this.authServices.logSuperUserLogin().subscribe({
-          next: () => {
-            this.toast.success('Switched to Super User!');
-            modalRef.destroy();
-            this.router.navigate(['/']);
-          },
-          error: (err) => {
-            console.log(err.message);
-            return this.toast.error(err.message)
-          },
-        })
+        this.router.navigate(['/']);
       },
       error: (err) => {
         console.log(err);
         this.toast.error(err.message);
       }
     });
-  }
-
-  switchToNormalUser(): void {
-
   }
 
   logoutUser(): void {
