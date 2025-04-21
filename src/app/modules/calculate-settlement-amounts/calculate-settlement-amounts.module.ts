@@ -2,21 +2,27 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { CalculateSettlementAmountsRoutingModule } from './calculate-settlement-amounts-routing.module';
-import { TradingAmountsCalculationModule } from './trading-amounts-calculation/trading-amounts-calculation.module';
-import { ReserveTradingAmountsCalculationModule } from './reserve-trading-amounts-calculation/reserve-trading-amounts-calculation.module';
-import { EnergyMarketFeeCalculationModule } from './energy-market-fee-calculation/energy-market-fee-calculation.module';
-import { ReserveMarketFeeCalculationModule } from './reserve-market-fee-calculation/reserve-market-fee-calculation.module';
+import { BaseComponent } from './base/base.component';
+import { FilterSearchComponent } from './filter-search/filter-search.component';
+import { TableComponent } from './table/table.component';
+import { NzCardModule } from 'ng-zorro-antd/card';
 
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    BaseComponent,
+    FilterSearchComponent,
+    TableComponent
+  ],
   imports: [
     CommonModule,
     CalculateSettlementAmountsRoutingModule,
-    TradingAmountsCalculationModule,
-    ReserveTradingAmountsCalculationModule,
-    EnergyMarketFeeCalculationModule,
-    ReserveMarketFeeCalculationModule
+    NzCardModule
+  ],
+  exports:[
+    FilterSearchComponent,
+    TableComponent,
+    BaseComponent
   ]
 })
 export class CalculateSettlementAmountsModule { }

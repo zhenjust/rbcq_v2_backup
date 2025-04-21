@@ -13,7 +13,7 @@ export class AuthorizeGuard implements CanActivate {
 
   constructor(private authService: AuthorizationService) {}
 
-  private searchCode(): string | null {
+  searchCode(): string | null {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('code');
   }

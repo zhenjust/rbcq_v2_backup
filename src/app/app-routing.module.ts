@@ -12,7 +12,7 @@ const routes: Routes = [
     canActivateChild: [AuthorizeGuard],
     children: [
       {
-        path: '', //child modules will handle the routing
+        path: '',
         loadChildren: () => import('./modules/calculate-settlement-amounts/calculate-settlement-amounts.module').then(m => m.CalculateSettlementAmountsModule)
       },
       {
