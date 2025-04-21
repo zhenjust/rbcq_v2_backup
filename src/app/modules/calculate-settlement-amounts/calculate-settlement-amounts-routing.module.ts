@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { NEW_ROUTES } from '@shared/constants';
+import { BaseComponent } from './energy-market-fee-calculation/base/base.component';
 
 const routes: Routes = [
   {
@@ -13,11 +14,10 @@ const routes: Routes = [
   },
   {
     path: NEW_ROUTES.ENERGY_MARKET_FEE_CALCULATION,
-    loadChildren: () => import('./energy-market-fee-calculation/energy-market-fee-calculation.module').then(m => m.EnergyMarketFeeCalculationModule)
+    component: BaseComponent
   },
   {
     path: NEW_ROUTES.RESERVE_MARKET_FEE_CALCULATION,
-    loadChildren: () => import('./reserve-market-fee-calculation/reserve-market-fee-calculation.module').then(m => m.ReserveMarketFeeCalculationModule)
   }
 ];
 

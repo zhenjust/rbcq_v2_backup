@@ -5,6 +5,13 @@ export enum MeterProcessTypes {
     ADJUSTMENT = 'ADJUSTMENT'
 }
 
+enum SettlementProcessType {
+    ALL = 'ALL',
+    ALLMONTHLY = 'ALLMONTHLY'
+}
+
+export type SettlementProcessTypes = MeterProcessTypes | SettlementProcessType;
+
 export enum RegionGroup {
     ALL = 'ALL',
     LUZON = 'LUZON',
