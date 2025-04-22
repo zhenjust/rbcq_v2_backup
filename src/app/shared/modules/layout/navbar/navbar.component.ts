@@ -833,8 +833,18 @@ export class NavbarComponent implements OnInit {
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_ADDTL_COMP]
               },
               {
+                title: 'Manage Additional Compensation Claims v2',
+                path: NEW_ROUTES.ADDITIONAL_COMPENSATION_LIST,
+                permission: [PHASE_TWO_AUTHORITIES.VIEW_ADDTL_COMP]
+              },
+              {
                 title: 'Update Additional Compensation Invoice',
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.CALCULATE_SETTLEMENT_AMOUNTS.UPDATE_ADDITIONAL_COMPENSATION_INVOICE,
+                permission: [PHASE_TWO_AUTHORITIES.AC_VIEW_AMS_INV_FOR_UPDATE]
+              },
+              {
+                title: 'Update Additional Compensation Invoice v2',
+                path: NEW_ROUTES.ADDITIONAL_COMPENSATION_INVOICE,
                 permission: [PHASE_TWO_AUTHORITIES.AC_VIEW_AMS_INV_FOR_UPDATE]
               }
             ]

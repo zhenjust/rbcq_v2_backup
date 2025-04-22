@@ -8,7 +8,7 @@
         </tr>
     </thead>
     <tbody>
-        @for(data of nzTable.data; track data){
+        <ng-container *ngFor="let data of nzTable.data; trackBy: trackByBillingPeriod">
             <tr>
                 <td [nzExpand]="expandSet.has(data.billingPeriod)" (nzExpandChange)="onExpandChange(data.billingPeriod, $event)"></td>
                 <td>{{ data.processType }}</td>
@@ -16,24 +16,29 @@
                 <td></td>
             </tr>
             <tr [nzExpand]="expandSet.has(data.billingPeriod)">
-                <nz-table>
-                    <thead>
-                        <th></th>
-                        <th>Job ID</th>
-                        <th>Run Date and Time</th>
-                        <th>Process Type</th>
-                        <th>Trading Date</th>
-                        <th>Region Group</th>
-                        <th>MTN</th>
-                        <th>Status</th>
-                        <th>Progress</th>
-                        <th>Action</th>
-                        <th></th>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </nz-table>
+                <div class="centered-inner-table">
+                    <nz-table>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Job ID</th>
+                                <th>Run Date and Time</th>
+                                <th>Process Type</th>
+                                <th>Trading Date</th>
+                                <th>Region Group</th>
+                                <th>MTN</th>
+                                <th>Status</th>
+                                <th>Progress</th>
+                                <th>Action</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Inner table data rows would go here -->
+                        </tbody>
+                    </nz-table>
+                </div>
             </tr>
-        }
+        </ng-container>
     </tbody>
 </nz-table>

@@ -114,6 +114,10 @@ export class TableComponent implements OnInit {
     }
   }
 
+  trackByBillingPeriod(index: number, item: meterProcessTableData): number {
+    return item.billingPeriod;
+  }
+
   constructor() {}
 
   ngOnInit(): void {
