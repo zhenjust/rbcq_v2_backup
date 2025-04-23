@@ -25,7 +25,7 @@
             <div class="label-container">
                 <label class="form-label">Trading Date:</label>
                 <nz-date-picker
-                    formControlName="date"
+                    formControlName="tradingDate"
                     class="select-size"
                 ></nz-date-picker>
             </div>
@@ -65,9 +65,13 @@
                 <nz-select
                     formControlName="regionGroup"
                     class="select-size">
-                    <nz-option nzValue="ALL"></nz-option>
+                    <nz-option 
+                        *ngFor="let option of meterProcessRegionGroup" 
+                        [nzValue]="option.value" 
+                        [nzLabel]="option.label">
+                    </nz-option>
                 </nz-select>
             </div>
         </div>
     </form>
-  </nz-flex>
+</nz-flex>

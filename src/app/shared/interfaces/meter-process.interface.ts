@@ -17,3 +17,9 @@ export interface meterProcessTableData extends meterProcessPayload {
     adjNo: string | null,
     taskExecutionDtoList: []
 }
+
+export interface meterProcessOptions {
+    id: string,
+    label: string,
+    value: MeterProcessTypes
+}

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MeterProcessTypes, RegionGroup } from '@shared/enums';
-import { meterProcessPayload } from '@shared/interfaces';
+import { meterProcessPayload, meterProcessOptions } from '@shared/interfaces';
 import { debounceTime } from 'rxjs/operators';
+import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
 
 @Component({
   selector: 'app-meter-process-config',
@@ -11,7 +12,7 @@ import { debounceTime } from 'rxjs/operators';
   styleUrl: './meter-process-config.component.scss'
 })
 export class MeterProcessConfigComponent implements OnInit {
-  meterProcessTypeOptions: {label: string, value: MeterProcessTypes}[] = [];
+  meterProcessTypeOptions: meterProcessOptions[] = METER_PROCESS_TYPE_OPTION;
   meterProcessRegionGroup: {label: string, value: RegionGroup}[] = [];
   meterProcessForm!: FormGroup;
   MeterProcessTypes = MeterProcessTypes;
@@ -30,7 +31,7 @@ export class MeterProcessConfigComponent implements OnInit {
       adjustmentNumber: ['']
     });
     
-    this.meterProcessTypeOptions = Object.entries(MeterProcessTypes).map(([key, value]) => ({
+    this.meterProcessRegionGroup = Object.entries(RegionGroup).map(([key, value]) => ({
       label: key,
       value: value
     }));
@@ -40,6 +41,7 @@ export class MeterProcessConfigComponent implements OnInit {
       .subscribe(formValue => {
         this.saveChanges(formValue as meterProcessPayload);
       });
+    
     this.meterProcessForm.get('processType')?.valueChanges.subscribe(value => {
       this.handleProcessTypeChange(value);
     });
