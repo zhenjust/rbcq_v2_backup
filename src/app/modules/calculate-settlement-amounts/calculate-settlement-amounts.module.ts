@@ -7,6 +7,11 @@ import { FilterSearchComponent } from './filter-search/filter-search.component';
 import { TableComponent } from './table/table.component';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzFlexModule } from 'ng-zorro-antd/flex';
+import { ReactiveFormsModule } from '@angular/forms';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzFormModule } from 'ng-zorro-antd/form';
 
 
 @NgModule({
@@ -19,7 +24,12 @@ import { NzTableModule } from 'ng-zorro-antd/table';
     CommonModule,
     CalculateSettlementAmountsRoutingModule,
     NzCardModule,
-    NzTableModule
+    NzTableModule,
+    NzFlexModule,
+    ReactiveFormsModule,
+    NzSelectModule,
+    NzButtonModule,
+    NzFormModule
   ],
   exports:[
     FilterSearchComponent,

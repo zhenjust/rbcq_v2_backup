@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { ActivatedRoute, Data } from '@angular/router';
 
 @Component({
   selector: 'app-table',
@@ -6,6 +7,14 @@ import { Component } from '@angular/core';
   templateUrl: './table.component.html',
   styleUrl: './table.component.scss'
 })
-export class TableComponent {
+export class TableComponent implements OnInit {
+  isLineRentalStatus: boolean = false;
 
+  constructor(private router: ActivatedRoute){};
+
+  ngOnInit(): void {
+    this.router.data.subscribe((data: Data) => {
+      this.isLineRentalStatus = data['isLineRentalStatus'] as boolean;
+    })
+  }
 }

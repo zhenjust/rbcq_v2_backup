@@ -4,8 +4,8 @@ export const NEW_ROUTES = {
     METER_PROCESS: 'meter-process-v2',
     TRADING_AMOUNTS_CALCULATION: 'trading-amounts-calculations-v2',
     RESERVE_TRADING_AMOUNTS_CALCULATION: 'reserve-trading-amounts-calculation-v2',
-    ENERGY_MARKET_FEE_CALCULATION: 'energey-market-fee-calculation-v2',
-    RESERVE_MARKET_FEE_CALCULATION: 'resserve-market-fee-calculation-v2',
+    ENERGY_MARKET_FEE_CALCULATION: 'energy-market-fee-calculation-v2',
+    RESERVE_MARKET_FEE_CALCULATION: 'reserve-market-fee-calculation-v2',
     ADDITIONAL_COMPENSATION_LIST: 'additional-compensation-v2',
     ADDITIONAL_COMPENSATION_INVOICE: 'addtl-comp-ams-update-v2'
 }

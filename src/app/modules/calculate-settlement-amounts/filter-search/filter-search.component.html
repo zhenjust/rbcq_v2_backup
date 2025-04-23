@@ -1,1 +1,30 @@
-<p>filter-search works!</p>
+<nz-flex nzVertical="true" nzJustify="center" nzAlign="center" class="form-container">
+    <nz-flex>
+        <form nz-form [formGroup]="settlementForm" (ngSubmit)="onSubmit()">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="6" nzFor="settlementType">Process Type</nz-form-label>
+              <nz-form-control [nzSpan]="14">
+                <nz-select 
+                  formControlName="settlementType" 
+                  id="settlementType"
+                  nzPlaceHolder="Select a settlement type">
+                  <nz-option 
+                    *ngFor="let option of settlementOptions" 
+                    [nzValue]="option.value" 
+                    [nzLabel]="option.label">
+                  </nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+            
+            <nz-form-item>
+              <nz-form-control [nzOffset]="6" [nzSpan]="14">
+                <button nz-button nzType="primary" [disabled]="!settlementForm.valid">Submit</button>
+              </nz-form-control>
+            </nz-form-item>
+          </form>
+    </nz-flex>
+    <nz-flex>
+        <p>this</p>
+    </nz-flex>
+</nz-flex>
