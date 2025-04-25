@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { apiPath } from '@shared/constants';
 import { environment } from 'environments/environment';
@@ -35,15 +35,15 @@ export class AuthorizeGuard implements CanActivate {
       if (code) {
         return this.authService.authorize(code, baseRedirectUri).pipe(
           switchMap(() => this.authService.userInit()),
+          tap(() => {
+            window.location.href = baseRedirectUri;
+          }),
           map(() => true),
           catchError(() => {
             window.location.href = authorizeUrl;
             return of(false);
           })
         );
-      } else {
-        window.location.href = authorizeUrl;
-        return false;
       }
     }
 

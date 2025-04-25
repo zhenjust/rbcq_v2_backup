@@ -12,8 +12,7 @@ export class AuthorizationService {
   private currentUser: CurrentUser | null = null;
   
   constructor(
-    private http: HttpClient,
-    private toast: ToastrService
+    private http: HttpClient
   ) {}
 
   getUser(): Observable<CurrentUser> {
@@ -45,15 +44,11 @@ export class AuthorizationService {
           localStorage.setItem('refresh_token', response.refresh_token);
         }
       ),
-      map(() => {
-        window.history.replaceState({}, document.title, window.location.pathname)
-        return true;
-      })
+      map(() => true)
     );
   }
 
   //TODO cast proper types to the services
-
   userInit(): Observable<CurrentUser> {
     return this.http.post<CurrentUser>(`${apiPath.__AUTH_PATH__}/user/init`, {});
   }
