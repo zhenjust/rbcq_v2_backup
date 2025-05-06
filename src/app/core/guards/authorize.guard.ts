@@ -28,7 +28,7 @@ export class AuthorizeGuard implements CanActivate {
 
     const token = this.authService.getToken();
     const code = this.searchCode();
-    const baseRedirectUri = `${location.protocol}//${location.host}`;
+    const baseRedirectUri = `${location.protocol}//${location.host}${location.pathname !== '/' ? location.pathname : ''}`;
     const authorizeUrl = `${this.auth_url}/oauth/authorize?response_type=code&client_id=crss&redirect_uri=${baseRedirectUri}`;
 
     if (!token) {
