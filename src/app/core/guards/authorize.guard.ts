@@ -28,7 +28,7 @@ export class AuthorizeGuard implements CanActivate {
 
     const token = this.authService.getToken();
     const code = this.searchCode();
-    const baseRedirectUri = `${location.protocol}//${location.host}${location.pathname !== '/' ? location.pathname : ''}`;
+    const baseRedirectUri = `${location.protocol}//${location.host}`;
     const authorizeUrl = `${this.auth_url}/oauth/authorize?response_type=code&client_id=crss&redirect_uri=${baseRedirectUri}`;
 
     if (!token) {
@@ -36,7 +36,7 @@ export class AuthorizeGuard implements CanActivate {
         return this.authService.authorize(code, baseRedirectUri).pipe(
           switchMap(() => this.authService.userInit()),
           tap(() => {
-            window.location.href = baseRedirectUri;
+            window.location.href = baseRedirectUri + location.pathname !== '/' ? location.pathname : '';
           }),
           map(() => true),
           catchError(() => {
