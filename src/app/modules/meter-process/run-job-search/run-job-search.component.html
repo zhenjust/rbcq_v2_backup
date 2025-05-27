@@ -5,3 +5,16 @@
         <button *ngIf="isFinalType" nz-button nzType="primary">Clone Final</button>
     </nz-flex>
 </nz-flex>
+
+<ng-template #runWesmModal let-modal>
+    <nz-flex nzGap="large" nzVertical="true">
+        <nz-result nzStatus="info" nzTitle="You are going to run a WESM Job"></nz-result>
+            <nz-flex nzGap="large" nzJustify="space-evenly">
+                <p><strong>Job Type:</strong> {{ meterProcessParams?.processType }}</p>
+                <p *ngIf="meterProcessParams?.billingPeriod"><strong>Billing Period:</strong> {{ meterProcessParams?.billingPeriod }}</p>
+                <p *ngIf="meterProcessParams?.tradingDate"><strong>Trading Date:</strong> {{ meterProcessParams?.tradingDate }}</p>
+                <p *ngIf="meterProcessParams?.startDate"><strong>Start Date:</strong> {{ meterProcessParams?.startDate }}</p>
+                <p *ngIf="meterProcessParams?.endDate"><strong>End Date:</strong> {{ meterProcessParams?.endDate }}</p>
+            </nz-flex>
+    </nz-flex>
+</ng-template>

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { meterProcessParams, meterProcessRunJobPayload } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { RunJobService } from '@shared/services/meterProcess';
@@ -13,6 +13,8 @@ import { filter, Subject, takeUntil } from 'rxjs';
 })
 export class RunJobSearchComponent implements OnInit, OnDestroy {
 
+  @ViewChild('runWesmModal', { static: true }) runWesmModal!: TemplateRef<void>;
+  
   isLoading: boolean = false;
   private destroy$ = new Subject<void>();
   protected meterProcessParams: Partial<meterProcessParams> | null = null;
@@ -61,16 +63,9 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const modalRef = this.modal.create({
+    this.modal.create({
       nzTitle: 'Run WESM Job',
-      nzContent: `
-        <nz-result nzStatus="info" nzTitle="You are going to run a WESM Job"></nz-result>
-        <p><strong>Job Type:</strong> ${this.meterProcessParams.processType}</p>
-        ${this.meterProcessParams.billingPeriod ? `<p><strong>Billing Period:</strong> ${this.meterProcessParams?.billingPeriod}</p>` : ''}
-        ${this.meterProcessParams.tradingDate ? `<p><strong>Trading Date:</strong> ${this.meterProcessParams.tradingDate}</p>` : ''}
-        ${this.meterProcessParams.startDate ? `<p><strong>Start Date:</strong> ${this.meterProcessParams.startDate}</p>` : ''}
-        ${this.meterProcessParams.endDate ? `<p><strong>End Date:</strong> ${this.meterProcessParams.endDate}</p>` : ''}
-      `,
+      nzContent: this.runWesmModal,
       nzOkText: 'Run Job',
       nzCancelText: 'Cancel',
       nzOnOk: () => {
@@ -83,7 +78,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
                   nzTitle: 'Success',
                   nzContent: 'Job has been submitted successfully.'
                 });
-                resolve(); // Close modal
+                resolve();
               },
               error: (err) => {
                 this.modal.error({
@@ -91,7 +86,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
                   nzContent: 'Failed to run the job.'
                 });
                 console.error('Run Job Error:', err);
-                reject(); // Keep modal open
+                reject();
               }
             })
             .add(() => this.isLoading = false);

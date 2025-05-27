@@ -3,7 +3,8 @@
       "context": [
         "/uaa",
         "/reg",
-        "/mtr-data-pipeline"
+        "/mtr-data-pipeline",
+        "/stl-data-pipeline"
       ],
       "target": "https://crss-dev.exist.com.ph",
       "secure": true,
