@@ -12,6 +12,7 @@ import { filter, Subject, takeUntil } from 'rxjs';
   styleUrl: './run-job-search.component.scss'
 })
 export class RunJobSearchComponent implements OnInit, OnDestroy {
+  isFormValid: boolean = false;
 
   @ViewChild('runWesmModal', { static: true }) runWesmModal!: TemplateRef<void>;
   
@@ -27,6 +28,9 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getLatestRunJobParams();
+    this.meterProcessService.formValid$.subscribe(valid => {
+      this.isFormValid = valid;
+    });
   }
 
   ngOnDestroy(): void {

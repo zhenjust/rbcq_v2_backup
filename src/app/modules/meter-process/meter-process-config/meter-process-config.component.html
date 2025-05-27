@@ -45,11 +45,12 @@
                         class="select-size"
                         nzPlaceHolder="Select Billing Period"
                     >
-                        <!-- TODO: Replace with actual billing period options -->
-                        <nz-option nzValue="240121" nzLabel="January 2024"></nz-option>
-                        <nz-option nzValue="240222" nzLabel="February 2024"></nz-option>
-                        <nz-option nzValue="240321" nzLabel="March 2024"></nz-option>
-                        <!-- Add more options as needed -->
+                        <nz-option
+                            *ngFor="let billing of meterProcessBillingPeriod"
+                            [nzValue]="billing.billingPeriod"
+                            [nzLabel]="billing.supplyMonth"
+                        >
+                        </nz-option>
                     </nz-select>
                 </div>
             </div>

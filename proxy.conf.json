@@ -2,7 +2,10 @@
     {
       "context": [
         "/uaa",
-        "/reg"
+        "/reg",
+        "/mtr-data-pipeline",
+        "/stl-data-pipeline",
+        "/meter-process"
       ],
       "target": "",
       "secure": true,

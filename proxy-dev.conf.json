@@ -4,7 +4,8 @@
         "/uaa",
         "/reg",
         "/mtr-data-pipeline",
-        "/stl-data-pipeline"
+        "/stl-data-pipeline",
+        "/meter-process"
       ],
       "target": "https://crss-dev.exist.com.ph",
       "secure": true,

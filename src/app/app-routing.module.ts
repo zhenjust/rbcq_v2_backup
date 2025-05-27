@@ -4,7 +4,6 @@ import { AuthorizeGuard } from '@core/guards/authorize.guard';
 import { NEW_ROUTES } from '@shared/constants';
 import { BaseComponent } from '@shared/modules/layout/base/base.component';
 
-//TODO make other paths verbose
 const routes: Routes = [
   {
     path: '',
@@ -30,7 +29,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, {
-    useHash: true //disable hashing
+    useHash: true
   })],
   exports: [RouterModule]
 })

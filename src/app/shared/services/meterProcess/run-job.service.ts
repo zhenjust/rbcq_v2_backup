@@ -40,16 +40,15 @@ export class RunJobService {
     this.meterProcessForm = this.fb.group({
       processType: [MeterProcessTypes.DAILY, Validators.required],
       tradingDate: [this.formatedDatePipe.formatToShortDate(new Date().toISOString())],
-      billingPeriod: [this.formatedDatePipe.formatToShortDate(new Date().toISOString())],
-      startDate: [''],
-      endDate: [''],
+      billingPeriod: [this.formatedDatePipe.formatToShortDate(new Date().toISOString()), Validators.required],
+      startDate: ['', Validators.required],
+      endDate: ['', Validators.required], 
       regionGroup: [RegionGroup.ALL],
       adjNo: ['']
     });
   }
   
   private setupFormValueChanges(): void {
-    // Emit form value changes
     this.meterProcessForm.valueChanges
       .pipe(
         debounceTime(300),
@@ -66,18 +65,15 @@ export class RunJobService {
         this.formValidSubject.next(this.meterProcessForm.valid);
       });
     
-    // Emit form validity changes
     this.meterProcessForm.statusChanges.subscribe(status => {
       this.formValidSubject.next(status === 'VALID');
     });
     
-    // Emit process type changes specifically
     this.meterProcessForm.get('processType')?.valueChanges.subscribe(value => {
       this.processTypeSubject.next(value);
       this.handleProcessTypeChange(value);
     });
     
-    // Emit initial values
     this.formValueSubject.next(this.meterProcessForm.value);
     this.formValidSubject.next(this.meterProcessForm.valid);
     this.processTypeSubject.next(this.meterProcessForm.get('processType')?.value);
@@ -173,5 +169,25 @@ export class RunJobService {
   
   get currentProcessType(): string {
     return this.meterProcessForm?.get('processType')?.value || '';
+  }
+
+  get isVisibleFieldsValid(): boolean {
+    const controlsToCheck: string[] = [];
+    const processType = this.currentProcessType;
+
+    if (processType === MeterProcessTypes.DAILY) {
+      controlsToCheck.push('tradingDate');
+    } else if (processType === MeterProcessTypes.ADJUSTMENT) {
+      controlsToCheck.push('adjNo', 'billingPeriod', 'startDate', 'endDate');
+    } else {
+      controlsToCheck.push('billingPeriod', 'startDate', 'endDate');
+    }
+
+    controlsToCheck.push('regionGroup');
+
+    return controlsToCheck.every((fieldName) => {
+      const control = this.meterProcessForm.get(fieldName);
+      return control && control.enabled && control.valid && control.value !== null && control.value !== '';
+    });
   }
 }

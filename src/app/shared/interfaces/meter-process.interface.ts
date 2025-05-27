@@ -46,11 +46,22 @@ export interface meterProcessParams {
     billingPeriodName?: string,
     processType?: MeterProcessTypes,
     adjNo?: number | string,
-    regionGroup?: number | string
+    regionGroup?: number | string,
+    name?: string
 }
 
 export interface meterProcessRunJobPayload {
     pipelineName: string
     refId: number,
     parameters: meterProcessParams
+}
+
+export interface meterProcessBillingPeriod {
+    createDatetime: string
+    id: number
+    billingPeriod: number
+    supplyMonth: string
+    startDate: string
+    endDate: string
+    name: string
 }
