@@ -16,6 +16,17 @@ export class SearchFilterService {
   ) { }
 
   refreshJobs(params: meterProcessParams): void {
-    this.mpa.search(params).subscribe();
+    this.isLoading = true;
+    this.mpa.search(params).subscribe({
+      next: (data) => {
+        this.jobsSubject.next(data); // Emit to subscribers
+      },
+      error: (err) => {
+        console.error(err);
+        this.jobsSubject.next(null); // Optional: clear data on error
+      }
+    }).add(() => {
+      this.isLoading = false;
+    });
   }
 }

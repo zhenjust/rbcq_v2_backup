@@ -49,7 +49,7 @@ import { NzResultModule } from 'ng-zorro-antd/result';
   ],
   providers: [
     RunJobService,
-    SearchFilterService
+    SearchFilterService,
   ]
 })
 export class MeterProcessModule { }

@@ -1,10 +1,85 @@
-<nz-flex nzGap="large" class="form-container" nzJustify="space-between">
-    <input nz-input placeholder="Search Jobs" />
-    <nz-flex nzGap="large">
+<nz-flex nzJustify="space-between" nzAlign="start" class="toolbar-container">
+    <!-- Left side: Filter form -->
+    <nz-flex nzDirection="column" nzAlign="start" class="form-section">
+        <button nz-button [nzType]="hasFilter ? 'primary' : 'default'" (click)=" !hasFilter ? toggleFilter() : resetFilter()">
+        {{ hasFilter ? 'Clear Filter' : 'Set Filter' }}
+        </button>
+
+        <form *ngIf="hasFilter" [formGroup]="filterForm" class="form-container">
+        <div class="form-item">
+            <label class="form-label">Meter Process Type:</label>
+            <nz-select 
+            formControlName="processType"
+            class="select-size"
+            nzPlaceHolder="Enter Process Type"
+            [nzOptions]="meterProcessTypeOptions">
+            </nz-select>
+        </div>
+
+        <div class="form-item" *ngIf="filterForm.get('tradingDate')?.enabled">
+            <label class="form-label">Trading Date:</label>
+            <nz-date-picker
+            formControlName="tradingDate"
+            class="select-size"
+            nzPlaceHolder="Select trading date">
+            </nz-date-picker>
+        </div>
+
+        <div class="form-item" *ngIf="filterForm.get('billingPeriod')?.enabled">
+            <label class="form-label">Billing Period:</label>
+            <nz-select 
+            formControlName="billingPeriod"
+            class="select-size"
+            nzPlaceHolder="Enter Billing Period">
+            <nz-option
+                *ngFor="let billing of meterProcessBillingPeriod"
+                [nzValue]="billing.billingPeriod"
+                [nzLabel]="billing.supplyMonth">
+            </nz-option>
+            </nz-select>
+        </div>
+
+        <nz-space *ngIf="filterForm.get('startDate')?.enabled && filterForm.get('endDate')?.enabled">
+            <div class="form-item" *nzSpaceItem>
+            <label class="form-label">Start Date:</label>
+            <nz-date-picker
+                formControlName="startDate"
+                class="select-size"
+                nzPlaceHolder="Select start date">
+            </nz-date-picker>
+            </div>
+            <div class="form-item" *nzSpaceItem>
+            <label class="form-label">End Date:</label>
+            <nz-date-picker
+                formControlName="endDate"
+                class="select-size"
+                nzPlaceHolder="Select end date">
+            </nz-date-picker>
+            </div>
+        </nz-space>
+
+        <div class="form-item" *ngIf="filterForm.get('adjNo')?.enabled">
+            <label class="form-label">Adjustment Number</label>
+            <nz-input-number 
+            formControlName="adjNo" 
+            class="select-size"
+            nzPlaceHolder="Enter adjustment number">
+            </nz-input-number>
+        </div>
+
+        <nz-flex nzGap="large" class="form-item" *ngIf="filterForm.dirty">
+            <button nz-button nzType="primary" (click)="applyFilter()">Apply Filter</button>
+        </nz-flex>
+        </form>
+    </nz-flex>
+
+    <!-- Right side: Action buttons -->
+    <nz-flex nzGap="large" nzAlign="start">
         <button nz-button nzType="primary" [disabled]="!meterProcessService.isVisibleFieldsValid" (click)="openRunWesmModal()">Run WESM</button>
         <button *ngIf="isFinalType" nz-button nzType="primary">Clone Final</button>
     </nz-flex>
 </nz-flex>
+
 
 <ng-template #runWesmModal let-modal>
     <nz-flex nzVertical="true">

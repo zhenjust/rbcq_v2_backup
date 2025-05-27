@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { meterProcessParams, meterProcessSearch, meterProcessTableData } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
+import { SearchFilterService } from '@shared/services/meterProcess';
 import { ToastrService } from 'ngx-toastr';
 
 interface tableColumn {
@@ -75,7 +76,8 @@ export class TableComponent implements OnInit {
 
   constructor(
     private mp: MeterprocessService,
-    public toast: ToastrService
+    public toast: ToastrService,
+    private searchFilterService: SearchFilterService
   ) {}
 
   fetchJobs(params: meterProcessParams): void {
@@ -87,6 +89,27 @@ export class TableComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.fetchJobs(this.meterProcessParams);
+    this.fetchJobs({}); 
+
+    this.searchFilterService.jobs$.subscribe({
+      next: (data) => {
+        if (data) {
+          this.tableData = data;
+          this.toast.success('Filtered Jobs Loaded!');
+        }
+      },
+      error: (error) => {
+        this.toast.error('Failed to load filtered jobs');
+      }
+    });
+  }
+
+  formatBillingDate(dateString: string): string {
+      const yearSuffix = dateString.substring(0, 2);
+      const month = dateString.substring(2, 4);
+      const day = dateString.substring(4, 6);
+      const year = `20${yearSuffix}`;
+      const formattedDate = `${year}-${month}-${day}`;
+      return formattedDate;
   }
 }
