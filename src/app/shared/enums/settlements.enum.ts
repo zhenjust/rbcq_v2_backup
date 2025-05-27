@@ -13,3 +13,12 @@ export enum settlementProcessTypes {
     FINAL = 'FINAL',
     ADJUSTED = 'ADJUSTED'
 }
+
+export enum settlementSearchNames {
+    RESERVE_TRADING_AMOUNTS = "reserveTradingAmounts",
+    ENERGY_TRADING_AMOUNTS = "energyTradingAmounts",
+    ENERGY_MARKET_FEE = "energyMarketFee",
+    RESERVE_MARKET_FEE = "reserveMarketFee",
+    MANAGE_ADD_COM_CLAIMS = "manageAddComClaims",
+    UPDATE_ADD_COM_INVOICE = "updateAddComInvoice"
+}

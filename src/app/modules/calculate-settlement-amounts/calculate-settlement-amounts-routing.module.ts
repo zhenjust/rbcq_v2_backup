@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { NEW_ROUTES } from '@shared/constants';
 import { BaseComponent } from './base/base.component';
-import { settlementPageTitles } from '@shared/enums';
+import { settlementPageTitles, settlementSearchNames } from '@shared/enums';
 
 const routes: Routes = [
   {
@@ -10,7 +10,8 @@ const routes: Routes = [
     component: BaseComponent,
     data: {
       pageTitle: settlementPageTitles.ENERGY_MARKET_FEE_CALCULATION,
-      isLineRentalStatus: false
+      isLineRentalStatus: false,
+      searchName: settlementSearchNames.ENERGY_MARKET_FEE
     }
   },
   {
@@ -18,7 +19,8 @@ const routes: Routes = [
     component: BaseComponent,
     data: {
       pageTitle: settlementPageTitles.RESERVE_MARKET_FEE_CALCULATION,
-      isLineRentalStatus: false
+      isLineRentalStatus: false,
+      searchName: settlementSearchNames.RESERVE_MARKET_FEE
     }
   },
   {
@@ -26,7 +28,8 @@ const routes: Routes = [
     component: BaseComponent,
     data: {
       pageTitle: settlementPageTitles.RESERVE_TRADING_AMOUNTS_CALCULATION,
-      isLineRentalStatus: false
+      isLineRentalStatus: false,
+      searchName: settlementSearchNames.RESERVE_TRADING_AMOUNTS
     }
   },
   {
@@ -34,7 +37,8 @@ const routes: Routes = [
     component: BaseComponent,
     data: {
       pageTitle: settlementPageTitles.TRADING_AMOUNTS_CALCULATION,
-      isLineRentalStatus: true
+      isLineRentalStatus: true,
+      searchName: settlementSearchNames.ENERGY_TRADING_AMOUNTS
     }
   }
 ];
