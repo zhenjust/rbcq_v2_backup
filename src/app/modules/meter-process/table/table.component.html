@@ -1,10 +1,17 @@
-<nz-table #nzTable [nzData]="mockMeterProcessData" [nzShowPagination]="true">
+<nz-table 
+    #nzTable 
+    [nzData]="tableData.content" 
+    [nzLoading]="isLoading" 
+    [nzPageSize]="tableData.totalElements"
+    [nzPageIndex]="tableData.totalPages"
+    [nzFrontPagination]="false"
+>
     <thead>
         <tr>
             <th nzWidth="60px"></th>
-            <th>Process Type</th>
-            <th>Billing Period / Trading Date</th>
-            <th>Actions</th>
+            @for (column of columnItem; track column) {
+                <th>{{column.name}}</th>
+            }
         </tr>
     </thead>
     <tbody>
@@ -12,24 +19,18 @@
             <tr>
                 <td [nzExpand]="expandSet.has(data.billingPeriod)" (nzExpandChange)="onExpandChange(data.billingPeriod, $event)"></td>
                 <td>{{ data.processType }}</td>
-                <td>{{ data.date | formatDate }}</td>
+                <td>{{ data.date }}</td>
                 <td></td>
             </tr>
             <tr [nzExpand]="expandSet.has(data.billingPeriod)">
                 <div class="centered-inner-table">
-                    <nz-table>
+                    <nz-table #nzTable [nzLoading]="isLoading">
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>Job ID</th>
-                                <th>Run Date and Time</th>
-                                <th>Process Type</th>
-                                <th>Trading Date</th>
-                                <th>Region Group</th>
-                                <th>MTN</th>
-                                <th>Status</th>
-                                <th>Progress</th>
-                                <th>Action</th>
+                                @for (column of childColumnItem; track column) {
+                                    <th>{{column.name}}</th>
+                                }
                                 <th></th>
                             </tr>
                         </thead>

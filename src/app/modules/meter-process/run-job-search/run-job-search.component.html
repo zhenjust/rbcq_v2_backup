@@ -1,8 +1,7 @@
 <nz-flex nzGap="large" class="form-container" nzJustify="space-between">
     <input nz-input placeholder="Search Jobs" />
-    <!-- TODO add condition to the buttons once connected to the backend -->
     <nz-flex nzGap="large">
-        <button nz-button nzType="primary">Run WESM</button>
-        <button nz-button nzType="primary">Clone Final</button>
+        <button nz-button nzType="primary" (click)="openRunWesmModal()">Run WESM</button>
+        <button *ngIf="isFinalType" nz-button nzType="primary">Clone Final</button>
     </nz-flex>
 </nz-flex>

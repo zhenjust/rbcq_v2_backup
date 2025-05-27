@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { MeterProcessTypes, RegionGroup } from '@shared/enums';
-import { meterProcessTableData } from '@shared/interfaces';
+import { meterProcessParams, meterProcessSearch, meterProcessTableData } from '@shared/interfaces';
+import { MeterprocessService } from '@shared/services/api';
+import { ToastrService } from 'ngx-toastr';
 
+interface tableColumn {
+  name: string,
+} 
 @Component({
   selector: 'app-table',
   standalone: false,
@@ -9,101 +13,52 @@ import { meterProcessTableData } from '@shared/interfaces';
   styleUrl: './table.component.scss'
 })
 export class TableComponent implements OnInit {
-
-  //mock data
-  mockMeterProcessData: meterProcessTableData[] = [
+  tableData: meterProcessSearch | any = {};
+  meterProcessParams: meterProcessParams = {};
+  isLoading: boolean = false;
+  columnItem: tableColumn[] = [
     {
-      date: '2025-04-01',
-      processType: MeterProcessTypes.ADJUSTMENT,
-      regionGroup: RegionGroup.ALL,
-      adjNo: 'ADJ-2025-001',
-      billingPeriod: 2505,
-      billingPeriodName: 'April 2025',
-      taskExecutionDtoList: []
+      name: 'Process Type'
     },
     {
-      date: '2025-03-15',
-      processType: MeterProcessTypes.FINAL,
-      regionGroup: RegionGroup.LUZON,
-      adjNo: null,
-      billingPeriod: 2503,
-      billingPeriodName: 'March 2025',
-      taskExecutionDtoList: []
+      name: 'Billing Period / Trading Date'
     },
     {
-      date: '2025-03-01',
-      processType: MeterProcessTypes.PRELIMINARY,
-      regionGroup: RegionGroup.VISAYAS,
-      adjNo: null,
-      billingPeriod: 2503,
-      billingPeriodName: 'March 2025',
-      taskExecutionDtoList: []
+      name: 'Actions'
+    },
+  ]
+  childColumnItem: tableColumn[] = [
+    {
+      name: 'Job ID'
     },
     {
-      date: '2025-02-25',
-      processType: MeterProcessTypes.DAILY,
-      regionGroup: RegionGroup.MINDANAO,
-      adjNo: null,
-      billingPeriod: 2502,
-      billingPeriodName: 'February 2025',
-      taskExecutionDtoList: []
+      name: 'Job ID'
     },
     {
-      date: '2025-02-15',
-      processType: MeterProcessTypes.ADJUSTMENT,
-      regionGroup: RegionGroup.ALL,
-      adjNo: 'ADJ-2025-002',
-      billingPeriod: 2502,
-      billingPeriodName: 'February 2025',
-      taskExecutionDtoList: []
+      name: 'Run Date and Time'
     },
     {
-      date: '2025-02-01',
-      processType: MeterProcessTypes.FINAL,
-      regionGroup: RegionGroup.LUZON,
-      adjNo: null,
-      billingPeriod: 2501,
-      billingPeriodName: 'January 2025',
-      taskExecutionDtoList: []
+      name: 'Process Type'
     },
     {
-      date: '2025-01-20',
-      processType: MeterProcessTypes.PRELIMINARY,
-      regionGroup: RegionGroup.MINDANAO,
-      adjNo: null,
-      billingPeriod: 2501,
-      billingPeriodName: 'January 2025',
-      taskExecutionDtoList: []
+      name: 'Trading Date'
     },
     {
-      date: '2025-01-10',
-      processType: MeterProcessTypes.DAILY,
-      regionGroup: RegionGroup.VISAYAS,
-      adjNo: null,
-      billingPeriod: 2501,
-      billingPeriodName: 'January 2025',
-      taskExecutionDtoList: []
+      name: 'Region Group'
     },
     {
-      date: '2024-12-15',
-      processType: MeterProcessTypes.ADJUSTMENT,
-      regionGroup: RegionGroup.ALL,
-      adjNo: 'ADJ-2024-125',
-      billingPeriod: 2412,
-      billingPeriodName: 'December 2024',
-      taskExecutionDtoList: []
+      name: 'MTN'
     },
     {
-      date: '2024-12-01',
-      processType: MeterProcessTypes.FINAL,
-      regionGroup: RegionGroup.MINDANAO,
-      adjNo: null,
-      billingPeriod: 2411,
-      billingPeriodName: 'November 2024',
-      taskExecutionDtoList: []
+      name: 'Status'
+    },
+    {
+      name: 'Progress'
+    },
+    {
+      name: 'Action'
     }
   ];
-
   expandSet = new Set<number>();
 
   onExpandChange(id: number, checked: boolean): void {
@@ -118,9 +73,20 @@ export class TableComponent implements OnInit {
     return item.billingPeriod;
   }
 
-  constructor() {}
+  constructor(
+    private mp: MeterprocessService,
+    public toast: ToastrService
+  ) {}
+
+  fetchJobs(params: meterProcessParams): void {
+    this.isLoading = true
+    return this.mp.search(params ? params : this.meterProcessParams).subscribe({
+      next: (data) => [this.tableData = data, this.toast.success('Jobs Loaded!')],
+      error: (error) => this.toast.error(error.message)
+    }).add(() => {this.isLoading = false});
+  }
 
   ngOnInit(): void {
-    this.mockMeterProcessData;
+    this.fetchJobs(this.meterProcessParams);
   }
 }

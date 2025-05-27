@@ -30,7 +30,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, {
-    useHash: false //disable hashing
+    useHash: true //disable hashing
   })],
   exports: [RouterModule]
 })

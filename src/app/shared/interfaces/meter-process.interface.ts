@@ -23,3 +23,34 @@ export interface meterProcessOptions {
     label: string,
     value: MeterProcessTypes
 }
+
+export interface meterProcessSearch {
+    content: meterProcessTableData[]
+    last: boolean
+    totalPages: number
+    totalElements: number
+    sortBy: any
+    sortDirection: any
+    first: boolean
+    numberOfElements: number
+    size: number
+    number: number
+}
+
+export interface meterProcessParams {
+    billingPeriod?: string,
+    date?: string,
+    startDate?: string
+    endDate?: string,
+    tradingDate?: string,
+    billingPeriodName?: string,
+    processType?: MeterProcessTypes,
+    adjNo?: number | string,
+    regionGroup?: number | string
+}
+
+export interface meterProcessRunJobPayload {
+    pipelineName: string
+    refId: number,
+    parameters: meterProcessParams
+}

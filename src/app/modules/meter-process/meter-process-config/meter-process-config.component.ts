@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MeterProcessTypes, RegionGroup } from '@shared/enums';
-import { meterProcessPayload, meterProcessOptions } from '@shared/interfaces';
-import { debounceTime } from 'rxjs/operators';
-import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { MeterProcessTypes } from '@shared/enums';
+import { Subject, takeUntil } from 'rxjs';
+import { RunJobService } from '@shared/services/meterProcess';
+import { meterProcessParams } from '@shared/interfaces';
 
 @Component({
   selector: 'app-meter-process-config',
@@ -11,59 +11,46 @@ import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
   templateUrl: './meter-process-config.component.html',
   styleUrl: './meter-process-config.component.scss'
 })
-export class MeterProcessConfigComponent implements OnInit {
-  meterProcessTypeOptions: meterProcessOptions[] = METER_PROCESS_TYPE_OPTION;
-  meterProcessRegionGroup: {label: string, value: RegionGroup}[] = [];
+export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   meterProcessForm!: FormGroup;
   MeterProcessTypes = MeterProcessTypes;
   
-  constructor(private fb: FormBuilder) {}
+  private destroy$ = new Subject<void>();
   
-  //TODO update active form updates to observable object for dynamic get functionality on the table component
+  constructor(public meterProcessService: RunJobService) {}
+  
   ngOnInit(): void {
-    this.meterProcessForm = this.fb.group({
-      processType: [MeterProcessTypes.DAILY, Validators.required],
-      tradingDate: [''],
-      billingPeriod: [''],
-      startDate: [''],
-      endDate: [''],
-      regionGroup: [''],
-      adjustmentNumber: ['']
-    });
-    
-    this.meterProcessRegionGroup = Object.entries(RegionGroup).map(([key, value]) => ({
-      label: key,
-      value: value
-    }));
-    
-    this.meterProcessForm.valueChanges
-      .pipe(debounceTime(300)) // debounce for UX
-      .subscribe(formValue => {
-        this.saveChanges(formValue as meterProcessPayload);
-      });
-    
-    this.meterProcessForm.get('processType')?.valueChanges.subscribe(value => {
-      this.handleProcessTypeChange(value);
-    });
+    this.meterProcessForm = this.meterProcessService.getForm();
   }
   
-  saveChanges(formValue: meterProcessPayload): void {
-    this.onProcessTypeChange(formValue.processType);
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
   
-  onProcessTypeChange(value: string): void {
+  
+  // Getters (existing)
+  get isAdjustmentType(): boolean {
+    return this.meterProcessService.isAdjustmentType;
   }
-
-  handleProcessTypeChange(value: string): void {
-    //disabling fields just in case
-    if (value !== MeterProcessTypes.DAILY) {
-      this.meterProcessForm.get('billingPeriod')?.enable();
-      this.meterProcessForm.get('startDate')?.enable();
-      this.meterProcessForm.get('endDate')?.enable();
-    } else {
-      this.meterProcessForm.get('billingPeriod')?.disable();
-      this.meterProcessForm.get('startDate')?.disable();
-      this.meterProcessForm.get('endDate')?.disable();
-    }
+  
+  get isDailyType(): boolean {
+    return this.meterProcessService.isDailyType;
+  }
+  
+  get isNotDailyType(): boolean {
+    return this.meterProcessService.isNotDailyType;
+  }
+  
+  get currentProcessType(): string {
+    return this.meterProcessService.currentProcessType;
+  }
+  
+  get meterProcessTypeOptions() {
+    return this.meterProcessService.meterProcessTypeOptions;
+  }
+  
+  get meterProcessRegionGroup() {
+    return this.meterProcessService.meterProcessRegionGroup;
   }
 }

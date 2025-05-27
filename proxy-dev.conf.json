@@ -2,7 +2,8 @@
     {
       "context": [
         "/uaa",
-        "/reg"
+        "/reg",
+        "/mtr-data-pipeline"
       ],
       "target": "https://crss-dev.exist.com.ph",
       "secure": true,

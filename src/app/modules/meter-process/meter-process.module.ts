@@ -19,6 +19,8 @@ import { SharedModule } from '@shared/shared.module';
 import { RunJobSearchComponent } from './run-job-search/run-job-search.component';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { RunJobService, SearchFilterService } from '@shared/services/meterProcess';
+import { NzResultModule } from 'ng-zorro-antd/result';
 
 
 @NgModule({
@@ -42,7 +44,12 @@ import { NzInputModule } from 'ng-zorro-antd/input';
     NzInputNumberModule,
     SharedModule,
     NzButtonModule,
-    NzInputModule
+    NzInputModule,
+    NzResultModule
+  ],
+  providers: [
+    RunJobService,
+    SearchFilterService
   ]
 })
 export class MeterProcessModule { }

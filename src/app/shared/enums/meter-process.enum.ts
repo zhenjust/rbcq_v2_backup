@@ -1,6 +1,6 @@
 export enum MeterProcessTypes {
     DAILY = 'DAILY',
-    PRELIMINARY = 'PRELIM',
+    PRELIMINARY = 'PRELIMINARY',
     FINAL = 'FINAL',
     ADJUSTMENT = 'ADJUSTMENT'
 }
