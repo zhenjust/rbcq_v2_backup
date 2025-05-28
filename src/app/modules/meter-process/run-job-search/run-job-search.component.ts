@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
 import { MeterProcessTypes } from '@shared/enums';
 import { meterProcessBillingPeriod, meterProcessOptions, meterProcessParams } from '@shared/interfaces';
+import { FormatDatePipe } from '@shared/pipes';
 import { MeterprocessService } from '@shared/services/api';
 import { RunJobService, SearchFilterService } from '@shared/services/meterProcess';
 import { ProcessTypeUtilService } from '@shared/services/utils';
@@ -26,6 +27,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
   @ViewChild('runWesmModal', { static: true }) runWesmModal!: TemplateRef<void>;
   
   isLoading: boolean = false;
+  private fdp = new FormatDatePipe();
   private destroy$ = new Subject<void>();
   protected meterProcessParams: Partial<meterProcessParams> | null = null;
   protected meterProcessFilterParams: Partial<meterProcessParams> | null = null;
@@ -138,8 +140,15 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
 
   applyFilter(): void {
     if (this.filterForm.valid) {
-      const filterValues: meterProcessParams = this.filterForm.getRawValue();
-      this.searchFilterService.refreshJobs(filterValues);
+      const rawValues: meterProcessParams = this.filterForm.getRawValue();
+
+      const formattedValues: meterProcessParams = {
+        ...rawValues,
+        startDate: rawValues.startDate ? this.fdp.transform(rawValues.startDate) : undefined,
+        endDate: rawValues.endDate ? this.fdp.transform(rawValues.endDate) : undefined,
+        tradingDate: rawValues.tradingDate ? this.fdp.transform(rawValues.tradingDate) : undefined
+      };
+      this.searchFilterService.refreshJobs(formattedValues);
     }
   }
 
