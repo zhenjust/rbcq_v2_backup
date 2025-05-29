@@ -1,30 +1,74 @@
-<nz-flex nzVertical="true" nzJustify="center" nzAlign="center" class="form-container">
-    <nz-flex>
-        <form nz-form [formGroup]="settlementForm" (ngSubmit)="onSubmit()">
-            <nz-form-item>
-              <nz-form-label [nzSpan]="6" nzFor="settlementType">Process Type</nz-form-label>
-              <nz-form-control [nzSpan]="14">
-                <nz-select 
-                  formControlName="settlementType" 
-                  id="settlementType"
-                  nzPlaceHolder="Select a settlement type">
-                  <nz-option 
-                    *ngFor="let option of settlementOptions" 
-                    [nzValue]="option.value" 
-                    [nzLabel]="option.label">
-                  </nz-option>
-                </nz-select>
-              </nz-form-control>
-            </nz-form-item>
-            
-            <nz-form-item>
-              <nz-form-control [nzOffset]="6" [nzSpan]="14">
-                <button nz-button nzType="primary" [disabled]="!settlementForm.valid">Submit</button>
-              </nz-form-control>
-            </nz-form-item>
-          </form>
+<nz-flex nzVertical="true" nzJustify="center" nzAlign="start" class="form-container" nzWrap="wrap">
+  <button 
+    nz-button 
+    [nzType]="hasFilter ? 'default' : 'primary'" 
+    (click)=" !hasFilter ? toggleFilter() : resetFilter()"
+    >{{ hasFilter ? 'Clear Filter' : 'Set Filter' }}</button>
+
+  <form *ngIf="hasFilter" [formGroup]="filterSettlementForm" class="form-container">
+    <div class="form-item">
+        <label class="form-label">Meter Process Type:</label>
+        <nz-select 
+        formControlName="processType"
+        class="select-size"
+        nzPlaceHolder="Enter Process Type"
+        [nzOptions]="settlementOptions">
+        </nz-select>
+    </div>
+    <nz-space *ngIf="filterSettlementForm.get('tradingStartDate')?.enabled && filterSettlementForm.get('tradingEndDate')?.enabled">
+        <div class="form-item" *nzSpaceItem>
+        <label class="form-label">Trading Start Date:</label>
+        <nz-date-picker
+            formControlName="tradingStartDate"
+            class="select-size"
+            nzPlaceHolder="Select trading start date">
+        </nz-date-picker>
+        </div>
+        <div class="form-item" *nzSpaceItem>
+        <label class="form-label">Trading End Date:</label>
+        <nz-date-picker
+            formControlName="tradingEndDate"
+            class="select-size"
+            nzPlaceHolder="Select trading end date">
+        </nz-date-picker>
+        </div>
+    </nz-space>
+
+    <div class="form-item" *ngIf="filterSettlementForm.get('billingPeriod')?.enabled">
+        <label class="form-label">Billing Period:</label>
+        <nz-select 
+        formControlName="billingPeriod"
+        class="select-size"
+        nzPlaceHolder="Enter Billing Period">
+        <nz-option
+            *ngFor="let billing of meterProcessBillingPeriod"
+            [nzValue]="billing.billingPeriod"
+            [nzLabel]="billing.supplyMonth">
+        </nz-option>
+        </nz-select>
+    </div>
+
+    <nz-space *ngIf="filterSettlementForm.get('startDate')?.enabled && filterSettlementForm.get('endDate')?.enabled">
+        <div class="form-item" *nzSpaceItem>
+        <label class="form-label">Start Date:</label>
+        <nz-date-picker
+            formControlName="startDate"
+            class="select-size"
+            nzPlaceHolder="Select start date">
+        </nz-date-picker>
+        </div>
+        <div class="form-item" *nzSpaceItem>
+        <label class="form-label">End Date:</label>
+        <nz-date-picker
+            formControlName="endDate"
+            class="select-size"
+            nzPlaceHolder="Select end date">
+        </nz-date-picker>
+        </div>
+    </nz-space>
+
+    <nz-flex nzGap="large" class="form-item" *ngIf="filterSettlementForm.dirty">
+        <button nz-button nzType="primary" (click)="applyFilter()">Apply Filter</button>
     </nz-flex>
-    <nz-flex>
-        <p>this</p>
-    </nz-flex>
+  </form>
 </nz-flex>

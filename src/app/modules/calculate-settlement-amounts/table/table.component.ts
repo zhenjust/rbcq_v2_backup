@@ -1,7 +1,8 @@
 import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, Data } from '@angular/router';
-import { meterProcessSearch } from '@shared/interfaces';
+import { settlementSearch } from '@shared/interfaces';
 import { SettlementService } from '@shared/services/api';
+import { SearchFilterService } from '@shared/services/settlement';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -13,22 +14,14 @@ import { ToastrService } from 'ngx-toastr';
 export class TableComponent implements OnInit {
   isLineRentalStatus: boolean = false;
   isLoading: boolean = false;
-  tableData: meterProcessSearch | any = {};
+  tableData: settlementSearch | any = {};
   searchName: string = '';
 
   constructor(
     private router: ActivatedRoute,
-    private sts: SettlementService,
     public toast: ToastrService,
+    private sfs: SearchFilterService
   ){};
-
-  fetchJobs(searchName: string): void {
-    this.isLoading = true
-    return this.sts.search({}, searchName).subscribe({
-      next: (data) => [this.tableData = data, this.toast.success('Jobs Loaded!')],
-      error: (error) => this.toast.error(error.message)
-    }).add(() => {this.isLoading = false});
-  }
 
   ngOnInit(): void {
     this.router.data.subscribe((data: Data) => {
@@ -36,7 +29,21 @@ export class TableComponent implements OnInit {
       this.searchName = data['searchName'] as string;
     })
 
-    this.fetchJobs(this.searchName);
+    this.sfs.fetchJobs({}, this.searchName); //initial load
+
+    //watch table data change
+    this.sfs.jobs$.subscribe({
+      next: (data) => {
+        if (data) {
+          this.tableData = data;
+          this.toast.success('Jobs Loaded!');
+        }
+      },
+      error: (error) => {
+        this.toast.error(error.message);
+      }
+    });
+
     console.log(this.tableData);
   }
 }

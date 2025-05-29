@@ -83,7 +83,6 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
       billingPeriod: [{ value: '', disabled: true }],
       startDate: [{ value: '', disabled: true }],
       endDate: [{ value: '', disabled: true }],
-      adjNo: [{ value: '', disabled: true }],
       tradingDate: [{ value: '', disabled: true }]
     });
 

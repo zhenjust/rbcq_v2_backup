@@ -1,7 +1,7 @@
 <nz-flex nzJustify="space-between" nzAlign="start" class="toolbar-container">
     <!-- Left side: Filter form -->
     <nz-flex nzDirection="column" nzAlign="start" class="form-section">
-        <button nz-button [nzType]="hasFilter ? 'primary' : 'default'" (click)=" !hasFilter ? toggleFilter() : resetFilter()">
+        <button nz-button [nzType]="hasFilter ? 'default' : 'primary'" (click)=" !hasFilter ? toggleFilter() : resetFilter()">
         {{ hasFilter ? 'Clear Filter' : 'Set Filter' }}
         </button>
 
@@ -41,31 +41,22 @@
 
         <nz-space *ngIf="filterForm.get('startDate')?.enabled && filterForm.get('endDate')?.enabled">
             <div class="form-item" *nzSpaceItem>
-            <label class="form-label">Start Date:</label>
-            <nz-date-picker
-                formControlName="startDate"
-                class="select-size"
-                nzPlaceHolder="Select start date">
-            </nz-date-picker>
-            </div>
-            <div class="form-item" *nzSpaceItem>
-            <label class="form-label">End Date:</label>
-            <nz-date-picker
-                formControlName="endDate"
-                class="select-size"
-                nzPlaceHolder="Select end date">
-            </nz-date-picker>
+                <label class="form-label">Start Date:</label>
+                <nz-date-picker
+                    formControlName="startDate"
+                    class="select-size"
+                    nzPlaceHolder="Select start date">
+                </nz-date-picker>
+                </div>
+                <div class="form-item" *nzSpaceItem>
+                <label class="form-label">End Date:</label>
+                <nz-date-picker
+                    formControlName="endDate"
+                    class="select-size"
+                    nzPlaceHolder="Select end date">
+                </nz-date-picker>
             </div>
         </nz-space>
-
-        <div class="form-item" *ngIf="filterForm.get('adjNo')?.enabled">
-            <label class="form-label">Adjustment Number</label>
-            <nz-input-number 
-            formControlName="adjNo" 
-            class="select-size"
-            nzPlaceHolder="Enter adjustment number">
-            </nz-input-number>
-        </div>
 
         <nz-flex nzGap="large" class="form-item" *ngIf="filterForm.dirty">
             <button nz-button nzType="primary" (click)="applyFilter()">Apply Filter</button>

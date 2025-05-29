@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { MeterProcessTypes } from '@shared/enums';
+import { MeterProcessTypes, settlementProcessTypes } from '@shared/enums';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +15,6 @@ export class ProcessTypeUtilService {
         billingPeriod: '',
         startDate: '',
         endDate: '',
-        adjNo: '',
       });
       this.disableNonDailyFields(form);
     } else if (value === MeterProcessTypes.ADJUSTMENT) {
@@ -29,7 +28,6 @@ export class ProcessTypeUtilService {
     } else {
       form.patchValue({
         tradingDate: '',
-        adjNo: '',
       });
       this.enableNonDailyFields(form);
     }
@@ -39,7 +37,6 @@ export class ProcessTypeUtilService {
     form.get('billingPeriod')?.disable();
     form.get('startDate')?.disable();
     form.get('endDate')?.disable();
-    form.get('adjNo')?.disable();
     form.get('tradingDate')?.enable();
   }
 
@@ -47,7 +44,37 @@ export class ProcessTypeUtilService {
     form.get('billingPeriod')?.enable();
     form.get('startDate')?.enable();
     form.get('endDate')?.enable();
-    form.get('adjNo')?.enable();
     form.get('tradingDate')?.disable();
+  }
+
+  handleSettlementProcessTypeChange(value: string, form: FormGroup): void {
+    if(value === settlementProcessTypes.DAILY){
+      form.get('tradingStartDate')?.enable();
+      form.get('tradingEndDate')?.enable();
+      form.patchValue({
+        tradingStartDate: '',
+        tradingEndDate: ''
+      });
+      form.get('startDate')?.disable();
+      form.get('endDate')?.disable();
+      form.get('billingPeriod')?.disable();
+    }else if (value === settlementProcessTypes.ALL){
+      form.get('startDate')?.disable();
+      form.get('endDate')?.disable();
+      form.get('billingPeriod')?.disable();
+      form.get('tradingStartDate')?.disable();
+      form.get('tradingEndDate')?.disable();
+    }else {
+      form.get('startDate')?.enable();
+      form.get('endDate')?.enable();
+      form.get('billingPeriod')?.enable();
+      form.patchValue({
+        billingPeriod: '',
+        startDate: '',
+        endDate: ''
+      });
+      form.get('tradingStartDate')?.disable();
+      form.get('tradingEndDate')?.disable();
+    }
   }
 }

@@ -1,0 +1,21 @@
+.form-container {
+  margin: 12px 0;
+
+  .form-item {
+    margin-bottom: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    .form-label {
+      min-width: 150px;
+      text-align: right;
+      margin-right: 8px;
+      font-weight: 500;
+    }
+
+    .select-size {
+      width: 300px;
+    }
+  }
+}

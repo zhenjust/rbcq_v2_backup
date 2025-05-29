@@ -1,4 +1,4 @@
-<nz-flex nzVertical="true" nzJustify="center" nzAlign="center" class="form-container">
+<nz-flex nzVertical="true" nzJustify="center" nzAlign="center" class="form-container" nzWrap="wrap">
     <form [formGroup]="meterProcessForm">
         <div class="form-item">
             <div class="label-container">
@@ -55,7 +55,7 @@
                 </div>
             </div>
             
-            <nz-space>
+            <nz-space nzWrap="wrap">
                 <div class="form-item" *nzSpaceItem>
                     <label class="form-label">Start Date:</label>
                     <nz-date-picker

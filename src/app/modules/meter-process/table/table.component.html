@@ -19,7 +19,7 @@
             <tr>
                 <td [nzExpand]="expandSet.has(data.billingPeriod)" (nzExpandChange)="onExpandChange(data.billingPeriod, $event)"></td>
                 <td>{{ data.processType }}</td>
-                <td>{{ data.billingPeriod === null ? data.tradingDate : formatBillingDate(data.billingPeriod) }}</td>
+                <td>{{ data.billingPeriod === null ? `${data.startDate} - ${data.endDate}` : formatBillingDate(data.billingPeriod) }}</td>
                 <td></td>
             </tr>
             <tr [nzExpand]="expandSet.has(data.billingPeriod)">

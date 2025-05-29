@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ParamsUtilService } from '../utils';
-import { meterProcessParams, meterProcessSearch } from '@shared/interfaces';
+import { meterProcessParams, meterProcessSearch, settlementParams, settlementSearch } from '@shared/interfaces';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -16,13 +16,13 @@ export class SettlementService {
     private paramUtil: ParamsUtilService
   ) { }
 
-  public search(data: meterProcessParams, searchName: string): Observable<meterProcessSearch>{
+  public search(data: settlementParams, searchName: string): Observable<settlementSearch>{
     //hardcoding meterprocess job list
     const withName = {
       ...data,
       name: searchName
     }
     const params = this.paramUtil.buildParams(withName);
-    return this.http.get<meterProcessSearch>(`${this.API_URL}/search`, { params });
+    return this.http.get<settlementSearch>(`${this.API_URL}/search`, { params });
   }
 }

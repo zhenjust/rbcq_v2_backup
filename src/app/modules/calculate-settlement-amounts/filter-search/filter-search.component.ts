@@ -1,7 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { FULL_SETTLEMENT_OPTIONS, MARKET_FEE_SETTLEMENT_OPTIONS } from '@shared/constants';
-import { settlementJobInstanceOptions } from '@shared/interfaces';
+import { ActivatedRoute, Data } from '@angular/router';
+import { FULL_SETTLEMENT_OPTIONS } from '@shared/constants';
+import { meterProcessBillingPeriod, settlementJobInstanceOptions, settlementParams } from '@shared/interfaces';
+import { FormatDatePipe } from '@shared/pipes';
+import { MeterprocessService } from '@shared/services/api';
+import { SearchFilterService } from '@shared/services/settlement';
+import { ProcessTypeUtilService } from '@shared/services/utils';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-filter-search',
@@ -9,30 +15,120 @@ import { settlementJobInstanceOptions } from '@shared/interfaces';
   templateUrl: './filter-search.component.html',
   styleUrl: './filter-search.component.scss'
 })
-export class FilterSearchComponent implements OnInit {
-  settlementForm!: FormGroup;
-  settlementOptions: settlementJobInstanceOptions[] = [];
+export class FilterSearchComponent implements OnInit, OnDestroy {
+  hasFilter: boolean = false;
+  filterSettlementForm!: FormGroup;
+  searchName:string = ''
+  settlementOptions: settlementJobInstanceOptions[] = FULL_SETTLEMENT_OPTIONS;
+  meterProcessBillingPeriod: meterProcessBillingPeriod[] = []; 
+  private destroy$ = new Subject<void>();
+  private fdp = new FormatDatePipe();
+  protected settlementFilterParams: Partial<settlementParams> | null = null;
   
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private mpa: MeterprocessService,
+    private ptc: ProcessTypeUtilService,
+    private searchFilterService: SearchFilterService,
+    private router: ActivatedRoute,
+  ) {}
   
-  ngOnInit(): void {
-    this.settlementForm = this.fb.group({
-      settlementType: [FULL_SETTLEMENT_OPTIONS[1]]
+  ngOnInit(): void {    
+    this.initFilterForm();
+    this.router.data.subscribe((data: Data) => {
+      this.searchName = data['searchName'] as string;
     });
-    this.settlementOptions = FULL_SETTLEMENT_OPTIONS;
   }
-  
-  toggleOptionSet(useMarketFeeOnly: boolean): void {
-    this.settlementOptions = useMarketFeeOnly ? 
-      MARKET_FEE_SETTLEMENT_OPTIONS : 
-      FULL_SETTLEMENT_OPTIONS;
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
-  
-  onSubmit(): void {
-    if (this.settlementForm.valid) {
-      const selectedType = this.settlementForm.get('settlementType')?.value;
-      console.log('Selected settlement type:', selectedType);
-      // Further processing...
+
+  toggleFilter(): void {
+    this.hasFilter = !this.hasFilter;
+    this.mpa.getBillingPeriod().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data) => {
+        this.meterProcessBillingPeriod = Array.isArray(data) ? data : Object.values(data); // Adjusted for object-of-objects
+        this.tryAutoSetBillingPeriod();
+      },
+      error: (err) => console.error(err)
+    });
+
+    this.filterSettlementForm.get('billingPeriod')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((selectedValue) => {
+        const selectedBilling = this.meterProcessBillingPeriod.find(
+          (item) => item.billingPeriod === selectedValue
+        );
+
+        if (selectedBilling) {
+          this.filterSettlementForm.patchValue({
+            startDate: new Date(selectedBilling.startDate),
+            endDate: new Date(selectedBilling.endDate)
+          });
+        }
+    });
+  }
+
+  private initFilterForm(): void {
+    this.filterSettlementForm = this.fb.group({
+      processType: [null],
+      billingPeriod: [{ value: '', disabled: true }],
+      startDate: [{ value: '', disabled: true }],
+      endDate: [{ value: '', disabled: true }],
+      tradingStartDate: [{value: '', disabled: true}],
+      tradingEndDate: [{value: '', disabled: true}]
+    });
+
+    this.filterSettlementForm.get('processType')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(value => {
+        this.ptc.handleSettlementProcessTypeChange(value, this.filterSettlementForm);
+      });
+
+    this.filterSettlementForm.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(value => {
+        this.settlementFilterParams = {
+          ...this.settlementFilterParams,
+          ...value
+        };
+    });
+  }
+
+  private tryAutoSetBillingPeriod(): void {
+    if (this.meterProcessBillingPeriod.length > 0) {
+      const selected = this.meterProcessBillingPeriod[0];
+
+      this.filterSettlementForm.patchValue({
+        billingPeriod: selected.billingPeriod,
+        startDate: new Date(selected.startDate),
+        endDate: new Date(selected.endDate)
+      });
+    }
+  }
+
+  resetFilter(): void {
+    this.filterSettlementForm.reset();
+    this.hasFilter = false;
+    this.settlementFilterParams = null;
+    this.searchFilterService.fetchJobs({}, this.searchName);
+  }
+
+  applyFilter(): void {
+    if (this.filterSettlementForm.valid) {
+      const rawValues: settlementParams = this.filterSettlementForm.getRawValue();
+
+      const formattedValues: settlementParams = {
+        ...rawValues,
+        startDate: rawValues.startDate ? this.fdp.transform(rawValues.startDate) : undefined,
+        endDate: rawValues.endDate ? this.fdp.transform(rawValues.endDate) : undefined,
+        tradingStartDate: rawValues.tradingStartDate ? this.fdp.transform(rawValues.tradingStartDate) : undefined,
+        tradingEndDate: rawValues.tradingEndDate ? this.fdp.transform(rawValues.tradingEndDate) : undefined
+      };
+      this.searchFilterService.fetchJobs(formattedValues, this.searchName);
+      this.settlementFilterParams = null;
     }
   }
 }

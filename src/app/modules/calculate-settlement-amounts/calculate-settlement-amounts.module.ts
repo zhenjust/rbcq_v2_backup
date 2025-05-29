@@ -12,6 +12,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzSpaceModule } from 'ng-zorro-antd/space';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 
 
 @NgModule({
@@ -29,7 +32,11 @@ import { NzFormModule } from 'ng-zorro-antd/form';
     ReactiveFormsModule,
     NzSelectModule,
     NzButtonModule,
-    NzFormModule
+    NzFormModule,
+    NzButtonModule,
+    NzSpaceModule,
+    NzInputNumberModule,
+    NzDatePickerModule
   ],
   exports:[
     FilterSearchComponent,
