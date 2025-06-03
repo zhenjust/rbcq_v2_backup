@@ -65,8 +65,8 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
 
         if (selectedBilling) {
           this.filterForm.patchValue({
-            startDate: new Date(selectedBilling.startDate),
-            endDate: new Date(selectedBilling.endDate)
+            startDatetime: new Date(selectedBilling.startDate),
+            endDatetime: new Date(selectedBilling.endDate)
           });
         }
     });
@@ -81,8 +81,8 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
     this.filterForm = this.fb.group({
       processType: [null],
       billingPeriod: [{ value: '', disabled: true }],
-      startDate: [{ value: '', disabled: true }],
-      endDate: [{ value: '', disabled: true }],
+      startDatetime: [{ value: '', disabled: true }],
+      endDatetime: [{ value: '', disabled: true }],
       tradingDate: [{ value: '', disabled: true }]
     });
 
@@ -108,8 +108,8 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
 
       this.filterForm.patchValue({
         billingPeriod: selected.billingPeriod,
-        startDate: new Date(selected.startDate),
-        endDate: new Date(selected.endDate)
+        startDatetime: new Date(selected.startDate),
+        endDatetime: new Date(selected.endDate)
       });
     }
   }

@@ -39,11 +39,11 @@
             </nz-select>
         </div>
 
-        <nz-space *ngIf="filterForm.get('startDate')?.enabled && filterForm.get('endDate')?.enabled">
+        <nz-space *ngIf="filterForm.get('startDatetime')?.enabled && filterForm.get('endDatetime')?.enabled">
             <div class="form-item" *nzSpaceItem>
                 <label class="form-label">Start Date:</label>
                 <nz-date-picker
-                    formControlName="startDate"
+                    formControlName="startDatetime"
                     class="select-size"
                     nzPlaceHolder="Select start date">
                 </nz-date-picker>
@@ -51,7 +51,7 @@
                 <div class="form-item" *nzSpaceItem>
                 <label class="form-label">End Date:</label>
                 <nz-date-picker
-                    formControlName="endDate"
+                    formControlName="endDatetime"
                     class="select-size"
                     nzPlaceHolder="Select end date">
                 </nz-date-picker>
@@ -81,8 +81,8 @@
             <p *ngIf="meterProcessParams?.tradingDate"><strong>Trading Date:</strong> {{ meterProcessParams?.tradingDate }}</p>
         </nz-flex>
         <nz-flex nzGap="large" nzAlign="start">
-            <p *ngIf="meterProcessParams?.startDatetime"><strong>Start Date:</strong> {{ meterProcessParams?.startDatetime }}</p>
-            <p *ngIf="meterProcessParams?.endDatetime"><strong>End Date:</strong> {{ meterProcessParams?.endDatetime }}</p>
+            <p *ngIf="meterProcessParams?.startDatetime"><strong>Start Date Time:</strong> {{ meterProcessParams?.startDatetime }}</p>
+            <p *ngIf="meterProcessParams?.endDatetime"><strong>End Date Time:</strong> {{ meterProcessParams?.endDatetime }}</p>
         </nz-flex>
         <p *ngIf="meterProcessParams?.adjNo"><strong>Billing Period:</strong> {{ meterProcessParams?.adjNo }}</p>
     </nz-flex>
