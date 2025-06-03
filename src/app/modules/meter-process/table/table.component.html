@@ -1,10 +1,10 @@
 <nz-table 
     #nzTable 
-    [nzData]="tableData.content" 
-    [nzLoading]="isLoading" 
+    [nzData]="tableData.pipelineGroup" 
     [nzPageSize]="tableData.totalElements"
     [nzPageIndex]="tableData.totalPages"
     [nzFrontPagination]="false"
+    [nzLoading]="isLoading"
 >
     <thead>
         <tr>
@@ -15,27 +15,58 @@
         </tr>
     </thead>
     <tbody>
-        <ng-container *ngFor="let data of nzTable.data; trackBy: trackByBillingPeriod">
+        <ng-container *ngFor="let data of nzTable.data; let i = index">
             <tr>
-                <td [nzExpand]="expandSet.has(data.billingPeriod)" (nzExpandChange)="onExpandChange(data.billingPeriod, $event)"></td>
+                <td [nzExpand]="expandSet.has(i)" (nzExpandChange)="onExpandChange($event, i)"></td>
                 <td>{{ data.processType }}</td>
-                <td>{{ data.billingPeriod === null ? `${data.startDate} - ${data.endDate}` : formatBillingDate(data.billingPeriod) }}</td>
-                <td></td>
+                <td>{{ data.billingPeriod ? `${data.startDatetime} - ${data.endDatetime}` : data.tradingDate }}</td>
+                <td>
+                    <nz-tag [nzColor]="'blue'">
+                        {{ data.pipelines.length || 0 }} Jobs
+                    </nz-tag>
+                </td>
             </tr>
-            <tr [nzExpand]="expandSet.has(data.billingPeriod)">
+            <tr [nzExpand]="expandSet.has(i)">
                 <div class="centered-inner-table">
-                    <nz-table #nzTable [nzLoading]="isLoading">
+                    <nz-table 
+                        #innerTable
+                        [nzData]="data.pipelines || []"
+                        [nzSize]="'small'"
+                        [nzShowPagination]="false"
+                    >
                         <thead>
                             <tr>
-                                <th></th>
                                 @for (column of childColumnItem; track column) {
                                     <th>{{column.name}}</th>
                                 }
-                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Inner table data rows would go here -->
+                            <tr *ngFor="let pipeline of innerTable.data">
+                                <td>{{ pipeline.name }}</td>
+                                <td>{{ pipeline.runId }}</td>
+                                <td>{{ formatDateTime(pipeline.runStart) }}</td>
+                                <td>{{ pipeline.parameters.processType || data.processType }}</td>
+                                <td>{{ pipeline.parameters.tradingDate || data.tradingDate }}</td>
+                                <td>{{ pipeline.parameters.regionGroup || '-' }}</td>
+                                <td>{{ pipeline.parameters.mtn || '-' }}</td>
+                                <td>
+                                    <nz-tag [nzColor]="getStatusColor(pipeline.status)">
+                                        {{ pipeline.status }}
+                                    </nz-tag>
+                                </td>
+                                <td>
+                                    <!-- PERCENTAGE DISPLAY -->
+                                </td>
+                                <td>
+                                    <!-- ACTIONS DISPLAY -->
+                                </td>
+                            </tr>
+                            <tr *ngIf="!data.pipelines || data.pipelines.length === 0">
+                                <td [attr.colspan]="childColumnItem.length" style="text-align: center; color: #999;">
+                                    No jobs found
+                                </td>
+                            </tr>
                         </tbody>
                     </nz-table>
                 </div>

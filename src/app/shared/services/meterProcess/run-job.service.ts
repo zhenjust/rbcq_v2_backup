@@ -1,8 +1,9 @@
+//ts service 
 import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
 import { MeterProcessTypes, RegionGroup } from '@shared/enums';
-import { meterProcessOptions, meterProcessParams } from '@shared/interfaces';
+import { meterProcessOptions, meterProcessParams, mtnList } from '@shared/interfaces';
 import { FormatDatePipe } from '@shared/pipes';
 import { BehaviorSubject, debounceTime, distinctUntilChanged } from 'rxjs';
 
@@ -15,12 +16,14 @@ export class RunJobService {
   private formValueSubject = new BehaviorSubject<meterProcessParams | null>(null);
   private formValidSubject = new BehaviorSubject<boolean>(false);
   private processTypeSubject = new BehaviorSubject<string>('');
+  private mtnListSubject = new BehaviorSubject<mtnList[]>([]);
   private formatedDatePipe = new FormatDatePipe();
   
   // observables
   public formValue$ = this.formValueSubject.asObservable();
   public formValid$ = this.formValidSubject.asObservable();
   public processType$ = this.processTypeSubject.asObservable();
+  public mtnList$ = this.mtnListSubject.asObservable();
   
   // Form options
   public meterProcessTypeOptions: meterProcessOptions[] = METER_PROCESS_TYPE_OPTION;
@@ -37,14 +40,25 @@ export class RunJobService {
   }
   
   private initializeForm(): void {
+    //default values for DAILY
+    const today = new Date();
+    const startDate = new Date(today);
+    startDate.setHours(0, 5, 0, 0); 
+    const endDate = new Date(today);
+    endDate.setDate(endDate.getDate() + 1);
+    endDate.setHours(0, 0, 0, 0);
+
+
     this.meterProcessForm = this.fb.group({
       processType: [MeterProcessTypes.DAILY, Validators.required],
-      tradingDate: [this.formatedDatePipe.formatToShortDate(new Date().toISOString())],
-      billingPeriod: [this.formatedDatePipe.formatToShortDate(new Date().toISOString()), Validators.required],
-      startDate: ['', Validators.required],
-      endDate: ['', Validators.required], 
+      tradingDate: [today],
+      billingPeriod: [null],
+      billingPeriodName: [null],
+      startDatetime: [startDate, Validators.required],
+      endDatetime: [endDate, Validators.required],
       regionGroup: [RegionGroup.ALL],
-      adjNo: ['']
+      mtn: [[], Validators.required],
+      adjNo: [null]
     });
   }
   
@@ -57,9 +71,10 @@ export class RunJobService {
       .subscribe(value => {
         const processedValues = {
           ...value,
-          tradingDate: this.formatedDatePipe.transform(value.tradingDate),
-          startDate: this.formatedDatePipe.transform(value.startDate),
-          endDate: this.formatedDatePipe.transform(value.endDate)
+          tradingDate: this.formatedDatePipe.formatDateOnly(value.tradingDate),
+          startDatetime: this.formatedDatePipe.formatDateTime(value.startDatetime),
+          endDatetime: this.formatedDatePipe.formatDateTime(value.endDatetime),
+          mtn: Array.isArray(value.mtn) ? value.mtn.join(',') : value.mtn
         }
         this.formValueSubject.next(processedValues as meterProcessParams);
         this.formValidSubject.next(this.meterProcessForm.valid);
@@ -73,6 +88,12 @@ export class RunJobService {
       this.processTypeSubject.next(value);
       this.handleProcessTypeChange(value);
     });
+
+    this.meterProcessForm.get('tradingDate')?.valueChanges.subscribe(value => {
+      if (this.isDailyType && value) {
+        this.updateDatetimeForTradingDate(value);
+      }
+    });
     
     this.formValueSubject.next(this.meterProcessForm.value);
     this.formValidSubject.next(this.meterProcessForm.valid);
@@ -85,28 +106,54 @@ export class RunJobService {
       value: value
     }));
   }
+
+  // New method to update datetime based on trading date
+  private updateDatetimeForTradingDate(tradingDate: Date): void {
+    if (!tradingDate) return;
+
+    const tradingDateObj = new Date(tradingDate);
+    if (isNaN(tradingDateObj.getTime())) return;
+
+    const startDate = new Date(tradingDateObj);
+    startDate.setHours(0, 5, 0, 0);
+
+    const endDate = new Date(tradingDateObj);
+    endDate.setDate(endDate.getDate() + 1);
+    endDate.setHours(0, 0, 0, 0);
+
+    this.meterProcessForm.patchValue({
+      startDatetime: startDate,
+      endDatetime: endDate
+    }, { emitEvent: false });
+  }
   
   private handleProcessTypeChange(value: string): void {
     if (value === MeterProcessTypes.DAILY) {
       this.meterProcessForm.patchValue({
-        billingPeriod: '',
-        startDate: '',
-        endDate: '',
-        adjNo: ''
+        billingPeriod: null,
+        billingPeriodName: null,
+        adjNo: null
       });
       this.disableNonDailyFields();
+      
+      // Auto-populate datetime based on current trading date
+      const currentTradingDate = this.meterProcessForm.get('tradingDate')?.value;
+      if (currentTradingDate) {
+        this.updateDatetimeForTradingDate(currentTradingDate);
+      }
     } else if (value === MeterProcessTypes.ADJUSTMENT) {
       this.meterProcessForm.patchValue({
-        tradingDate: '',
-        billingPeriod: '',
-        startDate: '',
-        endDate: ''
+        tradingDate: null,
+        billingPeriod: null,
+        billingPeriodName: null,
+        startDatetime: null,
+        endDatetime: null
       });
       this.enableNonDailyFields();
     } else {
       this.meterProcessForm.patchValue({
-        tradingDate: '',
-        adjNo: ''
+        tradingDate: null,
+        adjNo: null
       });
       this.enableNonDailyFields();
     }
@@ -114,15 +161,59 @@ export class RunJobService {
   
   private disableNonDailyFields(): void {
     this.meterProcessForm.get('billingPeriod')?.disable();
-    this.meterProcessForm.get('startDate')?.disable();
-    this.meterProcessForm.get('endDate')?.disable();
+    this.meterProcessForm.get('billingPeriodName')?.disable();
     this.meterProcessForm.get('adjNo')?.disable();
+    this.meterProcessForm.get('startDatetime')?.enable();
+    this.meterProcessForm.get('endDatetime')?.enable();
   }
   
   private enableNonDailyFields(): void {
     this.meterProcessForm.get('billingPeriod')?.enable();
-    this.meterProcessForm.get('startDate')?.enable();
-    this.meterProcessForm.get('endDate')?.enable();
+    this.meterProcessForm.get('billingPeriodName')?.enable();
+    this.meterProcessForm.get('startDatetime')?.enable();
+    this.meterProcessForm.get('endDatetime')?.enable();
+  }
+  
+  // MTN List methods
+  public updateMtnList(mtnList: mtnList[]): void {
+    this.mtnListSubject.next(mtnList);
+  }
+  
+  public getMtnList(): mtnList[] {
+    return this.mtnListSubject.value;
+  }
+  
+  public getSelectedMtnNames(): string[] {
+    const selectedIds = this.meterProcessForm.get('mtn')?.value || [];
+    const mtnList = this.getMtnList();
+    return mtnList
+      .filter(mtn => selectedIds.includes(mtn.id))
+      .map(mtn => mtn.name);
+  }
+  
+  // Billing period with datetime update
+  public updateBillingPeriodWithDatetime(billingPeriod: any): void {
+    if (billingPeriod) {
+      const startDate = new Date(billingPeriod.startDate);
+      const endDate = new Date(billingPeriod.endDate);
+      startDate.setHours(0, 5, 0, 0);
+      endDate.setHours(0, 0, 0, 0);
+      
+      this.meterProcessForm.patchValue({
+        startDatetime: startDate,
+        endDatetime: endDate,
+        billingPeriodName: billingPeriod.supplyMonth
+      });
+    }
+  }
+  
+  // helper method for time intervals
+  public roundToNearestFiveMinutes(date: Date): Date {
+    const minutes = date.getMinutes();
+    const roundedMinutes = Math.round(minutes / 5) * 5;
+    const newDate = new Date(date);
+    newDate.setMinutes(roundedMinutes, 0, 0);
+    return newDate;
   }
   
   // form methods
@@ -131,7 +222,14 @@ export class RunJobService {
   }
   
   getCurrentFormValue(): meterProcessParams {
-    return this.meterProcessForm.value;
+    const formValue = this.meterProcessForm.value;
+    return {
+      ...formValue,
+      tradingDate: this.formatedDatePipe.formatDateOnly(formValue.tradingDate),
+      startDatetime: this.formatedDatePipe.formatDateTime(formValue.startDatetime),
+      endDatetime: this.formatedDatePipe.formatDateTime(formValue.endDatetime),
+      mtn: Array.isArray(formValue.mtn) ? formValue.mtn.join(',') : formValue.mtn
+    };
   }
   
   updateFormValue(value: meterProcessParams): void {
@@ -142,7 +240,13 @@ export class RunJobService {
     this.meterProcessForm.reset({
       processType: MeterProcessTypes.DAILY,
       regionGroup: RegionGroup.ALL,
-      tradingDate: new Date()
+      tradingDate: new Date(),
+      billingPeriod: null,
+      billingPeriodName: null,
+      startDatetime: null,
+      endDatetime: null,
+      mtn: [],
+      adjNo: null
     });
   }
   
@@ -176,14 +280,14 @@ export class RunJobService {
     const processType = this.currentProcessType;
 
     if (processType === MeterProcessTypes.DAILY) {
-      controlsToCheck.push('tradingDate');
+      controlsToCheck.push('tradingDate', 'startDatetime', 'endDatetime');
     } else if (processType === MeterProcessTypes.ADJUSTMENT) {
-      controlsToCheck.push('adjNo', 'billingPeriod', 'startDate', 'endDate');
+      controlsToCheck.push('adjNo', 'billingPeriod', 'startDatetime', 'endDatetime');
     } else {
-      controlsToCheck.push('billingPeriod', 'startDate', 'endDate');
+      controlsToCheck.push('billingPeriod', 'startDatetime', 'endDatetime');
     }
 
-    controlsToCheck.push('regionGroup');
+    controlsToCheck.push('regionGroup', 'mtn');
 
     return controlsToCheck.every((fieldName) => {
       const control = this.meterProcessForm.get(fieldName);

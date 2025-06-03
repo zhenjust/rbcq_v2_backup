@@ -21,6 +21,10 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { RunJobService, SearchFilterService } from '@shared/services/meterProcess';
 import { NzResultModule } from 'ng-zorro-antd/result';
+import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzProgressModule } from 'ng-zorro-antd/progress';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 
 
 @NgModule({
@@ -45,7 +49,11 @@ import { NzResultModule } from 'ng-zorro-antd/result';
     SharedModule,
     NzButtonModule,
     NzInputModule,
-    NzResultModule
+    NzResultModule,
+    NzTagModule,
+    NzProgressModule,
+    NzDividerModule,
+    NzTimePickerModule
   ],
   providers: [
     RunJobService,

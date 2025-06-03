@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { meterProcessParams, meterProcessSearch, meterProcessTableData } from '@shared/interfaces';
-import { MeterprocessService } from '@shared/services/api';
+import { meterProcessTable, meterProcessPipeline } from '@shared/interfaces';
 import { SearchFilterService } from '@shared/services/meterProcess';
 import { ToastrService } from 'ngx-toastr';
 
 interface tableColumn {
-  name: string,
+  name: string;
 } 
+
 @Component({
   selector: 'app-table',
   standalone: false,
@@ -14,102 +14,109 @@ interface tableColumn {
   styleUrl: './table.component.scss'
 })
 export class TableComponent implements OnInit {
-  tableData: meterProcessSearch | any = {};
-  meterProcessParams: meterProcessParams = {};
+  tableData: meterProcessTable = {
+    pipelineGroup: [],
+    last: false,
+    totalPages: 0,
+    totalElements: 0,
+    sortBy: null,
+    sortDirection: null,
+    first: true,
+    numberOfElements: 0,
+    size: 10,
+    number: 0
+  };
+  
   isLoading: boolean = false;
+  
   columnItem: tableColumn[] = [
-    {
-      name: 'Process Type'
-    },
-    {
-      name: 'Billing Period / Trading Date'
-    },
-    {
-      name: 'Actions'
-    },
-  ]
-  childColumnItem: tableColumn[] = [
-    {
-      name: 'Job ID'
-    },
-    {
-      name: 'Job ID'
-    },
-    {
-      name: 'Run Date and Time'
-    },
-    {
-      name: 'Process Type'
-    },
-    {
-      name: 'Trading Date'
-    },
-    {
-      name: 'Region Group'
-    },
-    {
-      name: 'MTN'
-    },
-    {
-      name: 'Status'
-    },
-    {
-      name: 'Progress'
-    },
-    {
-      name: 'Action'
-    }
+    { name: 'Process Type' },
+    { name: 'Billing Period / Trading Date' },
+    { name: 'Jobs Count' }
   ];
+  
+  childColumnItem: tableColumn[] = [
+    { name: 'Job Name' },
+    { name: 'Run ID' },
+    { name: 'Run Date and Time' },
+    { name: 'Process Type' },
+    { name: 'Trading Date' },
+    { name: 'Region Group' },
+    { name: 'MTN' },
+    { name: 'Status' },
+    { name: 'Progress' },
+    { name: 'Actions' }
+  ];
+  
   expandSet = new Set<number>();
 
-  onExpandChange(id: number, checked: boolean): void {
+  onExpandChange(checked: boolean, index: number): void {
     if (checked) {
-      this.expandSet.add(id);
+      this.expandSet.add(index);
     } else {
-      this.expandSet.delete(id);
+      this.expandSet.delete(index);
     }
   }
 
-  trackByBillingPeriod(index: number, item: meterProcessTableData): number {
-    return item.billingPeriod;
+  formatDateTime(dateString: string): string {
+    if (!dateString) return '-';
+    try {
+      return new Date(dateString).toLocaleString();
+    } catch {
+      return dateString;
+    }
+  }
+
+  getStatusColor(status: string): string {
+    const statusColors: { [key: string]: string } = {
+      'RUNNING': 'processing',
+      'COMPLETED': 'success',
+      'FAILED': 'error',
+      'PENDING': 'default',
+      'CANCELLED': 'warning'
+    };
+    return statusColors[status?.toUpperCase()] || 'default';
+  }
+
+  // Helper method to get progress status
+  getProgressStatus(status: string): 'success' | 'exception' | 'active' | 'normal' {
+    const statusMap: { [key: string]: 'success' | 'exception' | 'active' | 'normal' } = {
+      'COMPLETED': 'success',
+      'FAILED': 'exception',
+      'RUNNING': 'active',
+      'PENDING': 'normal',
+      'CANCELLED': 'exception'
+    };
+    return statusMap[status?.toUpperCase()] || 'normal';
+  }
+
+  // Method to refresh data
+  refreshData(): void {
+    this.isLoading = true;
+    this.searchFilterService.refreshJobs({});
   }
 
   constructor(
-    private mp: MeterprocessService,
     public toast: ToastrService,
     private searchFilterService: SearchFilterService
   ) {}
 
-  fetchJobs(params: meterProcessParams): void {
-    this.isLoading = true
-    return this.mp.search(params ? params : this.meterProcessParams).subscribe({
-      next: (data) => [this.tableData = data, this.toast.success('Jobs Loaded!')],
-      error: (error) => this.toast.error(error.message)
-    }).add(() => {this.isLoading = false});
-  }
-
   ngOnInit(): void {
-    this.fetchJobs({}); 
+    this.isLoading = true;
+    this.searchFilterService.refreshJobs({});
 
     this.searchFilterService.jobs$.subscribe({
       next: (data) => {
         if (data) {
           this.tableData = data;
-          this.toast.success('Filtered Jobs Loaded!');
+          this.isLoading = false
+          this.toast.success('Jobs Loaded!');
         }
       },
       error: (error) => {
-        this.toast.error('Failed to load filtered jobs');
+        this.isLoading = false
+        this.toast.error('Failed to load jobs');
       }
     });
-  }
-
-  formatBillingDate(dateString: string): string {
-      const yearSuffix = dateString.substring(0, 2);
-      const month = dateString.substring(2, 4);
-      const day = dateString.substring(4, 6);
-      const year = `20${yearSuffix}`;
-      const formattedDate = `${year}-${month}-${day}`;
-      return formattedDate;
   }
 }

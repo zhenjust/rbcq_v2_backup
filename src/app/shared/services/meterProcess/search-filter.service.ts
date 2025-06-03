@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { meterProcessParams, meterProcessSearch } from '@shared/interfaces';
+import { meterProcessJobSearchGroupParams, meterProcessTable } from '@shared/interfaces';
 import { BehaviorSubject } from 'rxjs';
 import { MeterprocessService } from '../api';
 
@@ -8,14 +8,14 @@ import { MeterprocessService } from '../api';
 })
 export class SearchFilterService {
   isLoading: boolean = false;
-  private jobsSubject = new BehaviorSubject<meterProcessSearch | null>(null);
+  private jobsSubject = new BehaviorSubject<meterProcessTable | null>(null);
   public jobs$ = this.jobsSubject.asObservable();
 
   constructor(
     private mpa: MeterprocessService
   ) { }
 
-  refreshJobs(params: meterProcessParams): void {
+  refreshJobs(params: meterProcessJobSearchGroupParams): void {
     this.isLoading = true;
     this.mpa.search(params).subscribe({
       next: (data) => {

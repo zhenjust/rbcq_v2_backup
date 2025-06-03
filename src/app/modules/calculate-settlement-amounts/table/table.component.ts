@@ -1,7 +1,6 @@
-import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Data } from '@angular/router';
 import { settlementSearch } from '@shared/interfaces';
-import { SettlementService } from '@shared/services/api';
 import { SearchFilterService } from '@shared/services/settlement';
 import { ToastrService } from 'ngx-toastr';
 

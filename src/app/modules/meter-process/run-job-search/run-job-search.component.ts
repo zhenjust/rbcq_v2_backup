@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/c
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
 import { MeterProcessTypes } from '@shared/enums';
-import { meterProcessBillingPeriod, meterProcessOptions, meterProcessParams } from '@shared/interfaces';
+import { meterProcessBillingPeriod, meterProcessJobSearchGroupParams, meterProcessOptions, meterProcessParams } from '@shared/interfaces';
 import { FormatDatePipe } from '@shared/pipes';
 import { MeterprocessService } from '@shared/services/api';
 import { RunJobService, SearchFilterService } from '@shared/services/meterProcess';
@@ -29,8 +29,8 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
   private fdp = new FormatDatePipe();
   private destroy$ = new Subject<void>();
-  protected meterProcessParams: Partial<meterProcessParams> | null = null;
-  protected meterProcessFilterParams: Partial<meterProcessParams> | null = null;
+  protected meterProcessParams: Partial<meterProcessJobSearchGroupParams> | null = null;
+  protected meterProcessFilterParams: Partial<meterProcessJobSearchGroupParams> | null = null;
 
   constructor(
     public meterProcessService: RunJobService,
@@ -122,31 +122,34 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
     this.meterProcessService.formValue$
       .pipe(
         takeUntil(this.destroy$),
-        filter((value): value is meterProcessParams => value !== null)
+        filter((value): value is meterProcessJobSearchGroupParams => value !== null)
       )
       .subscribe((value) => {
         // Filter out falsy values
         const filtered = Object.entries(value)
           .filter(([key, val]) => val !== null && val !== undefined && val !== '' && key !== 'tradingDate')
           .reduce((obj, [k, v]) => {
-            obj[k as keyof meterProcessParams] = v;
+            obj[k as keyof meterProcessJobSearchGroupParams] = v;
             return obj;
-          }, {} as Partial<meterProcessParams>);
+          }, {} as Partial<meterProcessJobSearchGroupParams>);
 
         this.meterProcessParams = filtered;
       });
+
+    console.log(this.meterProcessParams)
   }
 
   applyFilter(): void {
     if (this.filterForm.valid) {
-      const rawValues: meterProcessParams = this.filterForm.getRawValue();
+      const rawValues: meterProcessJobSearchGroupParams = this.filterForm.getRawValue();
 
-      const formattedValues: meterProcessParams = {
+      const formattedValues: meterProcessJobSearchGroupParams = {
         ...rawValues,
-        startDate: rawValues.startDate ? this.fdp.transform(rawValues.startDate) : undefined,
-        endDate: rawValues.endDate ? this.fdp.transform(rawValues.endDate) : undefined,
-        tradingDate: rawValues.tradingDate ? this.fdp.transform(rawValues.tradingDate) : undefined
+        startDatetime: rawValues.startDatetime ? this.fdp.formatDateTime(rawValues.startDatetime) : undefined,
+        endDatetime: rawValues.endDatetime ? this.fdp.formatDateTime(rawValues.endDatetime) : undefined,
+        tradingDate: rawValues.tradingDate ? this.fdp.formatDateTime(rawValues.tradingDate) : undefined
       };
+      
       this.searchFilterService.refreshJobs(formattedValues);
     }
   }

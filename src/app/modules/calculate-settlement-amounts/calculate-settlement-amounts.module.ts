@@ -15,6 +15,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { SharedModule } from '@shared/shared.module';
 
 
 @NgModule({
@@ -36,7 +37,8 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
     NzButtonModule,
     NzSpaceModule,
     NzInputNumberModule,
-    NzDatePickerModule
+    NzDatePickerModule,
+    SharedModule
   ],
   exports:[
     FilterSearchComponent,
