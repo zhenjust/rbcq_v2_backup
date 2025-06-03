@@ -177,11 +177,12 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
           this.isLoading = true;
           this.mpa.runJob(this.meterProcessParams!)
             .subscribe({
-              next: () => {
+              next: (response: any) => {
                 this.modal.success({
-                  nzTitle: 'Success',
-                  nzContent: 'Job has been submitted successfully.'
+                  nzTitle: response.message,
+                  nzContent: `RunId: ${response.runId}`
                 });
+                this.searchFilterService.refreshJobs({});
                 resolve();
               },
               error: (err) => {
