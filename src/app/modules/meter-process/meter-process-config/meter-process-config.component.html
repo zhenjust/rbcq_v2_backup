@@ -94,11 +94,16 @@
         
         <div class="form-item">
             <div class="label-container">
-                <label class="form-label">Region Group:</label>
+                <label class="form-label">Region/s:</label>
                 <nz-select
                     formControlName="regionGroup"
                     class="select-size"
-                    nzPlaceHolder="Select region group"
+                    nzMode="multiple"
+                    nzPlaceHolder="Select region group(s)"
+                    nzShowSearch
+                    nzAllowClear
+                    [nzMaxTagCount]="3"
+                    [nzTokenSeparators]="[',']"
                     [nzOptions]="meterProcessRegionGroup"
                 >
                 </nz-select>

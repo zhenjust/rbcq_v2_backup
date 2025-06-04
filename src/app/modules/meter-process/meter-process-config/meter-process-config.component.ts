@@ -1,4 +1,3 @@
-//ts component
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MeterProcessTypes } from '@shared/enums';
@@ -128,6 +127,10 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     return this.meterProcessService.meterProcessTypeOptions;
   }
   
+  get selectedRegionNames(): string[] {
+    return this.meterProcessService.selectedRegionNames;
+  }
+
   get meterProcessRegionGroup() {
     return this.meterProcessService.meterProcessRegionGroup;
   }

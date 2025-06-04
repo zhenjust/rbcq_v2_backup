@@ -46,7 +46,7 @@ export interface meterProcessParams {
     billingPeriodName?: string,
     processType?: MeterProcessTypes,
     adjNo?: number | string,
-    regionGroup?: number | string,
+    regionGroup?: string,
     name?: string,
     mtn?: string | []
 }
@@ -120,7 +120,7 @@ export interface meterProcessJobSearchGroupParams {
   startDatetime?: string; 
   endDatetime?: string; 
   adjNo?: number | string;
-  regionGroup?: string | number;
+  regionGroup?: string;
   mtn?: string | [];
   page?: number;
   size?: number;

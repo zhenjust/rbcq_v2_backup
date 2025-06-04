@@ -11,3 +11,9 @@ export enum RegionGroup {
     VISAYAS = 'VISAYAS',
     MINDANAO = 'MINDANAO'
 }
+
+export enum Regions {
+    LUZON = 'LUZON',
+    VISAYAS = 'VISAYAS',
+    MINDANAO = 'MINDANAO'
+}

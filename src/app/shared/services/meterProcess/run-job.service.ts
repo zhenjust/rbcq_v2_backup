@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
-import { MeterProcessTypes, RegionGroup } from '@shared/enums';
+import { MeterProcessTypes, RegionGroup, Regions } from '@shared/enums';
 import { meterProcessOptions, meterProcessParams, mtnList } from '@shared/interfaces';
 import { FormatDatePipe } from '@shared/pipes';
 import { BehaviorSubject, debounceTime, distinctUntilChanged } from 'rxjs';
@@ -27,7 +27,7 @@ export class RunJobService {
   
   // Form options
   public meterProcessTypeOptions: meterProcessOptions[] = METER_PROCESS_TYPE_OPTION;
-  public meterProcessRegionGroup: {label: string, value: RegionGroup}[] = [];
+  public meterProcessRegionGroup: {label: string, value: Regions}[] = [];
   
   constructor(private fb: FormBuilder) {
     this.initializeForm();
@@ -56,7 +56,7 @@ export class RunJobService {
       billingPeriodName: [null],
       startDatetime: [startDate, Validators.required],
       endDatetime: [endDate, Validators.required],
-      regionGroup: [RegionGroup.ALL],
+      regionGroup: [[], Validators.required], 
       mtn: [[], Validators.required],
       adjNo: [null]
     });
@@ -74,7 +74,8 @@ export class RunJobService {
           tradingDate: this.formatedDatePipe.formatDateOnly(value.tradingDate),
           startDatetime: this.formatedDatePipe.formatDateTime(value.startDatetime),
           endDatetime: this.formatedDatePipe.formatDateTime(value.endDatetime),
-          mtn: Array.isArray(value.mtn) ? value.mtn.join(',') : value.mtn
+          mtn: Array.isArray(value.mtn) ? value.mtn.join(',') : value.mtn,
+          regionGroup: Array.isArray(value.regionGroup) ? value.regionGroup.join(',') : value.regionGroup
         }
         this.formValueSubject.next(processedValues as meterProcessParams);
         this.formValidSubject.next(this.meterProcessForm.valid);
@@ -101,7 +102,7 @@ export class RunJobService {
   }
   
   private initializeRegionGroup(): void {
-    this.meterProcessRegionGroup = Object.entries(RegionGroup).map(([key, value]) => ({
+    this.meterProcessRegionGroup = Object.entries(Regions).map(([key, value]) => ({
       label: key,
       value: value
     }));
@@ -190,6 +191,13 @@ export class RunJobService {
       .filter(mtn => selectedIds.includes(mtn.id))
       .map(mtn => mtn.name);
   }
+
+  get selectedRegionNames(): string[] {
+    const selectedValues = this.meterProcessForm.get('regionGroup')?.value || [];
+    return this.meterProcessRegionGroup
+        .filter(region => selectedValues.includes(region.value))
+        .map(region => region.label);
+  }
   
   // Billing period with datetime update
   public updateBillingPeriodWithDatetime(billingPeriod: any): void {
@@ -228,7 +236,8 @@ export class RunJobService {
       tradingDate: this.formatedDatePipe.formatDateOnly(formValue.tradingDate),
       startDatetime: this.formatedDatePipe.formatDateTime(formValue.startDatetime),
       endDatetime: this.formatedDatePipe.formatDateTime(formValue.endDatetime),
-      mtn: Array.isArray(formValue.mtn) ? formValue.mtn.join(',') : formValue.mtn
+      mtn: Array.isArray(formValue.mtn) ? formValue.mtn.join(',') : formValue.mtn,
+      regionGroup: Array.isArray(formValue.regionGroup) ? formValue.regionGroup.join(',') : formValue.regionGroup
     };
   }
   
@@ -239,7 +248,7 @@ export class RunJobService {
   resetForm(): void {
     this.meterProcessForm.reset({
       processType: MeterProcessTypes.DAILY,
-      regionGroup: RegionGroup.ALL,
+      regionGroup: [],
       tradingDate: new Date(),
       billingPeriod: null,
       billingPeriodName: null,
@@ -280,18 +289,23 @@ export class RunJobService {
     const processType = this.currentProcessType;
 
     if (processType === MeterProcessTypes.DAILY) {
-      controlsToCheck.push('tradingDate', 'startDatetime', 'endDatetime');
+        controlsToCheck.push('tradingDate', 'startDatetime', 'endDatetime');
     } else if (processType === MeterProcessTypes.ADJUSTMENT) {
-      controlsToCheck.push('adjNo', 'billingPeriod', 'startDatetime', 'endDatetime');
+        controlsToCheck.push('adjNo', 'billingPeriod', 'startDatetime', 'endDatetime');
     } else {
-      controlsToCheck.push('billingPeriod', 'startDatetime', 'endDatetime');
+        controlsToCheck.push('billingPeriod', 'startDatetime', 'endDatetime');
     }
 
     controlsToCheck.push('regionGroup', 'mtn');
 
     return controlsToCheck.every((fieldName) => {
-      const control = this.meterProcessForm.get(fieldName);
-      return control && control.enabled && control.valid && control.value !== null && control.value !== '';
+        const control = this.meterProcessForm.get(fieldName);
+        if (fieldName === 'regionGroup' || fieldName === 'mtn') {
+            return control && control.enabled && control.valid && 
+                  Array.isArray(control.value) && control.value.length > 0;
+        }
+        return control && control.enabled && control.valid && 
+              control.value !== null && control.value !== '';
     });
   }
 }
