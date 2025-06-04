@@ -1,19 +1,39 @@
-<nz-table>
+<nz-table
+    #nzTable
+    [nzData]="tableData.pipelines"
+    [nzPageSize]="tableData.size"
+    [nzPageIndex]="tableData.number"
+    [nzTotal]="tableData.totalElements"
+    [nzFrontPagination]="false">
     <thead>
         <tr>
-            <th>GroupId</th>
-            <th>Run Date and Time</th>
-            <th>Process Type</th>
-            <th>Trading Date</th>
-            <th>Region</th>
-            <th>Status</th>
-            <th *ngIf="isLineRentalStatus">Line Rental Status</th>
-            <th>Progress</th>
-            <th>Actions</th>
+            @for (column of tableItem; track column.key) {
+                <th>{{column.name}}</th>
+            }
         </tr>
     </thead>
     <tbody>
-        <tr>
-        </tr>
+        <ng-container *ngFor="let data of nzTable.data; trackBy: trackByFn">
+            <tr>
+                @for (column of tableItem; track column.key) {
+                    <td>
+                        @if (isActionColumn(column)) {
+                            <nz-select
+                                [(ngModel)]="selectedAction"
+                                nzPlaceHolder="Select Action"
+                                nzSize="small"
+                                style="width: 140px"
+                                (ngModelChange)="onActionSelect($event, data)">
+                                @for (action of settlementJobActions; track action.value) {
+                                    <nz-option [nzValue]="action.value" [nzLabel]="action.label"></nz-option>
+                                }
+                            </nz-select>
+                        } @else {
+                            {{getCellValue(data, column)}}
+                        }
+                    </td>
+                }
+            </tr>
+        </ng-container>
     </tbody>
 </nz-table>

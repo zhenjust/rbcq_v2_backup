@@ -1,8 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Data } from '@angular/router';
-import { meterProcessSearch } from '@shared/interfaces';
-import { SettlementService } from '@shared/services/api';
+import { settlementPipeline, settlementTableDate } from '@shared/interfaces';
+import { SearchFilterService } from '@shared/services/settlement';
 import { ToastrService } from 'ngx-toastr';
+import { Subject, takeUntil } from 'rxjs';
+
+interface tableColumn {
+  name: string;
+  key: string;
+}
+
+interface jobSelect {
+  label: string,
+  value: string
+}
 
 @Component({
   selector: 'app-table',
@@ -13,30 +24,143 @@ import { ToastrService } from 'ngx-toastr';
 export class TableComponent implements OnInit {
   isLineRentalStatus: boolean = false;
   isLoading: boolean = false;
-  tableData: meterProcessSearch | any = {};
+  selectedAction: string = '';
+  tableData: settlementTableDate = {
+    pipelines: [],
+    first: true,
+    last: false,
+    number: 0,
+    numberOfElements: 0,
+    size: 0,
+    totalElements: 0,
+    totalPages: 0
+  };
   searchName: string = '';
+  private baseTableItem: tableColumn[] = [
+    { name: 'GroupId', key: 'name' },
+    { name: 'Run Date and Time', key: 'runStart' },
+    { name: 'Process Type', key: 'processType' },
+    { name: 'Trading Date', key: 'tradingDate' },
+    { name: 'Region', key: 'regionGroup' },
+    { name: 'Status', key: 'status' },
+    { name: 'Line Rental Status', key: 'lineRentalStatus' },
+    { name: 'Progress', key: 'progress' },
+    { name: 'Actions', key: 'actions' }
+  ];
+
+  settlementJobActions: jobSelect[] = [
+    { label: 'Select Action', value: '' },
+    { label: 'Generate Run Summary', value: 'run_summary' },
+    { label: 'Generate File', value: 'generate_files' },
+    { label: 'Publish Transaction Report', value: 'publish_transaction_report' }
+  ]
+
+  get tableItem(): tableColumn[] {
+    return this.baseTableItem.filter(column => 
+      column.name !== 'Line Rental Status' || this.isLineRentalStatus
+    );
+  }
+  private destroy$ = new Subject<void>();
 
   constructor(
     private router: ActivatedRoute,
-    private sts: SettlementService,
     public toast: ToastrService,
+    private sfs: SearchFilterService
   ){};
-
-  fetchJobs(searchName: string): void {
-    this.isLoading = true
-    return this.sts.search({}, searchName).subscribe({
-      next: (data) => [this.tableData = data, this.toast.success('Jobs Loaded!')],
-      error: (error) => this.toast.error(error.message)
-    }).add(() => {this.isLoading = false});
-  }
 
   ngOnInit(): void {
     this.router.data.subscribe((data: Data) => {
       this.isLineRentalStatus = data['isLineRentalStatus'] as boolean;
       this.searchName = data['searchName'] as string;
-    })
+    });
 
-    this.fetchJobs(this.searchName);
-    console.log(this.tableData);
+    this.sfs.fetchJobs({}, this.searchName); // initial load
+
+    this.sfs.jobs$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          if (data) {
+            this.tableData = data;
+          }
+        },
+        error: (error) => {
+          this.toast.error(error.message);
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  trackByFn(index: number, item: any): any {
+    return item.id || item.name || index;
+  }
+
+  getCellValue(data: settlementPipeline, column: tableColumn): string {
+    switch (column.key) {
+      case 'name':
+        return data.name || '';
+      case 'runStart':
+        return data.runStart || '';
+      case 'processType':
+        return data.parameters?.processType || '';
+      case 'tradingDate':
+        return data.parameters?.billingPeriod 
+          ? `${data.parameters.startDatetime} - ${data.parameters.endDatetime}`
+          : data.parameters?.tradingDate || '';
+      case 'regionGroup':
+        return data.parameters?.regionGroup || '';
+      case 'status':
+        return data.status || '';
+      case 'lineRentalStatus':
+        return data.lineRentalStatus || '';
+      case 'progress':
+        return data.progress || '';
+      case 'actions':
+        return '';
+      default:
+        return '';
+    }
+  }
+
+  isActionColumn(column: tableColumn): boolean {
+    return column.key === 'actions';
+  }
+
+  onActionSelect(selectedValue: string | any, rowData: settlementPipeline): void {
+    const actionValue = typeof selectedValue === 'string' ? selectedValue : selectedValue?.toString();
+    if (!actionValue || actionValue === '') {
+      return;
+    }
+    
+    switch (actionValue) {
+      case 'run_summary':
+        this.runSummary(rowData);
+        break;
+      case 'generate_files':
+        this.generateFiles(rowData);
+        break;
+      case 'publish_transaction_report':
+        this.publishTransactionReports(rowData);
+        break;
+      default:
+        console.warn('Unknown action:', actionValue);
+    }
+  }
+
+  // Action handler methods
+  private runSummary(data: settlementPipeline): void {
+    console.log('Full row data for view:', data);
+  }
+
+  private generateFiles(data: settlementPipeline): void {
+    console.log('Full row data for edit:', data);
+  }
+
+  private publishTransactionReports(data: settlementPipeline): void {
+    console.log('Full row data for download:', data);
   }
 }

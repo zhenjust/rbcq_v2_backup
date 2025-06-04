@@ -8,7 +8,7 @@ import { TableComponent } from './table/table.component';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzFlexModule } from 'ng-zorro-antd/flex';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -31,6 +31,7 @@ import { SharedModule } from '@shared/shared.module';
     NzTableModule,
     NzFlexModule,
     ReactiveFormsModule,
+    FormsModule,
     NzSelectModule,
     NzButtonModule,
     NzFormModule,

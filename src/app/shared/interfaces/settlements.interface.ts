@@ -23,30 +23,6 @@ export interface settlementJobInstanceOptions {
     value: settlementProcessTypes | null
 }
 
-export interface settlementTableData {
-    billingPeriod: string
-    date: any
-    startDate: any
-    endDate: any
-    billingPeriodName: any
-    processType: string
-    adjNo: any
-    regionGroup: string
-}
-
-export interface settlementSearch {
-    content: settlementTableData[]
-    last: boolean
-    totalPages: number
-    totalElements: number
-    sortBy: any
-    sortDirection: any
-    first: boolean
-    numberOfElements: number
-    size: number
-    number: number
-}
-
 export interface settlementParams {
     billingPeriod?: string,
     date?: string,
@@ -60,4 +36,38 @@ export interface settlementParams {
     name?: string,
     tradingStartDate?: string,
     tradingEndDate?: string
+}
+
+export interface settlementPipelineParameters {
+    billingPeriod: string
+    startDatetime: string
+    endDatetime: string
+    billingPeriodName: string
+    adjNo?: number
+    regionGroup: string
+    mtn: string
+    processType: MeterProcessTypes,
+    tradingDate?: string
+}
+
+export interface settlementPipeline {
+    name: string
+    runId: string
+    status: string
+    runStart: string
+    runEnd: string
+    parameters: settlementPipelineParameters,
+    lineRentalStatus?: string,
+    progress?: string
+}
+
+export interface settlementTableDate {
+    pipelines: settlementPipeline[]
+    last: boolean
+    totalPages: number
+    totalElements: number
+    first: boolean
+    numberOfElements: number
+    size: number
+    number: number
 }

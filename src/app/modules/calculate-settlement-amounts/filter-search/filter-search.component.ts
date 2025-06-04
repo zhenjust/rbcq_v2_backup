@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Data } from '@angular/router';
-import { FULL_SETTLEMENT_OPTIONS } from '@shared/constants';
+import { FULL_SETTLEMENT_OPTIONS, MARKET_FEE_SETTLEMENT_OPTIONS } from '@shared/constants';
+import { settlementSearchNames } from '@shared/enums';
 import { meterProcessBillingPeriod, settlementJobInstanceOptions, settlementParams } from '@shared/interfaces';
 import { FormatDatePipe } from '@shared/pipes';
 import { MeterprocessService } from '@shared/services/api';
@@ -19,7 +20,7 @@ export class FilterSearchComponent implements OnInit, OnDestroy {
   hasFilter: boolean = false;
   filterSettlementForm!: FormGroup;
   searchName:string = ''
-  settlementOptions: settlementJobInstanceOptions[] = FULL_SETTLEMENT_OPTIONS;
+  settlementOptions: settlementJobInstanceOptions[] = [];
   meterProcessBillingPeriod: meterProcessBillingPeriod[] = []; 
   private destroy$ = new Subject<void>();
   private fdp = new FormatDatePipe();
@@ -32,12 +33,22 @@ export class FilterSearchComponent implements OnInit, OnDestroy {
     private searchFilterService: SearchFilterService,
     private router: ActivatedRoute,
   ) {}
+
+  private setSettlementOptions(): void {
+    if (this.searchName === settlementSearchNames.RESERVE_MARKET_FEE || 
+        this.searchName === settlementSearchNames.ENERGY_MARKET_FEE) {
+      this.settlementOptions = MARKET_FEE_SETTLEMENT_OPTIONS;
+    } else {
+      this.settlementOptions = FULL_SETTLEMENT_OPTIONS;
+    }
+  }
   
   ngOnInit(): void {    
     this.initFilterForm();
     this.router.data.subscribe((data: Data) => {
       this.searchName = data['searchName'] as string;
     });
+    this.setSettlementOptions();
   }
 
   ngOnDestroy(): void {

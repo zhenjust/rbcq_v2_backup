@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { SettlementService } from '../api';
 import { BehaviorSubject } from 'rxjs';
-import { settlementParams, settlementSearch } from '@shared/interfaces';
+import { settlementParams, settlementTableDate } from '@shared/interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SearchFilterService {
   isLoading: boolean = false;
-  private jobsSubject = new BehaviorSubject<settlementSearch | null>(null);
+  private jobsSubject = new BehaviorSubject<settlementTableDate | null>(null);
   public jobs$ = this.jobsSubject.asObservable();
 
   constructor(
