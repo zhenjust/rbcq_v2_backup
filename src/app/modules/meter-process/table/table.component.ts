@@ -115,7 +115,7 @@ export class TableComponent implements OnInit {
       },
       error: (error) => {
         this.isLoading = false
-        this.toast.error('Failed to load jobs');
+        this.toast.error('Failed to load jobs', error.message);
       }
     });
   }

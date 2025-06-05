@@ -136,7 +136,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
         this.meterProcessParams = filtered;
       });
 
-    console.log(this.meterProcessParams)
+    // console.log(this.meterProcessParams)
   }
 
   applyFilter(): void {

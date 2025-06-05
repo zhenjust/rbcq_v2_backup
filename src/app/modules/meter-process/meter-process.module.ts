@@ -25,6 +25,7 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 
 @NgModule({
@@ -53,7 +54,8 @@ import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
     NzTagModule,
     NzProgressModule,
     NzDividerModule,
-    NzTimePickerModule
+    NzTimePickerModule,
+    NzSpinModule
   ],
   providers: [
     RunJobService,

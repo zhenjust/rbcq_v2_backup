@@ -102,6 +102,7 @@
                     nzPlaceHolder="Select region group(s)"
                     nzShowSearch
                     nzAllowClear
+                    [nzShowArrow]="true"
                     [nzMaxTagCount]="3"
                     [nzTokenSeparators]="[',']"
                     [nzOptions]="meterProcessRegionGroup"
@@ -120,21 +121,28 @@
                     nzPlaceHolder="Select MTN(s)"
                     nzShowSearch
                     nzAllowClear
+                    [nzShowArrow]="true"
                     [nzMaxTagCount]="3"
                     [nzTokenSeparators]="[',']"
+                    (nzScrollToBottom)="getNextMtnRecord()"
+                    (nzOnSearch)="getNextMtnRecord($event)"
+                    [nzDropdownRender]="isLoadingTemplate"
                 >
                     <nz-option
                         *ngFor="let mtnItem of mtnList"
-                        [nzValue]="mtnItem.id"
+                        [nzValue]="mtnItem.name"
                         [nzLabel]="mtnItem.name"
                     >
-                        <span>{{ mtnItem.name }}</span>
-                        <span style="float: right; color: #999; font-size: 12px;">
-                            {{ mtnItem.substation }}
-                        </span>
                     </nz-option>
                 </nz-select>
             </div>
         </div>
     </form>
 </nz-flex>
+
+
+<ng-template #isLoadingTemplate>
+    @if (mtnIsLoading) {
+        <nz-spin></nz-spin>
+    }
+</ng-template>

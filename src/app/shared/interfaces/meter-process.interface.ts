@@ -137,4 +137,13 @@ export interface mtnList {
     modifiedBy: string;
     name: string;
     id: number;
+    region?: string
+}
+
+export interface mtnListPage {
+    data: mtnList[]
+    draw: number
+    recordsTotal: number
+    recordsFiltered: any
+    hasMore?: boolean
 }

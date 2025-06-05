@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { meterProcessBillingPeriod, meterProcessJobSearchGroupParams, meterProcessParams, meterProcessRunJobPayload, meterProcessTable, mtnList } from '@shared/interfaces';
+import { meterProcessBillingPeriod, meterProcessJobSearchGroupParams, meterProcessParams, meterProcessRunJobPayload, meterProcessTable, mtnList, mtnListPage } from '@shared/interfaces';
 import { Observable } from 'rxjs';
 import { ParamsUtilService } from '../utils';
 
@@ -43,12 +43,16 @@ export class MeterprocessService {
     return this.http.get<meterProcessBillingPeriod[]>(this.METER_PROCESS);
   }
   
-  public getMtnList(): Observable<any> {
+  public getMtnList(pageNumber?: number, search?: string): Observable<mtnListPage> {
+    
     // manually adding parameters 
     const payload = {
-          "pageNo": 0,
-          "pageSize": 1255,
-          "mapParams": {},
+          "pageNo": pageNumber ? pageNumber : 0,
+          "pageSize": 20,
+          "mapParams": {
+            "IsActive": true,
+            "name": search ? search : ''
+          },
           "orderList": [
               {
                   "sortColumn": "name",
@@ -56,6 +60,6 @@ export class MeterprocessService {
               }
           ]
       }
-    return this.http.post(this.MTN_LIST, payload);
+    return this.http.post<mtnListPage>(this.MTN_LIST, payload);
   }
 }

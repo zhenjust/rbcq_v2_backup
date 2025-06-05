@@ -3,7 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { MeterProcessTypes } from '@shared/enums';
 import { Subject, takeUntil } from 'rxjs';
 import { RunJobService } from '@shared/services/meterProcess';
-import { meterProcessBillingPeriod, mtnList } from '@shared/interfaces';
+import { meterProcessBillingPeriod, mtnList, mtnListPage } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 
 @Component({
@@ -15,6 +15,9 @@ import { MeterprocessService } from '@shared/services/api';
 export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   meterProcessForm!: FormGroup;
   MeterProcessTypes = MeterProcessTypes;
+  nextPage: number = 1;
+  search: string = '';
+  mtnIsLoading: boolean = false;
   meterProcessBillingPeriod: meterProcessBillingPeriod[] = []; 
   mtnList: mtnList[] = [];
   
@@ -38,53 +41,10 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   
   ngOnInit(): void {
     this.meterProcessForm = this.meterProcessService.getForm();
-
-    this.meterProcessService.mtnList$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(mtnList => {
-        this.mtnList = mtnList;
-      });
-
-    this.mpa.getBillingPeriod().pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data) => {
-        this.meterProcessBillingPeriod = Array.isArray(data) ? data : Object.values(data);
-        this.tryAutoSetBillingPeriod();
-      },
-      error: (err) => console.error(err)
-    });
-
-    this.meterProcessForm.get('billingPeriod')?.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((selectedValue) => {
-        const selectedBilling = this.meterProcessBillingPeriod.find(
-          (item) => item.billingPeriod === selectedValue
-        );
-
-        if (selectedBilling) {
-          this.meterProcessService.updateBillingPeriodWithDatetime(selectedBilling);
-        }
-      });
-
-    this.mpa.getMtnList().pipe(takeUntil(this.destroy$)).subscribe({
-      next: (response) => {
-        let mtnData: mtnList[] = [];
-        
-        if (response && response.data && Array.isArray(response.data)) {
-          mtnData = response.data;
-        } else if (Array.isArray(response)) {
-          mtnData = response;
-        } else {
-          console.warn(response.message);
-          mtnData = [];
-        }
-        
-        this.meterProcessService.updateMtnList(mtnData);
-      },
-      error: (error) => {
-        console.error('Error loading MTN list:', error);
-        this.meterProcessService.updateMtnList([]);
-      }
-    });
+    this.populateMtnList();
+    this.getBillingPeriod();
+    this.updateBillingPeriodForm();
+    this.callMtnList();
   }
   
   ngOnDestroy(): void {
@@ -101,10 +61,60 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       });
     }
   }
-  
-  // Get selected MTN names for display - now using service method
-  getSelectedMtnNames(): string[] {
-    return this.meterProcessService.getSelectedMtnNames();
+
+  private populateMtnList(): void {
+    this.meterProcessService.mtnList$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(mtnList => {
+        this.mtnList = mtnList;
+    });
+  }
+
+  private getBillingPeriod(): void {
+    this.mpa.getBillingPeriod().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data) => {
+        this.meterProcessBillingPeriod = Array.isArray(data) ? data : Object.values(data);
+        this.tryAutoSetBillingPeriod();
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  private updateBillingPeriodForm(): void {
+    this.meterProcessForm.get('billingPeriod')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((selectedValue) => {
+        const selectedBilling = this.meterProcessBillingPeriod.find(
+          (item) => item.billingPeriod === selectedValue
+        );
+
+        if (selectedBilling) {
+          this.meterProcessService.updateBillingPeriodWithDatetime(selectedBilling);
+        }
+    });
+  }
+
+  private callMtnList(): void {
+    this.mpa.getMtnList().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response) => {
+        let mtnData: mtnList[] = [];
+        
+        if (response && response.data && Array.isArray(response.data)) {
+          mtnData = response.data;
+        } else if (Array.isArray(response)) {
+          mtnData = response;
+        } else {
+          console.warn(response);
+          mtnData = [];
+        }
+        
+        this.meterProcessService.updateMtnList(mtnData);
+      },
+      error: (error) => {
+        console.error('Error loading MTN list:', error);
+        this.meterProcessService.updateMtnList([]);
+      }
+    });
   }
   
   get isAdjustmentType(): boolean {
@@ -141,5 +151,26 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       const roundedDate = this.meterProcessService.roundToNearestFiveMinutes(date);
       this.meterProcessForm.get(controlName)?.setValue(roundedDate, { emitEvent: false });
     }
+  }
+
+  getNextMtnRecord(search?: string): void {
+    this.mtnIsLoading = true;
+    if(search !== '' || undefined){
+      this.nextPage = 0; //reverting to the first with search
+    }
+    this.mpa.getMtnList(this.nextPage, search).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: mtnListPage) => {
+        if(response.hasMore){
+          this.nextPage = this.nextPage + 1; //TODO update this to make more sense
+          const mtn: mtnList[] = response ? [...this.mtnList,...response.data] : this.mtnList;
+          this.meterProcessService.updateMtnList(mtn);
+        }
+        this.meterProcessService.getSelectedMtnNames();
+        this.populateMtnList();
+      },
+      error: (error) => {
+        console.error('Error loading MTN list:', error.message);
+      }
+    }).add(() => this.mtnIsLoading = false);
   }
 }
