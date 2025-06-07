@@ -154,10 +154,6 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   }
 
   getNextMtnRecord(search?: string): void {
-    this.mtnIsLoading = true;
-    if(search !== '' || undefined){
-      this.nextPage = 0; //reverting to the first with search
-    }
     this.mpa.getMtnList(this.nextPage, search).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: mtnListPage) => {
         if(response.hasMore){
@@ -172,5 +168,12 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
         console.error('Error loading MTN list:', error.message);
       }
     }).add(() => this.mtnIsLoading = false);
+  }
+
+  searchMtnRecord(search: string): void {
+    if(search !== '' || undefined){
+      this.nextPage = 0;
+    }
+    this.getNextMtnRecord(search);
   }
 }

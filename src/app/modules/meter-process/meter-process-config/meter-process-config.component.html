@@ -125,7 +125,7 @@
                     [nzMaxTagCount]="3"
                     [nzTokenSeparators]="[',']"
                     (nzScrollToBottom)="getNextMtnRecord()"
-                    (nzOnSearch)="getNextMtnRecord($event)"
+                    (nzOnSearch)="searchMtnRecord($event)"
                     [nzDropdownRender]="isLoadingTemplate"
                 >
                     <nz-option
