@@ -47,7 +47,8 @@ export interface settlementPipelineParameters {
     regionGroup: string
     mtn: string
     processType: MeterProcessTypes,
-    tradingDate?: string
+    tradingDate?: string,
+    pricingCondition?: string
 }
 
 export interface settlementPipeline {
@@ -58,7 +59,8 @@ export interface settlementPipeline {
     runEnd: string
     parameters: settlementPipelineParameters,
     lineRentalStatus?: string,
-    progress?: string
+    progress?: string,
+    pricingCondition?: string
 }
 
 export interface settlementTableDate {

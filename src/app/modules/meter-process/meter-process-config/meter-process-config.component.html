@@ -56,41 +56,38 @@
             </div>
         </div>
         
-        <!-- DateTime fields for both DAILY and non-DAILY types -->
-        <div *ngIf="isDailyType || isNotDailyType">
-            <nz-space nzWrap="wrap">
-                <div class="form-item" *nzSpaceItem>
-                    <label class="form-label">Start Date Time:</label>
-                    <nz-date-picker
-                        formControlName="startDatetime"
-                        class="select-size"
-                        nzPlaceHolder="Select start date and time"
-                        [nzShowTime]="{
-                            nzMinuteStep: 5,
-                            nzSecondStep: 60,
-                            nzDefaultOpenValue: defaultStartTime
-                        }"
-                        nzFormat="yyyy-MM-dd HH:mm"
-                        (ngModelChange)="onDatetimeChange('startDatetime', $event)"
-                    ></nz-date-picker>
-                </div>
-                <div class="form-item" *nzSpaceItem>
-                    <label class="form-label">End Date Time:</label>
-                    <nz-date-picker
-                        formControlName="endDatetime"
-                        class="select-size"
-                        nzPlaceHolder="Select end date and time"
-                        [nzShowTime]="{
-                            nzMinuteStep: 5,
-                            nzSecondStep: 60,
-                            nzDefaultOpenValue: defaultEndTime
-                        }"
-                        nzFormat="yyyy-MM-dd HH:mm"
-                        (ngModelChange)="onDatetimeChange('endDatetime', $event)"
-                    ></nz-date-picker>
-                </div>
-            </nz-space>
-        </div>
+        <nz-space nzWrap="wrap">
+            <div class="form-item" *nzSpaceItem>
+                <label class="form-label">Start Date Time:</label>
+                <nz-date-picker
+                    formControlName="startDatetime"
+                    class="select-size"
+                    nzPlaceHolder="Select start date and time"
+                    [nzShowTime]="{
+                        nzMinuteStep: 5,
+                        nzSecondStep: 60,
+                        nzDefaultOpenValue: defaultStartTime
+                    }"
+                    nzFormat="yyyy-MM-dd HH:mm"
+                    (ngModelChange)="onDatetimeChange('startDatetime', $event)"
+                ></nz-date-picker>
+            </div>
+            <div class="form-item" *nzSpaceItem>
+                <label class="form-label">End Date Time:</label>
+                <nz-date-picker
+                    formControlName="endDatetime"
+                    class="select-size"
+                    nzPlaceHolder="Select end date and time"
+                    [nzShowTime]="{
+                        nzMinuteStep: 5,
+                        nzSecondStep: 60,
+                        nzDefaultOpenValue: defaultEndTime
+                    }"
+                    nzFormat="yyyy-MM-dd HH:mm"
+                    (ngModelChange)="onDatetimeChange('endDatetime', $event)"
+                ></nz-date-picker>
+            </div>
+        </nz-space>
         
         <div class="form-item">
             <div class="label-container">

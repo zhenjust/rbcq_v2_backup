@@ -37,13 +37,10 @@ export class TableComponent implements OnInit {
   };
   searchName: string = '';
   private baseTableItem: tableColumn[] = [
-    { name: 'GroupId', key: 'name' },
-    { name: 'Run Date and Time', key: 'runStart' },
-    { name: 'Process Type', key: 'processType' },
     { name: 'Trading Date', key: 'tradingDate' },
-    { name: 'Region', key: 'regionGroup' },
+    { name: 'GroupId', key: 'name' },
+    { name: 'Pricing Condition', key: 'pricingCondition'},
     { name: 'Status', key: 'status' },
-    { name: 'Line Rental Status', key: 'lineRentalStatus' },
     { name: 'Progress', key: 'progress' },
     { name: 'Actions', key: 'actions' }
   ];
@@ -103,20 +100,14 @@ export class TableComponent implements OnInit {
     switch (column.key) {
       case 'name':
         return data.name || '';
-      case 'runStart':
-        return data.runStart || '';
-      case 'processType':
-        return data.parameters?.processType || '';
       case 'tradingDate':
         return data.parameters?.billingPeriod 
           ? `${data.parameters.startDatetime} - ${data.parameters.endDatetime}`
           : data.parameters?.tradingDate || '';
-      case 'regionGroup':
-        return data.parameters?.regionGroup || '';
+      case 'pricingCondition':
+        return data.parameters?.pricingCondition ? data.parameters?.pricingCondition : ''; 
       case 'status':
         return data.status || '';
-      case 'lineRentalStatus':
-        return data.lineRentalStatus || '';
       case 'progress':
         return data.progress || '';
       case 'actions':

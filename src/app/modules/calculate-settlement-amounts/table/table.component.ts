@@ -25,7 +25,6 @@ interface jobSelect {
 export class TableComponent implements OnInit, OnDestroy {
   isLineRentalStatus: boolean = false;
   isLoading: boolean = false;
-  selectedAction: string = '';
   tableData: settlementTableDate = {
     pipelines: [],
     first: true,
