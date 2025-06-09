@@ -70,7 +70,7 @@
                             nzSecondStep: 60,
                             nzDefaultOpenValue: defaultStartTime
                         }"
-                        nzFormat="yyyy-MM-dd HH:mm:ss"
+                        nzFormat="yyyy-MM-dd HH:mm"
                         (ngModelChange)="onDatetimeChange('startDatetime', $event)"
                     ></nz-date-picker>
                 </div>
@@ -85,7 +85,7 @@
                             nzSecondStep: 60,
                             nzDefaultOpenValue: defaultEndTime
                         }"
-                        nzFormat="yyyy-MM-dd HH:mm:ss"
+                        nzFormat="yyyy-MM-dd HH:mm"
                         (ngModelChange)="onDatetimeChange('endDatetime', $event)"
                     ></nz-date-picker>
                 </div>
@@ -121,11 +121,13 @@
                     nzPlaceHolder="Select MTN(s)"
                     nzShowSearch
                     nzAllowClear
+                    [nzServerSearch]="true"
                     [nzShowArrow]="true"
                     [nzMaxTagCount]="3"
                     [nzTokenSeparators]="[',']"
                     (nzScrollToBottom)="getNextMtnRecord()"
                     (nzOnSearch)="searchMtnRecord($event)"
+                    (nzClearIcon)="onSearchClear()"
                     [nzDropdownRender]="isLoadingTemplate"
                 >
                     <nz-option

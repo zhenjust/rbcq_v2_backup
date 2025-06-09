@@ -44,11 +44,10 @@ export class MeterprocessService {
   }
   
   public getMtnList(pageNumber?: number, search?: string): Observable<mtnListPage> {
-    
     // manually adding parameters 
     const payload = {
           "pageNo": pageNumber ? pageNumber : 0,
-          "pageSize": 20,
+          "pageSize": 10,
           "mapParams": {
             "IsActive": true,
             "name": search ? search : ''

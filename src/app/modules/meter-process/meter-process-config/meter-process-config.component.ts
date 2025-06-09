@@ -157,7 +157,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     this.mpa.getMtnList(this.nextPage, search).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: mtnListPage) => {
         if(response.hasMore){
-          this.nextPage = this.nextPage + 1; //TODO update this to make more sense
+          this.nextPage = this.nextPage + 1;
           const mtn: mtnList[] = response ? [...this.mtnList,...response.data] : this.mtnList;
           this.meterProcessService.updateMtnList(mtn);
         }
@@ -171,9 +171,18 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   }
 
   searchMtnRecord(search: string): void {
-    if(search !== '' || undefined){
-      this.nextPage = 0;
-    }
+    // reset list
+    this.nextPage = 0;
+    this.mtnList = []; // clear list
+    this.meterProcessService.updateMtnList([]); // Clear service data
     this.getNextMtnRecord(search);
+  }
+  
+  // Reset dropdown data upon clear
+  onSearchClear(): void {
+    this.nextPage = 0;
+    this.mtnList = [];
+    this.meterProcessService.updateMtnList([]);
+    this.getNextMtnRecord();
   }
 }
