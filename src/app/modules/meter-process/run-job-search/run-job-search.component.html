@@ -31,11 +31,9 @@
             formControlName="billingPeriod"
             class="select-size"
             nzPlaceHolder="Enter Billing Period">
-            <nz-option
-                *ngFor="let billing of meterProcessBillingPeriod"
-                [nzValue]="billing.billingPeriod"
-                [nzLabel]="billing.supplyMonth">
-            </nz-option>
+            @for (billing of meterProcessBillingPeriod; track billing.id) {
+                <nz-option [nzValue]="billing.billingPeriod" [nzLabel]="billing.supplyMonth"></nz-option>
+            }
             </nz-select>
         </div>
 
@@ -67,7 +65,7 @@
     <!-- Right side: Action buttons -->
     <nz-flex nzGap="large" nzAlign="start">
         <button nz-button nzType="primary" [disabled]="!meterProcessService.isVisibleFieldsValid" (click)="openRunWesmModal()">Run WESM</button>
-        <button *ngIf="isFinalType" nz-button nzType="primary">Clone Final</button>
+        @if (isFinalType) {<button nz-button nzType="primary">Clone Final</button>}
     </nz-flex>
 </nz-flex>
 
@@ -77,13 +75,13 @@
         <nz-result nzStatus="info" nzTitle="You are going to run a WESM Job"></nz-result>
         <p><strong>Job Type:</strong> {{ meterProcessParams?.processType }}</p>
         <nz-flex nzGap="large" nzAlign="start">
-            <p *ngIf="meterProcessParams?.billingPeriod"><strong>Billing Period:</strong> {{ meterProcessParams?.billingPeriod }}</p>
-            <p *ngIf="meterProcessParams?.tradingDate"><strong>Trading Date:</strong> {{ meterProcessParams?.tradingDate }}</p>
+            @if (meterProcessParams?.billingPeriod) {<p><strong>Billing Period:</strong> {{ meterProcessParams?.billingPeriod }}</p>}
+            @if (meterProcessParams?.tradingDate) {<p><strong>Trading Date:</strong> {{ meterProcessParams?.tradingDate }}</p>}
         </nz-flex>
         <nz-flex nzGap="large" nzAlign="start">
-            <p *ngIf="meterProcessParams?.startDatetime"><strong>Start Date Time:</strong> {{ meterProcessParams?.startDatetime }}</p>
-            <p *ngIf="meterProcessParams?.endDatetime"><strong>End Date Time:</strong> {{ meterProcessParams?.endDatetime }}</p>
+            @if (meterProcessParams?.startDatetime) {<p><strong>Start Date Time:</strong> {{ meterProcessParams?.startDatetime }}</p>}
+            @if (meterProcessParams?.endDatetime) {<p><strong>End Date Time:</strong> {{ meterProcessParams?.endDatetime }}</p>}
         </nz-flex>
-        <p *ngIf="meterProcessParams?.adjNo"><strong>Billing Period:</strong> {{ meterProcessParams?.adjNo }}</p>
+        @if (meterProcessParams?.adjNo) {<p><strong>Billing Period:</strong> {{ meterProcessParams?.adjNo }}</p>}
     </nz-flex>
 </ng-template>

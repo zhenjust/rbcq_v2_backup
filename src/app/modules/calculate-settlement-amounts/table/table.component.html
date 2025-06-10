@@ -21,8 +21,6 @@
                             <nz-select
                                 [ngModel]="''"
                                 nzPlaceHolder="Select Action"
-                                nzSize="small"
-                                style="width: 140px"
                                 (ngModelChange)="onActionSelect($event, data)">
                                 @for (action of settlementJobActions; track action.value) {
                                     <nz-option [nzValue]="action.value" [nzLabel]="action.label"></nz-option>

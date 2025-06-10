@@ -62,11 +62,13 @@
                                     <!-- ACTIONS DISPLAY -->
                                 </td>
                             </tr>
-                            <tr *ngIf="!data.pipelines || data.pipelines.length === 0">
-                                <td [attr.colspan]="childColumnItem.length" style="text-align: center; color: #999;">
-                                    No jobs found
-                                </td>
-                            </tr>
+                            @if (!data.pipelines || data.pipelines.length === 0) {
+                                <tr>
+                                    <td [attr.colspan]="childColumnItem.length" style="text-align: center; color: #999;">
+                                        No jobs found
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
                     </nz-table>
                 </div>
