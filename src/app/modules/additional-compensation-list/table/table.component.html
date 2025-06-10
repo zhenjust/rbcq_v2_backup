@@ -13,7 +13,7 @@
         </tr>
     </thead>
     <tbody>
-        <ng-container *ngFor="let data of nzTable.data; trackBy: trackByFn">
+        @for (data of nzTable.data; track data) {
             <tr>
                 @for (column of tableItem; track column.key) {
                     <td>
@@ -21,8 +21,6 @@
                             <nz-select
                                 [ngModel]="''"
                                 nzPlaceHolder="Select Action"
-                                nzSize="small"
-                                style="width: 140px"
                                 (ngModelChange)="onActionSelect($event, data)">
                                 @for (action of settlementJobActions; track action.value) {
                                     <nz-option [nzValue]="action.value" [nzLabel]="action.label"></nz-option>
@@ -34,6 +32,6 @@
                     </td>
                 }
             </tr>
-        </ng-container>
+        }
     </tbody>
 </nz-table>

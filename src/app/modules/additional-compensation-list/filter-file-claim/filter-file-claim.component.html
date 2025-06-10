@@ -13,12 +13,9 @@
                         formControlName="billingPeriod"
                         nzPlaceHolder="Select Billing Period"
                     >
-                        <nz-option
-                            *ngFor="let billing of meterProcessBillingPeriod"
-                            [nzValue]="billing.billingPeriod"
-                            [nzLabel]="billing.supplyMonth"
-                        >
-                        </nz-option>
+                        @for (billing of meterProcessBillingPeriod; track billing.id) {
+                            <nz-option [nzValue]="billing.billingPeriod" [nzLabel]="billing.supplyMonth"></nz-option>
+                        }
                     </nz-select>
                 </div>
             </div>

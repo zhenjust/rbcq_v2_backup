@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { meterProcessJobSearchGroupParams, meterProcessTable } from '@shared/interfaces';
 import { BehaviorSubject } from 'rxjs';
 import { MeterprocessService } from '../api';
@@ -10,10 +10,7 @@ export class SearchFilterService {
   isLoading: boolean = false;
   private jobsSubject = new BehaviorSubject<meterProcessTable | null>(null);
   public jobs$ = this.jobsSubject.asObservable();
-
-  constructor(
-    private mpa: MeterprocessService
-  ) { }
+  private mpa = inject(MeterprocessService);
 
   refreshJobs(params: meterProcessJobSearchGroupParams): void {
     this.isLoading = true;

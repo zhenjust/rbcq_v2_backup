@@ -15,7 +15,7 @@
         </tr>
     </thead>
     <tbody>
-        <ng-container *ngFor="let data of nzTable.data; let i = index">
+        @for (data of nzTable.data; track data; let i = $index) {
             <tr>
                 <td [nzExpand]="expandSet.has(i)" (nzExpandChange)="onExpandChange($event, i)"></td>
                 <td>{{ data.processType }}</td>
@@ -42,26 +42,28 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let pipeline of innerTable.data">
-                                <td>{{ pipeline.name }}</td>
-                                <td>{{ pipeline.runId }}</td>
-                                <td>{{ formatDateTime(pipeline.runStart) }}</td>
-                                <td>{{ pipeline.parameters.processType || data.processType }}</td>
-                                <td>{{ pipeline.parameters.tradingDate || data.tradingDate }}</td>
-                                <td>{{ pipeline.parameters.regionGroup || '-' }}</td>
-                                <td>{{ pipeline.parameters.mtn || '-' }}</td>
-                                <td>
-                                    <nz-tag [nzColor]="getStatusColor(pipeline.status)">
-                                        {{ pipeline.status }}
-                                    </nz-tag>
-                                </td>
-                                <td>
-                                    <!-- PERCENTAGE DISPLAY -->
-                                </td>
-                                <td>
-                                    <!-- ACTIONS DISPLAY -->
-                                </td>
-                            </tr>
+                            @for (pipeline of innerTable.data; track pipeline) {
+                                <tr>
+                                    <td>{{ pipeline.name }}</td>
+                                    <td>{{ pipeline.runId }}</td>
+                                    <td>{{ formatDateTime(pipeline.runStart) }}</td>
+                                    <td>{{ pipeline.parameters.processType || data.processType }}</td>
+                                    <td>{{ pipeline.parameters.tradingDate || data.tradingDate }}</td>
+                                    <td>{{ pipeline.parameters.regionGroup || '-' }}</td>
+                                    <td>{{ pipeline.parameters.mtn || '-' }}</td>
+                                    <td>
+                                        <nz-tag [nzColor]="getStatusColor(pipeline.status)">
+                                            {{ pipeline.status }}
+                                        </nz-tag>
+                                    </td>
+                                    <td>
+                                        <!-- PERCENTAGE DISPLAY -->
+                                    </td>
+                                    <td>
+                                        <!-- ACTIONS DISPLAY -->
+                                    </td>
+                                </tr>
+                            }
                             @if (!data.pipelines || data.pipelines.length === 0) {
                                 <tr>
                                     <td [attr.colspan]="childColumnItem.length" style="text-align: center; color: #999;">
@@ -73,6 +75,6 @@
                     </nz-table>
                 </div>
             </tr>
-        </ng-container>
+        }
     </tbody>
 </nz-table>
