@@ -18,8 +18,7 @@ interface jobSelect {
 @Component({
   selector: 'app-table',
   standalone: false,
-  templateUrl: './table.component.html',
-  styleUrl: './table.component.scss'
+  templateUrl: './table.component.html'
 })
 export class TableComponent implements OnInit {
   isLineRentalStatus: boolean = false;

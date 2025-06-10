@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ParamsUtilService } from '../utils';
 import { meterProcessParams, meterProcessSearch, settlementParams, settlementTableDate } from '@shared/interfaces';
 import { Observable } from 'rxjs';
@@ -11,9 +11,10 @@ export class SettlementService {
 
   protected API_URL: string = '/stl-data-pipeline/job';
 
+  private paramUtil = inject(ParamsUtilService);
+
   constructor(
-    private http: HttpClient,
-    private paramUtil: ParamsUtilService
+    private http: HttpClient
   ) { }
 
   public search(data: settlementParams, searchName: string): Observable<settlementTableDate>{

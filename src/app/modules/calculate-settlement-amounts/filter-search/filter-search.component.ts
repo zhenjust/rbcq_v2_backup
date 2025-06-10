@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Data } from '@angular/router';
 import { FULL_SETTLEMENT_OPTIONS, MARKET_FEE_SETTLEMENT_OPTIONS } from '@shared/constants';
@@ -26,10 +26,11 @@ export class FilterSearchComponent implements OnInit, OnDestroy {
   private fdp = new FormatDatePipe();
   protected settlementFilterParams: Partial<settlementParams> | null = null;
   
+  private ptc = inject(ProcessTypeUtilService);
+  private fb = inject(FormBuilder);
+  
   constructor(
-    private fb: FormBuilder,
     private mpa: MeterprocessService,
-    private ptc: ProcessTypeUtilService,
     private searchFilterService: SearchFilterService,
     private router: ActivatedRoute,
   ) {}

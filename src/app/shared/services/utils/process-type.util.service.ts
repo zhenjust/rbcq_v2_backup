@@ -6,9 +6,6 @@ import { MeterProcessTypes, settlementProcessTypes } from '@shared/enums';
   providedIn: 'root'
 })
 export class ProcessTypeUtilService {
-
-  constructor() { }
-
   handleProcessTypeChange(value: string, form: FormGroup): void {
     if (value === MeterProcessTypes.DAILY) {
       form.patchValue({

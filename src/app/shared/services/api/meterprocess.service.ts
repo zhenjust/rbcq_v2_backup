@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { meterProcessBillingPeriod, meterProcessJobSearchGroupParams, meterProcessParams, meterProcessRunJobPayload, meterProcessTable, mtnList, mtnListPage } from '@shared/interfaces';
 import { Observable } from 'rxjs';
 import { ParamsUtilService } from '../utils';
@@ -13,9 +13,10 @@ export class MeterprocessService {
   protected METER_PROCESS: string = '/meter-process/billing-period/find-all';
   protected MTN_LIST: string = '/reg/mtn/list/v2';
 
+  private paramUtil = inject(ParamsUtilService);
+
   constructor(
-    private http: HttpClient,
-    private paramUtil: ParamsUtilService
+    private http: HttpClient
   ) { }
 
   public search(data: meterProcessJobSearchGroupParams): Observable<meterProcessTable>{

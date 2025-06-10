@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
 import { MeterProcessTypes } from '@shared/enums';
@@ -32,12 +32,13 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
   protected meterProcessParams: Partial<meterProcessJobSearchGroupParams> | null = null;
   protected meterProcessFilterParams: Partial<meterProcessJobSearchGroupParams> | null = null;
 
+  private ptc = inject(ProcessTypeUtilService);
+
   constructor(
     public meterProcessService: RunJobService,
     public modal: NzModalService,
     private mpa: MeterprocessService,
     private fb: FormBuilder,
-    private ptc: ProcessTypeUtilService,
     private searchFilterService: SearchFilterService
   ) {}
 

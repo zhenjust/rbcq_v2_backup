@@ -5,8 +5,7 @@ import { settlementPageTitles } from '@shared/enums';
 @Component({
   selector: 'app-base',
   standalone: false,
-  templateUrl: './base.component.html',
-  styleUrl: './base.component.scss'
+  templateUrl: './base.component.html'
 })
 export class BaseComponent implements OnInit {
   pageTitle: string | undefined = undefined;
