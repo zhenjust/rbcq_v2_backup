@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Data } from '@angular/router';
 import { settlementPipeline, settlementTableDate } from '@shared/interfaces';
-import { SearchFilterService } from '@shared/services/settlement';
+import { RunSettlementService, SearchFilterService } from '@shared/services/settlement';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -57,6 +57,8 @@ export class TableComponent implements OnInit {
     );
   }
   private destroy$ = new Subject<void>();
+
+  private runSettlements = inject(RunSettlementService);
 
   constructor(
     private router: ActivatedRoute,
@@ -128,29 +130,16 @@ export class TableComponent implements OnInit {
     
     switch (actionValue) {
       case 'run_summary':
-        this.runSummary(rowData);
+        this.runSettlements.runSummary(rowData);
         break;
       case 'generate_files':
-        this.generateFiles(rowData);
+        this.runSettlements.generateFiles(rowData);
         break;
       case 'publish_transaction_report':
-        this.publishTransactionReports(rowData);
+        this.runSettlements.publishTransactionReports(rowData);
         break;
       default:
         console.warn('Unknown action:', actionValue);
     }
-  }
-
-  // Action handler methods
-  private runSummary(data: settlementPipeline): void {
-    console.log('Full row data for view:', data);
-  }
-
-  private generateFiles(data: settlementPipeline): void {
-    console.log('Full row data for edit:', data);
-  }
-
-  private publishTransactionReports(data: settlementPipeline): void {
-    console.log('Full row data for download:', data);
   }
 }
