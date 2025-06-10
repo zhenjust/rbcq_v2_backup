@@ -43,10 +43,10 @@ export class RunJobService {
     //default values for DAILY
     const today = new Date();
     const startDate = new Date(today);
-    startDate.setHours(0, 5, 0, 0); 
+    startDate.setHours(0, 5); 
     const endDate = new Date(today);
     endDate.setDate(endDate.getDate() + 1);
-    endDate.setHours(0, 0, 0, 0);
+    endDate.setHours(0, 0);
 
 
     this.meterProcessForm = this.fb.group({
@@ -116,11 +116,11 @@ export class RunJobService {
     if (isNaN(tradingDateObj.getTime())) return;
 
     const startDate = new Date(tradingDateObj);
-    startDate.setHours(0, 5, 0, 0);
+    startDate.setHours(0, 5);
 
     const endDate = new Date(tradingDateObj);
     endDate.setDate(endDate.getDate() + 1);
-    endDate.setHours(0, 0, 0, 0);
+    endDate.setHours(0, 0);
 
     this.meterProcessForm.patchValue({
       startDatetime: startDate,
@@ -204,8 +204,8 @@ export class RunJobService {
     if (billingPeriod) {
       const startDate = new Date(billingPeriod.startDate);
       const endDate = new Date(billingPeriod.endDate);
-      startDate.setHours(0, 5, 0, 0);
-      endDate.setHours(0, 0, 0, 0);
+      startDate.setHours(0, 5);
+      endDate.setHours(0, 0);
       
       this.meterProcessForm.patchValue({
         startDatetime: startDate,
@@ -246,14 +246,23 @@ export class RunJobService {
   }
   
   resetForm(): void {
+    //default values for DAILY
+    const today = new Date();
+    const startDate = new Date(today);
+    startDate.setHours(0, 5); 
+    const endDate = new Date(today);
+    endDate.setDate(endDate.getDate() + 1);
+    endDate.setHours(0, 0);
+
+
     this.meterProcessForm.reset({
       processType: MeterProcessTypes.DAILY,
       regionGroup: [],
-      tradingDate: new Date(),
+      tradingDate: [today],
       billingPeriod: null,
       billingPeriodName: null,
-      startDatetime: null,
-      endDatetime: null,
+      startDatetime: [startDate, Validators.required],
+      endDatetime: [endDate, Validators.required],
       mtn: [],
       adjNo: null
     });

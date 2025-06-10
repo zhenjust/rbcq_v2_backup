@@ -64,9 +64,8 @@
                     class="select-size"
                     nzPlaceHolder="Select start date and time"
                     [nzShowTime]="{
-                        nzMinuteStep: 5,
-                        nzSecondStep: 60,
-                        nzDefaultOpenValue: defaultStartTime
+                        nzHourStep: 1,
+                        nzMinuteStep: 5
                     }"
                     nzFormat="yyyy-MM-dd HH:mm"
                     (ngModelChange)="onDatetimeChange('startDatetime', $event)"
@@ -79,9 +78,8 @@
                     class="select-size"
                     nzPlaceHolder="Select end date and time"
                     [nzShowTime]="{
-                        nzMinuteStep: 5,
-                        nzSecondStep: 60,
-                        nzDefaultOpenValue: defaultEndTime
+                        nzHourStep: 1,
+                        nzMinuteStep: 5
                     }"
                     nzFormat="yyyy-MM-dd HH:mm"
                     (ngModelChange)="onDatetimeChange('endDatetime', $event)"

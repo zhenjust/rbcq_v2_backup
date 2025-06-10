@@ -3,6 +3,10 @@
   flex-direction: column;
   height: 100%;
 
+  .linkHover:hover{
+    background-color: #3e4a54;
+  }
+
   .menu-container {
     flex-grow: 1;
     overflow-y: auto;
@@ -61,9 +65,10 @@
   ul {
     background-color: #3e4a58 !important;
   }
-}
 
-.ant-menu-submenu-title, .ant-menu-submenu {
-  margin: 0;
-  padding: 4px 0;
+  .subChildColor {
+    background-color: #3e4a58 !important;
+    margin: 0;
+    padding: 6px 0;
+  }
 }

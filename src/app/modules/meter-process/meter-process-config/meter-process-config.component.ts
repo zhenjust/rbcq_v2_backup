@@ -33,10 +33,10 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   ) {
     // Initialize default time values
     this.defaultStartTime = new Date();
-    this.defaultStartTime.setHours(0, 0, 0, 0);
+    this.defaultStartTime.setHours(0, 0);
     
     this.defaultEndTime = new Date();
-    this.defaultEndTime.setHours(23, 59, 0, 0);
+    this.defaultEndTime.setHours(23, 59);
   }
   
   ngOnInit(): void {
