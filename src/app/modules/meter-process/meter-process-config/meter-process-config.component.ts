@@ -30,7 +30,7 @@ import { FormatDatePipe } from '@shared/pipes';
 export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   meterProcessForm!: FormGroup;
   MeterProcessTypes = MeterProcessTypes;
-  
+
   private formatedDatePipe = new FormatDatePipe();
 
   // Form options
@@ -63,19 +63,19 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   public readonly isAdjustmentType = computed(() => 
     this._processType() === MeterProcessTypes.ADJUSTMENT
   );
-  
+
   public readonly isDailyType = computed(() => 
     this._processType() === MeterProcessTypes.DAILY
   );
-  
+
   public readonly isNotDailyType = computed(() => 
     this._processType() !== MeterProcessTypes.DAILY
   );
-  
+
   public readonly isFinalType = computed(() => 
     this._processType() === MeterProcessTypes.FINAL
   );
-  
+
   public readonly currentProcessType = computed(() => 
     this._processType() || ''
   );
@@ -204,6 +204,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((status) => {
         this._formValid.set(status === 'VALID');
+        this.rjs.updateFormValidity(status === 'VALID');
       });
 
     // Handle process type changes
@@ -227,6 +228,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
 
     // Set initial form validity
     this._formValid.set(this.meterProcessForm.valid);
+    this.rjs.updateFormValidity(this.meterProcessForm.valid);
   }
 
   private processFormValue(formValue: any): meterProcessParams {
@@ -403,6 +405,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
 
     this._processType.set(MeterProcessTypes.DAILY);
     this._formValid.set(false);
+    this.rjs.updateFormValidity(false);
   }
 
   public getCurrentFormValue(): meterProcessParams {

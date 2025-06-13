@@ -22,10 +22,10 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
   isFormValid: boolean = false;
   hasFilter: boolean = false;
   meterProcessTypeOptions: meterProcessOptions[] = METER_PROCESS_TYPE_OPTION;
-  meterProcessBillingPeriod: meterProcessBillingPeriod[] = []; 
+  meterProcessBillingPeriod: meterProcessBillingPeriod[] = [];
 
   @ViewChild('runWesmModal', { static: true }) runWesmModal!: TemplateRef<void>;
-  
+
   isLoading: boolean = false;
   private fdp = new FormatDatePipe();
   private destroy$ = new Subject<void>();
@@ -49,12 +49,12 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
     this.getLatestRunJobParams();
 
     this.mpa.getBillingPeriod().pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data) => {
+        next: (data) => {
         this.meterProcessBillingPeriod = Array.isArray(data) ? data : Object.values(data);
-        this.tryAutoSetBillingPeriod();
-      },
+          this.tryAutoSetBillingPeriod();
+        },
       error: (err) => console.error(err)
-    });
+      });
 
     this.filterForm.get('billingPeriod')?.valueChanges
       .pipe(takeUntil(this.destroy$))
@@ -69,7 +69,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
             endDatetime: new Date(selectedBilling.endDate)
           });
         }
-    });
+      });
 
     console.log(this.rjs.hasValidConfiguration());
   }
@@ -82,7 +82,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
   private setupServiceEffects(): void {
     effect(() => {
       const configuration = this.rjs.latestConfiguration();
-      
+
       if (configuration) {
         this.isFormValid = this.rjs.hasValidConfiguration();
         
@@ -98,6 +98,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
       if (isCleared) {
         this.meterProcessParams = null;
         this.isFormValid = false;
+        this.resetFilter();
       }
     });
   }
@@ -135,7 +136,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
           ...this.meterProcessFilterParams,
           ...value
         };
-    });
+      });
   }
 
   private tryAutoSetBillingPeriod(): void {
@@ -170,7 +171,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
         endDatetime: rawValues.endDatetime ? this.fdp.formatDateTime(rawValues.endDatetime) : undefined,
         tradingDate: rawValues.tradingDate ? this.fdp.formatDateTime(rawValues.tradingDate) : undefined
       };
-      
+
       this.searchFilterService.refreshJobs(formattedValues);
     }
   }
@@ -183,8 +184,11 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
   }
 
   openRunWesmModal(): void {
-    if (!this.meterProcessParams) {
-      this.modal.warning({ nzTitle: 'Missing Parameters', nzContent: 'No job parameters found.' });
+    if (!this.meterProcessParams || !this.rjs.hasValidConfiguration()) {
+      this.modal.warning({
+        nzTitle: 'Invalid Configuration',
+        nzContent: 'Please ensure all required fields are filled correctly.',
+      });
       return;
     }
 
@@ -204,6 +208,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
                   nzContent: `RunId: ${response.runId}`
                 });
                 this.searchFilterService.refreshJobs({});
+                this.rjs.clearConfiguration();
                 resolve();
               },
               error: (err) => {
@@ -215,7 +220,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
                 reject();
               }
             })
-            .add(() => (this.isLoading = false, this.rjs.clearConfiguration()));
+            .add(() => (this.isLoading = false));
         });
       }
     });
