@@ -39,7 +39,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
     public modal: NzModalService,
     private mpa: MeterprocessService,
     private fb: FormBuilder,
-    private searchFilterService: SearchFilterService
+    private sfs: SearchFilterService
   ) {
     this.setupServiceEffects();
   }
@@ -172,7 +172,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
         tradingDate: rawValues.tradingDate ? this.fdp.formatDateTime(rawValues.tradingDate) : undefined
       };
 
-      this.searchFilterService.refreshJobs(formattedValues);
+      this.sfs.refreshJobs(formattedValues);
     }
   }
 
@@ -180,7 +180,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
     this.filterForm.reset();
     this.hasFilter = false;
     this.meterProcessParams = null;
-    this.searchFilterService.refreshJobs({});
+    this.sfs.refreshJobs({});
   }
 
   openRunWesmModal(): void {
@@ -207,7 +207,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
                   nzTitle: response.message,
                   nzContent: `RunId: ${response.runId}`
                 });
-                this.searchFilterService.refreshJobs({});
+                this.sfs.refreshJobs({});
                 this.rjs.clearConfiguration();
                 resolve();
               },

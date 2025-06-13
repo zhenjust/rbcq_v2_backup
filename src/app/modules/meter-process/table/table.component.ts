@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { meterProcessTable, meterProcessPipeline } from '@shared/interfaces';
+import { Component, OnInit, computed, effect } from '@angular/core';
+import { meterProcessTable } from '@shared/interfaces';
 import { SearchFilterService } from '@shared/services/meterProcess';
 import { ToastrService } from 'ngx-toastr';
 
@@ -14,7 +14,8 @@ interface tableColumn {
   styleUrl: './table.component.scss'
 })
 export class TableComponent implements OnInit {
-  tableData: meterProcessTable = {
+  // Default table data structure
+  private defaultTableData: meterProcessTable = {
     pipelineGroup: [],
     last: false,
     totalPages: 0,
@@ -27,7 +28,8 @@ export class TableComponent implements OnInit {
     number: 0
   };
   
-  isLoading: boolean = false;
+  tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
+  isLoading = computed(() => this.sfs.isLoading());
   
   columnItem: tableColumn[] = [
     { name: 'Process Type' },
@@ -50,12 +52,39 @@ export class TableComponent implements OnInit {
   
   expandSet = new Set<number>();
 
+  constructor(
+    public toast: ToastrService,
+    public sfs: SearchFilterService
+  ) {
+    effect(() => {
+      const jobs = this.sfs.jobs();
+      const error = this.sfs.error();
+      const loading = this.sfs.isLoading();
+      
+      if (jobs && !loading) {
+        this.toast.success('Jobs Loaded!');
+      }
+      
+      if (error && !loading) {
+        this.toast.error('Failed to load jobs', error);
+      }
+    });
+  }
+
+  ngOnInit(): void {
+    this.sfs.refreshJobs({});
+  }
+
   onExpandChange(checked: boolean, index: number): void {
     if (checked) {
       this.expandSet.add(index);
     } else {
       this.expandSet.delete(index);
     }
+  }
+
+  refreshData(): void {
+    this.sfs.refreshJobs({});
   }
 
   formatDateTime(dateString: string): string {
@@ -67,6 +96,7 @@ export class TableComponent implements OnInit {
     }
   }
 
+  //addtnl methods
   getStatusColor(status: string): string {
     const statusColors: { [key: string]: string } = {
       'RUNNING': 'processing',
@@ -78,7 +108,6 @@ export class TableComponent implements OnInit {
     return statusColors[status?.toUpperCase()] || 'default';
   }
 
-  // Helper method to get progress status
   getProgressStatus(status: string): 'success' | 'exception' | 'active' | 'normal' {
     const statusMap: { [key: string]: 'success' | 'exception' | 'active' | 'normal' } = {
       'COMPLETED': 'success',
@@ -88,35 +117,5 @@ export class TableComponent implements OnInit {
       'CANCELLED': 'exception'
     };
     return statusMap[status?.toUpperCase()] || 'normal';
-  }
-
-  // Method to refresh data
-  refreshData(): void {
-    this.isLoading = true;
-    this.searchFilterService.refreshJobs({});
-  }
-
-  constructor(
-    public toast: ToastrService,
-    private searchFilterService: SearchFilterService
-  ) {}
-
-  ngOnInit(): void {
-    this.isLoading = true;
-    this.searchFilterService.refreshJobs({});
-
-    this.searchFilterService.jobs$.subscribe({
-      next: (data) => {
-        if (data) {
-          this.tableData = data;
-          this.isLoading = false
-          this.toast.success('Jobs Loaded!');
-        }
-      },
-      error: (error) => {
-        this.isLoading = false
-        this.toast.error('Failed to load jobs', error.message);
-      }
-    });
   }
 }

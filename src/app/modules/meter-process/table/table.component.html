@@ -1,10 +1,10 @@
 <nz-table 
     #nzTable 
-    [nzData]="tableData.pipelineGroup" 
-    [nzPageSize]="tableData.totalElements"
-    [nzPageIndex]="tableData.totalPages"
+    [nzData]="tableData().pipelineGroup" 
+    [nzPageSize]="tableData().totalElements"
+    [nzPageIndex]="tableData().totalPages"
     [nzFrontPagination]="false"
-    [nzLoading]="isLoading"
+    [nzLoading]="isLoading()"
 >
     <thead>
         <tr>
