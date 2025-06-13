@@ -55,7 +55,8 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
     NzProgressModule,
     NzDividerModule,
     NzTimePickerModule,
-    NzSpinModule
+    NzSpinModule,
+    NzTableModule
   ],
   providers: [
     RunJobService,

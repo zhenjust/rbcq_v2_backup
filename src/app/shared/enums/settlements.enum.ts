@@ -22,3 +22,11 @@ export enum settlementSearchNames {
     MANAGE_ADD_COM_CLAIMS = "manageAddComClaims",
     UPDATE_ADD_COM_INVOICE = "updateAddComInvoice"
 }
+
+export enum pricingConditions {
+    AP = "AP",
+    SEC = "SEC",
+    MRU = "MRU",
+    PSM = "PSM",
+    MOT = "MOT"
+}

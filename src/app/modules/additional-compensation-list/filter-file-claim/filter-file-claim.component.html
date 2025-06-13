@@ -1,6 +1,12 @@
 <nz-flex [nzJustify]="'flex-end'" class="button-container" nzGap="large">
     <button nz-button nzType="primary">Filter</button>
-    <button nz-button nzType="primary" *ngIf="isFileClaimPage" (click)="fileClaimModal()">File a Claim</button>
+        @if (isFileClaimPage) {<button
+            nz-button
+            nzType="primary"
+            (click)="fileClaimModal()"
+        >
+            File a Claim</button
+        >}
 </nz-flex>
 
 <ng-template #fileClaim let-modal>
@@ -14,7 +20,10 @@
                         nzPlaceHolder="Select Billing Period"
                     >
                         @for (billing of meterProcessBillingPeriod; track billing.id) {
-                            <nz-option [nzValue]="billing.billingPeriod" [nzLabel]="billing.supplyMonth"></nz-option>
+                            <nz-option
+                                [nzValue]="billing.id"
+                                [nzLabel]="billing.supplyMonth"
+                            ></nz-option>
                         }
                     </nz-select>
                 </div>
@@ -22,19 +31,115 @@
             <nz-space nzWrap="wrap">
                 <div class="form-item">
                     <label class="form-label">Start Date:</label>
-                    <input 
-                        nz-input 
-                        [disabled]="true"
-                        formControlName="startDate" />
+                    <nz-date-picker
+                        formControlName="startDate"
+                        [nzDisabled]="true"
+                        nzPlaceHolder="Start Date"
+                    >
+                    </nz-date-picker>
                 </div>
                 <div class="form-item">
                     <label class="form-label">End Date:</label>
-                    <input 
-                        nz-input
-                        [disabled]="true"
-                        formControlName="endDate" />
+                    <nz-date-picker
+                        formControlName="endDate"
+                        [nzDisabled]="true"
+                        nzPlaceHolder="End Date"
+                    >
+                    </nz-date-picker>
                 </div>
             </nz-space>
+            <nz-flex nzJustify="end" style="margin-bottom: 12px">
+                <button
+                    nz-button
+                    nzType="primary"
+                    [disabled]="!hasBillingPeriod"
+                    (click)="addDateRange()"
+                >
+                    Add Date Range
+                </button>
+            </nz-flex>
+            <nz-table
+                #nzTable
+                [nzData]="billingPeriodDateRange"
+                [nzSize]="'small'"
+                [nzScroll]="{ x: '100%' }"
+            >
+                <thead>
+                    <tr>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (billingDate of nzTable.data; track billingDate; let i = $index) {
+                        <tr>
+                            <td>
+                                <nz-date-picker
+                                    [(ngModel)]="billingDate.startDate"
+                                    nzFormat="yyyy-MM-dd HH:mm:ss"
+                                    [nzShowTime]="{ nzFormat: 'HH:mm', nzHourStep: 1, nzMinuteStep: 5 }"
+                                    nzPlaceHolder="Start Date & Time"
+                                ></nz-date-picker>
+                            </td>
+                            <td>
+                                <nz-date-picker
+                                    [(ngModel)]="billingDate.endDate"
+                                    nzFormat="yyyy-MM-dd HH:mm:ss"
+                                    [nzShowTime]="{ nzFormat: 'HH:mm', nzHourStep: 1, nzMinuteStep: 5 }"
+                                    nzPlaceHolder="End Date & Time"
+                                ></nz-date-picker>
+                            </td>
+                            <td>
+                                <button
+                                    nz-button
+                                    nzType="default"
+                                    nzDanger
+                                    type="button"
+                                    (click)="deleteDateRange(i)"
+                                >
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </nz-table>
+            <hr />
+            <div class="form-item">
+                <div class="label-container">
+                    <label class="form-label">Pricing Conditions:</label>
+                    <nz-select
+                        formControlName="pricingCondition"
+                        nzPlaceHolder="Select Pricing Condition"
+                        [nzOptions]="pricingConditions"
+                    >
+                    </nz-select>
+                </div>
+            </div>
+            <nz-flex nzJustify="end" style="margin-bottom: 12px">
+                <button
+                    nz-button
+                    nzType="primary"
+                    [disabled]="!hasBillingPeriod"
+                    (click)="addClaimant()"
+                >
+                    Add a Claimant
+                </button>
+            </nz-flex>
+            <nz-table>
+                <thead>
+                    <tr>
+                        <th>Billing ID</th>
+                        <th>MTN</th>
+                        <th>Approved Rate</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- body -->
+                </tbody>
+            </nz-table>
         </form>
     </nz-flex>
 </ng-template>

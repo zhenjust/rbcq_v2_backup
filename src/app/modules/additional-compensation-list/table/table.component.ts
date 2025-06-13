@@ -58,14 +58,14 @@ export class TableComponent implements OnInit {
   private destroy$ = new Subject<void>();
 
   private runSettlements = inject(RunSettlementService);
+  private sfs = inject(SearchFilterService);
 
   tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
   isLoading = computed(() => this.sfs.isLoading());
 
   constructor(
     private router: ActivatedRoute,
-    public toast: ToastrService,
-    private sfs: SearchFilterService
+    public toast: ToastrService
   ){
     effect(() => {
       const jobs = this.sfs.jobs();
@@ -94,10 +94,6 @@ export class TableComponent implements OnInit {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  trackByFn(index: number, item: any): any {
-    return item.id || item.name || index;
   }
 
   getCellValue(data: settlementPipeline, column: tableColumn): string {

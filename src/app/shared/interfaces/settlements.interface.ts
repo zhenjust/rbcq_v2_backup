@@ -1,4 +1,4 @@
-import { MeterProcessTypes, settlementPageTitles, settlementProcessTypes } from "@shared/enums";
+import { MeterProcessTypes, pricingConditions, settlementPageTitles, settlementProcessTypes } from "@shared/enums";
 
 export interface settlementPageData {
     pageTitle: settlementPageTitles | string,
@@ -20,7 +20,7 @@ export interface settlementJobInstanceParams {
 export interface settlementJobInstanceOptions {
     id: string,
     label: string,
-    value: settlementProcessTypes | null
+    value: settlementProcessTypes | pricingConditions | null
 }
 
 export interface settlementParams {
@@ -73,3 +73,4 @@ export interface settlementTableDate {
     size: number
     number: number
 }
+

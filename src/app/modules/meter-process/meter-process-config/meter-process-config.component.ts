@@ -4,10 +4,11 @@ import {
   OnInit,
   computed,
   effect,
+  inject,
   signal,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MeterProcessTypes, RegionGroup, Regions } from '@shared/enums';
+import { MeterProcessTypes, Regions } from '@shared/enums';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 import { RunJobService } from '@shared/services/meterProcess';
 import {
@@ -29,8 +30,6 @@ import { FormatDatePipe } from '@shared/pipes';
 })
 export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   meterProcessForm!: FormGroup;
-  MeterProcessTypes = MeterProcessTypes;
-
   private formatedDatePipe = new FormatDatePipe();
 
   // Form options
@@ -131,11 +130,11 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   });
 
   private destroy$ = new Subject<void>();
+  private rjs = inject(RunJobService);
+  private mpa = inject(MeterprocessService);
+  private fb = inject(FormBuilder);
 
   constructor(
-    public rjs: RunJobService,
-    public mpa: MeterprocessService,
-    private fb: FormBuilder
   ) {
     // Initialize default time values
     this.defaultStartTime = new Date();
@@ -151,7 +150,6 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initializeForm();
     this.setupFormValueChanges();
-    this.populateMtnList();
     this.getBillingPeriod();
     this.updateBillingPeriodForm();
     this.callMtnList();
@@ -412,11 +410,6 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     return this.processFormValue(this.meterProcessForm.value);
   }
 
-  // Existing methods remain the same
-  private populateMtnList(): void {
-    // MTN list is now managed locally in component
-  }
-
   private getBillingPeriod(): void {
     this.mpa
       .getBillingPeriod()
@@ -518,10 +511,6 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     this._search.set('');
     this._mtnList.set([]);
     this.getNextMtnRecord();
-  }
-
-  public handleConfigurationClear(): void {
-    this.rjs.clearConfiguration();
   }
 
   // Getter methods for template compatibility
