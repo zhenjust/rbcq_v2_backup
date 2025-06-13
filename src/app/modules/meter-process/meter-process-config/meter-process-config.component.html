@@ -13,7 +13,7 @@
             </div>
         </div>
         
-        @if (isAdjustmentType) {
+        @if (isAdjustmentType()) {
             <div class="form-item">
                 <div class="label-container">
                     <label class="form-label">Adjustment Number</label>
@@ -27,7 +27,7 @@
             </div>
         }
         
-        @if (isDailyType) {
+        @if (isDailyType()) {
             <div class="form-item">
                 <div class="label-container">
                     <label class="form-label">Trading Date:</label>
@@ -40,7 +40,7 @@
             </div>
         }
         
-        @if (isNotDailyType) {
+        @if (isNotDailyType()) {
             <div class="form-item">
                 <div class="label-container">
                     <label class="form-label">Billing Period:</label>
@@ -49,7 +49,7 @@
                         class="select-size"
                         nzPlaceHolder="Select Billing Period"
                     >
-                        @for (billing of meterProcessBillingPeriod; track billing.id) {
+                        @for (billing of meterProcessBillingPeriod(); track billing.id) {
                             <nz-option [nzValue]="billing.billingPeriod" [nzLabel]="billing.supplyMonth"></nz-option>
                         }
                     </nz-select>
@@ -128,7 +128,7 @@
                     (nzClearIcon)="onSearchClear()"
                     [nzDropdownRender]="isLoadingTemplate"
                 >
-                    @for (mtnItem of mtnList; track mtnItem.id) {
+                    @for (mtnItem of mtnList(); track mtnItem.id) {
                         <nz-option [nzValue]="mtnItem.name" [nzLabel]="mtnItem.name"></nz-option>
                     }
                 </nz-select>
@@ -139,5 +139,5 @@
 
 
 <ng-template #isLoadingTemplate>
-    @if (mtnIsLoading) {<nz-spin></nz-spin>}
+    @if (mtnIsLoading()) {<nz-spin></nz-spin>}
 </ng-template>

@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild, effect } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
 import { MeterProcessTypes } from '@shared/enums';
@@ -35,23 +35,22 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
   private ptc = inject(ProcessTypeUtilService);
 
   constructor(
-    public meterProcessService: RunJobService,
+    public rjs: RunJobService,
     public modal: NzModalService,
     private mpa: MeterprocessService,
     private fb: FormBuilder,
     private searchFilterService: SearchFilterService
-  ) {}
+  ) {
+    this.setupServiceEffects();
+  }
 
   ngOnInit(): void {
     this.initFilterForm();
     this.getLatestRunJobParams();
-    this.meterProcessService.formValid$.subscribe(valid => {
-      this.isFormValid = valid;
-    });
 
     this.mpa.getBillingPeriod().pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => {
-        this.meterProcessBillingPeriod = Array.isArray(data) ? data : Object.values(data); // Adjusted for object-of-objects
+        this.meterProcessBillingPeriod = Array.isArray(data) ? data : Object.values(data);
         this.tryAutoSetBillingPeriod();
       },
       error: (err) => console.error(err)
@@ -71,11 +70,47 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
           });
         }
     });
+
+    console.log(this.rjs.hasValidConfiguration());
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  private setupServiceEffects(): void {
+    effect(() => {
+      const configuration = this.rjs.latestConfiguration();
+      
+      if (configuration) {
+        this.isFormValid = this.rjs.hasValidConfiguration();
+        
+        this.processConfigurationForSearch(configuration);
+      } else {
+        this.isFormValid = false;
+        this.meterProcessParams = null;
+      }
+    });
+
+    effect(() => {
+      const isCleared = this.rjs.isConfigurationCleared();
+      if (isCleared) {
+        this.meterProcessParams = null;
+        this.isFormValid = false;
+      }
+    });
+  }
+
+  private processConfigurationForSearch(configuration: meterProcessParams): void {
+    const filtered = Object.entries(configuration)
+      .filter(([key, val]) => val !== null && val !== undefined && val !== '' && key !== 'tradingDate')
+      .reduce((obj, [k, v]) => {
+        obj[k as keyof meterProcessJobSearchGroupParams] = v;
+        return obj;
+      }, {} as Partial<meterProcessJobSearchGroupParams>);
+
+    this.meterProcessParams = filtered;
   }
 
   private initFilterForm(): void {
@@ -115,29 +150,14 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
     }
   }
 
+  // UPDATED: Use service method to check if configuration indicates final type
   get isFinalType(): boolean {
-    return this.meterProcessService.isFinalType;
+    const configuration = this.rjs.getLatestConfiguration();
+    return configuration?.processType === MeterProcessTypes.FINAL;
   }
 
   private getLatestRunJobParams(): void {
-    this.meterProcessService.formValue$
-      .pipe(
-        takeUntil(this.destroy$),
-        filter((value): value is meterProcessJobSearchGroupParams => value !== null)
-      )
-      .subscribe((value) => {
-        // Filter out falsy values
-        const filtered = Object.entries(value)
-          .filter(([key, val]) => val !== null && val !== undefined && val !== '' && key !== 'tradingDate')
-          .reduce((obj, [k, v]) => {
-            obj[k as keyof meterProcessJobSearchGroupParams] = v;
-            return obj;
-          }, {} as Partial<meterProcessJobSearchGroupParams>);
-
-        this.meterProcessParams = filtered;
-      });
-
-    // console.log(this.meterProcessParams)
+    console.log('Configuration will be tracked via effects');
   }
 
   applyFilter(): void {
@@ -195,7 +215,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
                 reject();
               }
             })
-            .add(() => this.isLoading = false);
+            .add(() => (this.isLoading = false, this.rjs.clearConfiguration()));
         });
       }
     });
