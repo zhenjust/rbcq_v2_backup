@@ -1,9 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, effect, computed, inject } from '@angular/core';
 import { ActivatedRoute, Data } from '@angular/router';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { settlementPipeline, settlementTableDate } from '@shared/interfaces';
-import { SearchFilterService } from '@shared/services/settlement';
+import { RunSettlementService, SearchFilterService } from '@shared/services/settlement';
 import { ToastrService } from 'ngx-toastr';
 
 interface tableColumn {
@@ -23,8 +22,7 @@ interface jobSelect {
 })
 export class TableComponent implements OnInit, OnDestroy {
   isLineRentalStatus: boolean = false;
-  isLoading: boolean = false;
-  tableData: settlementTableDate = {
+  defaultTableData: settlementTableDate = {
     pipelines: [],
     first: true,
     last: false,
@@ -62,33 +60,36 @@ export class TableComponent implements OnInit, OnDestroy {
     );
   }
   private destroy$ = new Subject<void>();
+  private runSettlements = inject(RunSettlementService);
+  tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
+  isLoading = computed(() => this.sfs.isLoading());
 
   constructor(
     private router: ActivatedRoute,
     public toast: ToastrService,
     private sfs: SearchFilterService
-  ){};
+  ){
+    effect(() => {
+      const jobs = this.sfs.jobs();
+      const error = this.sfs.error();
+      const loading = this.sfs.isLoading();
+      
+      if (jobs && !loading) {
+        this.toast.success('Jobs Loaded!');
+      }
+      
+      if (error && !loading) {
+        this.toast.error('Failed to load jobs', error);
+      }
+    });
+  };
 
   ngOnInit(): void {
     this.router.data.subscribe((data: Data) => {
       this.isLineRentalStatus = data['isLineRentalStatus'] as boolean;
       this.searchName = data['searchName'] as string;
     });
-
     this.sfs.fetchJobs({}, this.searchName); // initial load
-
-    this.sfs.jobs$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          if (data) {
-            this.tableData = data;
-          }
-        },
-        error: (error) => {
-          this.toast.error(error.message);
-        }
-      });
   }
 
   ngOnDestroy(): void {
@@ -139,42 +140,22 @@ export class TableComponent implements OnInit, OnDestroy {
 
     switch (actionValue) {
       case 'generate':
-        this.generateInputWorkspace(rowData);
+        this.runSettlements.generateInputWorkspace(rowData);
         break;
       case 'finalize':
-        this.finalizeTradingAmounts(rowData);
+        this.runSettlements.finalizeTradingAmounts(rowData);
         break;
       case 'calculations':
-        this.viewCalculations(rowData);
+        this.runSettlements.viewCalculations(rowData);
         break;
       case 'validate_input':
-        this.validateInput(rowData);
+        this.runSettlements.validateInput(rowData);
         break;
       case 'validations':
-        this.viewValidations(rowData);
+        this.runSettlements.viewValidations(rowData);
         break;
       default:
         console.warn('Unknown action:', actionValue);
     }
-  }
-
-  private generateInputWorkspace(data: settlementPipeline): void {
-    console.log('Generate Input Workspace - Full row data:', data);
-  }
-
-  private finalizeTradingAmounts(data: settlementPipeline): void {
-    console.log('Finalize Trading Amounts - Full row data:', data);
-  }
-
-  private viewCalculations(data: settlementPipeline): void {
-    console.log('View Calculations - Full row data:', data);
-  }
-
-  private validateInput(data: settlementPipeline): void {
-    console.log('Validate Input - Full row data:', data);
-  }
-
-  private viewValidations(data: settlementPipeline): void {
-    console.log('View Validations - Full row data:', data);
   }
 }

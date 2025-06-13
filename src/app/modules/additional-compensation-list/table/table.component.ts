@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, effect, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Data } from '@angular/router';
 import { settlementPipeline, settlementTableDate } from '@shared/interfaces';
 import { RunSettlementService, SearchFilterService } from '@shared/services/settlement';
@@ -22,9 +22,8 @@ interface jobSelect {
 })
 export class TableComponent implements OnInit {
   isLineRentalStatus: boolean = false;
-  isLoading: boolean = false;
   selectedAction: string = '';
-  tableData: settlementTableDate = {
+  defaultTableData: settlementTableDate = {
     pipelines: [],
     first: true,
     last: false,
@@ -60,11 +59,28 @@ export class TableComponent implements OnInit {
 
   private runSettlements = inject(RunSettlementService);
 
+  tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
+  isLoading = computed(() => this.sfs.isLoading());
+
   constructor(
     private router: ActivatedRoute,
     public toast: ToastrService,
     private sfs: SearchFilterService
-  ){};
+  ){
+    effect(() => {
+      const jobs = this.sfs.jobs();
+      const error = this.sfs.error();
+      const loading = this.sfs.isLoading();
+      
+      if (jobs && !loading) {
+        this.toast.success('Jobs Loaded!');
+      }
+      
+      if (error && !loading) {
+        this.toast.error('Failed to load jobs', error);
+      }
+    });
+  };
 
   ngOnInit(): void {
     this.router.data.subscribe((data: Data) => {
@@ -73,19 +89,6 @@ export class TableComponent implements OnInit {
     });
 
     this.sfs.fetchJobs({}, this.searchName); // initial load
-
-    this.sfs.jobs$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          if (data) {
-            this.tableData = data;
-          }
-        },
-        error: (error) => {
-          this.toast.error(error.message);
-        }
-      });
   }
 
   ngOnDestroy(): void {

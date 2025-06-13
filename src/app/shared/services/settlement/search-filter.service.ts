@@ -1,29 +1,29 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { SettlementService } from '../api';
-import { BehaviorSubject } from 'rxjs';
 import { settlementParams, settlementTableDate } from '@shared/interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SearchFilterService {
-  isLoading: boolean = false;
-  private jobsSubject = new BehaviorSubject<settlementTableDate | null>(null);
-  public jobs$ = this.jobsSubject.asObservable();
   private sts = inject(SettlementService);
 
+  isLoading = signal<boolean>(false);
+  jobs = signal<settlementTableDate | null>(null);
+  error = signal<string | null>(null);
+
   fetchJobs(searchParams: settlementParams ,searchName: string): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
+    this.error.set(null);
     this.sts.search(searchParams, searchName).subscribe({
       next: (data) => {
-        this.jobsSubject.next(data); // Emit to subscribers
+        this.jobs.set(data); // Emit to subscribers
       },
       error: (err) => {
         console.error(err);
-        this.jobsSubject.next(null); // Optional: clear data on error
+        this.jobs.set(null);
+        this.error.set(err.message || 'something happened');
       }
-    }).add(() => {
-      this.isLoading = false;
-    });
+    }).add(() => { this.isLoading.set(false)});
   }
 }
