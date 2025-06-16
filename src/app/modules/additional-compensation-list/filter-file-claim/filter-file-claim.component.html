@@ -1,6 +1,6 @@
 <nz-flex [nzJustify]="'flex-end'" class="button-container" nzGap="large">
     <button nz-button nzType="primary">Filter</button>
-        @if (isFileClaimPage) {<button
+        @if (isFileClaimPage()) {<button
             nz-button
             nzType="primary"
             (click)="fileClaimModal()"
@@ -18,8 +18,9 @@
                     <nz-select
                         formControlName="billingPeriod"
                         nzPlaceHolder="Select Billing Period"
+                        style="width: 400px;"
                     >
-                        @for (billing of meterProcessBillingPeriod; track billing.id) {
+                        @for (billing of meterProcessBillingPeriod(); track billing.id) {
                             <nz-option
                                 [nzValue]="billing.id"
                                 [nzLabel]="billing.supplyMonth"
@@ -33,6 +34,7 @@
                     <label class="form-label">Start Date:</label>
                     <nz-date-picker
                         formControlName="startDate"
+                        nzFormat="yyyy-MM-dd HH:mm"
                         [nzDisabled]="true"
                         nzPlaceHolder="Start Date"
                     >
@@ -42,6 +44,7 @@
                     <label class="form-label">End Date:</label>
                     <nz-date-picker
                         formControlName="endDate"
+                        nzFormat="yyyy-MM-dd HH:mm"
                         [nzDisabled]="true"
                         nzPlaceHolder="End Date"
                     >
@@ -52,7 +55,7 @@
                 <button
                     nz-button
                     nzType="primary"
-                    [disabled]="!hasBillingPeriod"
+                    [disabled]="!hasBillingPeriod()"
                     (click)="addDateRange()"
                 >
                     Add Date Range
@@ -60,7 +63,7 @@
             </nz-flex>
             <nz-table
                 #nzTable
-                [nzData]="billingPeriodDateRange"
+                [nzData]="billingPeriodDateRange()"
                 [nzSize]="'small'"
                 [nzScroll]="{ x: '100%' }"
             >
@@ -72,20 +75,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @for (billingDate of nzTable.data; track billingDate; let i = $index) {
+                    @for (billingDate of billingPeriodDateRange(); track $index; let i = $index) {
                         <tr>
                             <td>
                                 <nz-date-picker
-                                    [(ngModel)]="billingDate.startDate"
-                                    nzFormat="yyyy-MM-dd HH:mm:ss"
+                                    [ngModel]="billingDate.startDate"
+                                    (ngModelChange)="updateDateRange(i, 'startDate', $event)"
+                                    nzFormat="yyyy-MM-dd HH:mm"
                                     [nzShowTime]="{ nzFormat: 'HH:mm', nzHourStep: 1, nzMinuteStep: 5 }"
                                     nzPlaceHolder="Start Date & Time"
                                 ></nz-date-picker>
                             </td>
                             <td>
                                 <nz-date-picker
-                                    [(ngModel)]="billingDate.endDate"
-                                    nzFormat="yyyy-MM-dd HH:mm:ss"
+                                    [ngModel]="billingDate.endDate"
+                                    (ngModelChange)="updateDateRange(i, 'endDate', $event)"
+                                    nzFormat="yyyy-MM-dd HH:mm"
                                     [nzShowTime]="{ nzFormat: 'HH:mm', nzHourStep: 1, nzMinuteStep: 5 }"
                                     nzPlaceHolder="End Date & Time"
                                 ></nz-date-picker>
@@ -112,8 +117,15 @@
                     <nz-select
                         formControlName="pricingCondition"
                         nzPlaceHolder="Select Pricing Condition"
-                        [nzOptions]="pricingConditions"
+                        style="width: 400px;"
                     >
+                        @for (pc of pricingConditions; track pc) {
+                            <nz-option
+                                [nzValue]="pc.id"
+                                [nzLabel]="pc.label"
+                            >
+                            </nz-option>
+                        }
                     </nz-select>
                 </div>
             </div>
@@ -121,7 +133,7 @@
                 <button
                     nz-button
                     nzType="primary"
-                    [disabled]="!hasBillingPeriod"
+                    [disabled]="hasClaimant()"
                     (click)="addClaimant()"
                 >
                     Add a Claimant
@@ -137,7 +149,27 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- body -->
+                    <tr>
+                        <td>
+                            <nz-select></nz-select>
+                        </td>
+                        <td>
+                            <nz-select></nz-select>
+                        </td>
+                        <td>
+                            <nz-input-number></nz-input-number>
+                        </td>
+                        <td>
+                            <button
+                                nz-button
+                                nzType="default"
+                                nzDanger
+                                type="button"
+                            >
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
                 </tbody>
             </nz-table>
         </form>

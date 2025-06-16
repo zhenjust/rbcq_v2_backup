@@ -1,19 +1,13 @@
-import {
-  Component,
-  inject,
-  OnDestroy,
-  OnInit,
-  TemplateRef,
-  ViewChild,
-} from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Data } from '@angular/router';
 import { PRICING_CONDITIONS } from '@shared/constants';
 import { settlementSearchNames } from '@shared/enums';
 import { meterProcessBillingPeriod, settlementJobInstanceOptions } from '@shared/interfaces';
-import { MeterprocessService } from '@shared/services/api';
+import { MeterprocessService, SettlementService } from '@shared/services/api';
+import { DateFormatterUtilService } from '@shared/services/utils';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-filter-file-claim',
@@ -23,27 +17,39 @@ import { Subject, Subscription, takeUntil } from 'rxjs';
 })
 export class FilterFileClaimComponent implements OnInit, OnDestroy {
   searchName: string = '';
-  protected fileClaimForm!: FormGroup;
-  billingPeriodDateRange: { startDate: Date; endDate: Date }[] = [];
-  meterProcessBillingPeriod: meterProcessBillingPeriod[] = [];
-  selectedBillingPeriod: meterProcessBillingPeriod[] | null = null;
+
+  // Signals
+  meterProcessBillingPeriod = signal<meterProcessBillingPeriod[]>([]);
+  billingIdList = signal<[]>([]);
+  billingPeriodDateRange = signal<{ startDate: string; endDate: string }[]>([]);
+  selectedBillingPeriod = signal<meterProcessBillingPeriod | null>(null);
+  
   @ViewChild('fileClaim', { static: true }) fileClaim!: TemplateRef<void>;
 
-  protected pricingConditions: settlementJobInstanceOptions[] = PRICING_CONDITIONS;
+  protected fileClaimForm!: FormGroup;
 
-  selectedBillingPeriodId: number | null = null;
+  public pricingConditions: settlementJobInstanceOptions[] = PRICING_CONDITIONS;
 
   private destroy$ = new Subject<void>();
-  private billingPeriodSub!: Subscription;
-
   private mpa = inject(MeterprocessService);
+  private sta = inject(SettlementService);
   private fb = inject(FormBuilder);
+  private dfs = inject(DateFormatterUtilService);
+  private modal = inject(NzModalService);
+  private router = inject(ActivatedRoute);
 
-  constructor(public modal: NzModalService, private router: ActivatedRoute) {}
+  // Computed signals
+  isFileClaimPage = computed(() => this.searchName === settlementSearchNames.MANAGE_ADD_COM_CLAIMS);
+  
+  hasBillingPeriod = computed(() => {
+    return this.selectedBillingPeriod() !== null &&
+           this.fileClaimForm?.get('startDate')?.value !== null &&
+           this.fileClaimForm?.get('endDate')?.value !== null;
+  });
 
-  get isFileClaimPage(): boolean {
-    return this.searchName === settlementSearchNames.MANAGE_ADD_COM_CLAIMS;
-  }
+  hasClaimant = computed(() => {
+    return this.fileClaimForm?.get('pricingCondition')?.value !== null;
+  });
 
   private getBillingperiod(): void {
     this.mpa
@@ -51,9 +57,8 @@ export class FilterFileClaimComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
-          this.meterProcessBillingPeriod = Array.isArray(data)
-            ? data
-            : Object.values(data);
+          const billingPeriods: meterProcessBillingPeriod[] = Array.isArray(data) ? data : Object.values(data);
+          this.meterProcessBillingPeriod.set(billingPeriods);
         },
         error: (err) => console.error(err),
       });
@@ -63,33 +68,11 @@ export class FilterFileClaimComponent implements OnInit, OnDestroy {
     this.router.data.subscribe((data: Data) => {
       this.searchName = data['searchName'] as string;
     });
-    this.initializeBillingPeriodChangeHandler();
-    this.isFileClaimPage;
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    if (this.billingPeriodSub) this.billingPeriodSub.unsubscribe();
-  }
-
-  private initializeBillingPeriodChangeHandler(): void {
-    this.billingPeriodSub = this.fb.control(null).valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        const billingId = this.fileClaimForm.get('billingPeriod')?.value;
-        const selected = this.meterProcessBillingPeriod.find(
-          (period) => period.id === billingId
-        );
-        if (selected) {
-          this.selectedBillingPeriodId = selected.id;
-          this.selectedBillingPeriod = [selected];
-          this.fileClaimForm.patchValue({
-            startDate: new Date(selected.startDate),
-            endDate: new Date(selected.endDate),
-          });
-        }
-      });
   }
 
   fileClaimModal(): void {
@@ -109,50 +92,77 @@ export class FilterFileClaimComponent implements OnInit, OnDestroy {
       billingPeriod: [null],
       startDate: [{ value: null, disabled: true }],
       endDate: [{ value: null, disabled: true }],
+      pricingCondition: [null]
     });
 
-    this.billingPeriodSub = this.fileClaimForm.get('billingPeriod')!.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((billingId) => {
-        const selected = this.meterProcessBillingPeriod.find(
-          (period) => period.id === billingId
-        );
-        if (selected) {
-          this.selectedBillingPeriod = [selected];
-          this.fileClaimForm.patchValue({
-            startDate: new Date(selected.startDate),
-            endDate: new Date(selected.endDate),
-          });
-        }
-      });
+    // Listen for billing period changes
+    this.fileClaimForm.get('billingPeriod')?.valueChanges.subscribe(billingPeriodId => {
+      this.onBillingPeriodChange(billingPeriodId);
+    });
   }
 
-
-  addDateRange(): void {
-    const startDate = this.fileClaimForm.get('startDate')?.value;
-    const endDate = this.fileClaimForm.get('endDate')?.value;
-    console.log(startDate, endDate)
-    if (startDate && endDate) {
-      this.billingPeriodDateRange.push({
-        startDate: new Date(startDate),
-        endDate: new Date(endDate),
+  private onBillingPeriodChange(billingPeriodId: number): void {
+    if (billingPeriodId) {
+      const selectedPeriod = this.meterProcessBillingPeriod().find(bp => bp.id === billingPeriodId);
+      if (selectedPeriod) {
+        this.selectedBillingPeriod.set(selectedPeriod);
+        this.fileClaimForm.patchValue({
+          startDate: selectedPeriod.startDate,
+          endDate: selectedPeriod.endDate
+        });
+      }
+    } else {
+      this.selectedBillingPeriod.set(null);
+      this.fileClaimForm.patchValue({
+        startDate: null,
+        endDate: null
       });
     }
   }
 
+  addDateRange(): void {
+    const startDate = this.fileClaimForm.get('startDate')?.value;
+    const endDate = this.fileClaimForm.get('endDate')?.value;
+    
+    if (startDate && endDate) {
+      const currentRanges = this.billingPeriodDateRange();
+      this.billingPeriodDateRange.set([
+        ...currentRanges,
+        {
+          startDate: startDate,
+          endDate: endDate,
+        }
+      ]);
+    }
+  }
+
   deleteDateRange(index: number): void {
-    this.billingPeriodDateRange.splice(index, 1);
+    const currentRanges = this.billingPeriodDateRange();
+    const updatedRanges = [...currentRanges];
+    updatedRanges.splice(index, 1);
+    this.billingPeriodDateRange.set(updatedRanges);
   }
 
   addClaimant(): void {
+    const acPc = this.fileClaimForm.get('pricingCondition')?.value;
+    const startDate = this.fileClaimForm.get('startDate')?.value;
+    const endDate = this.fileClaimForm.get('endDate')?.value;
 
+    this.sta.getBillingId(acPc, this.dfs.formatDateOnly(startDate), this.dfs.formatDateOnly(endDate)).subscribe({
+      next: (data: []) => {
+        this.billingIdList.set(data);
+        console.log(this.billingIdList());
+      },
+      error: (error) => {
+        console.error(error.message)
+      }
+    })
   }
 
-  get hasBillingPeriod(): boolean {
-    return (
-      this.selectedBillingPeriod !== null &&
-      this.fileClaimForm.get('startDate')?.value !== null &&
-      this.fileClaimForm.get('endDate')?.value !== null
-    );
+  updateDateRange(index: number, field: 'startDate' | 'endDate', value: string): void {
+    const currentRanges = this.billingPeriodDateRange();
+    const updatedRanges = [...currentRanges];
+    updatedRanges[index][field] = value;
+    this.billingPeriodDateRange.set(updatedRanges);
   }
 }

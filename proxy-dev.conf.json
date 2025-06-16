@@ -5,7 +5,8 @@
         "/reg",
         "/mtr-data-pipeline",
         "/stl-data-pipeline",
-        "/meter-process"
+        "/meter-process",
+        "/settlement"
       ],
       "target": "https://crss-dev.exist.com.ph",
       "secure": true,

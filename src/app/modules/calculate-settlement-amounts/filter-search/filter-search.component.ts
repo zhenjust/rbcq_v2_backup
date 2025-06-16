@@ -4,10 +4,9 @@ import { ActivatedRoute, Data } from '@angular/router';
 import { FULL_SETTLEMENT_OPTIONS, MARKET_FEE_SETTLEMENT_OPTIONS } from '@shared/constants';
 import { settlementSearchNames } from '@shared/enums';
 import { meterProcessBillingPeriod, settlementJobInstanceOptions, settlementParams } from '@shared/interfaces';
-import { FormatDatePipe } from '@shared/pipes';
 import { MeterprocessService } from '@shared/services/api';
 import { SearchFilterService } from '@shared/services/settlement';
-import { ProcessTypeUtilService } from '@shared/services/utils';
+import { DateFormatterUtilService, ProcessTypeUtilService } from '@shared/services/utils';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -23,11 +22,11 @@ export class FilterSearchComponent implements OnInit, OnDestroy {
   settlementOptions: settlementJobInstanceOptions[] = [];
   meterProcessBillingPeriod: meterProcessBillingPeriod[] = []; 
   private destroy$ = new Subject<void>();
-  private fdp = new FormatDatePipe();
   protected settlementFilterParams: Partial<settlementParams> | null = null;
   
   private ptc = inject(ProcessTypeUtilService);
   private fb = inject(FormBuilder);
+  private fdp = inject(DateFormatterUtilService)
   
   constructor(
     private mpa: MeterprocessService,
@@ -134,10 +133,10 @@ export class FilterSearchComponent implements OnInit, OnDestroy {
 
       const formattedValues: settlementParams = {
         ...rawValues,
-        startDate: rawValues.startDate ? this.fdp.transform(rawValues.startDate) : undefined,
-        endDate: rawValues.endDate ? this.fdp.transform(rawValues.endDate) : undefined,
-        tradingStartDate: rawValues.tradingStartDate ? this.fdp.transform(rawValues.tradingStartDate) : undefined,
-        tradingEndDate: rawValues.tradingEndDate ? this.fdp.transform(rawValues.tradingEndDate) : undefined
+        startDate: rawValues.startDate ? this.fdp.transformDate(rawValues.startDate) : undefined,
+        endDate: rawValues.endDate ? this.fdp.transformDate(rawValues.endDate) : undefined,
+        tradingStartDate: rawValues.tradingStartDate ? this.fdp.transformDate(rawValues.tradingStartDate) : undefined,
+        tradingEndDate: rawValues.tradingEndDate ? this.fdp.transformDate(rawValues.tradingEndDate) : undefined
       };
       this.searchFilterService.fetchJobs(formattedValues, this.searchName);
       this.settlementFilterParams = null;

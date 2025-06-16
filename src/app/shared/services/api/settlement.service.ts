@@ -10,6 +10,8 @@ import { Observable } from 'rxjs';
 export class SettlementService {
 
   protected API_URL: string = '/stl-data-pipeline/job';
+  protected BILLING_ID: string = '/settlement/addtl-comp/billing-id-list';
+
 
   private paramUtil = inject(ParamsUtilService);
 
@@ -25,5 +27,17 @@ export class SettlementService {
     }
     const params = this.paramUtil.buildParams(withName);
     return this.http.get<settlementTableDate>(`${this.API_URL}/search`, { params });
+  }
+
+  public getBillingId(acPc: string, startDate: string, endDate: string): Observable<[]>{
+    //hardcoding empty search - this is from previous apis
+    const withSearch = {search: ' ', acPc, startDate, endDate};
+    const params = this.paramUtil.buildParams(withSearch);
+    return this.http.get<[]>(this.BILLING_ID, { params });
+  }
+
+  public getPricingConditionsBasedMtn(billId: string, acPc: string, startDate: string, endDate: string): Observable<[]>{
+    const params = this.paramUtil.buildParams({billId, acPc, startDate, endDate})
+    return this.http.get<[]>(this.BILLING_ID, { params });
   }
 }
