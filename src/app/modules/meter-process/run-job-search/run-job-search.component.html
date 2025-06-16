@@ -83,7 +83,10 @@
 <ng-template #runWesmModal let-modal>
     <nz-flex nzVertical="true">
         <nz-result nzStatus="info" nzTitle="You are going to run a WESM Job"></nz-result>
-        <p><strong>Job Type:</strong> {{ meterProcessParams?.processType }}</p>
+        <nz-flex nzGap="large" nzAlign="start">
+            <p><strong>Job Type:</strong> {{ meterProcessParams?.processType }}</p>
+            @if (meterProcessParams?.adjNo) {<p><strong>Adjustment Number:</strong> {{meterProcessParams?.adjNo}}</p>}
+        </nz-flex>
         <nz-flex nzGap="large" nzAlign="start">
             @if (meterProcessParams?.billingPeriod) {<p><strong>Billing Period:</strong> {{ meterProcessParams?.billingPeriod }}</p>}
             @if (meterProcessParams?.tradingDate) {<p><strong>Trading Date:</strong> {{ meterProcessParams?.tradingDate }}</p>}
@@ -92,6 +95,5 @@
             @if (meterProcessParams?.startDatetime) {<p><strong>Start Date Time:</strong> {{ meterProcessParams?.startDatetime }}</p>}
             @if (meterProcessParams?.endDatetime) {<p><strong>End Date Time:</strong> {{ meterProcessParams?.endDatetime }}</p>}
         </nz-flex>
-        @if (meterProcessParams?.adjNo) {<p><strong>Billing Period:</strong> {{ meterProcessParams?.adjNo }}</p>}
     </nz-flex>
 </ng-template>

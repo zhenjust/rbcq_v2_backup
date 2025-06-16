@@ -64,6 +64,7 @@
                     formControlName="startDatetime"
                     class="select-size"
                     nzPlaceHolder="Select start date and time"
+                    [nzDisabledDate]="disableStartDate"
                     [nzShowTime]="{
                         nzFormat: 'HH:mm',
                         nzHourStep: 1,
@@ -79,6 +80,7 @@
                     formControlName="endDatetime"
                     class="select-size"
                     nzPlaceHolder="Select end date and time"
+                    [nzDisabledDate]="disableStartDate"
                     [nzShowTime]="{
                         nzFormat: 'HH:mm',
                         nzHourStep: 1,
