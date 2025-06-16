@@ -1,11 +1,10 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Injectable } from '@angular/core';
 
-@Pipe({
-  name: 'formatDate',
-  standalone: false
+@Injectable({
+  providedIn: 'root'
 })
-export class FormatDatePipe implements PipeTransform {
-  transform(dateString: string): string {
+export class DateFormatterUtilService {
+  transformDate(dateString: string): string {
     if (!dateString) {
       return '';
     }
@@ -23,7 +22,7 @@ export class FormatDatePipe implements PipeTransform {
       return '';
     }
   }
-
+  
   formatToShortDate(date: any): string {
     if (!date) return '';
     const d = new Date(date);
@@ -57,7 +56,7 @@ export class FormatDatePipe implements PipeTransform {
     
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
-  
+
   formatDateOnly(date: string): string {
     if (!date) return '';
     

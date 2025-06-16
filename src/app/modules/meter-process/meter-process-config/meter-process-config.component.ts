@@ -6,8 +6,8 @@ import { RunJobService } from '@shared/services/meterProcess';
 import { meterProcessBillingPeriod, mtnList, mtnListPage, meterProcessParams, meterProcessOptions } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
-import { FormatDatePipe } from '@shared/pipes';
 import { differenceInCalendarDays } from 'date-fns';
+import { DateFormatterUtilService } from '@shared/services/utils';
 
 @Component({
   selector: 'app-meter-process-config',
@@ -18,7 +18,6 @@ import { differenceInCalendarDays } from 'date-fns';
 export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   today: Date = new Date();
   meterProcessForm!: FormGroup;
-  private readonly formatDatePipe = new FormatDatePipe();
   private readonly destroy$ = new Subject<void>();
 
   // Form options
@@ -72,6 +71,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   private readonly rjs = inject(RunJobService);
   private readonly mpa = inject(MeterprocessService);
   private readonly fb = inject(FormBuilder);
+  private readonly fdp = inject(DateFormatterUtilService)
 
   ngOnInit(): void {
     this.initializeForm();
@@ -196,9 +196,9 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   private processFormValue(formValue: any): meterProcessParams {
     return {
       ...formValue,
-      tradingDate: this.formatDatePipe.formatDateOnly(formValue.tradingDate),
-      startDatetime: this.formatDatePipe.formatDateTime(formValue.startDatetime),
-      endDatetime: this.formatDatePipe.formatDateTime(formValue.endDatetime),
+      tradingDate: this.fdp.formatDateOnly(formValue.tradingDate),
+      startDatetime: this.fdp.formatDateTime(formValue.startDatetime),
+      endDatetime: this.fdp.formatDateTime(formValue.endDatetime),
       mtn: Array.isArray(formValue.mtn) ? formValue.mtn.join(',') : formValue.mtn,
       regionGroup: Array.isArray(formValue.regionGroup) 
         ? formValue.regionGroup.join(',') 

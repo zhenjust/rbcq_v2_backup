@@ -3,10 +3,9 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
 import { MeterProcessTypes } from '@shared/enums';
 import { meterProcessBillingPeriod, meterProcessJobSearchGroupParams, meterProcessOptions, meterProcessParams } from '@shared/interfaces';
-import { FormatDatePipe } from '@shared/pipes';
 import { MeterprocessService } from '@shared/services/api';
 import { RunJobService, SearchFilterService } from '@shared/services/meterProcess';
-import { ProcessTypeUtilService } from '@shared/services/utils';
+import { DateFormatterUtilService, ProcessTypeUtilService } from '@shared/services/utils';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { filter, Subject, takeUntil } from 'rxjs';
 
@@ -27,12 +26,12 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
   @ViewChild('runWesmModal', { static: true }) runWesmModal!: TemplateRef<void>;
 
   isLoading: boolean = false;
-  private fdp = new FormatDatePipe();
   private destroy$ = new Subject<void>();
   protected meterProcessParams: Partial<meterProcessJobSearchGroupParams> | null = null;
   protected meterProcessFilterParams: Partial<meterProcessJobSearchGroupParams> | null = null;
 
   private ptc = inject(ProcessTypeUtilService);
+  private fdp = inject(DateFormatterUtilService)
 
   constructor(
     public rjs: RunJobService,
