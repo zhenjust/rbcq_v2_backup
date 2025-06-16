@@ -45,7 +45,6 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initFilterForm();
-    this.getLatestRunJobParams();
 
     this.mpa.getBillingPeriod().pipe(takeUntil(this.destroy$)).subscribe({
         next: (data) => {
@@ -69,8 +68,6 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
           });
         }
       });
-
-    console.log(this.rjs.hasValidConfiguration());
   }
 
   ngOnDestroy(): void {
@@ -154,10 +151,6 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
   get isFinalType(): boolean {
     const configuration = this.rjs.getLatestConfiguration();
     return configuration?.processType === MeterProcessTypes.FINAL;
-  }
-
-  private getLatestRunJobParams(): void {
-    console.log('Configuration will be tracked via effects');
   }
 
   applyFilter(): void {

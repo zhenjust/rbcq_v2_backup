@@ -11,7 +11,7 @@ export class MeterprocessService {
 
   protected API_URL: string = '/mtr-data-pipeline/job';
   protected METER_PROCESS: string = '/meter-process/billing-period/find-all';
-  protected MTN_LIST: string = '/reg/mtn/list/v2';
+  protected MTN_LIST: string = '/reg/mtn/list/region';
 
   private paramUtil = inject(ParamsUtilService);
 
@@ -44,21 +44,15 @@ export class MeterprocessService {
     return this.http.get<meterProcessBillingPeriod[]>(this.METER_PROCESS);
   }
   
-  public getMtnList(pageNumber?: number, search?: string): Observable<mtnListPage> {
+  public getMtnList(pageNumber?: number, search?: string, region?: string): Observable<mtnListPage> {
     // manually adding parameters 
     const payload = {
           "pageNo": pageNumber ? pageNumber : 0,
           "pageSize": 10,
           "mapParams": {
-            "IsActive": true,
-            "name": search ? search : ''
-          },
-          "orderList": [
-              {
-                  "sortColumn": "name",
-                  "sortDirection": "ASC"
-              }
-          ]
+            "name": search ? search : '',
+            "region": region ? region : ''
+          }
       }
     return this.http.post<mtnListPage>(this.MTN_LIST, payload);
   }

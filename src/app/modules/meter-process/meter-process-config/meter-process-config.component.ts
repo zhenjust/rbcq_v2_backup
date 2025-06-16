@@ -25,7 +25,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   public readonly meterProcessRegionGroup = this.initializeRegionGroup();
 
   // Private signals
-  private readonly _nextPage = signal<number>(1);
+  private readonly _nextPage = signal<number>(0);
   private readonly _search = signal<string>('');
   private readonly _mtnIsLoading = signal<boolean>(false);
   private readonly _meterProcessBillingPeriod = signal<meterProcessBillingPeriod[]>([]);
@@ -52,32 +52,19 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     this._processType() !== MeterProcessTypes.DAILY
   );
 
-  public readonly isFormValid = computed(() => {
-    const processType = this._processType();
-    const form = this.meterProcessForm;
-    if (!form) return false;
-
-    const requiredFields = this.getRequiredFieldsByType(processType);
-    
-    return requiredFields.every(fieldName => {
-      const control = form.get(fieldName);
-      if (['regionGroup', 'mtn'].includes(fieldName)) {
-        return control?.valid && Array.isArray(control.value) && control.value.length > 0;
-      }
-      return control?.valid && control.value !== null && control.value !== '';
-    });
-  });
-
   private readonly rjs = inject(RunJobService);
   private readonly mpa = inject(MeterprocessService);
   private readonly fb = inject(FormBuilder);
   private readonly fdp = inject(DateFormatterUtilService)
+  
+  constructor(){
+    this.setupEffects();
+  };
 
   ngOnInit(): void {
     this.initializeForm();
     this.setupFormSubscriptions();
     this.loadInitialData();
-    this.setupEffects();
   }
 
   ngOnDestroy(): void {
@@ -144,6 +131,18 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
           this.updateBillingPeriodWithDatetime(billingPeriod);
         }
       });
+
+    this.meterProcessForm.get('regionGroup')
+      ?.valueChanges.pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(regionValues => {
+        if (regionValues && regionValues.length > 0) {
+          this.loadMtnList();
+        }
+    });
   }
 
   private setupEffects(): void {
@@ -155,8 +154,6 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
         this.meterProcessForm.patchValue({ billingPeriod: firstPeriod.billingPeriod });
       }
     });
-
-    // Handle configuration reset
     effect(() => {
       if (this.rjs.isConfigurationCleared()) {
         this.resetComponentState();
@@ -178,19 +175,6 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     endDate.setHours(0, 0, 0, 0);
 
     return { startDate, endDate };
-  }
-
-  private getRequiredFieldsByType(processType: string): string[] {
-    const baseFields = ['regionGroup', 'mtn'];
-    
-    switch (processType) {
-      case MeterProcessTypes.DAILY:
-        return [...baseFields, 'tradingDate', 'startDatetime', 'endDatetime'];
-      case MeterProcessTypes.ADJUSTMENT:
-        return [...baseFields, 'adjNo', 'billingPeriod', 'startDatetime', 'endDatetime'];
-      default:
-        return [...baseFields, 'billingPeriod', 'startDatetime', 'endDatetime'];
-    }
   }
 
   private processFormValue(formValue: any): meterProcessParams {
@@ -282,6 +266,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     this._mtnList.set([]);
     this._meterProcessBillingPeriod.set([]);
     this.resetForm();
+    this.loadInitialData();
   }
 
   private loadBillingPeriods(): void {
@@ -296,12 +281,19 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       });
   }
 
+  private hasRegionSelected(): string[] {
+    const regionValues = this.meterProcessForm.get('regionGroup')?.value;
+    return Array.isArray(regionValues) ? regionValues : [];
+  }
+
   private loadMtnList(): void {
-    this.mpa.getMtnList()
+    const regionValues = this.hasRegionSelected();
+    const regionString = regionValues.length > 0 ? regionValues.join(',') : '';
+    this.mpa.getMtnList(0, '', regionString)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          const mtnData = this.extractMtnData(response);
+          const mtnData = this.extractMtnData(response.data);
           this._mtnList.set(mtnData);
         },
         error: (error) => {
@@ -348,8 +340,10 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   public getNextMtnRecord(search?: string): void {
     this._mtnIsLoading.set(true);
     const currentPage = this._nextPage();
+    const regionValues = this.hasRegionSelected();
+    const regionString = regionValues.length > 0 ? regionValues.join(',') : '';
 
-    this.mpa.getMtnList(currentPage, search)
+    this.mpa.getMtnList(currentPage, search, regionString)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: mtnListPage) => {
@@ -365,14 +359,14 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   }
 
   public searchMtnRecord(search: string): void {
-    this._nextPage.set(1);
+    this._nextPage.set(0);
     this._search.set(search);
     this._mtnList.set([]);
     this.getNextMtnRecord(search);
   }
 
   public onSearchClear(): void {
-    this._nextPage.set(1);
+    this._nextPage.set(0);
     this._search.set('');
     this._mtnList.set([]);
     this.getNextMtnRecord();

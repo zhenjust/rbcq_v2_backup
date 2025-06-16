@@ -131,8 +131,8 @@
                     (nzClearIcon)="onSearchClear()"
                     [nzDropdownRender]="isLoadingTemplate"
                 >
-                    @for (mtnItem of mtnList(); track mtnItem.id) {
-                        <nz-option [nzValue]="mtnItem.name" [nzLabel]="mtnItem.name"></nz-option>
+                    @for (mtnItem of mtnList(); track mtnItem.mtnName) {
+                        <nz-option [nzValue]="mtnItem.mtnName" [nzLabel]="`${mtnItem.mtnName} - ${mtnItem.region}`"></nz-option>
                     }
                 </nz-select>
             </div>

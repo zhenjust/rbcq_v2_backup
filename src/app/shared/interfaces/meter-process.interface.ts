@@ -128,16 +128,8 @@ export interface meterProcessJobSearchGroupParams {
 }
 
 export interface mtnList {
-    substation: string;
-    modifiedDate: string;
-    status: string;
-    source: string;
-    facilityType: string;
-    createdBy: string;
-    modifiedBy: string;
-    name: string;
-    id: number;
-    region?: string
+    mtnName: string;
+    region: string
 }
 
 export interface mtnListPage {
