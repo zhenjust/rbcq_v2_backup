@@ -33,8 +33,6 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   private readonly _processType = signal<string>(MeterProcessTypes.DAILY);
 
   // Public readonly signals
-  public readonly nextPage = this._nextPage.asReadonly();
-  public readonly search = this._search.asReadonly();
   public readonly mtnIsLoading = this._mtnIsLoading.asReadonly();
   public readonly meterProcessBillingPeriod = this._meterProcessBillingPeriod.asReadonly();
   public readonly mtnList = this._mtnList.asReadonly();
@@ -202,11 +200,11 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
 
     const tradingDateObj = new Date(tradingDate);
     const startDate = new Date(tradingDateObj);
-    startDate.setHours(0, 5, 0, 0);
+    startDate.setHours(0, 5);
 
     const endDate = new Date(tradingDateObj);
     endDate.setDate(endDate.getDate() + 1);
-    endDate.setHours(0, 0, 0, 0);
+    endDate.setHours(0, 0);
 
     this.meterProcessForm.patchValue({
       startDatetime: startDate,
@@ -261,7 +259,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   }
 
   private resetComponentState(): void {
-    this._nextPage.set(1);
+    this._nextPage.set(0);
     this._search.set('');
     this._mtnList.set([]);
     this._meterProcessBillingPeriod.set([]);
@@ -330,13 +328,6 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     });
   }
 
-  public onDatetimeChange(controlName: string, date: Date): void {
-    if (date) {
-      const roundedDate = this.roundToNearestFiveMinutes(date);
-      this.meterProcessForm.get(controlName)?.setValue(roundedDate, { emitEvent: false });
-    }
-  }
-
   public getNextMtnRecord(search?: string): void {
     this._mtnIsLoading.set(true);
     const currentPage = this._nextPage();
@@ -389,18 +380,6 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
 
     this._processType.set(MeterProcessTypes.DAILY);
     this.rjs.updateFormValidity(false);
-  }
-
-  public getCurrentFormValue(): meterProcessParams {
-    return this.processFormValue(this.meterProcessForm.value);
-  }
-
-  private roundToNearestFiveMinutes(date: Date): Date {
-    const minutes = date.getMinutes();
-    const roundedMinutes = Math.round(minutes / 5) * 5;
-    const newDate = new Date(date);
-    newDate.setMinutes(roundedMinutes, 0, 0);
-    return newDate;
   }
 
   disableStartDate = (date: Date): boolean =>
