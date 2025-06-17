@@ -35,7 +35,7 @@
                         formControlName="tradingDate"
                         class="select-size"
                         nzPlaceHolder="Select trading date"
-                        [nzDisabledDate]="disableStartDate"
+                        [nzDisabledDate]="disableDate"
                     ></nz-date-picker>
                 </div>
             </div>
@@ -65,7 +65,7 @@
                     formControlName="startDatetime"
                     class="select-size"
                     nzPlaceHolder="Select start date and time"
-                    [nzDisabledDate]="disableStartDate"
+                    [nzDisabledDate]="disableDailyDates"
                     [nzShowTime]="{
                         nzFormat: 'HH:mm',
                         nzHourStep: 1,
@@ -80,7 +80,7 @@
                     formControlName="endDatetime"
                     class="select-size"
                     nzPlaceHolder="Select end date and time"
-                    [nzDisabledDate]="disableStartDate"
+                    [nzDisabledDate]="disableDailyDates"
                     [nzShowTime]="{
                         nzFormat: 'HH:mm',
                         nzHourStep: 1,

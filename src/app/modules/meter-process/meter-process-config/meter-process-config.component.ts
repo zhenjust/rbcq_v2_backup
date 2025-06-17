@@ -6,7 +6,7 @@ import { RunJobService } from '@shared/services/meterProcess';
 import { meterProcessBillingPeriod, mtnList, mtnListPage, meterProcessParams, meterProcessOptions } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
-import { differenceInCalendarDays } from 'date-fns';
+import { differenceInCalendarDays, isSameDay } from 'date-fns';
 import { DateFormatterUtilService } from '@shared/services/utils';
 
 @Component({
@@ -138,7 +138,14 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       )
       .subscribe(regionValues => {
         if (regionValues && regionValues.length > 0) {
+          this.meterProcessForm.patchValue({ mtn: [] }, { emitEvent: false });
+          this._mtnList.set([]);
+          this._nextPage.set(0);
+          this._search.set('');          
           this.loadMtnList();
+        } else {
+          this.meterProcessForm.patchValue({ mtn: [] }, { emitEvent: false });
+          this._mtnList.set([]);
         }
     });
   }
@@ -382,6 +389,8 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     this.rjs.updateFormValidity(false);
   }
 
-  disableStartDate = (date: Date): boolean =>
+  disableDate = (date: Date): boolean =>
     this.isDailyType() ? differenceInCalendarDays(date, this.today) > 0  : false;
+
+  disableDailyDates = (date: Date): boolean => !isSameDay(date, this.today);
 }
