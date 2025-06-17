@@ -65,7 +65,6 @@
                 #nzTable
                 [nzData]="billingPeriodDateRange()"
                 [nzSize]="'small'"
-                [nzScroll]="{ x: '100%' }"
             >
                 <thead>
                     <tr>
@@ -74,41 +73,41 @@
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @for (billingDate of billingPeriodDateRange(); track $index; let i = $index) {
-                        <tr>
-                            <td>
-                                <nz-date-picker
-                                    [ngModel]="billingDate.startDate"
-                                    (ngModelChange)="updateDateRange(i, 'startDate', $event)"
-                                    nzFormat="yyyy-MM-dd HH:mm"
-                                    [nzShowTime]="{ nzFormat: 'HH:mm', nzHourStep: 1, nzMinuteStep: 5 }"
-                                    nzPlaceHolder="Start Date & Time"
-                                ></nz-date-picker>
-                            </td>
-                            <td>
-                                <nz-date-picker
-                                    [ngModel]="billingDate.endDate"
-                                    (ngModelChange)="updateDateRange(i, 'endDate', $event)"
-                                    nzFormat="yyyy-MM-dd HH:mm"
-                                    [nzShowTime]="{ nzFormat: 'HH:mm', nzHourStep: 1, nzMinuteStep: 5 }"
-                                    nzPlaceHolder="End Date & Time"
-                                ></nz-date-picker>
-                            </td>
-                            <td>
-                                <button
-                                    nz-button
-                                    nzType="default"
-                                    nzDanger
-                                    type="button"
-                                    (click)="deleteDateRange(i)"
-                                >
-                                    Delete
-                                </button>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
+                    <tbody>
+                        @for (billingDate of nzTable.data; track $index; let i = $index) {
+                            <tr>
+                                <td>
+                                    <nz-date-picker
+                                        [ngModel]="billingDate.startDate"
+                                        (ngModelChange)="updateDateRange(i, 'startDate', $event)"
+                                        nzFormat="yyyy-MM-dd HH:mm"
+                                        [nzShowTime]="{ nzFormat: 'HH:mm', nzHourStep: 1, nzMinuteStep: 5 }"
+                                        nzPlaceHolder="Start Date & Time"
+                                    ></nz-date-picker>
+                                </td>
+                                <td>
+                                    <nz-date-picker
+                                        [ngModel]="billingDate.endDate"
+                                        (ngModelChange)="updateDateRange(i, 'endDate', $event)"
+                                        nzFormat="yyyy-MM-dd HH:mm"
+                                        [nzShowTime]="{ nzFormat: 'HH:mm', nzHourStep: 1, nzMinuteStep: 5 }"
+                                        nzPlaceHolder="End Date & Time"
+                                    ></nz-date-picker>
+                                </td>
+                                <td>
+                                    <button
+                                        nz-button
+                                        nzType="default"
+                                        nzDanger
+                                        type="button"
+                                        (click)="deleteDateRange(i)"
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
             </nz-table>
             <hr />
             <div class="form-item">
@@ -139,7 +138,10 @@
                     Add a Claimant
                 </button>
             </nz-flex>
-            <nz-table>
+            <nz-table
+                #nzTable
+                [nzSize]="'small'"
+            >
                 <thead>
                     <tr>
                         <th>Billing ID</th>
@@ -149,27 +151,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>
-                            <nz-select></nz-select>
-                        </td>
-                        <td>
-                            <nz-select></nz-select>
-                        </td>
-                        <td>
-                            <nz-input-number></nz-input-number>
-                        </td>
-                        <td>
-                            <button
-                                nz-button
-                                nzType="default"
-                                nzDanger
-                                type="button"
-                            >
-                                Delete
-                            </button>
-                        </td>
-                    </tr>
                 </tbody>
             </nz-table>
         </form>

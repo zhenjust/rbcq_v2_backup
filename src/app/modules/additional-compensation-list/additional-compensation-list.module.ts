@@ -19,6 +19,7 @@ import { FilterFileClaimComponent } from './filter-file-claim/filter-file-claim.
 import { NzResultModule } from 'ng-zorro-antd/result';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
 
 
 @NgModule({
@@ -44,7 +45,8 @@ import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
     SharedModule,
     NzResultModule,
     NzInputModule,
-    NzTimePickerModule
+    NzTimePickerModule,
+    NzDividerModule
   ]
 })
 export class AdditionalCompensationListModule { }

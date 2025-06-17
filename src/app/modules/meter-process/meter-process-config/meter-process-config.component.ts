@@ -146,6 +146,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
         } else {
           this.meterProcessForm.patchValue({ mtn: [] }, { emitEvent: false });
           this._mtnList.set([]);
+          this.loadMtnList();
         }
     });
   }

@@ -74,3 +74,23 @@ export interface settlementTableDate {
     number: number
 }
 
+export interface StartEndDateParam {
+    startDate: string
+    endDate: string
+}
+
+export interface AddtlCompensationRunDto {
+    billingId: string
+    mtn: string
+    approvedRate: number
+    acParamBillingIdList: string[]
+    acParamBillingIdMtnList: string[]
+    billingStartDate: string
+    billingEndDate: string
+    pricingCondition: string
+    startEndDateParams: StartEndDateParam[]
+}
+
+export interface addtlCompensationRunDtos {
+    addtlCompensationRunDtos: AddtlCompensationRunDto[]
+}
