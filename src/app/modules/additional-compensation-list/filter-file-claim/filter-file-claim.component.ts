@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Data } from '@angular/router';
 import { PRICING_CONDITIONS } from '@shared/constants';
 import { settlementSearchNames } from '@shared/enums';
-import { meterProcessBillingPeriod, settlementJobInstanceOptions } from '@shared/interfaces';
+import { addtlCompensationRunDtos, meterProcessBillingPeriod, settlementJobInstanceOptions } from '@shared/interfaces';
 import { MeterprocessService, SettlementService } from '@shared/services/api';
 import { DateFormatterUtilService } from '@shared/services/utils';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -27,6 +27,9 @@ export class FilterFileClaimComponent implements OnInit, OnDestroy {
   @ViewChild('fileClaim', { static: true }) fileClaim!: TemplateRef<void>;
 
   protected fileClaimForm!: FormGroup;
+
+  //Private Signal
+  private readonly _addtnlCompList = signal<addtlCompensationRunDtos | null>(null);
 
   public pricingConditions: settlementJobInstanceOptions[] = PRICING_CONDITIONS;
 
@@ -84,7 +87,20 @@ export class FilterFileClaimComponent implements OnInit, OnDestroy {
       nzContent: this.fileClaim,
       nzOkText: 'Run Job',
       nzCancelText: 'Cancel',
+      nzOnOk: () => this.runAddntlCompJob(),
     });
+  }
+
+  private runAddntlCompJob():void {
+    //call api from this method
+    this.sta.addtnlCompensationClaim(this._addtnlCompList).subscribe({
+      next: (response) => {
+
+      },
+      error: (error) => {
+        console.warn(error.message);
+      }
+    }).add(() => this.initializeFileClaimForm());
   }
 
   private initializeFileClaimForm(): void {

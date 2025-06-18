@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ParamsUtilService } from '../utils';
-import { meterProcessParams, meterProcessSearch, settlementParams, settlementTableDate } from '@shared/interfaces';
+import { settlementParams, settlementTableDate } from '@shared/interfaces';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -11,6 +11,7 @@ export class SettlementService {
 
   protected API_URL: string = '/stl-data-pipeline/job';
   protected BILLING_ID: string = '/settlement/addtl-comp/billing-id-list';
+  protected ADD_COMP: string = '/data-flow/task-executions/additional-compensation/multi';
 
 
   private paramUtil = inject(ParamsUtilService);
@@ -39,5 +40,10 @@ export class SettlementService {
   public getPricingConditionsBasedMtn(billId: string, acPc: string, startDate: string, endDate: string): Observable<[]>{
     const params = this.paramUtil.buildParams({billId, acPc, startDate, endDate})
     return this.http.get<[]>(this.BILLING_ID, { params });
+  }
+
+  //update type after testings
+  public addtnlCompensationClaim(payload: any): Observable<any>{
+    return this.http.post<any>(this.ADD_COMP, payload);
   }
 }
