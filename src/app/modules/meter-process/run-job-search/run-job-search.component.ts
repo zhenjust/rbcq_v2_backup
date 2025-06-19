@@ -7,7 +7,7 @@ import { MeterprocessService } from '@shared/services/api';
 import { RunJobService, SearchFilterService } from '@shared/services/meterProcess';
 import { DateFormatterUtilService, ProcessTypeUtilService } from '@shared/services/utils';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { filter, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-run-job-search',
@@ -154,9 +154,9 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
 
   applyFilter(): void {
     if (this.filterForm.valid) {
-      const rawValues: meterProcessJobSearchGroupParams = this.filterForm.getRawValue();
+      const rawValues: Partial<meterProcessJobSearchGroupParams> = this.filterForm.getRawValue();
 
-      const formattedValues: meterProcessJobSearchGroupParams = {
+      const formattedValues: Partial<meterProcessJobSearchGroupParams> = {
         ...rawValues,
         startDatetime: rawValues.startDatetime ? this.fdp.formatDateTime(rawValues.startDatetime) : undefined,
         endDatetime: rawValues.endDatetime ? this.fdp.formatDateTime(rawValues.endDatetime) : undefined,

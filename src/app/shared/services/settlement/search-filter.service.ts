@@ -12,7 +12,7 @@ export class SearchFilterService {
   jobs = signal<settlementTableDate | null>(null);
   error = signal<string | null>(null);
 
-  fetchJobs(searchParams: settlementParams ,searchName: string): void {
+  fetchJobs(searchParams: Partial<settlementParams> ,searchName: string): void {
     this.isLoading.set(true);
     this.error.set(null);
     this.sts.search(searchParams, searchName).subscribe({

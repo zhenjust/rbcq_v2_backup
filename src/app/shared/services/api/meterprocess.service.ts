@@ -19,7 +19,7 @@ export class MeterprocessService {
     private http: HttpClient
   ) { }
 
-  public search(data: meterProcessJobSearchGroupParams): Observable<meterProcessTable>{
+  public search(data: Partial<meterProcessJobSearchGroupParams>): Observable<meterProcessTable>{
     //hardcoding meterprocess job list
     const withName = {
       ...data,
@@ -29,7 +29,7 @@ export class MeterprocessService {
     return this.http.get<meterProcessTable>(`${this.API_URL}/search-group`, { params });
   }
 
-  public runJob(data: meterProcessParams): Observable<meterProcessParams>{
+  public runJob(data: Partial<meterProcessParams>): Observable<meterProcessParams>{
     //hardcoding body params
     const bodyParams: meterProcessRunJobPayload = {
       pipelineName: 'runWESM',

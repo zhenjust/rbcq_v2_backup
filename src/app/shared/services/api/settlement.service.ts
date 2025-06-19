@@ -20,7 +20,7 @@ export class SettlementService {
     private http: HttpClient
   ) { }
 
-  public search(data: settlementParams, searchName: string): Observable<settlementTableDate>{
+  public search(data: Partial<settlementParams>, searchName: string): Observable<settlementTableDate>{
     //hardcoding meterprocess job list
     const withName = {
       ...data,

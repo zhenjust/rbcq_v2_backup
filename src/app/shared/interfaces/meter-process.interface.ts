@@ -38,24 +38,24 @@ export interface meterProcessSearch {
 }
 
 export interface meterProcessParams {
-    billingPeriod?: string,
-    date?: string,
-    startDateTime?: string
-    endDateTime?: string,
-    tradingDate?: string,
-    billingPeriodName?: string,
-    processType?: MeterProcessTypes,
-    adjNo?: number | string,
-    regionGroup?: string,
-    name?: string,
-    mtn?: string | []
+    billingPeriod: string,
+    date: string,
+    startDateTime: string
+    endDateTime: string,
+    tradingDate: string,
+    billingPeriodName: string,
+    processType: MeterProcessTypes,
+    adjNo: number | string,
+    regionGroup: string,
+    name: string,
+    mtn: string | []
 }
 
 export interface meterProcessRunJobPayload {
     pipelineName: string
     refId: number,
     isGroup: boolean,
-    parameters: meterProcessParams
+    parameters: Partial<meterProcessParams>
 }
 
 export interface meterProcessBillingPeriod {
@@ -113,18 +113,18 @@ export interface meterProcessTable {
 }
 
 export interface meterProcessJobSearchGroupParams {
-  name?: string;
-  processType?: MeterProcessTypes;
-  billingPeriod?: string | undefined;
-  tradingDate?: string; 
-  startDatetime?: string; 
-  endDatetime?: string; 
-  adjNo?: number | string;
+  name: string;
+  processType: MeterProcessTypes;
+  billingPeriod: string | undefined;
+  tradingDate: string; 
+  startDatetime: string; 
+  endDatetime: string; 
+  adjNo: number | string;
   regionGroup?: string;
-  mtn?: string | [];
-  page?: number;
-  size?: number;
-  sort?: string;
+  mtn: string | [];
+  page: number;
+  size: number;
+  sort: string;
 }
 
 export interface mtnList {
@@ -137,5 +137,5 @@ export interface mtnListPage {
     draw: number
     recordsTotal: number
     recordsFiltered: any
-    hasMore?: boolean
+    hasMore: boolean
 }

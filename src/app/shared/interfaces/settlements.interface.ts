@@ -24,18 +24,18 @@ export interface settlementJobInstanceOptions {
 }
 
 export interface settlementParams {
-    billingPeriod?: string,
-    date?: string,
-    startDate?: string
-    endDate?: string,
-    tradingDate?: string,
-    billingPeriodName?: string,
-    processType?: MeterProcessTypes,
-    adjNo?: number | string,
-    regionGroup?: number | string,
-    name?: string,
-    tradingStartDate?: string,
-    tradingEndDate?: string
+    billingPeriod: string,
+    date: string,
+    startDate: string
+    endDate: string,
+    tradingDate: string,
+    billingPeriodName: string,
+    processType: MeterProcessTypes,
+    adjNo: number | string,
+    regionGroup: number | string,
+    name: string,
+    tradingStartDate: string,
+    tradingEndDate: string
 }
 
 export interface settlementPipelineParameters {

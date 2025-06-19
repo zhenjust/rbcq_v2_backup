@@ -131,7 +131,7 @@ export class FilterSearchComponent implements OnInit, OnDestroy {
     if (this.filterSettlementForm.valid) {
       const rawValues: settlementParams = this.filterSettlementForm.getRawValue();
 
-      const formattedValues: settlementParams = {
+      const formattedValues: Partial<settlementParams> = {
         ...rawValues,
         startDate: rawValues.startDate ? this.fdp.transformDate(rawValues.startDate) : undefined,
         endDate: rawValues.endDate ? this.fdp.transformDate(rawValues.endDate) : undefined,

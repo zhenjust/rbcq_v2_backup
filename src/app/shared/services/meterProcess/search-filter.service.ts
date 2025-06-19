@@ -13,7 +13,7 @@ export class SearchFilterService {
   jobs = signal<meterProcessTable | null>(null);
   error = signal<string | null>(null);
 
-  refreshJobs(params: meterProcessJobSearchGroupParams): void {
+  refreshJobs(params: Partial<meterProcessJobSearchGroupParams>): void {
     this.isLoading.set(true);
     this.error.set(null); // Clear any previous errors
     
