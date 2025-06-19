@@ -75,7 +75,7 @@
     <!-- Right side: Action buttons -->
     <nz-flex nzGap="large" nzAlign="start">
         <button nz-button nzType="primary" [disabled]="!rjs.hasValidConfiguration()" (click)="openRunWesmModal()">Run WESM</button>
-        @if (isFinalType) {<button nz-button nzType="primary">Clone Final</button>}
+        @if (isAdjustmentType) {<button nz-button nzType="primary" [disabled]="!rjs.hasValidConfiguration()">Clone Final</button>}
     </nz-flex>
 </nz-flex>
 

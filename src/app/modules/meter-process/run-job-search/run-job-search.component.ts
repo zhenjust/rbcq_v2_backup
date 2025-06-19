@@ -147,10 +147,9 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  // UPDATED: Use service method to check if configuration indicates final type
-  get isFinalType(): boolean {
+  get isAdjustmentType(): boolean {
     const configuration = this.rjs.getLatestConfiguration();
-    return configuration?.processType === MeterProcessTypes.FINAL;
+    return configuration?.processType === MeterProcessTypes.ADJUSTMENT;
   }
 
   applyFilter(): void {
@@ -220,9 +219,5 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
 
   toggleFilter() {
     this.hasFilter = !this.hasFilter;
-  }
-
-  get ifAdjustmentType(): boolean {
-    return this.meterProcessFilterParams?.processType === MeterProcessTypes.ADJUSTMENT;
   }
 }
