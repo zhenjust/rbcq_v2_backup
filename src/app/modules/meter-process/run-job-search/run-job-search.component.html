@@ -88,12 +88,16 @@
             @if (meterProcessParams?.adjNo) {<p><strong>Adjustment Number:</strong> {{meterProcessParams?.adjNo}}</p>}
         </nz-flex>
         <nz-flex nzGap="large" nzAlign="start">
-            @if (meterProcessParams?.billingPeriod) {<p><strong>Billing Period:</strong> {{ meterProcessParams?.billingPeriod }}</p>}
+            @if (meterProcessParams?.billingPeriodName) {<p><strong>Billing Period:</strong> {{ meterProcessParams?.billingPeriodName }}</p>}
             @if (meterProcessParams?.tradingDate) {<p><strong>Trading Date:</strong> {{ meterProcessParams?.tradingDate }}</p>}
         </nz-flex>
         <nz-flex nzGap="large" nzAlign="start">
-            @if (meterProcessParams?.startDatetime) {<p><strong>Start Date Time:</strong> {{ meterProcessParams?.startDatetime }}</p>}
-            @if (meterProcessParams?.endDatetime) {<p><strong>End Date Time:</strong> {{ meterProcessParams?.endDatetime }}</p>}
+            @if (meterProcessParams?.startDatetime) {<p><strong>Start Date Time:</strong> {{ meterProcessParams?.startDatetime?.slice(0, -3) }}</p>}
+            @if (meterProcessParams?.endDatetime) {<p><strong>End Date Time:</strong> {{ meterProcessParams?.endDatetime?.slice(0, -3) }}</p>}
+        </nz-flex>
+        <nz-flex nzGap="large" nzAlign="start">
+            @if (meterProcessParams?.regionGroup) {<p><strong>Region/s: </strong>{{ meterProcessParams?.regionGroup }}</p>}
+            @if (meterProcessParams?.mtn) {<p><strong>MTN/s: </strong>{{ meterProcessParams?.mtn }}</p>}
         </nz-flex>
     </nz-flex>
 </ng-template>

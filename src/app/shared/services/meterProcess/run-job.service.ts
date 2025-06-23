@@ -11,7 +11,6 @@ export class RunJobService {
 
   public readonly latestConfiguration = this._latestConfiguration.asReadonly();
   public readonly isConfigurationCleared = this._isConfigurationCleared.asReadonly();
-  public readonly isFormValid = this._isFormValid.asReadonly();
 
   // Computed signal for active configuration validation
   public readonly hasValidConfiguration = computed(() => {

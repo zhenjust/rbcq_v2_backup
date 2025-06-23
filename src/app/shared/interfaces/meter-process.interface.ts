@@ -38,16 +38,14 @@ export interface meterProcessSearch {
 }
 
 export interface meterProcessParams {
-    billingPeriod: string,
     date: string,
-    startDateTime: string
-    endDateTime: string,
+    startDatetime: string
+    endDatetime: string,
     tradingDate: string,
     billingPeriodName: string,
     processType: MeterProcessTypes,
     adjNo: number | string,
-    regionGroup: string,
-    name: string,
+    regionGroup: string
     mtn: string | []
 }
 
@@ -115,9 +113,9 @@ export interface meterProcessTable {
 export interface meterProcessJobSearchGroupParams {
   name: string;
   processType: MeterProcessTypes;
-  billingPeriod: string | undefined;
   tradingDate: string; 
   startDatetime: string; 
+  billingPeriodName: string,
   endDatetime: string; 
   adjNo: number | string;
   regionGroup?: string;

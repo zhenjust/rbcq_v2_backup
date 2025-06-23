@@ -27,7 +27,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
 
   isLoading: boolean = false;
   private destroy$ = new Subject<void>();
-  protected meterProcessParams: Partial<meterProcessJobSearchGroupParams> | null = null;
+  protected meterProcessParams: Partial<meterProcessParams> | null = null;
   protected meterProcessFilterParams: Partial<meterProcessJobSearchGroupParams> | null = null;
 
   private ptc = inject(ProcessTypeUtilService);
@@ -103,9 +103,9 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
     const filtered = Object.entries(configuration)
       .filter(([key, val]) => val !== null && val !== undefined && val !== '' && key !== 'tradingDate')
       .reduce((obj, [k, v]) => {
-        obj[k as keyof meterProcessJobSearchGroupParams] = v;
+        obj[k as keyof meterProcessParams] = v;
         return obj;
-      }, {} as Partial<meterProcessJobSearchGroupParams>);
+      }, {} as Partial<meterProcessParams>);
 
     this.meterProcessParams = filtered;
   }
@@ -182,7 +182,6 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
       });
       return;
     }
-
     this.modal.create({
       nzTitle: 'Run WESM Job',
       nzContent: this.runWesmModal,
@@ -195,8 +194,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
             .subscribe({
               next: (response: any) => {
                 this.modal.success({
-                  nzTitle: response.message,
-                  nzContent: `RunId: ${response.runId}`
+                  nzTitle: 'Jobs Successfully Triggered!',
                 });
                 this.sfs.refreshJobs({});
                 this.rjs.clearConfiguration();

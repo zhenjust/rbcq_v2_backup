@@ -35,7 +35,7 @@
                         formControlName="tradingDate"
                         class="select-size"
                         nzPlaceHolder="Select trading date"
-                        [nzDisabledDate]="disableDate"
+                        [nzDisabledDate]="disableTradingDateRange"
                     ></nz-date-picker>
                 </div>
             </div>
@@ -51,7 +51,7 @@
                         nzPlaceHolder="Select Billing Period"
                     >
                         @for (billing of meterProcessBillingPeriod(); track billing.id) {
-                            <nz-option [nzValue]="billing.billingPeriod" [nzLabel]="billing.supplyMonth"></nz-option>
+                            <nz-option [nzValue]="billing.name" [nzLabel]="billing.supplyMonth"></nz-option>
                         }
                     </nz-select>
                 </div>
@@ -65,12 +65,13 @@
                     formControlName="startDatetime"
                     class="select-size"
                     nzPlaceHolder="Select start date and time"
-                    [nzDisabledDate]="disableDailyDates"
+                    [nzDisabledDate]="disableStartDateRange"
                     [nzShowTime]="{
                         nzFormat: 'HH:mm',
                         nzHourStep: 1,
                         nzMinuteStep: 5
                     }"
+                    [nzDisabledTime]="isDailyType() ? disabledStartTime : undefined"
                     nzFormat="yyyy-MM-dd HH:mm"
                 ></nz-date-picker>
             </div>
@@ -80,12 +81,13 @@
                     formControlName="endDatetime"
                     class="select-size"
                     nzPlaceHolder="Select end date and time"
-                    [nzDisabledDate]="disableDailyDates"
+                    [nzDisabledDate]="disableEndDateRange"
                     [nzShowTime]="{
                         nzFormat: 'HH:mm',
                         nzHourStep: 1,
                         nzMinuteStep: 5
                     }"
+                    [nzDisabledTime]="isDailyType() ? disabledEndTime : undefined"
                     nzFormat="yyyy-MM-dd HH:mm"
                 ></nz-date-picker>
             </div>
@@ -130,7 +132,7 @@
                     [nzDropdownRender]="isLoadingTemplate"
                 >
                     @for (mtnItem of mtnList(); track mtnItem.mtnName) {
-                        <nz-option [nzValue]="mtnItem.mtnName" [nzLabel]="`${mtnItem.mtnName} - ${mtnItem.region}`"></nz-option>
+                        <nz-option [nzValue]="mtnItem.mtnName" [nzLabel]="mtnItem.mtnName"></nz-option>
                     }
                 </nz-select>
             </div>

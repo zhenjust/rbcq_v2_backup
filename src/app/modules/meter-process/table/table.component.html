@@ -19,7 +19,7 @@
             <tr>
                 <td [nzExpand]="expandSet.has(i)" (nzExpandChange)="onExpandChange($event, i)"></td>
                 <td>{{ data.processType }}</td>
-                <td>{{ data.billingPeriod ? `${data.startDatetime} - ${data.endDatetime}` : data.tradingDate }}</td>
+                <td>{{ data.billingPeriod ? `${data.startDatetime.slice(0, -8)}  -  ${data.endDatetime.slice(0, -8)}` : data.tradingDate }}</td>
                 <td>
                     <nz-tag [nzColor]="'blue'">
                         {{ data.pipelines.length || 0 }} Jobs
@@ -48,7 +48,12 @@
                                     <td>{{ pipeline.runId }}</td>
                                     <td>{{ formatDateTime(pipeline.runStart) }}</td>
                                     <td>{{ pipeline.parameters.processType || data.processType }}</td>
-                                    <td>{{ pipeline.parameters.tradingDate || data.tradingDate }}</td>
+                                    <td>
+                                        <!-- Start Date -->
+                                    </td>
+                                    <td>
+                                        <!-- End Date -->
+                                    </td>
                                     <td>{{ pipeline.parameters.regionGroup || '-' }}</td>
                                     <td>{{ pipeline.parameters.mtn || '-' }}</td>
                                     <td>
