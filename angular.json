@@ -52,14 +52,16 @@
                 "glob": "**/*",
                 "input": "src/assets",
                 "output": "/assets/",
-                "ignore": ["**/*.svg"]
+                "ignore": [
+                  "**/*.svg"
+                ]
               }
             ],
             "styles": [
               "./node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
               "node_modules/bootstrap/scss/bootstrap.scss",
               "src/styles.scss",
-              "node_modules/ngx-toastr/toastr.css" 
+              "node_modules/ngx-toastr/toastr.css"
             ],
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
@@ -135,21 +137,35 @@
                 "glob": "**/*",
                 "input": "src/assets",
                 "output": "/assets/",
-                "ignore": ["**/*.svg"]
+                "ignore": [
+                  "**/*.svg"
+                ]
               }
             ],
             "styles": [
               "./node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
               "src/styles.scss",
-              "node_modules/ngx-toastr/toastr.css" 
+              "node_modules/ngx-toastr/toastr.css"
             ],
             "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         }
       }
     }
   },
   "cli": {
-    "analytics": false
+    "analytics": false,
+    "schematicCollections": [
+      "angular-eslint"
+    ]
   }
 }
