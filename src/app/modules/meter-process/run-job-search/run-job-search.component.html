@@ -36,31 +36,10 @@
                     class="select-size"
                     nzPlaceHolder="Enter Billing Period">
                     @for (billing of meterProcessBillingPeriod; track billing.id) {
-                        <nz-option [nzValue]="billing.billingPeriod" [nzLabel]="billing.supplyMonth"></nz-option>
+                        <nz-option [nzValue]="billing.name" [nzLabel]="billing.supplyMonth"></nz-option>
                     }
                     </nz-select>
                 </div>
-            }
-
-            @if (filterForm.get('startDatetime')?.enabled && filterForm.get('endDatetime')?.enabled) {
-                <nz-space>
-                    <div class="form-item" *nzSpaceItem>
-                        <label class="form-label">Start Date:</label>
-                        <nz-date-picker
-                            formControlName="startDatetime"
-                            class="select-size"
-                            nzPlaceHolder="Select start date">
-                        </nz-date-picker>
-                        </div>
-                        <div class="form-item" *nzSpaceItem>
-                        <label class="form-label">End Date:</label>
-                        <nz-date-picker
-                            formControlName="endDatetime"
-                            class="select-size"
-                            nzPlaceHolder="Select end date">
-                        </nz-date-picker>
-                    </div>
-                </nz-space>
             }
 
             @if (filterForm.dirty) {

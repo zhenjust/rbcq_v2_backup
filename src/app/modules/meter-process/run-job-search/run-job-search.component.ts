@@ -53,21 +53,6 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
         },
       error: (err) => console.error(err)
       });
-
-    this.filterForm.get('billingPeriod')?.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((selectedValue) => {
-        const selectedBilling = this.meterProcessBillingPeriod.find(
-          (item) => item.billingPeriod === selectedValue
-        );
-
-        if (selectedBilling) {
-          this.filterForm.patchValue({
-            startDatetime: new Date(selectedBilling.startDate),
-            endDatetime: new Date(selectedBilling.endDate)
-          });
-        }
-      });
   }
 
   ngOnDestroy(): void {
@@ -114,8 +99,6 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
     this.filterForm = this.fb.group({
       processType: [null],
       billingPeriod: [{ value: '', disabled: true }],
-      startDatetime: [{ value: '', disabled: true }],
-      endDatetime: [{ value: '', disabled: true }],
       tradingDate: [{ value: '', disabled: true }]
     });
 
@@ -140,9 +123,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
       const selected = this.meterProcessBillingPeriod[0];
 
       this.filterForm.patchValue({
-        billingPeriod: selected.billingPeriod,
-        startDatetime: new Date(selected.startDate),
-        endDatetime: new Date(selected.endDate)
+        billingPeriod: selected.name
       });
     }
   }
@@ -158,9 +139,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
 
       const formattedValues: Partial<meterProcessJobSearchGroupParams> = {
         ...rawValues,
-        startDatetime: rawValues.startDatetime ? this.fdp.formatDateTime(rawValues.startDatetime) : undefined,
-        endDatetime: rawValues.endDatetime ? this.fdp.formatDateTime(rawValues.endDatetime) : undefined,
-        tradingDate: rawValues.tradingDate ? this.fdp.formatDateTime(rawValues.tradingDate) : undefined
+        tradingDate: rawValues.tradingDate ? this.fdp.formatDateOnly(rawValues.tradingDate) : undefined
       };
 
       this.sfs.refreshJobs(formattedValues);
