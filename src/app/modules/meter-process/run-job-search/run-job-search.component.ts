@@ -182,6 +182,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
       });
       return;
     }
+    // console.log(this.rjs.latestConfiguration());
     this.modal.create({
       nzTitle: 'Run WESM Job',
       nzContent: this.runWesmModal,

@@ -71,7 +71,7 @@
                         nzHourStep: 1,
                         nzMinuteStep: 5
                     }"
-                    [nzDisabledTime]="isDailyType() ? disabledStartTime : undefined"
+                    [nzDisabledTime]="disabledStartTime"
                     nzFormat="yyyy-MM-dd HH:mm"
                 ></nz-date-picker>
             </div>
@@ -87,7 +87,7 @@
                         nzHourStep: 1,
                         nzMinuteStep: 5
                     }"
-                    [nzDisabledTime]="isDailyType() ? disabledEndTime : undefined"
+                    [nzDisabledTime]="disabledEndTime"
                     nzFormat="yyyy-MM-dd HH:mm"
                 ></nz-date-picker>
             </div>
