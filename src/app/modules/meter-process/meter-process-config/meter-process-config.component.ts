@@ -48,7 +48,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   public readonly isNotDailyType = computed(() => this._processType() !== MeterProcessTypes.DAILY);
 
   public readonly selectedBillingPeriod = computed(() => {
-    const billingPeriodValue = this.meterProcessForm?.get('billingPeriod')?.value;
+    const billingPeriodValue = this.meterProcessForm?.get('billingPeriodName')?.value;
     if (!billingPeriodValue) return null;
     return this._meterProcessBillingPeriod().find(period => period.name === billingPeriodValue);
   });
@@ -110,7 +110,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     this.meterProcessForm = this.fb.group({
       processType: [MeterProcessTypes.DAILY, Validators.required],
       tradingDate: [new Date()],
-      billingPeriod: [null],
+      billingPeriodName: [null],
       startDatetime: [startDate, Validators.required],
       endDatetime: [endDate, Validators.required],
       regionGroup: [null],
@@ -147,7 +147,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.meterProcessForm.get('billingPeriod')?.valueChanges
+    this.meterProcessForm.get('billingPeriodName')?.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(selectedValue => {
         const billingPeriod = this._meterProcessBillingPeriod().find(item => item.name === selectedValue);
@@ -171,7 +171,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       if (this.isNotDailyType() && this._meterProcessBillingPeriod().length > 0) {
         const firstPeriod = this._meterProcessBillingPeriod()[0];
         this.updateBillingPeriodWithDatetime(firstPeriod);
-        this.meterProcessForm.patchValue({ billingPeriod: firstPeriod.billingPeriod });
+        this.meterProcessForm.patchValue({ billingPeriodName: firstPeriod.billingPeriod });
         this.updateServiceConfiguration();
       }
     });
@@ -259,14 +259,14 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   }
 
   private getResetValuesForProcessType(processType: string): any {
-    const baseReset = { tradingDate: null, billingPeriod: null, adjNo: null };
+    const baseReset = { tradingDate: null, billingPeriodName: null, adjNo: null };
 
     switch (processType) {
       case MeterProcessTypes.DAILY:
         return {
           ...baseReset,
           tradingDate: new Date(), // Keep trading date for daily
-          billingPeriod: null,
+          billingPeriodName: null,
           adjNo: null,
         };
       
@@ -283,7 +283,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   }
 
   private updateFieldStates(processType: string): void {
-    const billingControl = this.meterProcessForm.get('billingPeriod');
+    const billingControl = this.meterProcessForm.get('billingPeriodName');
     const adjControl = this.meterProcessForm.get('adjNo');
 
     // Reset validators and states
@@ -294,6 +294,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       adjControl?.disable();
     } else {
       billingControl?.enable();
+      billingControl?.setValidators(Validators.required);
       
       if (processType === MeterProcessTypes.ADJUSTMENT) {
         adjControl?.enable();
@@ -432,7 +433,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       processType: MeterProcessTypes.DAILY,
       regionGroup: [],
       tradingDate: new Date(),
-      billingPeriod: null,
+      billingPeriodName: null,
       startDatetime: startDate,
       endDatetime: endDate,
       mtn: [],
