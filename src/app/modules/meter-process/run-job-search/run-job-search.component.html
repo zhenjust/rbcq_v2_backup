@@ -9,7 +9,7 @@
         <form [formGroup]="filterForm" class="form-container">
             <div class="form-item">
                 <label class="form-label">Meter Process Type:</label>
-                <nz-select 
+                <nz-select
                 formControlName="processType"
                 class="select-size"
                 nzPlaceHolder="Enter Process Type"
@@ -31,7 +31,7 @@
             @if (filterForm.get('billingPeriod')?.enabled) {
                 <div class="form-item">
                     <label class="form-label">Billing Period:</label>
-                    <nz-select 
+                    <nz-select
                     formControlName="billingPeriod"
                     class="select-size"
                     nzPlaceHolder="Enter Billing Period">
@@ -59,9 +59,9 @@
 </nz-flex>
 
 
-<ng-template #runWesmModal let-modal>
+<ng-template #runMeterDataModal let-modal>
     <nz-flex nzVertical="true">
-        <nz-result nzStatus="info" nzTitle="You are going to run a WESM Job"></nz-result>
+        <nz-result nzStatus="info" nzTitle="You are going to run a Meter Data Job"></nz-result>
         <nz-flex nzGap="large" nzAlign="start">
             <p><strong>Job Type:</strong> {{ meterProcessParams?.processType }}</p>
             @if (meterProcessParams?.adjNo) {<p><strong>Adjustment Number:</strong> {{meterProcessParams?.adjNo}}</p>}

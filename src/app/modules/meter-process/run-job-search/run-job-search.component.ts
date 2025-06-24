@@ -23,7 +23,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
   meterProcessTypeOptions: meterProcessOptions[] = METER_PROCESS_TYPE_OPTION;
   meterProcessBillingPeriod: meterProcessBillingPeriod[] = [];
 
-  @ViewChild('runWesmModal', { static: true }) runWesmModal!: TemplateRef<void>;
+  @ViewChild('runMeterDataModal', { static: true }) runMeterDataModal!: TemplateRef<void>;
 
   isLoading: boolean = false;
   private destroy$ = new Subject<void>();
@@ -65,7 +65,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
 
       if (configuration) {
         this.isFormValid = this.rjs.hasValidConfiguration();
-        
+
         this.processConfigurationForSearch(configuration);
       } else {
         this.isFormValid = false;
@@ -162,8 +162,8 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
     }
     // console.log(this.rjs.latestConfiguration());
     this.modal.create({
-      nzTitle: 'Run WESM Job',
-      nzContent: this.runWesmModal,
+      nzTitle: 'Run Meter Data Job',
+      nzContent: this.runMeterDataModal,
       nzOkText: 'Run Job',
       nzCancelText: 'Cancel',
       nzOnOk: () => {

@@ -6,11 +6,6 @@ export interface meterProcessPayload {
     regionGroup: RegionGroup
 }
 
-export interface meterProcessPayloadNotDaily extends meterProcessPayload {
-    startDate: string,
-    endDate: string
-}
-
 export interface meterProcessTableData extends meterProcessPayload {
     billingPeriod: number,
     billingPeriodName: string | null,
