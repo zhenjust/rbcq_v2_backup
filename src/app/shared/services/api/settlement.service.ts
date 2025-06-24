@@ -9,10 +9,9 @@ import { Observable } from 'rxjs';
 })
 export class SettlementService {
 
-  protected API_URL: string = '/stl-data-pipeline/job';
-  protected BILLING_ID: string = '/settlement/addtl-comp/billing-id-list';
-  protected ADD_COMP: string = '/data-flow/task-executions/additional-compensation/multi';
-
+  private API_URL: string = '/stl-data-pipeline/job';
+  private BILLING_ID: string = '/settlement/addtl-comp/billing-id-list';
+  private ADD_COMP: string = '/data-flow/task-executions/additional-compensation/multi';
 
   private paramUtil = inject(ParamsUtilService);
   private http = inject(HttpClient);

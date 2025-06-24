@@ -9,9 +9,10 @@ import { ParamsUtilService } from '../utils';
 })
 export class MeterprocessService {
 
-  protected API_URL: string = '/mtr-data-pipeline/job';
-  protected METER_PROCESS: string = '/meter-process/billing-period/find-all';
-  protected MTN_LIST: string = '/reg/mtn/list/region';
+  private API_URL: string = '/mtr-data-pipeline/job';
+  private METER_PROCESS: string = '/meter-process/billing-period/find-all';
+  private MTN_LIST: string = '/reg/mtn/list/region';
+  private PIPELINE_NAME: string = 'runMeterDataInitialize';
 
   private paramUtil = inject(ParamsUtilService);
   private http = inject(HttpClient);
@@ -20,7 +21,7 @@ export class MeterprocessService {
     //hardcoding meterprocess job list
     const withName = {
       ...data,
-      name: 'runWESM'
+      name: this.PIPELINE_NAME
     }
     const params = this.paramUtil.buildParams(withName);
     return this.http.get<meterProcessTable>(`${this.API_URL}/search-group`, { params });
@@ -29,7 +30,7 @@ export class MeterprocessService {
   public runJob(data: Partial<meterProcessParams>): Observable<meterProcessParams>{
     //hardcoding body params
     const bodyParams: meterProcessRunJobPayload = {
-      pipelineName: 'runWESM',
+      pipelineName: this.PIPELINE_NAME,
       refId: 25,
       isGroup: true,
       parameters: data
@@ -40,9 +41,9 @@ export class MeterprocessService {
   public getBillingPeriod(): Observable<meterProcessBillingPeriod[]> {
     return this.http.get<meterProcessBillingPeriod[]>(this.METER_PROCESS);
   }
-  
+
   public getMtnList(pageNumber?: number, search?: string, region?: string): Observable<mtnListPage> {
-    // manually adding parameters 
+    // manually adding parameters
     const payload = {
           "pageNo": pageNumber ? pageNumber : 0,
           "pageSize": 10,
