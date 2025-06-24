@@ -6,7 +6,7 @@
     "start": "ng serve --hmr",
     "start-proxy": "node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng serve --hmr --proxy-config proxy.conf.js",
     "dev": "node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng serve --hmr --proxy-config dev.conf.js",
-    "build": "node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build --configuration production",
+    "build": "npm run lint && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint"
@@ -28,6 +28,7 @@
     "@ng-bootstrap/ng-bootstrap": "^18.0.0",
     "@ng-select/ng-select": "^14.2.4",
     "@popperjs/core": "^2.11.8",
+    "bootstrap": "^5.3.3",
     "date-fns": "^4.1.0",
     "highcharts-angular": "^4.0.1",
     "moment": "^2.30.1",
