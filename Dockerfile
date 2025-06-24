@@ -4,6 +4,8 @@ COPY nginx.conf /etc/nginx/nginx.conf
 
 WORKDIR /usr/share/nginx/html
 RUN rm -rf ./*
-COPY dist/ui-bsmd2 .
+
+RUN mkdir -p /usr/share/nginx/html/crss
+COPY dist/ui-bsmd2 /usr/share/nginx/html/crss
 
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
