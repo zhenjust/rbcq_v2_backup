@@ -51,7 +51,7 @@ export interface meterProcessParams {
 
 export interface meterProcessRunJobPayload {
     pipelineName: string
-    refId: number,
+    refId?: number,
     isGroup: boolean,
     parameters: Partial<meterProcessParams>
 }
@@ -113,10 +113,10 @@ export interface meterProcessTable {
 export interface meterProcessJobSearchGroupParams {
   name: string;
   processType: MeterProcessTypes;
-  tradingDate: string; 
-  startDatetime: string; 
+  tradingDate: string;
+  startDatetime: string;
   billingPeriodName: string,
-  endDatetime: string; 
+  endDatetime: string;
   adjNo: number | string;
   regionGroup?: string;
   mtn: string | [];
