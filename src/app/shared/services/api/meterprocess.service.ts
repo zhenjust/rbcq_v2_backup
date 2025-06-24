@@ -1,8 +1,15 @@
-import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import { meterProcessBillingPeriod, meterProcessJobSearchGroupParams, meterProcessParams, meterProcessRunJobPayload, meterProcessTable, mtnListPage } from '@shared/interfaces';
-import { Observable } from 'rxjs';
-import { ParamsUtilService } from '../utils';
+import {HttpClient} from '@angular/common/http';
+import {inject, Injectable} from '@angular/core';
+import {
+  meterProcessBillingPeriod,
+  meterProcessJobSearchGroupParams,
+  meterProcessParams,
+  meterProcessRunJobPayload,
+  meterProcessTable,
+  mtnListPage
+} from '@shared/interfaces';
+import {Observable} from 'rxjs';
+import {ParamsUtilService} from '../utils';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +19,7 @@ export class MeterprocessService {
   private API_URL: string = '/mtr-data-pipeline/job';
   private METER_PROCESS: string = '/meter-process/billing-period/find-all';
   private MTN_LIST: string = '/reg/mtn/list/region';
-  private PIPELINE_NAME: string = 'runMeterDataInitialize';
+  private PIPELINE_NAME: string = 'runMeterData';
 
   private paramUtil = inject(ParamsUtilService);
   private http = inject(HttpClient);
@@ -28,9 +35,8 @@ export class MeterprocessService {
   }
 
   public runJob(data: Partial<meterProcessParams>): Observable<meterProcessParams>{
-    //hardcoding body params
     const bodyParams: meterProcessRunJobPayload = {
-      pipelineName: this.PIPELINE_NAME,
+      pipelineName: `${this.PIPELINE_NAME}-initialize`,
       isGroup: true,
       parameters: data
     }
