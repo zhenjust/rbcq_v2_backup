@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { inject, Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot, CanActivate, UrlTree } from '@angular/router';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { apiPath } from '@shared/constants';
 import { environment } from 'environments/environment';
@@ -11,7 +11,7 @@ import { catchError, map, Observable, of, switchMap, tap } from 'rxjs';
 export class AuthorizeGuard implements CanActivate {  
   private auth_url: string = environment.__API_URL__ + apiPath.__AUTH_PATH__;
 
-  constructor(private authService: AuthorizationService) {}
+  private authService = inject(AuthorizationService);
 
   searchCode(): string | null {
     const urlParams = new URLSearchParams(window.location.search);
@@ -19,8 +19,7 @@ export class AuthorizeGuard implements CanActivate {
   }
 
   canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
+    route: ActivatedRouteSnapshot
   ): Observable<boolean> | boolean {
     if (route.data['loginNonRequired']) {
       return true;
@@ -59,9 +58,8 @@ export class AuthorizeGuard implements CanActivate {
   }
 
   canActivateChild(
-    childRoute: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
+    childRoute: ActivatedRouteSnapshot
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    return this.canActivate(childRoute, state);
+    return this.canActivate(childRoute);
   }
 }

@@ -1,19 +1,15 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { apiPath } from '@shared/constants';
 import { AuthToken, CurrentUser } from '@shared/interfaces';
-import { ToastrService } from 'ngx-toastr';
-import { catchError, map, Observable, tap, throwError } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthorizationService {
   private currentUser: CurrentUser | null = null;
-  
-  constructor(
-    private http: HttpClient
-  ) {}
+  private http = inject(HttpClient);
 
   getUser(): Observable<CurrentUser> {
     return this.http.get<CurrentUser>(`${apiPath.__AUTH_PATH__}/user`);

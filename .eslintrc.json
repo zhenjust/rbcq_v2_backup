@@ -35,7 +35,9 @@
         "@typescript-eslint/no-empty-function": "off",
         "@typescript-eslint/no-non-null-assertion": "off",
         "@typescript-eslint/no-duplicate-enum-values": "off",
-        "@angular-eslint/no-empty-lifecycle-method": "off"
+        "@angular-eslint/no-empty-lifecycle-method": "off",
+        "@angular-eslint/prefer-standalone": "off",
+        "@typescript-eslint/no-explicit-any": "off"
       }
     },
     {

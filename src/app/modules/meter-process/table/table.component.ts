@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, effect } from '@angular/core';
+import { Component, OnInit, computed, effect, inject } from '@angular/core';
 import { meterProcessTable } from '@shared/interfaces';
 import { SearchFilterService } from '@shared/services/meterProcess';
 import { ToastrService } from 'ngx-toastr';
@@ -52,11 +52,10 @@ export class TableComponent implements OnInit {
   ];
   
   expandSet = new Set<number>();
-
-  constructor(
-    public toast: ToastrService,
-    public sfs: SearchFilterService
-  ) {
+  public toast = inject(ToastrService);
+  public sfs = inject(SearchFilterService);
+  
+  constructor() {
     effect(() => {
       const jobs = this.sfs.jobs();
       const error = this.sfs.error();

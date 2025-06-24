@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
   HttpEvent,
   HttpHandler,
@@ -12,8 +12,7 @@ import { AuthorizationService } from '@core/services/authorization.service';
 
 @Injectable()
 export class RequestInterceptor implements HttpInterceptor {
-  
-  constructor(private authService: AuthorizationService) {}
+  private authService = inject(AuthorizationService);
   
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     if (request.url.includes('/oauth/token')) {

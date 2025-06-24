@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Data } from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
+import { Data } from '@angular/router';
 import { settlementPageTitles } from '@shared/enums';
 
 @Component({
@@ -11,7 +11,7 @@ export class BaseComponent implements OnInit {
   pageTitle: string | undefined = undefined;
   isLineRentalStatus: boolean = false;
 
-  constructor(private router: ActivatedRoute){};
+  private router = inject(ActiveXObject);
 
   ngOnInit(): void {
     this.router.data.subscribe((data: Data) => {

@@ -94,7 +94,7 @@ export class FilterFileClaimComponent implements OnInit, OnDestroy {
   private runAddntlCompJob():void {
     //call api from this method
     this.sta.addtnlCompensationClaim(this._addtnlCompList).subscribe({
-      next: (response) => {
+      next: () => {
 
       },
       error: (error) => {

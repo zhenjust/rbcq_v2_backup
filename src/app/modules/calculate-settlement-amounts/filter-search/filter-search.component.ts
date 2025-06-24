@@ -26,13 +26,10 @@ export class FilterSearchComponent implements OnInit, OnDestroy {
   
   private ptc = inject(ProcessTypeUtilService);
   private fb = inject(FormBuilder);
-  private fdp = inject(DateFormatterUtilService)
-  
-  constructor(
-    private mpa: MeterprocessService,
-    private searchFilterService: SearchFilterService,
-    private router: ActivatedRoute,
-  ) {}
+  private fdp = inject(DateFormatterUtilService);
+  private mpa = inject(MeterprocessService);
+  private searchFilterService = inject(SearchFilterService);
+  private router = inject(ActivatedRoute);
 
   private setSettlementOptions(): void {
     if (this.searchName === settlementSearchNames.RESERVE_MARKET_FEE || 

@@ -62,13 +62,12 @@ export class TableComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private runSettlements = inject(RunSettlementService);
   private sfs = inject(SearchFilterService);
+  private router = inject(ActivatedRoute);
+  public toast = inject(ToastrService);
   tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
   isLoading = computed(() => this.sfs.isLoading());
 
-  constructor(
-    private router: ActivatedRoute,
-    public toast: ToastrService
-  ){
+  constructor(){
     effect(() => {
       const jobs = this.sfs.jobs();
       const error = this.sfs.error();

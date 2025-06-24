@@ -1,9 +1,9 @@
-import { Component, computed, effect, inject, OnInit } from '@angular/core';
+import { Component, computed, effect, inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Data } from '@angular/router';
 import { settlementPipeline, settlementTableDate } from '@shared/interfaces';
 import { RunSettlementService, SearchFilterService } from '@shared/services/settlement';
 import { ToastrService } from 'ngx-toastr';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 
 interface tableColumn {
   name: string;
@@ -20,7 +20,7 @@ interface jobSelect {
   standalone: false,
   templateUrl: './table.component.html'
 })
-export class TableComponent implements OnInit {
+export class TableComponent implements OnInit, OnDestroy {
   isLineRentalStatus: boolean = false;
   selectedAction: string = '';
   defaultTableData: settlementTableDate = {
@@ -59,14 +59,13 @@ export class TableComponent implements OnInit {
 
   private runSettlements = inject(RunSettlementService);
   private sfs = inject(SearchFilterService);
+  private router = inject(ActivatedRoute);
+  private toast = inject(ToastrService);
 
   tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
   isLoading = computed(() => this.sfs.isLoading());
 
-  constructor(
-    private router: ActivatedRoute,
-    public toast: ToastrService
-  ){
+  constructor(){
     effect(() => {
       const jobs = this.sfs.jobs();
       const error = this.sfs.error();

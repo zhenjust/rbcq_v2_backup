@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { externalRoutes, NEW_ROUTES } from '@shared/constants';
 import { CurrentUser, navItems } from '@shared/interfaces';
 import { faBell, faHome, faChevronDown, faChevronRight, faAddressCard, faBuilding, faCopy, faUserLarge, faCircleUser, faCalendar, faFileArchive, faAddressBook, faBuildingUn, faTachometer, faTachometerAlt, faBinoculars, faContactCard, faHandHoldingHand, faTachometerAverage, faListCheck, faRoadCircleCheck } from '@fortawesome/free-solid-svg-icons';
@@ -17,7 +17,7 @@ import { ToastrService } from 'ngx-toastr';
 export class NavbarComponent implements OnInit {
   @Input() isCollapsed: boolean = true;
   @Input() isHovered: boolean = false;
-  @Output() toggle: EventEmitter<void> = new EventEmitter<void>();
+  @Output() navbarToggle: EventEmitter<void> = new EventEmitter<void>();
   private userData: CurrentUser | null = null;
   
   faChevronDown = faChevronDown;
@@ -25,12 +25,10 @@ export class NavbarComponent implements OnInit {
   navItems!: navItems[];
   openDropdowns: Record<string, boolean | Record<string, boolean>> = {};
   isLoading: boolean = true;
-  
-  constructor(
-    private r: Router, 
-    private authorizationService: AuthorizationService,
-    private toast: ToastrService
-  ) {}
+
+  private r = inject(Router);
+  private authorizationService = inject(AuthorizationService);
+  private toast = inject(ToastrService);
   
   ngOnInit(): void {
     this.loadUserData();
@@ -1021,7 +1019,7 @@ export class NavbarComponent implements OnInit {
   }
   
   toggleCollapse(): void {
-    this.toggle.emit();
+    this.navbarToggle.emit();
   }
   
   shouldShowText(): boolean {

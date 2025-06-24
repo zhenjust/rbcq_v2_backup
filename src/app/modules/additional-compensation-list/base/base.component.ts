@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -9,7 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 export class BaseComponent implements OnInit {
   pageTitle: string | undefined;
 
-  constructor(private router: ActivatedRoute) {};
+  private router = inject(ActivatedRoute);
   ngOnInit(): void {
     this.router.data.subscribe((data: any) => { //TODO update this and create proper interface
       this.pageTitle = data.pageTitle;

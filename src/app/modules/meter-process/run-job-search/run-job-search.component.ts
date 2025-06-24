@@ -31,15 +31,14 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
   protected meterProcessFilterParams: Partial<meterProcessJobSearchGroupParams> | null = null;
 
   private ptc = inject(ProcessTypeUtilService);
-  private fdp = inject(DateFormatterUtilService)
+  private fdp = inject(DateFormatterUtilService);
+  public rjs = inject(RunJobService);
+  public modal = inject(NzModalService);
+  private mpa = inject(MeterprocessService);
+  private fb = inject(FormBuilder);
+  private sfs = inject(SearchFilterService);
 
-  constructor(
-    public rjs: RunJobService,
-    public modal: NzModalService,
-    private mpa: MeterprocessService,
-    private fb: FormBuilder,
-    private sfs: SearchFilterService
-  ) {
+  constructor() {
     this.setupServiceEffects();
   }
 
@@ -172,7 +171,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
           this.isLoading = true;
           this.mpa.runJob(this.meterProcessParams!)
             .subscribe({
-              next: (response: any) => {
+              next: () => {
                 this.modal.success({
                   nzTitle: 'Jobs Successfully Triggered!',
                 });

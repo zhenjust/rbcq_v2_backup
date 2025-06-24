@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { faEllipsisVertical, IconDefinition } from '@fortawesome/free-solid-svg-icons';
@@ -34,12 +34,10 @@ export class HeaderComponent implements OnInit{
     { label: 'FAQs', url: HEADER_ROUTES.FAQ }
   ];
 
-  constructor(
-    private authServices: AuthorizationService,
-    public toast: ToastrService,
-    public router: Router,
-    public modal: NzModalService
-  ){}
+  private authServices = inject(AuthorizationService);
+  public toast = inject(ToastrService);
+  public router = inject(Router);
+  public modal = inject(NzModalService);
 
   ngOnInit(): void {
       this.checkUser();

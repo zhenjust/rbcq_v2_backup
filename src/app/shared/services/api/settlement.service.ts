@@ -15,10 +15,7 @@ export class SettlementService {
 
 
   private paramUtil = inject(ParamsUtilService);
-
-  constructor(
-    private http: HttpClient
-  ) { }
+  private http = inject(HttpClient);
 
   public search(data: Partial<settlementParams>, searchName: string): Observable<settlementTableDate>{
     //hardcoding meterprocess job list
