@@ -57,14 +57,9 @@ export class TableComponent implements OnInit {
   
   constructor() {
     effect(() => {
-      const jobs = this.sfs.jobs();
+      this.sfs.jobs();
       const error = this.sfs.error();
       const loading = this.sfs.isLoading();
-      
-      if (jobs && !loading) {
-        this.toast.success('Jobs Loaded!');
-      }
-      
       if (error && !loading) {
         this.toast.error('Failed to load jobs', error);
       }
