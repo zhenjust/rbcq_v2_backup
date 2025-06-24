@@ -12,7 +12,7 @@ export class MeterprocessService {
   private API_URL: string = '/mtr-data-pipeline/job';
   private METER_PROCESS: string = '/meter-process/billing-period/find-all';
   private MTN_LIST: string = '/reg/mtn/list/region';
-  private PIPELINE_NAME: string = 'runMeterDataInitialize';
+  private PIPELINE_NAME: string = 'metering/runMeterDataInitialize';
 
   private paramUtil = inject(ParamsUtilService);
   private http = inject(HttpClient);
