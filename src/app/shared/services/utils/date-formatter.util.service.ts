@@ -41,7 +41,7 @@ export class DateFormatterUtilService {
       return formattedDate;
   }
 
-  formatDateTime(date: string): string {
+  formatDateTime(date: string | Date): string {
     if (!date) return '';
     
     const dateObj = new Date(date);
