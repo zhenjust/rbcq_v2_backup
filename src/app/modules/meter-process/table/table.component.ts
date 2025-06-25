@@ -70,10 +70,11 @@ export class TableComponent implements OnInit {
   pipelineColumnItem: tableColumn[] = [
     {name: 'Name'},
     {name: 'Run Id'},
-    {name: 'Run By'},
     {name: 'Run Start'},
     {name: 'Run End'},
-    {name: 'Status'}
+    {name: 'Duration'},
+    {name: 'Run By'},
+    {name: 'Status'},
   ]
 
   expandSet = new Set<number>();
