@@ -85,7 +85,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
 
   private processConfigurationForSearch(configuration: meterProcessParams): void {
     const filtered = Object.entries(configuration)
-      .filter(([key, val]) => val !== null && val !== undefined && val !== '')
+      .filter(([val]) => val !== null && val !== undefined && val !== '')
       .reduce((obj, [k, v]) => {
         obj[k as keyof meterProcessParams] = v;
         return obj; 
@@ -160,7 +160,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    // console.log(this.rjs.latestConfiguration());
+    console.log(this.rjs.latestConfiguration());
     this.modal.create({
       nzTitle: 'Run Meter Data Job',
       nzContent: this.runMeterDataModal,
