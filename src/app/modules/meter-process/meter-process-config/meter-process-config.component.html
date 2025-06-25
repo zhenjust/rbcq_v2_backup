@@ -32,6 +32,7 @@
                 <div class="label-container">
                     <label class="form-label">Trading Date:</label>
                     <nz-date-picker
+                        nzShowNow="false"
                         formControlName="tradingDate"
                         class="select-size"
                         nzPlaceHolder="Select trading date"
@@ -46,6 +47,7 @@
                 <div class="label-container">
                     <label class="form-label">Billing Period:</label>
                     <nz-select
+                        nzShowSearch
                         formControlName="billingPeriodName"
                         class="select-size"
                         nzPlaceHolder="Select Billing Period"
@@ -62,6 +64,7 @@
             <div class="form-item" *nzSpaceItem>
                 <label class="form-label">Start Date Time:</label>
                 <nz-date-picker
+                    nzShowNow="false"
                     formControlName="startDatetime"
                     class="select-size"
                     nzPlaceHolder="Select start date and time"
@@ -78,6 +81,7 @@
             <div class="form-item" *nzSpaceItem>
                 <label class="form-label">End Date Time:</label>
                 <nz-date-picker
+                    nzShowNow="false"
                     formControlName="endDatetime"
                     class="select-size"
                     nzPlaceHolder="Select end date and time"

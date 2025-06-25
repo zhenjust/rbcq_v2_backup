@@ -159,7 +159,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    console.log(this.rjs.latestConfiguration());
+    // console.log(this.rjs.latestConfiguration());
     this.modal.create({
       nzTitle: 'Run Meter Data Job',
       nzContent: this.runMeterDataModal,

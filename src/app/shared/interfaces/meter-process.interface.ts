@@ -37,9 +37,10 @@ export interface meterProcessParams {
     endDatetime: string,
     tradingDate: string,
     billingPeriodName: string,
+    billingStartDate: string,
+    billingEndDate: string,
     processType: MeterProcessTypes,
     adjNo: number | string,
-    regionGroup: string
     mtn: string | []
 }
 
