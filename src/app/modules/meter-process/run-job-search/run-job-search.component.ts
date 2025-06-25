@@ -175,7 +175,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
                   nzTitle: 'Jobs Successfully Triggered!',
                 });
                 this.sfs.refreshJobs({});
-                this.rjs.clearConfiguration();
+                // this.rjs.clearConfiguration();
                 resolve();
               },
               error: (err) => {

@@ -57,7 +57,7 @@ export class DateFormatterUtilService {
     return `${year}-${month}-${day} ${hours}:${minutes}`;
   }
 
-  formatDateOnly(date: string): string {
+  formatDateOnly(date: string | Date): string {
     if (!date) return '';
     
     const dateObj = new Date(date);

@@ -21,6 +21,7 @@
                 <td [nzExpand]="expandSet.has(parentIndex)" (nzExpandChange)="onExpandChange($event, parentIndex)"></td>
                 <td>{{ data.processType }}</td>
                 <td>{{ data.billingPeriod ? data.billingPeriod : data.tradingDate }}</td>
+                <td>{{ data.adjNo ? data.adjNo : '' }}</td>
                 <td>
                     <nz-tag [nzColor]="'blue'">
                         {{ data.pipelines.length || 0 }} Jobs
@@ -29,112 +30,117 @@
             </tr>
             <tr [nzExpand]="expandSet.has(parentIndex)">
                 <td [attr.colspan]="columnItem.length + 1" style="padding: 0;">
-                    <div class="centered-inner-table">
-                        <nz-table
-                            #innerTable
-                            [nzData]="data.pipelines || []"
-                            [nzSize]="'small'"
-                            [nzShowPagination]="false"
-                        >
-                            <thead>
+                    <nz-table
+                        #innerTable
+                        nzBordered="true"
+                        [nzData]="data.pipelines || []"
+                        [nzSize]="'small'"
+                        [nzShowPagination]="false"
+                    >
+                        <thead>
+                            <tr>
+                                <th nzWidth="40px"></th>
+                                @for (column of childColumnItem; track column) {
+                                    <th>{{column.name}}</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (pipeline of innerTable.data; track pipeline; let pipelineIndex = $index) {
                                 <tr>
-                                    <th nzWidth="40px"></th>
-                                    @for (column of childColumnItem; track column) {
-                                        <th>{{column.name}}</th>
-                                    }
+                                    <td [nzExpand]="isPipelineExpanded(parentIndex, pipelineIndex)" 
+                                        (nzExpandChange)="onPipelineExpandChange($event, parentIndex, pipelineIndex)"></td>
+                                    <td>{{ pipeline.id }}</td>
+                                    <td>{{ dfs.formatDateOnly(pipeline.lastModifiedDatetime) }}</td>
+                                    <td>{{ pipeline.lastModifiedBy }}</td>
+                                    <td>{{ data.processType }}</td>
+                                    <td>{{ pipeline.parameters.startDatetime }}</td>
+                                    <td>{{ pipeline.parameters.endDatetime }}</td>
+                                    <td>{{ pipeline.parameters.mtn || '-' }}</td>
+                                    <td>
+                                        <nz-tag>
+                                            {{ pipeline.status }}
+                                        </nz-tag>
+                                    </td>
+                                    <td>
+                                        <!-- PROGRESS SECTION -->
+                                    </td>
+                                    <td>
+                                        <nz-space nzDirection="vertical" nzSize="small">
+                                            @if (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_METER_DATA || 
+                                                    pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_SETTLEMENT_READY) {
+                                                <a nz-button nzType="link" nzBlock 
+                                                    (click)="openJobModal(pipeline, getJobTypeFromStatus(pipeline.status), meterDataPipelines.SETTLEMENT_READY)">
+                                                    Run Settlement - Ready
+                                                </a>
+                                            }
+                                            @if (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_GESQ) {
+                                                <a nz-button nzType="link" nzBlock 
+                                                    (click)="openJobModal(pipeline, getJobTypeFromStatus(pipeline.status), meterDataPipelines.FINALIZE_READY)">
+                                                    Finalize Settlement - Ready
+                                                </a>
+                                            }
+                                            <!-- <a nz-button nzType="link" nzBlock >
+                                                Generate MQ Report
+                                            </a> -->
+                                        </nz-space>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @for (pipeline of innerTable.data; track pipeline; let pipelineIndex = $index) {
-                                    <tr>
-                                        <td [nzExpand]="isPipelineExpanded(parentIndex, pipelineIndex)" 
-                                            (nzExpandChange)="onPipelineExpandChange($event, parentIndex, pipelineIndex)"></td>
-                                        <td>{{ pipeline.id }}</td>
-                                        <td>{{ pipeline.lastModifiedDatetime }}</td>
-                                        <td>{{ pipeline.lastModifiedBy }}</td>
-                                        <td>{{ data.processType }}</td>
-                                        <td>{{ pipeline.parameters.startDatetime }}</td>
-                                        <td>{{ pipeline.parameters.endDatetime }}</td>
-                                        <td>{{ pipeline.parameters.mtn || '-' }}</td>
-                                        <td>
-                                            <nz-tag>
-                                                {{ pipeline.status }}
-                                            </nz-tag>
-                                        </td>
-                                        <td>
-                                            <!-- PROGRESS SECTION -->
-                                        </td>
-                                        <td>
-                                            <nz-space nzDirection="vertical" nzSize="small">
-                                                @if (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_METER_DATA || 
-                                                     pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_SETTLEMENT_READY) {
-                                                    <a nz-button nzType="link" nzBlock 
-                                                       (click)="openJobModal(pipeline.pipelineRuns[0], pipeline.id)">
-                                                       Run Settlement - Ready
-                                                    </a>
-                                                }
-                                                @if (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_GESQ) {
-                                                    <a nz-button nzType="link" nzBlock 
-                                                       (click)="openJobModal(pipeline.pipelineRuns[0], pipeline.id)">
-                                                       Finalize Settlement - Ready
-                                                    </a>
-                                                }
-                                                <a nz-button nzType="link" nzBlock>Generate MQ Report</a>
-                                            </nz-space>
-                                        </td>
-                                    </tr>
-                                    <tr [nzExpand]="isPipelineExpanded(parentIndex, pipelineIndex)">
-                                        <td [attr.colspan]="childColumnItem.length + 1" style="padding: 0;">
-                                            <div style="padding: 16px; background-color: #fafafa;">
-                                                <nz-table
-                                                    #pipelineTable
-                                                    [nzData]="pipeline.pipelineRuns || []"
-                                                    [nzSize]="'small'"
-                                                    [nzShowPagination]="false"
-                                                >
-                                                    <thead>
+                                <tr [nzExpand]="isPipelineExpanded(parentIndex, pipelineIndex)">
+                                    <td [attr.colspan]="childColumnItem.length + 1" style="padding: 0;">
+                                        <div style="padding: 16px; background-color: #fafafa;">
+                                            <nz-table
+                                                #pipelineTable
+                                                nzBordered="true"
+                                                [nzData]="pipeline.pipelineRuns || []"
+                                                [nzSize]="'small'"
+                                                [nzShowPagination]="false"
+                                            >
+                                                <thead>
+                                                    <tr>
+                                                        @for (column of pipelineColumnItem; track column) {
+                                                            <th>{{column.name}}</th>
+                                                        }
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @for (runs of pipelineTable.data; track runs) {
                                                         <tr>
-                                                            @for (column of pipelineColumnItem; track column) {
-                                                                <th>{{column.name}}</th>
-                                                            }
+                                                            <td>{{runs.name}}</td>
+                                                            <td>{{runs.runId}}</td>
+                                                            <td>{{runs.runStart}}</td>
+                                                            <td>{{runs.runEnd}}</td>
+                                                            <td>{{runs.duration}}</td>
+                                                            <td>{{runs.runBy}}</td>
+                                                            <td>
+                                                                <nz-tag>
+                                                                    {{runs.status}}
+                                                                </nz-tag>
+                                                            </td>
                                                         </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @for (runs of pipelineTable.data; track runs) {
-                                                            <tr>
-                                                                <td>{{runs.name}}</td>
-                                                                <td>{{runs.runId}}</td>
-                                                                <td>{{runs.runStart}}</td>
-                                                                <td>
-                                                                    <nz-tag>
-                                                                        {{runs.status}}
-                                                                    </nz-tag>
-                                                                </td>
-                                                            </tr>
-                                                        }
-                                                        @if (!pipeline.pipelineRuns || pipeline.pipelineRuns.length === 0) {
-                                                            <tr>
-                                                                <td [attr.colspan]="pipelineColumnItem.length" style="text-align: center; color: #999;">
-                                                                    No pipeline runs found
-                                                                </td>
-                                                            </tr>
-                                                        }
-                                                    </tbody>
-                                                </nz-table>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                                @if (!data.pipelines || data.pipelines.length === 0) {
-                                    <tr>
-                                        <td [attr.colspan]="childColumnItem.length + 1" style="text-align: center; color: #999;">
-                                            No jobs found
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </nz-table>
-                    </div>
+                                                    }
+                                                    @if (!pipeline.pipelineRuns || pipeline.pipelineRuns.length === 0) {
+                                                        <tr>
+                                                            <td [attr.colspan]="pipelineColumnItem.length" style="text-align: center; color: #999;">
+                                                                No pipeline runs found
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </nz-table>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            @if (!data.pipelines || data.pipelines.length === 0) {
+                                <tr>
+                                    <td [attr.colspan]="childColumnItem.length + 1" style="text-align: center; color: #999;">
+                                        No jobs found
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </nz-table>
                 </td>
             </tr>
         }
@@ -143,6 +149,20 @@
 
 <ng-template #runJobs>
     <nz-flex nzVertical="true">
-        <nz-result nzStatus="info" nzTitle="You are going to run a Job"></nz-result>
+        @if (currentModalData) {
+            <nz-result 
+                nzStatus="info" 
+                [nzTitle]="'You are going to run a ' + currentModalData.jobType + ' Job'">
+                <div nz-result-extra>
+                    <nz-flex nzVertical="true" nzAlign="start">
+                        <p><strong>Status:</strong> {{ currentModalData.pipeline.status }}</p>
+                        <p><strong>Last Modified By:</strong> {{ currentModalData.pipeline.lastModifiedBy }}</p>
+                        <p><strong>Last Modified:</strong> {{ currentModalData.pipeline.lastModifiedDatetime }}</p>
+                    </nz-flex>
+                </div>
+            </nz-result>
+        } @else {
+            <nz-result nzStatus="info" nzTitle="Loading job information..."></nz-result>
+        }
     </nz-flex>
 </ng-template>

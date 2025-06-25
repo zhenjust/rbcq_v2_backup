@@ -1,7 +1,9 @@
 import { Component, OnInit, TemplateRef, ViewChild, computed, effect, inject } from '@angular/core';
-import { MeterProcessStatus } from '@shared/constants';
-import { meterProcessPipelineRuns, meterProcessTable } from '@shared/interfaces';
+import { MeterDataPipelineName, MeterProcessStatus } from '@shared/constants';
+import { meterProcessPipeline, meterProcessPipelineRuns, meterProcessTable } from '@shared/interfaces';
+import { MeterprocessService } from '@shared/services/api';
 import { SearchFilterService } from '@shared/services/meterProcess';
+import { DateFormatterUtilService } from '@shared/services/utils';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { ToastrService } from 'ngx-toastr';
 
@@ -9,11 +11,16 @@ interface tableColumn {
   name: string;
 }
 
+interface ModalData {
+  pipeline: meterProcessPipeline;
+  jobType: string;
+  actionType: MeterDataPipelineName;
+}
+
 @Component({
   selector: 'app-table',
   standalone: false,
-  templateUrl: './table.component.html',
-  styleUrl: './table.component.scss'
+  templateUrl: './table.component.html'
 })
 export class TableComponent implements OnInit {
   // Default table data structure
@@ -33,12 +40,17 @@ export class TableComponent implements OnInit {
   @ViewChild('runJobs', { static: true }) runJobs!: TemplateRef<void>;
 
   meterProcessStatus = MeterProcessStatus;
+  meterDataPipelines = MeterDataPipelineName;
   tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
   isLoading = computed(() => this.sfs.isLoading());
+
+  // Add property to store current modal data
+  currentModalData: ModalData | null = null;
 
   columnItem: tableColumn[] = [
     { name: 'Process Type' },
     { name: 'Billing Period / Trading Date' },
+    { name: 'Adjustment Number' },
     { name: 'Jobs Count' }
   ];
 
@@ -58,15 +70,19 @@ export class TableComponent implements OnInit {
   pipelineColumnItem: tableColumn[] = [
     {name: 'Name'},
     {name: 'Run Id'},
+    {name: 'Run By'},
     {name: 'Run Start'},
+    {name: 'Run End'},
     {name: 'Status'}
   ]
 
   expandSet = new Set<number>();
-  pipelineExpandSet = new Set<string>(); // Changed to string for unique identifiers
+  pipelineExpandSet = new Set<string>();
   public toast = inject(ToastrService);
   public sfs = inject(SearchFilterService);
   public modal = inject(NzModalService);
+  private mpa = inject(MeterprocessService);
+  public dfs = inject(DateFormatterUtilService);
 
   constructor() {
     effect(() => {
@@ -100,7 +116,6 @@ export class TableComponent implements OnInit {
     }
   }
 
-  // Helper method to check if pipeline is expanded
   isPipelineExpanded(parentIndex: number, pipelineIndex: number): boolean {
     const uniqueKey = `${parentIndex}-${pipelineIndex}`;
     return this.pipelineExpandSet.has(uniqueKey);
@@ -110,12 +125,57 @@ export class TableComponent implements OnInit {
     this.sfs.refreshJobs({});
   }
 
-  openJobModal(pipelineRunData: meterProcessPipelineRuns, refId: number): void {
-    console.log(pipelineRunData, refId); 
+  openJobModal(pipelineRunData: meterProcessPipeline, jobType: string, actionType: MeterDataPipelineName): void {
+    this.currentModalData = {
+      pipeline: pipelineRunData,
+      jobType: jobType,
+      actionType: actionType
+    };
+
+    console.log(this.currentModalData);
     this.modal.create({
-      nzTitle: 'Run Job',
+      nzTitle: actionType,
       nzContent: this.runJobs,
-      nzFooter: null
+      nzOkText: 'Run Job',
+      nzCancelText: 'Cancel',
+      nzOnOk: () => {
+        return new Promise<void>((resolve, reject) => {
+          this.mpa.runJob({}, this.currentModalData?.actionType, this.currentModalData?.pipeline.id)
+            .subscribe({
+              next: () => {
+                this.modal.success({
+                  nzCentered: true,
+                  nzTitle: 'Jobs Successfully Triggered!'
+                });
+                this.sfs.refreshJobs({});
+                // this.rjs.clearConfiguration();
+                resolve();
+              },
+              error: (err) => {
+                this.modal.error({
+                  nzTitle: 'Error',
+                  nzContent: 'Failed to run the job.'
+                });
+                console.error('Run Job Error:', err);
+                reject();
+              }
+            })
+        })
+      },
+      nzOnCancel: () => {
+        this.currentModalData = null;
+      }
     });
+  }
+
+  getJobTypeFromStatus(status: string): string {
+    const lowerStatus = status.toLowerCase();
+    if (lowerStatus === this.meterProcessStatus.COMPLETED_METER_DATA || 
+        lowerStatus === this.meterProcessStatus.COMPLETED_SETTLEMENT_READY) {
+      return 'Process Settlement - Ready';
+    } else if (lowerStatus === this.meterProcessStatus.COMPLETED_GESQ) {
+      return 'Process Finalize Settlement - Ready';
+    }
+    return 'Unknown';
   }
 }
