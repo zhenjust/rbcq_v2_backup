@@ -1,6 +1,6 @@
-<nz-table 
-    #nzTable 
-    [nzData]="tableData().pipelineGroup" 
+<nz-table
+    #nzTable
+    [nzData]="tableData().pipelineGroup"
     [nzPageSize]="tableData().totalElements"
     [nzPageIndex]="tableData().totalPages"
     [nzFrontPagination]="false"
@@ -28,7 +28,7 @@
             </tr>
             <tr [nzExpand]="expandSet.has(i)">
                 <div class="centered-inner-table">
-                    <nz-table 
+                    <nz-table
                         #innerTable
                         [nzData]="data.pipelines || []"
                         [nzSize]="'small'"
@@ -44,17 +44,12 @@
                         <tbody>
                             @for (pipeline of innerTable.data; track pipeline) {
                                 <tr>
-                                    <td>{{ pipeline.name }}</td>
-                                    <td>{{ pipeline.runId }}</td>
-                                    <td>{{ formatDateTime(pipeline.runStart) }}</td>
+                                    <td>{{ pipeline.workspaceId }}</td>
+                                    <td>{{ pipeline.lastModifiedDatetime }}</td>
+                                    <td>{{ pipeline.lastModifiedBy }}</td>
                                     <td>{{ pipeline.parameters.processType || data.processType }}</td>
-                                    <td>
-                                        <!-- Start Date -->
-                                    </td>
-                                    <td>
-                                        <!-- End Date -->
-                                    </td>
-                                    <td>{{ pipeline.parameters.regionGroup || '-' }}</td>
+                                    <td>{{ pipeline.parameters.startDatetime }}</td>
+                                    <td>{{ pipeline.parameters.endDatetime }}</td>
                                     <td>{{ pipeline.parameters.mtn || '-' }}</td>
                                     <td>
                                         <nz-tag [nzColor]="getStatusColor(pipeline.status)">

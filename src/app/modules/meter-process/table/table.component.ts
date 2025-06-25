@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 
 interface tableColumn {
   name: string;
-} 
+}
 
 @Component({
   selector: 'app-table',
@@ -27,34 +27,34 @@ export class TableComponent implements OnInit {
     size: 10,
     number: 0
   };
-  
+
   tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
   isLoading = computed(() => this.sfs.isLoading());
-  
+
   columnItem: tableColumn[] = [
     { name: 'Process Type' },
     { name: 'Billing Period / Trading Date' },
     { name: 'Jobs Count' }
   ];
-  
+
   childColumnItem: tableColumn[] = [
-    { name: 'Job Name' },
-    { name: 'Run ID' },
-    { name: 'Run Date and Time' },
+    { name: 'Workspace ID' },
+    { name: 'Last Activity Datetime' },
+    { name: 'Last Activity By' },
+    { name: 'Workspace ID' },
     { name: 'Process Type' },
-    { name: 'Start Date' },
-    { name: 'End Date' },
-    { name: 'Region Group' },
+    { name: 'Start Datetime' },
+    { name: 'End Datetime' },
     { name: 'MTN' },
     { name: 'Status' },
     { name: 'Progress' },
     { name: 'Actions' }
   ];
-  
+
   expandSet = new Set<number>();
   public toast = inject(ToastrService);
   public sfs = inject(SearchFilterService);
-  
+
   constructor() {
     effect(() => {
       this.sfs.jobs();
