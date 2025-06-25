@@ -1,7 +1,7 @@
 export enum MeterProcessStatus {
-    COMPLETED_METER_DATA = 'completed - meter data',
-    COMPLETED_SETTLEMENT_READY = 'completed - settlement ready',
-    COMPLETED_GESQ = 'completed - gesq'
+    COMPLETED_METER_DATA = 'succeeded - meter data',
+    COMPLETED_SETTLEMENT_READY = 'succeeded - settlement ready',
+    COMPLETED_GESQ = 'succeeded - gesq'
 }
 
 export enum MeterDataPipelineName {

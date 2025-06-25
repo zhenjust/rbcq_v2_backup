@@ -1,6 +1,8 @@
-import { Component, OnInit, computed, effect, inject } from '@angular/core';
-import { meterProcessTable } from '@shared/interfaces';
+import { Component, OnInit, TemplateRef, ViewChild, computed, effect, inject } from '@angular/core';
+import { MeterProcessStatus } from '@shared/constants';
+import { meterProcessPipelineRuns, meterProcessTable } from '@shared/interfaces';
 import { SearchFilterService } from '@shared/services/meterProcess';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { ToastrService } from 'ngx-toastr';
 
 interface tableColumn {
@@ -28,6 +30,9 @@ export class TableComponent implements OnInit {
     number: 0
   };
 
+  @ViewChild('runJobs', { static: true }) runJobs!: TemplateRef<void>;
+
+  meterProcessStatus = MeterProcessStatus;
   tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
   isLoading = computed(() => this.sfs.isLoading());
 
@@ -50,9 +55,18 @@ export class TableComponent implements OnInit {
     { name: 'Actions' }
   ];
 
+  pipelineColumnItem: tableColumn[] = [
+    {name: 'Name'},
+    {name: 'Run Id'},
+    {name: 'Run Start'},
+    {name: 'Status'}
+  ]
+
   expandSet = new Set<number>();
+  pipelineExpandSet = new Set<string>(); // Changed to string for unique identifiers
   public toast = inject(ToastrService);
   public sfs = inject(SearchFilterService);
+  public modal = inject(NzModalService);
 
   constructor() {
     effect(() => {
@@ -77,39 +91,31 @@ export class TableComponent implements OnInit {
     }
   }
 
+  onPipelineExpandChange(checked: boolean, parentIndex: number, pipelineIndex: number): void {
+    const uniqueKey = `${parentIndex}-${pipelineIndex}`;
+    if (checked) {
+      this.pipelineExpandSet.add(uniqueKey);
+    } else {
+      this.pipelineExpandSet.delete(uniqueKey);
+    }
+  }
+
+  // Helper method to check if pipeline is expanded
+  isPipelineExpanded(parentIndex: number, pipelineIndex: number): boolean {
+    const uniqueKey = `${parentIndex}-${pipelineIndex}`;
+    return this.pipelineExpandSet.has(uniqueKey);
+  }
+
   refreshData(): void {
     this.sfs.refreshJobs({});
   }
 
-  formatDateTime(dateString: string): string {
-    if (!dateString) return '-';
-    try {
-      return new Date(dateString).toLocaleString();
-    } catch {
-      return dateString;
-    }
-  }
-
-  //addtnl methods
-  getStatusColor(status: string): string {
-    const statusColors: { [key: string]: string } = {
-      'RUNNING': 'processing',
-      'COMPLETED': 'success',
-      'FAILED': 'error',
-      'PENDING': 'default',
-      'CANCELLED': 'warning'
-    };
-    return statusColors[status?.toUpperCase()] || 'default';
-  }
-
-  getProgressStatus(status: string): 'success' | 'exception' | 'active' | 'normal' {
-    const statusMap: { [key: string]: 'success' | 'exception' | 'active' | 'normal' } = {
-      'COMPLETED': 'success',
-      'FAILED': 'exception',
-      'RUNNING': 'active',
-      'PENDING': 'normal',
-      'CANCELLED': 'exception'
-    };
-    return statusMap[status?.toUpperCase()] || 'normal';
+  openJobModal(pipelineRunData: meterProcessPipelineRuns, refId: number): void {
+    console.log(pipelineRunData, refId); 
+    this.modal.create({
+      nzTitle: 'Run Job',
+      nzContent: this.runJobs,
+      nzFooter: null
+    });
   }
 }

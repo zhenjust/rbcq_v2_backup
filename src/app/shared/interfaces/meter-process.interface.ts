@@ -73,13 +73,21 @@ export interface meterProcessParameters {
     adjNo?: number
 }
 
+export interface meterProcessPipelineRuns {
+    name: string,
+    runId: string,
+    runStart: string,
+    status: string
+}
+
 export interface meterProcessPipeline {
     name: string
     id: number
     status: string
     lastModifiedBy: string
     lastModifiedDatetime: Date
-    parameters: meterProcessParameters
+    parameters: meterProcessParameters,
+    pipelineRuns: meterProcessPipelineRuns[]
 }
 
 export interface meterProcessPipelineGroup {
