@@ -39,7 +39,7 @@ export class TableComponent implements OnInit {
 
   childColumnItem: tableColumn[] = [
     { name: 'Workspace ID' },
-    { name: 'Last Activity Datetime' },
+    { name: 'Last Activity Date Time' },
     { name: 'Last Activity By' },
     { name: 'Process Type' },
     { name: 'Start Date Time' },
