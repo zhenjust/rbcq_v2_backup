@@ -85,10 +85,10 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
 
   private processConfigurationForSearch(configuration: meterProcessParams): void {
     const filtered = Object.entries(configuration)
-      .filter(([key, val]) => val !== null && val !== undefined && val !== '' && key !== 'tradingDate')
+      .filter(([key, val]) => val !== null && val !== undefined && val !== '')
       .reduce((obj, [k, v]) => {
         obj[k as keyof meterProcessParams] = v;
-        return obj;
+        return obj; 
       }, {} as Partial<meterProcessParams>);
 
     this.meterProcessParams = filtered;

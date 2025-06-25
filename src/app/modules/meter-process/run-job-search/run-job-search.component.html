@@ -71,8 +71,8 @@
             @if (meterProcessParams?.tradingDate) {<p><strong>Trading Date:</strong> {{ meterProcessParams?.tradingDate }}</p>}
         </nz-flex>
         <nz-flex nzGap="large" nzAlign="start">
-            @if (meterProcessParams?.startDatetime) {<p><strong>Start Date Time:</strong> {{ meterProcessParams?.startDatetime?.slice(0, -3) }}</p>}
-            @if (meterProcessParams?.endDatetime) {<p><strong>End Date Time:</strong> {{ meterProcessParams?.endDatetime?.slice(0, -3) }}</p>}
+            @if (meterProcessParams?.startDatetime) {<p><strong>Start Date Time:</strong> {{ meterProcessParams?.startDatetime }}</p>}
+            @if (meterProcessParams?.endDatetime) {<p><strong>End Date Time:</strong> {{ meterProcessParams?.endDatetime }}</p>}
         </nz-flex>
         <nz-flex nzGap="large" nzAlign="start">
             @if (meterProcessParams?.regionGroup) {<p><strong>Region/s: </strong>{{ meterProcessParams?.regionGroup }}</p>}
