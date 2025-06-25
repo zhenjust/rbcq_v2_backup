@@ -44,7 +44,7 @@
                         <tbody>
                             @for (pipeline of innerTable.data; track pipeline) {
                                 <tr>
-                                    <td>{{ pipeline.workspaceId }}</td>
+                                    <td>{{ pipeline.id }}</td>
                                     <td>{{ pipeline.lastModifiedDatetime }}</td>
                                     <td>{{ pipeline.lastModifiedBy }}</td>
                                     <td>{{ pipeline.parameters.processType || data.processType }}</td>

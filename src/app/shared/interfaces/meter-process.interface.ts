@@ -75,7 +75,7 @@ export interface meterProcessParameters {
 
 export interface meterProcessPipeline {
     name: string
-    workspaceId: number
+    id: number
     status: string
     lastModifiedBy: string
     lastModifiedDatetime: Date
