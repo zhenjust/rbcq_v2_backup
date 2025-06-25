@@ -20,7 +20,7 @@
             <tr>
                 <td [nzExpand]="expandSet.has(parentIndex)" (nzExpandChange)="onExpandChange($event, parentIndex)"></td>
                 <td>{{ data.processType === processTypes.ADJUSTMENT ? data.processType + data.adjNo : data.processType }}</td>
-                <td>{{ data.billingPeriod ? data.billingStartDate + data.billingEndDate : data.tradingDate }}</td>
+                <td>{{ data.billingPeriod ? data.billingStartDate + " - " + data.billingEndDate : data.tradingDate }}</td>
                 <td>
                     <nz-tag [nzColor]="'blue'">
                         {{ data.pipelines.length || 0 }} Jobs
