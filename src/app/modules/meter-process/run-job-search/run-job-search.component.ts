@@ -1,6 +1,6 @@
 import { Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild, effect } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { METER_PROCESS_TYPE_OPTION, MeterDataName } from '@shared/constants';
+import { METER_PROCESS_TYPE_OPTION, MeterDataPipelineName } from '@shared/constants';
 import { MeterProcessTypes } from '@shared/enums';
 import { meterProcessBillingPeriod, meterProcessJobSearchGroupParams, meterProcessOptions, meterProcessParams } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
@@ -27,7 +27,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
 
   isLoading: boolean = false;
   private destroy$ = new Subject<void>();
-  private meterDataName = MeterDataName;
+  private meterDataName = MeterDataPipelineName;
   protected meterProcessParams: Partial<meterProcessParams> | null = null;
   protected meterProcessFilterParams: Partial<meterProcessJobSearchGroupParams> | null = null;
 

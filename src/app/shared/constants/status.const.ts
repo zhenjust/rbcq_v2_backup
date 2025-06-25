@@ -4,7 +4,7 @@ export enum MeterProcessStatus {
     COMPLETED_GESQ = 'completed - gesq'
 }
 
-export enum MeterDataName {
+export enum MeterDataPipelineName {
     SETTLEMENT_READY = 'settlementReady',
     FINALIZE_READY = 'finalizeSettlementData',
     INITIALIZE = 'initialize'
