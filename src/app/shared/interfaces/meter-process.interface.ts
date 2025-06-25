@@ -33,7 +33,6 @@ export interface meterProcessSearch {
 }
 
 export interface meterProcessParams {
-    date: string,
     startDatetime: string
     endDatetime: string,
     tradingDate: string,
@@ -97,8 +96,8 @@ export interface meterProcessPipelineGroup {
     processType: MeterProcessTypes
     billingPeriod?: string
     tradingDate?: string
-    startDatetime: string
-    endDatetime: string
+    billingStartDate: string
+    billingEndDate: string
     adjNo?: number
     pipelines: meterProcessPipeline[]
 }

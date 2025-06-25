@@ -75,8 +75,7 @@
             @if (meterProcessParams?.endDatetime) {<p><strong>End Date Time:</strong> {{ meterProcessParams?.endDatetime }}</p>}
         </nz-flex>
         <nz-flex nzGap="large" nzAlign="start">
-            @if (meterProcessParams?.regionGroup) {<p><strong>Region/s: </strong>{{ meterProcessParams?.regionGroup }}</p>}
-            @if (meterProcessParams?.mtn) {<p><strong>MTN/s: </strong>{{ meterProcessParams?.mtn }}</p>}
+            <p><strong>MTN/s:</strong> {{ meterProcessParams?.mtn || 'ALL' }}</p>
         </nz-flex>
     </nz-flex>
 </ng-template>

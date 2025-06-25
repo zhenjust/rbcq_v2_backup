@@ -19,9 +19,8 @@
         @for (data of nzTable.data; track data; let parentIndex = $index) {
             <tr>
                 <td [nzExpand]="expandSet.has(parentIndex)" (nzExpandChange)="onExpandChange($event, parentIndex)"></td>
-                <td>{{ data.processType }}</td>
-                <td>{{ data.billingPeriod ? data.billingPeriod : data.tradingDate }}</td>
-                <td>{{ data.adjNo ? data.adjNo : '' }}</td>
+                <td>{{ data.processType === processTypes.ADJUSTMENT ? data.processType + data.adjNo : data.processType }}</td>
+                <td>{{ data.billingPeriod ? data.billingStartDate + data.billingEndDate : data.tradingDate }}</td>
                 <td>
                     <nz-tag [nzColor]="'blue'">
                         {{ data.pipelines.length || 0 }} Jobs
@@ -70,13 +69,13 @@
                                             @if (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_METER_DATA || 
                                                     pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_SETTLEMENT_READY) {
                                                 <a nz-button nzType="link" nzBlock 
-                                                    (click)="openJobModal(pipeline, getJobTypeFromStatus(pipeline.status), meterDataPipelines.SETTLEMENT_READY)">
+                                                    (click)="openJobModal(pipeline, getJobTypeFromStatus(pipeline.status), meterDataPipelines.SETTLEMENT_READY, data)">
                                                     Run Settlement - Ready
                                                 </a>
                                             }
                                             @if (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_GESQ) {
                                                 <a nz-button nzType="link" nzBlock 
-                                                    (click)="openJobModal(pipeline, getJobTypeFromStatus(pipeline.status), meterDataPipelines.FINALIZE_READY)">
+                                                    (click)="openJobModal(pipeline, getJobTypeFromStatus(pipeline.status), meterDataPipelines.FINALIZE_READY, data)">
                                                     Finalize Settlement - Ready
                                                 </a>
                                             }
@@ -153,14 +152,22 @@
             <nz-result 
                 nzStatus="info" 
                 [nzTitle]="'You are going to run a ' + currentModalData.jobType + ' Job'">
-                <div nz-result-extra>
-                    <nz-flex nzVertical="true" nzAlign="start">
-                        <p><strong>Status:</strong> {{ currentModalData.pipeline.status }}</p>
-                        <p><strong>Last Modified By:</strong> {{ currentModalData.pipeline.lastModifiedBy }}</p>
-                        <p><strong>Last Modified:</strong> {{ currentModalData.pipeline.lastModifiedDatetime }}</p>
-                    </nz-flex>
-                </div>
             </nz-result>
+            <nz-flex nzGap="large" nzAlign="start">
+                <p><strong>Job Type:</strong> {{ currentModalData.processType }}</p>
+                @if (currentModalData.adjustmentNumber) {<p><strong>Adjustment Number:</strong> {{ currentModalData.adjustmentNumber }}</p>}
+            </nz-flex>
+            <nz-flex nzGap="large" nzAlign="start">
+                @if (currentModalData.billingPeriod) {<p><strong>Billing Period:</strong> {{ currentModalData.billingPeriod }}</p>}
+                @if (currentModalData.tradingDate) {<p><strong>Trading Date:</strong> {{ currentModalData.tradingDate }}</p>}
+            </nz-flex>
+            <nz-flex nzGap="large" nzAlign="start">
+                <p><strong>Start Date Time:</strong> {{ currentModalData.pipeline.parameters.startDatetime }}</p>
+                <p><strong>End Date Time:</strong> {{ currentModalData.pipeline.parameters.endDatetime }}</p>
+            </nz-flex>
+            <nz-flex nzGap="large" nzAlign="start">
+                <p><strong>MTN/s:</strong> {{ currentModalData.pipeline.parameters.mtn || 'ALL' }}</p>
+            </nz-flex>
         } @else {
             <nz-result nzStatus="info" nzTitle="Loading job information..."></nz-result>
         }

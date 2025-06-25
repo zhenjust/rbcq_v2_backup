@@ -1,5 +1,6 @@
 import { Component, OnInit, TemplateRef, ViewChild, computed, effect, inject } from '@angular/core';
 import { MeterDataPipelineName, MeterProcessStatus } from '@shared/constants';
+import { MeterProcessTypes } from '@shared/enums';
 import { meterProcessPipeline, meterProcessTable } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { SearchFilterService } from '@shared/services/meterProcess';
@@ -15,6 +16,10 @@ interface ModalData {
   pipeline: meterProcessPipeline;
   jobType: string;
   actionType: MeterDataPipelineName;
+  processType: string;
+  billingPeriod?: string;
+  tradingDate?: string;
+  adjustmentNumber?: string;
 }
 
 @Component({
@@ -41,6 +46,7 @@ export class TableComponent implements OnInit {
 
   meterProcessStatus = MeterProcessStatus;
   meterDataPipelines = MeterDataPipelineName;
+  processTypes = MeterProcessTypes;
   tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
   isLoading = computed(() => this.sfs.isLoading());
 
@@ -50,7 +56,6 @@ export class TableComponent implements OnInit {
   columnItem: tableColumn[] = [
     { name: 'Process Type' },
     { name: 'Billing Period / Trading Date' },
-    { name: 'Adjustment Number' },
     { name: 'Jobs Count' }
   ];
 
@@ -126,11 +131,19 @@ export class TableComponent implements OnInit {
     this.sfs.refreshJobs({});
   }
 
-  openJobModal(pipelineRunData: meterProcessPipeline, jobType: string, actionType: MeterDataPipelineName): void {
+  openJobModal(pipelineRunData: meterProcessPipeline,
+    jobType: string,
+    actionType: MeterDataPipelineName,
+    parentData: any
+  ): void {
     this.currentModalData = {
       pipeline: pipelineRunData,
       jobType: jobType,
-      actionType: actionType
+      actionType: actionType,
+      processType: parentData.processType,
+      tradingDate: parentData.tradingDate,
+      billingPeriod: parentData.billingPeriod,
+      adjustmentNumber: parentData.adjNo
     };
 
     console.log(this.currentModalData);
@@ -149,7 +162,6 @@ export class TableComponent implements OnInit {
                   nzTitle: 'Jobs Successfully Triggered!'
                 });
                 this.sfs.refreshJobs({});
-                // this.rjs.clearConfiguration();
                 resolve();
               },
               error: (err) => {
@@ -173,9 +185,9 @@ export class TableComponent implements OnInit {
     const lowerStatus = status.toLowerCase();
     if (lowerStatus === this.meterProcessStatus.COMPLETED_METER_DATA || 
         lowerStatus === this.meterProcessStatus.COMPLETED_SETTLEMENT_READY) {
-      return 'Process Settlement - Ready';
+      return 'Settlement - Ready';
     } else if (lowerStatus === this.meterProcessStatus.COMPLETED_GESQ) {
-      return 'Process Finalize Settlement - Ready';
+      return 'Finalize - GESQ';
     }
     return 'Unknown';
   }

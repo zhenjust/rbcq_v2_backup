@@ -36,11 +36,13 @@ export class MeterprocessService {
   }
 
   public runJob(data: Partial<meterProcessParams>, pipelineName?: MeterDataPipelineName, refId?: number): Observable<meterProcessParams>{
-    const bodyParams: meterProcessRunJobPayload = {
+    const bodyParams: Partial<meterProcessRunJobPayload> = {
       pipelineName: `${this.PIPELINE_NAME}-${pipelineName}`,
       refId: refId,
-      isGroup: true,
-      parameters: data
+      isGroup: true
+    }
+    if (data && Object.keys(data).length > 0) {
+      bodyParams.parameters = data;
     }
     return this.http.post<meterProcessParams>(this.API_URL, bodyParams);
   }
