@@ -1,6 +1,6 @@
 import { Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild, effect } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
+import { METER_PROCESS_TYPE_OPTION, meterDataName } from '@shared/constants';
 import { MeterProcessTypes } from '@shared/enums';
 import { meterProcessBillingPeriod, meterProcessJobSearchGroupParams, meterProcessOptions, meterProcessParams } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
@@ -84,14 +84,11 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
   }
 
   private processConfigurationForSearch(configuration: meterProcessParams): void {
-    const filtered = Object.entries(configuration)
-      .filter(([val]) => val !== null && val !== undefined && val !== '')
-      .reduce((obj, [k, v]) => {
-        obj[k as keyof meterProcessParams] = v;
-        return obj; 
-      }, {} as Partial<meterProcessParams>);
-
-    this.meterProcessParams = filtered;
+    this.meterProcessParams = Object.fromEntries(
+      Object.entries(configuration).filter(([_, val]) => 
+        val !== null && val !== undefined && val !== ""
+      )
+    ) as Partial<meterProcessParams>;
   }
 
   private initFilterForm(): void {
@@ -169,7 +166,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
       nzOnOk: () => {
         return new Promise<void>((resolve, reject) => {
           this.isLoading = true;
-          this.mpa.runJob(this.meterProcessParams!)
+          this.mpa.runJob(this.meterProcessParams!,meterDataName.INITIALIZE)
             .subscribe({
               next: () => {
                 this.modal.success({
