@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef, ViewChild, computed, effect, inject } from '@angular/core';
-import { MeterDataPipelineName, MeterProcessStatus } from '@shared/constants';
+import { MeterDataPipelineName, MeterProcessStatus, ProcessType } from '@shared/constants';
 import { MeterProcessTypes } from '@shared/enums';
 import { meterProcessPipeline, meterProcessTable } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
@@ -183,10 +183,10 @@ export class TableComponent implements OnInit {
 
   getJobTypeFromStatus(status: string): string {
     const lowerStatus = status.toLowerCase();
-    if (lowerStatus === this.meterProcessStatus.COMPLETED_METER_DATA || 
-        lowerStatus === this.meterProcessStatus.COMPLETED_SETTLEMENT_READY) {
+    if (lowerStatus.endsWith(ProcessType.METER_DATA) ||
+      lowerStatus.endsWith(ProcessType.SETTLEMENT_READY)) {
       return 'Settlement - Ready';
-    } else if (lowerStatus === this.meterProcessStatus.COMPLETED_GESQ) {
+    } else if (lowerStatus.endsWith(ProcessType.GESQ)) {
       return 'Finalize - GESQ';
     }
     return 'Unknown';

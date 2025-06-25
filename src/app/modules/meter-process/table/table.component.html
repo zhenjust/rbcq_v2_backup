@@ -47,7 +47,7 @@
                         <tbody>
                             @for (pipeline of innerTable.data; track pipeline; let pipelineIndex = $index) {
                                 <tr>
-                                    <td [nzExpand]="isPipelineExpanded(parentIndex, pipelineIndex)" 
+                                    <td [nzExpand]="isPipelineExpanded(parentIndex, pipelineIndex)"
                                         (nzExpandChange)="onPipelineExpandChange($event, parentIndex, pipelineIndex)"></td>
                                     <td>{{ pipeline.id }}</td>
                                     <td>{{ dfs.formatDateTime(pipeline.lastModifiedDatetime) }}</td>
@@ -66,15 +66,19 @@
                                     </td>
                                     <td>
                                         <nz-space nzDirection="vertical" nzSize="small">
-                                            @if (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_METER_DATA || 
-                                                    pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_SETTLEMENT_READY) {
-                                                <a nz-button nzType="link" nzBlock 
+                                            @if (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_METER_DATA ||
+                                                    pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_SETTLEMENT_READY ||
+                                                      pipeline.status.toLowerCase() === meterProcessStatus.FAILED_GESQ ||
+                                                        pipeline.status.toLowerCase() === meterProcessStatus.CANCELLED_GESQ) {
+                                                <a nz-button nzType="link" nzBlock
                                                     (click)="openJobModal(pipeline, getJobTypeFromStatus(pipeline.status), meterDataPipelines.SETTLEMENT_READY, data)">
                                                     Run Settlement - Ready
                                                 </a>
                                             }
-                                            @if (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_GESQ) {
-                                                <a nz-button nzType="link" nzBlock 
+                                            @if (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_GESQ ||
+                                                    pipeline.status.toLowerCase() === meterProcessStatus.FAILED_SETTLEMENT_READY ||
+                                                      pipeline.status.toLowerCase() === meterProcessStatus.CANCELLED_SETTLEMENT_READY) {
+                                                <a nz-button nzType="link" nzBlock
                                                     (click)="openJobModal(pipeline, getJobTypeFromStatus(pipeline.status), meterDataPipelines.FINALIZE_READY, data)">
                                                     Finalize Settlement - Ready
                                                 </a>
@@ -149,8 +153,8 @@
 <ng-template #runJobs>
     <nz-flex nzVertical="true">
         @if (currentModalData) {
-            <nz-result 
-                nzStatus="info" 
+            <nz-result
+                nzStatus="info"
                 [nzTitle]="'You are going to run a ' + currentModalData.jobType + ' Job'">
             </nz-result>
             <nz-flex nzGap="large" nzAlign="start">
