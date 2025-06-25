@@ -167,7 +167,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
       nzOnOk: () => {
         return new Promise<void>((resolve, reject) => {
           this.isLoading = true;
-          this.mpa.runJob(this.meterProcessParams!,meterDataName.INITIALIZE)
+          this.mpa.runJob(this.meterProcessParams!, meterDataName.INITIALIZE)
             .subscribe({
               next: () => {
                 this.modal.success({
