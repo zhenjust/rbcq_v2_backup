@@ -172,6 +172,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
             .subscribe({
               next: () => {
                 this.modal.success({
+                  nzCentered: true,
                   nzTitle: 'Jobs Successfully Triggered!',
                 });
                 this.sfs.refreshJobs({});
