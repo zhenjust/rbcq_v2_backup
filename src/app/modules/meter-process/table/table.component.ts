@@ -1,6 +1,6 @@
 import { Component, OnInit, TemplateRef, ViewChild, computed, effect, inject } from '@angular/core';
 import { MeterDataPipelineName, MeterProcessStatus } from '@shared/constants';
-import { meterProcessPipeline, meterProcessPipelineRuns, meterProcessTable } from '@shared/interfaces';
+import { meterProcessPipeline, meterProcessTable } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { SearchFilterService } from '@shared/services/meterProcess';
 import { DateFormatterUtilService } from '@shared/services/utils';
