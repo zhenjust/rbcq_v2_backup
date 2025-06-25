@@ -27,6 +27,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
 
   isLoading: boolean = false;
   private destroy$ = new Subject<void>();
+  private meterDataName = meterDataName;
   protected meterProcessParams: Partial<meterProcessParams> | null = null;
   protected meterProcessFilterParams: Partial<meterProcessJobSearchGroupParams> | null = null;
 
@@ -167,7 +168,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
       nzOnOk: () => {
         return new Promise<void>((resolve, reject) => {
           this.isLoading = true;
-          this.mpa.runJob(this.meterProcessParams!, meterDataName.INITIALIZE)
+          this.mpa.runJob(this.meterProcessParams!, this.meterDataName.INITIALIZE)
             .subscribe({
               next: () => {
                 this.modal.success({

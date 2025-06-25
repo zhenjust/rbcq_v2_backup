@@ -10,6 +10,7 @@ import {
 } from '@shared/interfaces';
 import {Observable} from 'rxjs';
 import {ParamsUtilService} from '../utils';
+import { meterDataName } from '@shared/constants';
 
 @Injectable({
   providedIn: 'root'
@@ -34,9 +35,10 @@ export class MeterprocessService {
     return this.http.get<meterProcessTable>(`${this.API_URL}/search-group`, { params });
   }
 
-  public runJob(data: Partial<meterProcessParams>): Observable<meterProcessParams>{
+  public runJob(data: Partial<meterProcessParams>, pipelineName: meterDataName, refId?: number): Observable<meterProcessParams>{
     const bodyParams: meterProcessRunJobPayload = {
-      pipelineName: `${this.PIPELINE_NAME}-initialize`,
+      pipelineName: `${this.PIPELINE_NAME}-${pipelineName}`,
+      refId: refId,
       isGroup: true,
       parameters: data
     }
