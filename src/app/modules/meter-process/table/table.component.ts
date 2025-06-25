@@ -41,7 +41,6 @@ export class TableComponent implements OnInit {
     { name: 'Workspace ID' },
     { name: 'Last Activity Datetime' },
     { name: 'Last Activity By' },
-    { name: 'Workspace ID' },
     { name: 'Process Type' },
     { name: 'Start Datetime' },
     { name: 'End Datetime' },
