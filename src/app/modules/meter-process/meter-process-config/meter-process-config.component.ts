@@ -52,42 +52,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     if (!billingPeriodValue) return null;
     return this._meterProcessBillingPeriod().find(period => period.name === billingPeriodValue);
   });
-
-  public readonly disabledStartTime = computed(() => ({
-    nzDisabledHours: () => [],
-    nzDisabledMinutes: (hour: number) => hour === 0 ? Array.from({ length: 5 }, (_, i) => i) : [],
-    nzDisabledSeconds: () => [],
-  }));
-
-  public readonly disabledEndTime = computed(() => {
-    const start = new Date(this.meterProcessForm?.get('startDatetime')?.value);
-    const end = new Date(this.meterProcessForm?.get('endDatetime')?.value);
-    if (!start || !end) return { nzDisabledHours: () => [], nzDisabledMinutes: () => [], nzDisabledSeconds: () => [] };
-
-    const nextDay = new Date(start);
-    nextDay.setDate(start.getDate() + 1);
-
-    if (isSameDay(end, nextDay)) {
-      return {
-        nzDisabledHours: () => Array.from({ length: 24 }, (_, i) => i).filter(h => h !== 0),
-        nzDisabledMinutes: (hour: number) => hour === 0 ? Array.from({ length: 60 }, (_, i) => i).filter(m => m !== 0) : [],
-        nzDisabledSeconds: () => [],
-      };
-    }
-
-    const startHour = start.getHours();
-    const startMinute = start.getMinutes();
-
-    return {
-      nzDisabledHours: () => Array.from({ length: startHour }, (_, i) => i).concat([24]),
-      nzDisabledMinutes: (hour: number) => {
-        if (hour === startHour) return Array.from({ length: startMinute }, (_, i) => i);
-        if (hour === 24) return [56, 57, 58, 59];
-        return [];
-      },
-      nzDisabledSeconds: () => [],
-    };
-  });
+  
 
   constructor() {
     this.setupEffects();
@@ -245,28 +210,23 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   private handleProcessTypeChange(processType: string): void {
     const resetValues = this.getResetValuesForProcessType(processType);
     
-    // Apply reset values
     this.meterProcessForm.patchValue(resetValues, { emitEvent: false });
 
-    // Update field states and validators
     this.updateFieldStates(processType);
     this.updateDateTimeValidators(processType);
 
-    // Set appropriate datetime values based on process type
     if (processType === MeterProcessTypes.DAILY) {
       const tradingDate = this.meterProcessForm.get('tradingDate')?.value;
       if (tradingDate) {
         this.updateDatetimeForTradingDate(tradingDate);
       }
     } else {
-      // For non-daily types, clear datetime initially
       this.meterProcessForm.patchValue({
         startDatetime: null,
         endDatetime: null
       }, { emitEvent: false });
     }
 
-    // Update service configuration after all changes
     setTimeout(() => this.updateServiceConfiguration(), 0);
   }
 
@@ -274,22 +234,17 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     const startControl = this.meterProcessForm.get('startDatetime');
     const endControl = this.meterProcessForm.get('endDatetime');
 
-    // Clear existing validators
     startControl?.clearValidators();
     endControl?.clearValidators();
 
-    // Set validators based on process type
     if (processType === MeterProcessTypes.DAILY) {
-      // For daily type, datetime is auto-generated from trading date
       startControl?.setValidators(Validators.required);
       endControl?.setValidators(Validators.required);
     } else {
-      // For non-daily types, datetime is required and user-selectable
       startControl?.setValidators(Validators.required);
       endControl?.setValidators(Validators.required);
     }
 
-    // Update validity
     startControl?.updateValueAndValidity({ emitEvent: false });
     endControl?.updateValueAndValidity({ emitEvent: false });
   }
@@ -309,17 +264,14 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       case MeterProcessTypes.DAILY:
         return {
           ...baseReset,
-          tradingDate: new Date(),
-          // startDatetime and endDatetime will be set by updateDatetimeForTradingDate
+          tradingDate: new Date()
         };
       
       case MeterProcessTypes.ADJUSTMENT:
       case MeterProcessTypes.FINAL:
       case MeterProcessTypes.PRELIMINARY:
         return {
-          ...baseReset,
-          // billingPeriodName will be auto-selected by effect
-          // startDatetime and endDatetime will be set when billing period is selected
+          ...baseReset
         };
       
       default:
@@ -332,19 +284,16 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     const billingControl = this.meterProcessForm.get('billingPeriodName');
     const adjControl = this.meterProcessForm.get('adjNo');
 
-    // Reset all validators first
     tradingControl?.clearValidators();
     billingControl?.clearValidators();
     adjControl?.clearValidators();
 
     if (processType === MeterProcessTypes.DAILY) {
-      // Daily type: trading date enabled, billing and adj disabled
       tradingControl?.enable();
       tradingControl?.setValidators(Validators.required);
       billingControl?.disable();
       adjControl?.disable();
     } else {
-      // Non-daily types: trading date disabled, billing enabled
       tradingControl?.disable();
       billingControl?.enable();
       billingControl?.setValidators(Validators.required);
@@ -357,7 +306,6 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Update validity for all controls
     tradingControl?.updateValueAndValidity({ emitEvent: false });
     billingControl?.updateValueAndValidity({ emitEvent: false });
     adjControl?.updateValueAndValidity({ emitEvent: false });
@@ -506,52 +454,81 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   };
 
   public disableStartDateRange = (date: Date): boolean => {
-    const processType = this._processType();
+    const currentConfig = this.rjs.getLatestConfiguration();
+    const currentTradingDate = currentConfig ? currentConfig.tradingDate : '';
     const dateStart = startOfDay(date);
 
-    if (processType === MeterProcessTypes.DAILY) {
-      return !isSameDay(dateStart, this.today);
-    }
-
-    const selectedBilling = this.selectedBillingPeriod();
-    if (selectedBilling) {
-      const billingStart = startOfDay(new Date(selectedBilling.startDate));
-      const billingEnd = startOfDay(new Date(selectedBilling.endDate));
+    if (currentConfig?.processType !== MeterProcessTypes.DAILY) {
+      const currentBillingStart = currentConfig ? currentConfig.billingStartDate : '';
+      const currentBillingEnd = currentConfig ? currentConfig.billingEndDate : '';
+      const billingStart = startOfDay(new Date(currentBillingStart));
+      const billingEnd = startOfDay(new Date(currentBillingEnd));
       return isBefore(dateStart, billingStart) || isAfter(dateStart, billingEnd);
     }
 
-    return isAfter(dateStart, this.today);
+    return !isSameDay(dateStart, new Date(currentTradingDate));
   };
 
   public disableEndDateRange = (date: Date): boolean => {
-    const processType = this._processType();
+    const currentConfig = this.rjs.getLatestConfiguration();
+    const currentBillingStart = currentConfig ? currentConfig.billingStartDate : '';
+    const currentBillingEnd = currentConfig ? currentConfig.billingEndDate : '';
+    const currentTradingDate = currentConfig ? currentConfig.startDatetime : '';
     const dateStart = startOfDay(date);
 
-    if (processType === MeterProcessTypes.DAILY) {
+    if (currentConfig?.processType === MeterProcessTypes.DAILY) {
       return !isSameDay(dateStart, this.today);
     }
 
-    const selectedBilling = this.selectedBillingPeriod();
-    const startDatetime = this.meterProcessForm?.get('startDatetime')?.value;
-
-    if (selectedBilling) {
-      const billingStart = startOfDay(new Date(selectedBilling.startDate));
-      const billingEnd = startOfDay(new Date(selectedBilling.endDate));
+    if (currentConfig?.billingPeriodName) {
+      const billingStart = startOfDay(new Date(currentBillingStart));
+      const billingEnd = startOfDay(new Date(currentBillingEnd));
       let valid = !isBefore(dateStart, billingStart) && !isAfter(dateStart, billingEnd);
 
-      if (startDatetime) {
-        const startDate = startOfDay(new Date(startDatetime));
+      if (currentTradingDate) {
+        const startDate = startOfDay(new Date(currentTradingDate));
         valid = valid && !isBefore(dateStart, startDate);
       }
 
       return !valid;
     }
 
-    if (startDatetime) {
-      const startDate = startOfDay(new Date(startDatetime));
-      return isBefore(dateStart, startDate);
-    }
-
-    return isBefore(dateStart, this.today);
+    return isBefore(dateStart, new Date(currentTradingDate));
   };
+
+  disabledStartTime(){
+   return {
+      nzDisabledHours: () => [],
+      nzDisabledMinutes: (hour: number) => hour === 0 ? Array.from({ length: 5 }, (_, i) => i) : [],
+      nzDisabledSeconds: () => [],
+   } 
+  }
+
+  disabledEndTimeExceed(){
+    return {
+      nzDisabledHours: () => [],
+      nzDisabledMinutes: (hour: number) => hour === 0 ? Array.from({ length: 5 }, (_, i) => i) : [],
+      nzDisabledSeconds: () => [],
+    }
+  }
+
+  disabledEndTime() {
+    const currentConfig = this.rjs.getLatestConfiguration();
+    const currentBillingStart = currentConfig ? currentConfig.startDatetime : '';
+    const start = new Date(currentBillingStart);
+
+    const startHour = start.getHours();
+    const startMinute = start.getMinutes();
+
+    return {
+      nzDisabledHours: () => Array.from({ length: startHour }, (_, i) => i).concat([24]),
+      nzDisabledMinutes: (hour: number) => {
+        if (hour === startHour) return Array.from({ length: startMinute }, (_, i) => i);
+        if (hour === 24) return [56, 57, 58, 59];
+        return [];
+      },
+      nzDisabledSeconds: () => [],
+    };
+  }
+
 }
