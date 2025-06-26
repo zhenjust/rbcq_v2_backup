@@ -67,9 +67,8 @@
                                     <td>
                                         <nz-space nzDirection="vertical" nzSize="small">
                                             @if (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_METER_DATA ||
-                                                    pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_SETTLEMENT_READY ||
-                                                      pipeline.status.toLowerCase() === meterProcessStatus.FAILED_GESQ ||
-                                                        pipeline.status.toLowerCase() === meterProcessStatus.CANCELLED_GESQ) {
+                                                    pipeline.status.toLowerCase() === meterProcessStatus.FAILED_GESQ ||
+                                                      pipeline.status.toLowerCase() === meterProcessStatus.CANCELLED_GESQ) {
                                                 <a nz-button nzType="link" nzBlock
                                                     (click)="openJobModal(pipeline, getJobTypeFromStatus(pipeline.status), meterDataPipelines.SETTLEMENT_READY, data)">
                                                     Run Settlement - Ready
