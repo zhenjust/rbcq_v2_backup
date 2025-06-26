@@ -71,7 +71,7 @@
                                                       pipeline.status.toLowerCase() === meterProcessStatus.CANCELLED_GESQ) {
                                                 <a nz-button nzType="link" nzBlock
                                                     (click)="openJobModal(pipeline, getJobTypeFromStatus(pipeline.status), meterDataPipelines.SETTLEMENT_READY, data)">
-                                                    Run Settlement - Ready
+                                                    Process GESQ
                                                 </a>
                                             }
                                             @if (pipeline.status.toLowerCase() === meterProcessStatus.SUCCEEDED_GESQ ||
