@@ -8,6 +8,7 @@ import { MeterprocessService } from '@shared/services/api';
 import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
 import { isAfter, isBefore, isSameDay, startOfDay } from 'date-fns';
 import { DateFormatterUtilService } from '@shared/services/utils';
+import { DisabledTimeFn } from 'ng-zorro-antd/date-picker';
 
 @Component({
   selector: 'app-meter-process-config',
@@ -37,6 +38,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   private readonly _mtnList = signal<mtnList[]>([]);
   private readonly _processType = signal<string>(MeterProcessTypes.DAILY);
 
+
   //Public Signals
   public readonly mtnIsLoading = this._mtnIsLoading.asReadonly();
   public readonly meterProcessBillingPeriod = this._meterProcessBillingPeriod.asReadonly();
@@ -52,7 +54,6 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     if (!billingPeriodValue) return null;
     return this._meterProcessBillingPeriod().find(period => period.name === billingPeriodValue);
   });
-  
 
   constructor() {
     this.setupEffects();
@@ -512,21 +513,31 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     }
   }
 
-  disabledEndTime() {
+  disabledEndTime: DisabledTimeFn = () => {
     const currentConfig = this.rjs.getLatestConfiguration();
     const currentBillingStart = currentConfig ? currentConfig.startDatetime : '';
+    const currentBillingEnd = currentConfig ? currentConfig.endDatetime : '';
     const start = new Date(currentBillingStart);
+    const end = new Date(currentBillingEnd);
 
-    const startHour = start.getHours();
-    const startMinute = start.getMinutes();
+    if (isSameDay(start, end)) {
+      const startHour = start.getHours();
+      const startMinute = start.getMinutes();
+
+      return {
+        nzDisabledHours: () => Array.from({ length: startHour }, (_, i) => i).concat([24]),
+        nzDisabledMinutes: (hour: number) => {
+          if (hour === startHour) return Array.from({ length: startMinute }, (_, i) => i);
+          if (hour === 24) return [56, 57, 58, 59];
+          return [];
+        },
+        nzDisabledSeconds: () => [],
+      };
+    }
 
     return {
-      nzDisabledHours: () => Array.from({ length: startHour }, (_, i) => i).concat([24]),
-      nzDisabledMinutes: (hour: number) => {
-        if (hour === startHour) return Array.from({ length: startMinute }, (_, i) => i);
-        if (hour === 24) return [56, 57, 58, 59];
-        return [];
-      },
+      nzDisabledHours: () => Array.from({ length: 24 }, (_, i) => i).filter(h => h !== 0),
+      nzDisabledMinutes: (hour: number) => hour === 0 ? Array.from({ length: 60 }, (_, i) => i).filter(m => m !== 0) : [],
       nzDisabledSeconds: () => [],
     };
   }
