@@ -264,25 +264,27 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       billingPeriodName: null, 
       adjNo: null,
       startDatetime: null,
-      endDatetime: null,
       billingStartDate: null,
       billingEndDate: null
     };
+
+    const currentTradingDate = this.meterProcessForm?.get('tradingDate')?.value;
 
     switch (processType) {
       case MeterProcessTypes.DAILY:
         return {
           ...baseReset,
-          tradingDate: new Date()
+          tradingDate: currentTradingDate ?? new Date(),
+          endDatetime: currentTradingDate + 1
         };
-      
+
       case MeterProcessTypes.ADJUSTMENT:
       case MeterProcessTypes.FINAL:
       case MeterProcessTypes.PRELIMINARY:
         return {
           ...baseReset
         };
-      
+
       default:
         return baseReset;
     }
@@ -388,7 +390,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
 
     const startDate = new Date(billingPeriod.startDate);
     const endDate = new Date(billingPeriod.endDate);
-    endDate.setDate(endDate.getDate() + 1); // Add one day to end date
+    endDate.setDate(endDate.getDate() + 1);
     
     startDate.setHours(0, 5);
     endDate.setHours(0, 0);
@@ -464,45 +466,45 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
 
   public disableStartDateRange = (date: Date): boolean => {
     const currentConfig = this.rjs.getLatestConfiguration();
-    const currentTradingDate = currentConfig ? currentConfig.tradingDate : '';
     const dateStart = startOfDay(date);
 
     if (currentConfig?.processType !== MeterProcessTypes.DAILY) {
-      const currentBillingStart = currentConfig ? currentConfig.billingStartDate : '';
-      const currentBillingEnd = currentConfig ? currentConfig.billingEndDate : '';
-      const billingStart = startOfDay(new Date(currentBillingStart));
-      const billingEnd = startOfDay(new Date(currentBillingEnd));
+      const billingStartStr = currentConfig?.billingStartDate;
+      const billingEndStr = currentConfig?.billingEndDate;
+      if (!billingStartStr || !billingEndStr) return true;
+
+      const billingStart = startOfDay(new Date(billingStartStr));
+      const billingEnd = startOfDay(new Date(billingEndStr));
+
       return isBefore(dateStart, billingStart) || isAfter(dateStart, billingEnd);
     }
 
-    return !isSameDay(dateStart, new Date(currentTradingDate));
+    const tradingDate = currentConfig?.tradingDate;
+    return !isSameDay(dateStart, new Date(tradingDate));
   };
 
   public disableEndDateRange = (date: Date): boolean => {
     const currentConfig = this.rjs.getLatestConfiguration();
-    const currentBillingStart = currentConfig ? currentConfig.billingStartDate : '';
-    const currentBillingEnd = currentConfig ? currentConfig.billingEndDate : '';
-    const currentTradingDate = currentConfig ? currentConfig.startDatetime : '';
-    const dateStart = startOfDay(date);
+    const startDatetime = currentConfig?.startDatetime;
+    const billingStartStr = currentConfig?.billingStartDate;
+    const billingEndStr = currentConfig?.billingEndDate;
 
-    if (currentConfig?.processType === MeterProcessTypes.DAILY) {
-      return !isSameDay(dateStart, this.today);
+    if (!startDatetime) return true;
+
+    const checkDate = startOfDay(date);
+    const startDate = startOfDay(new Date(startDatetime));
+
+    // If billing range is available (e.g. in adjustment/final/prelim)
+    if (billingStartStr && billingEndStr) {
+      const billingStart = startOfDay(new Date(billingStartStr));
+      const billingEnd = startOfDay(new Date(billingEndStr));
+      return checkDate < billingStart || checkDate > billingEnd;
     }
 
-    if (currentConfig?.billingPeriodName) {
-      const billingStart = startOfDay(new Date(currentBillingStart));
-      const billingEnd = startOfDay(new Date(currentBillingEnd));
-      let valid = !isBefore(dateStart, billingStart) && !isAfter(dateStart, billingEnd);
-
-      if (currentTradingDate) {
-        const startDate = startOfDay(new Date(currentTradingDate));
-        valid = valid && !isBefore(dateStart, startDate);
-      }
-
-      return !valid;
-    }
-
-    return isBefore(dateStart, new Date(currentTradingDate));
+    // For DAILY process type, restrict to same or next day
+    const nextDate = new Date(startDate);
+    nextDate.setDate(startDate.getDate() + 1);
+    return !(isSameDay(checkDate, startDate) || isSameDay(checkDate, nextDate));
   };
 
   disabledStartTime(){
@@ -515,8 +517,14 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
 
   disabledEndTime: DisabledTimeFn = (current: Date | Date[]) => {
     const selected = Array.isArray(current) ? current[0] : current;
+    const currentConfig = this.rjs.getLatestConfiguration();
+    const configStart = currentConfig ? currentConfig.startDatetime : '';
+    const currentEndDate = currentConfig ? currentConfig.endDatetime : '';
+    const billingEndDate = new Date(currentEndDate);
+    billingEndDate.setDate(billingEndDate.getDate() - 1);
+    
 
-    if (!selected) {
+    if (currentConfig?.billingPeriodName && new Date(currentConfig.billingEndDate) !== billingEndDate) {
       return {
         nzDisabledHours: () => [],
         nzDisabledMinutes: () => [],
@@ -524,8 +532,6 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       };
     }
 
-    const currentConfig = this.rjs.getLatestConfiguration();
-    const configStart = currentConfig ? currentConfig.startDatetime : '';
     const start = new Date(configStart);
     const end = new Date(selected);
 
