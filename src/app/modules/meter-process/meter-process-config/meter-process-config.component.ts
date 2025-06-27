@@ -1,5 +1,5 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, computed, effect, inject, signal } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnDestroy, OnInit, computed, effect, inject, signal } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MeterProcessTypes, Regions } from '@shared/enums';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged} from 'rxjs';
 import { RunJobService } from '@shared/services/meterProcess';
@@ -9,6 +9,7 @@ import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
 import { isAfter, isBefore, isSameDay, startOfDay } from 'date-fns';
 import { DateFormatterUtilService } from '@shared/services/utils';
 import { DisabledTimeFn } from 'ng-zorro-antd/date-picker';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-meter-process-config',
@@ -24,7 +25,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   private readonly mpa = inject(MeterprocessService);
   private readonly fb = inject(FormBuilder);
   private readonly dfp = inject(DateFormatterUtilService);
-  private cdr = inject(ChangeDetectorRef);
+  public toast = inject(ToastrService)
 
   //Forms
   public meterProcessForm!: FormGroup;
@@ -85,7 +86,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       adjNo: [null],
       billingStartDate: [null],
       billingEndDate: [null]
-    });
+    }, {validators: [this.dateRangeValidator('startDatetime', 'endDatetime')]});
 
     this.updateServiceConfiguration();
   }
@@ -97,7 +98,14 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
 
     this.meterProcessForm.statusChanges
       .pipe(takeUntil(this.destroy$))
-      .subscribe(status => this.rjs.updateFormValidity(status === 'VALID'));
+      .subscribe(status => {
+        this.rjs.updateFormValidity(status === 'VALID');
+
+        const hasDateError = this.meterProcessForm.errors?.['dateRangeInvalid'];
+        if (status === 'INVALID' && hasDateError) {
+          this.toast.error('End Date must be after Start Date.', 'Date Range Error');
+        }
+      });
 
     this.meterProcessForm.get('processType')?.valueChanges
       .pipe(takeUntil(this.destroy$))
@@ -132,11 +140,18 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
         this.loadMtnList();
       });
 
+    this.meterProcessForm.get('startDatetime')?.valueChanges
+      .pipe(takeUntil(this.destroy$), debounceTime(100))
+      .subscribe(() => {
+        this.meterProcessForm.get('endDatetime')?.updateValueAndValidity({ emitEvent: false });
+        this.meterProcessForm.updateValueAndValidity({ emitEvent: false });
+      });
+
     this.meterProcessForm.get('endDatetime')?.valueChanges
       .pipe(takeUntil(this.destroy$), debounceTime(100))
       .subscribe(() => {
-        // Force re-evaluation of [nzDisabledTime]
-        this.cdr.markForCheck();
+        this.meterProcessForm.get('startDatetime')?.updateValueAndValidity({ emitEvent: false });
+        this.meterProcessForm.updateValueAndValidity({ emitEvent: false });
       });
   }
 
@@ -459,18 +474,32 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   }
 
   // Date validation methods
-  public disableTradingDateRange = (date: Date): boolean => {
+  dateRangeValidator(startKey: string, endKey: string): ValidatorFn {
+    return (group: AbstractControl): { [key: string]: any } | null => {
+      const start = group.get(startKey)?.value;
+      const end = group.get(endKey)?.value;
+
+      if (start && end && new Date(start) > new Date(end)) {
+        return { dateRangeInvalid: true };
+      }
+
+      return null;
+    };
+  }
+
+  disableTradingDateRange = (date: Date): boolean => {
     if (!this.isDailyType()) return false;
     return isAfter(startOfDay(date), this.today);
   };
 
-  public disableStartDateRange = (date: Date): boolean => {
-    const currentConfig = this.rjs.getLatestConfiguration();
+  disableStartDateRange = (date: Date): boolean => {
+    const form = this.meterProcessForm;
+    const processType = form.get('processType')?.value;
     const dateStart = startOfDay(date);
 
-    if (currentConfig?.processType !== MeterProcessTypes.DAILY) {
-      const billingStartStr = currentConfig?.billingStartDate;
-      const billingEndStr = currentConfig?.billingEndDate;
+    if (processType !== MeterProcessTypes.DAILY) {
+      const billingStartStr = form.get('billingStartDate')?.value;
+      const billingEndStr = form.get('billingEndDate')?.value;
       if (!billingStartStr || !billingEndStr) return true;
 
       const billingStart = startOfDay(new Date(billingStartStr));
@@ -479,41 +508,67 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       return isBefore(dateStart, billingStart) || isAfter(dateStart, billingEnd);
     }
 
-    const tradingDate = currentConfig?.tradingDate;
+    const tradingDate = form.get('tradingDate')?.value;
     return !isSameDay(dateStart, new Date(tradingDate));
   };
 
-  public disableEndDateRange = (date: Date): boolean => {
-    const currentConfig = this.rjs.getLatestConfiguration();
-    const startDatetime = currentConfig?.startDatetime;
-    const billingStartStr = currentConfig?.billingStartDate;
-    const billingEndStr = currentConfig?.billingEndDate;
+  disableEndDateRange = (date: Date): boolean => {
+    const form = this.meterProcessForm;
+    const processType = form.get('processType')?.value;
+    const startDatetime = form.get('startDatetime')?.value;
+    const billingStartStr = form.get('billingStartDate')?.value;
+    const billingEndStr = form.get('billingEndDate')?.value;
 
     if (!startDatetime) return true;
 
     const checkDate = startOfDay(date);
     const startDate = startOfDay(new Date(startDatetime));
 
-    // If billing range is available (e.g. in adjustment/final/prelim)
-    if (billingStartStr && billingEndStr) {
+    if (processType !== MeterProcessTypes.DAILY && billingStartStr && billingEndStr) {
       const billingStart = startOfDay(new Date(billingStartStr));
       const billingEnd = startOfDay(new Date(billingEndStr));
       return checkDate < billingStart || checkDate > billingEnd;
     }
 
-    // For DAILY process type, restrict to same or next day
     const nextDate = new Date(startDate);
     nextDate.setDate(startDate.getDate() + 1);
     return !(isSameDay(checkDate, startDate) || isSameDay(checkDate, nextDate));
   };
 
-  disabledStartTime(){
-   return {
+  disabledStartTime: DisabledTimeFn = (current: Date | Date[]) => {
+    const selected = Array.isArray(current) ? current[0] : current;
+    const formEnd = this.meterProcessForm.get('endDatetime')?.value;
+
+    if (!selected || !formEnd) {
+      return {
+        nzDisabledHours: () => [],
+        nzDisabledMinutes: () => [],
+        nzDisabledSeconds: () => [],
+      };
+    }
+
+    const selectedStart = new Date(selected);
+    const endDate = new Date(formEnd);
+
+    if (isSameDay(selectedStart, endDate)) {
+      const endHour = endDate.getHours();
+      const endMinute = endDate.getMinutes();
+
+      return {
+        nzDisabledHours: () =>
+          Array.from({ length: 24 }, (_, i) => i).filter(h => h > endHour),
+        nzDisabledMinutes: (hour: number) =>
+          hour === endHour ? Array.from({ length: 60 }, (_, i) => i).filter(m => m > endMinute) : [],
+        nzDisabledSeconds: () => [],
+      };
+    }
+
+    return {
       nzDisabledHours: () => [],
       nzDisabledMinutes: (hour: number) => hour === 0 ? Array.from({ length: 5 }, (_, i) => i) : [],
       nzDisabledSeconds: () => [],
-   } 
-  }
+    };
+  };
 
   disabledEndTime: DisabledTimeFn = (current: Date | Date[]) => {
     const selected = Array.isArray(current) ? current[0] : current;
