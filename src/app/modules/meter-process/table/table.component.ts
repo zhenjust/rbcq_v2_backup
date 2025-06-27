@@ -146,7 +146,7 @@ export class TableComponent implements OnInit {
       adjustmentNumber: parentData.adjNo
     };
 
-    console.log(this.currentModalData);
+    // console.log(this.currentModalData);
     this.modal.create({
       nzTitle: actionType,
       nzContent: this.runJobs,
