@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MeterProcessTypes, Regions } from '@shared/enums';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged} from 'rxjs';
@@ -24,6 +24,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   private readonly mpa = inject(MeterprocessService);
   private readonly fb = inject(FormBuilder);
   private readonly dfp = inject(DateFormatterUtilService);
+  private cdr = inject(ChangeDetectorRef);
 
   //Forms
   public meterProcessForm!: FormGroup;
@@ -129,6 +130,13 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.resetMtnSelection();
         this.loadMtnList();
+      });
+
+    this.meterProcessForm.get('endDatetime')?.valueChanges
+      .pipe(takeUntil(this.destroy$), debounceTime(100))
+      .subscribe(() => {
+        // Force re-evaluation of [nzDisabledTime]
+        this.cdr.markForCheck();
       });
   }
 
@@ -505,32 +513,30 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
    } 
   }
 
-  disabledEndTimeExceed(){
-    return {
-      nzDisabledHours: () => [],
-      nzDisabledMinutes: (hour: number) => hour === 0 ? Array.from({ length: 5 }, (_, i) => i) : [],
-      nzDisabledSeconds: () => [],
-    }
-  }
+  disabledEndTime: DisabledTimeFn = (current: Date | Date[]) => {
+    const selected = Array.isArray(current) ? current[0] : current;
 
-  disabledEndTime: DisabledTimeFn = () => {
+    if (!selected) {
+      return {
+        nzDisabledHours: () => [],
+        nzDisabledMinutes: () => [],
+        nzDisabledSeconds: () => [],
+      };
+    }
+
     const currentConfig = this.rjs.getLatestConfiguration();
-    const currentBillingStart = currentConfig ? currentConfig.startDatetime : '';
-    const currentBillingEnd = currentConfig ? currentConfig.endDatetime : '';
-    const start = new Date(currentBillingStart);
-    const end = new Date(currentBillingEnd);
+    const configStart = currentConfig ? currentConfig.startDatetime : '';
+    const start = new Date(configStart);
+    const end = new Date(selected);
 
     if (isSameDay(start, end)) {
       const startHour = start.getHours();
       const startMinute = start.getMinutes();
 
       return {
-        nzDisabledHours: () => Array.from({ length: startHour }, (_, i) => i).concat([24]),
-        nzDisabledMinutes: (hour: number) => {
-          if (hour === startHour) return Array.from({ length: startMinute }, (_, i) => i);
-          if (hour === 24) return [56, 57, 58, 59];
-          return [];
-        },
+        nzDisabledHours: () => Array.from({ length: startHour }, (_, i) => i),
+        nzDisabledMinutes: (hour: number) =>
+          hour === startHour ? Array.from({ length: startMinute }, (_, i) => i) : [],
         nzDisabledSeconds: () => [],
       };
     }
@@ -540,6 +546,5 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       nzDisabledMinutes: (hour: number) => hour === 0 ? Array.from({ length: 60 }, (_, i) => i).filter(m => m !== 0) : [],
       nzDisabledSeconds: () => [],
     };
-  }
-
+  };
 }
