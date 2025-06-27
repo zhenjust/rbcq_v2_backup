@@ -520,11 +520,13 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     const currentConfig = this.rjs.getLatestConfiguration();
     const configStart = currentConfig ? currentConfig.startDatetime : '';
     const currentEndDate = currentConfig ? currentConfig.endDatetime : '';
+    const currentBillingEndDate = currentConfig ? currentConfig.billingEndDate : '';
+    const billingEndDateFromForm = new Date(currentBillingEndDate);
     const billingEndDate = new Date(currentEndDate);
     billingEndDate.setDate(billingEndDate.getDate() - 1);
     
 
-    if (currentConfig?.billingPeriodName && new Date(currentConfig.billingEndDate) !== billingEndDate) {
+    if (currentConfig?.billingPeriodName && billingEndDateFromForm !== billingEndDate) {
       return {
         nzDisabledHours: () => [],
         nzDisabledMinutes: () => [],
