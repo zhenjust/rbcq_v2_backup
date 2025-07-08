@@ -5,14 +5,14 @@ export enum ProcessType {
 }
 
 export enum ProcessStatus {
-  SUCCEEDED = 'succeeded - ',
+  COMPLETED = 'completed - ',
   FAILED = 'failed - ',
   CANCELLED = 'cancelled - '
 }
 
 export enum MeterProcessStatus {
-  SUCCEEDED_METER_DATA = ProcessStatus.SUCCEEDED + ProcessType.METER_DATA,
-  SUCCEEDED_GESQ = ProcessStatus.SUCCEEDED + ProcessType.GESQ,
+  COMPLETED_METER_DATA = ProcessStatus.COMPLETED + ProcessType.METER_DATA,
+  COMPLETED_GESQ = ProcessStatus.COMPLETED + ProcessType.GESQ,
   FAILED_SETTLEMENT_READY = ProcessStatus.FAILED + ProcessType.SETTLEMENT_READY,
   FAILED_GESQ = ProcessStatus.FAILED + ProcessType.GESQ,
   CANCELLED_SETTLEMENT_READY = ProcessStatus.CANCELLED + ProcessType.SETTLEMENT_READY,
