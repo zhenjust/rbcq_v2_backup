@@ -1,25 +1,41 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, Signal, signal, computed, effect } from '@angular/core';
 import { apiPath } from '@shared/constants';
 import { AuthToken, CurrentUser } from '@shared/interfaces';
-import { map, Observable, tap } from 'rxjs';
+import { catchError, map, Observable, of, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthorizationService {
-  private currentUser: CurrentUser | null = null;
   private http = inject(HttpClient);
 
-  getUser(): Observable<CurrentUser> {
-    return this.http.get<CurrentUser>(`${apiPath.__AUTH_PATH__}/user`);
+  private _currentUser = signal<CurrentUser | null>(null);
+
+  readonly currentUser: Signal<CurrentUser | null> = this._currentUser.asReadonly();
+
+  loadUser(): Observable<CurrentUser> {
+    return this.http.get<CurrentUser>(`${apiPath.__AUTH_PATH__}/user`).pipe(
+      tap(user => this._currentUser.set(user))
+    );
+  }
+
+  // Access identity reactively or trigger a load if needed
+  identity(): CurrentUser | null {
+    if (!this._currentUser()) {
+      this.loadUser().subscribe();
+    }
+    return this._currentUser();
+  }
+
+  refreshUser(): Observable<CurrentUser> {
+    return this.loadUser();
   }
 
   logout(): Observable<string> {
     return this.http.get<string>(`${apiPath.__AUTH_PATH__}/oauth/invalidate-token`);
   }
 
-  // OAuth flow
   authorize(code: string, redirectUri: string): Observable<boolean> {
     const body = new HttpParams()
       .set('grant_type', 'authorization_code')
@@ -33,23 +49,19 @@ export class AuthorizationService {
       'Accept': 'application/json'
     });
 
-    return this.http.post<AuthToken>(`${apiPath.__AUTH_PATH__}/oauth/token`,body.toString(),{ headers }).pipe(
-      tap(
-        response => {
-          localStorage.setItem('id_token', response.access_token);
-          localStorage.setItem('refresh_token', response.refresh_token);
-        }
-      ),
+    return this.http.post<AuthToken>(`${apiPath.__AUTH_PATH__}/oauth/token`, body.toString(), { headers }).pipe(
+      tap(response => {
+        localStorage.setItem('id_token', response.access_token);
+        localStorage.setItem('refresh_token', response.refresh_token);
+      }),
       map(() => true)
     );
   }
 
-  //TODO cast proper types to the services
   userInit(): Observable<CurrentUser> {
     return this.http.post<CurrentUser>(`${apiPath.__AUTH_PATH__}/user/init`, {});
   }
 
-  
   changeToSuperUser(user: string): Observable<string> {
     return this.http.post<string>(`${apiPath.__AUTH_PATH__}/super-user/init/${user}`, {});
   }
@@ -59,7 +71,7 @@ export class AuthorizationService {
   }
 
   logSuperUserLogin(): Observable<string> {
-    return this.http.post<string>(`${apiPath.__REG_PATH__}/participant/0/info/audit/log`, {})
+    return this.http.post<string>(`${apiPath.__REG_PATH__}/participant/0/info/audit/log`, {});
   }
 
   userNameList(): Observable<string[]> {
@@ -70,24 +82,7 @@ export class AuthorizationService {
     return this.http.post<string>(`${apiPath.__REG_PATH__}/participant/0/info/audit/log`, {});
   }
 
-  isAuthorized(permissions: string | string[]): boolean {
-    if (!this.currentUser || this.currentUser.principal.username === 'anonymous') {
-      return false;
-    }
-
-    let perms: string[];
-    if (typeof permissions === 'string') {
-      perms = permissions.split(',');
-    } else {
-      perms = permissions;
-    }
-
-    return perms.every(permission => 
-      this.currentUser?.principal.privileges.includes(permission)
-    );
-  }
-
-  getToken(): string | null{
+  getToken(): string | null {
     return localStorage.getItem('id_token');
   }
 }

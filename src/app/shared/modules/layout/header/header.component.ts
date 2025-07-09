@@ -45,19 +45,29 @@ export class HeaderComponent implements OnInit{
 
   checkUser(): void {
     this.isLoading = true;
-    this.authServices.userInit().subscribe({
-      next: (data) => {
-        this.userData = data;
-        this.isSuper = !!data.principal.superUserName;
-        this.userOptions = this.isSuper ? 'Switch to Normal User' : 'Switch to Super User';
-      },
-      error: (err) => {
-        this.toast.error(err.message);
-      },
-      complete: () => {
-        this.isLoading = false;
-      }
-    });
+
+    const currentUser = this.authServices.currentUser();
+
+    if (currentUser) {
+      this.userData = currentUser;
+      this.isSuper = !!currentUser.principal.superUserName;
+      this.userOptions = this.isSuper ? 'Switch to Normal User' : 'Switch to Super User';
+      this.isLoading = false;
+    } else {
+      this.authServices.loadUser().subscribe({
+        next: (data) => {
+          this.userData = data;
+          this.isSuper = !!data.principal.superUserName;
+          this.userOptions = this.isSuper ? 'Switch to Normal User' : 'Switch to Super User';
+        },
+        error: (err) => {
+          this.toast.error(err.message);
+        },
+        complete: () => {
+          this.isLoading = false;
+        }
+      });
+    }
   }
 
   getLdapUsers(): void{

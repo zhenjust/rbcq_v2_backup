@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
+import { Component, effect, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
 import { externalRoutes, NEW_ROUTES } from '@shared/constants';
 import { CurrentUser, navItems } from '@shared/interfaces';
 import { faBell, faHome, faChevronDown, faChevronRight, faAddressCard, faBuilding, faCopy, faUserLarge, faCircleUser, faCalendar, faFileArchive, faAddressBook, faBuildingUn, faTachometer, faTachometerAlt, faBinoculars, faContactCard, faHandHoldingHand, faTachometerAverage, faListCheck, faRoadCircleCheck } from '@fortawesome/free-solid-svg-icons';
@@ -18,35 +18,40 @@ export class NavbarComponent implements OnInit {
   @Input() isCollapsed: boolean = true;
   @Input() isHovered: boolean = false;
   @Output() navbarToggle: EventEmitter<void> = new EventEmitter<void>();
-  private userData: CurrentUser | null = null;
-  
+
+  // Icons
   faChevronDown = faChevronDown;
   faChevronRight = faChevronRight;
+
   navItems!: navItems[];
   openDropdowns: Record<string, boolean | Record<string, boolean>> = {};
-  isLoading: boolean = true;
+
+  isLoading = signal(true);
+  userData = signal<CurrentUser | null>(null);
 
   private r = inject(Router);
   private authorizationService = inject(AuthorizationService);
   private toast = inject(ToastrService);
-  
-  ngOnInit(): void {
-    this.loadUserData();
-  }
-  
-  private loadUserData(): void {
-    this.isLoading = true;
-    this.authorizationService.getUser().subscribe({
-      next: (data) => {
-        this.userData = data;
-      },
-      error: (err) => {
-        this.toast.error(err.message);
+
+  constructor() {
+    effect(() => {
+      const user = this.authorizationService.currentUser();
+      this.userData.set(user);
+      if (user) {
+        this.getMenuItems();
       }
-    }).add(() => {
-      this.isLoading = false;
-      this.getMenuItems();
     });
+  }
+
+  ngOnInit(): void {
+    if (!this.authorizationService.currentUser()) {
+      this.authorizationService.loadUser().subscribe({
+        error: (err) => this.toast.error(err.message),
+        complete: () => this.isLoading.set(false)
+      });
+    } else {
+      this.isLoading.set(false);
+    }
   }
 
   private getMenuItems(): void {
@@ -1054,14 +1059,15 @@ export class NavbarComponent implements OnInit {
   }
   
   hasPermission(item: navItems): boolean {
+    const user = this.userData();
     if (!item.permission || item.permission.length === 0) {
       return true;
     }
-  
-    if (!this.userData || !this.userData.principal.privileges) {
+
+    if (!user || !user.principal.privileges) {
       return false;
     }
-    
-    return isAuthorizedAny(this.userData.principal.privileges, item.permission);
+
+    return isAuthorizedAny(user.principal.privileges, item.permission);
   }
 }
