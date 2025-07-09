@@ -218,6 +218,7 @@ export class TableComponent implements OnInit {
       currentUser,
     });
 
-    return `${baseUrl}?${params.toString()}`;
+    // return `${window.location.origin}`;
+    return `${window.location.origin}/${baseUrl}?${params.toString()}`;
   }
 }
