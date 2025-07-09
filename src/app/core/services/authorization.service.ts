@@ -1,8 +1,8 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { inject, Injectable, Signal, signal, computed, effect } from '@angular/core';
+import { inject, Injectable, Signal, signal } from '@angular/core';
 import { apiPath } from '@shared/constants';
 import { AuthToken, CurrentUser } from '@shared/interfaces';
-import { catchError, map, Observable, of, tap } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
