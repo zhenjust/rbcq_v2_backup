@@ -1,4 +1,5 @@
 import { Component, OnInit, TemplateRef, ViewChild, computed, effect, inject } from '@angular/core';
+import { AuthorizationService } from '@core/services/authorization.service';
 import { MeterDataPipelineName, MeterProcessStatus, ProcessType } from '@shared/constants';
 import { MeterProcessTypes } from '@shared/enums';
 import { meterProcessPipeline, meterProcessTable } from '@shared/interfaces';
@@ -87,8 +88,10 @@ export class TableComponent implements OnInit {
   public toast = inject(ToastrService);
   public sfs = inject(SearchFilterService);
   public modal = inject(NzModalService);
-  private mpa = inject(MeterprocessService);
   public dfs = inject(DateFormatterUtilService);
+
+  private mpa = inject(MeterprocessService);
+  private as = inject(AuthorizationService);
 
   constructor() {
     effect(() => {
@@ -190,5 +193,31 @@ export class TableComponent implements OnInit {
       return 'Finalize - GESQ';
     }
     return 'Unknown';
+  }
+
+
+  downloadReport(pipeline: meterProcessPipeline): string {
+    const baseUrl = 'meter-process/reports/download/zip';
+
+    const processType = pipeline.parameters.processType ?? '';
+    const isDaily = processType.toUpperCase?.() === 'DAILY';
+
+    const tradingDate = isDaily
+      ? this.dfs.formatDate(pipeline.parameters.tradingDate, 'yyyyMMdd')
+      : this.dfs.formatDate(pipeline.parameters.endDatetime, 'yyyyMMdd');
+
+    const runDate = this.dfs.formatDate(pipeline.lastModifiedDatetime, 'yyyyMMddHHmmss');
+    const currentUser = this.as.currentUser()?.principal.username ?? '';
+
+    const params = new URLSearchParams({
+      version: String(pipeline.id),
+      isDaily: String(isDaily),
+      tradingDate,
+      runDate,
+      processType,
+      currentUser,
+    });
+
+    return `${baseUrl}?${params.toString()}`;
   }
 }

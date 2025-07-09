@@ -1,9 +1,12 @@
+import { DatePipe } from '@angular/common';
 import { Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DateFormatterUtilService {
+  private datePipe = new DatePipe('en-US');
+
   transformDate(dateString: string): string {
     if (!dateString) {
       return '';
@@ -68,5 +71,9 @@ export class DateFormatterUtilService {
     const day = dateObj.getDate().toString().padStart(2, '0');
     
     return `${year}-${month}-${day}`;
+  }
+
+  formatDate(date: any, format: string): string {
+    return this.datePipe.transform(date, format) ?? '';
   }
 }
