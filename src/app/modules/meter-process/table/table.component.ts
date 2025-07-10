@@ -207,7 +207,7 @@ export class TableComponent implements OnInit {
       : this.dfs.formatDate(pipeline.parameters.endDatetime, 'yyyyMMdd');
 
     const runDate = this.dfs.formatDate(pipeline.lastModifiedDatetime, 'yyyyMMddHHmmss');
-    const currentUser = this.as.currentUser()?.principal.username ?? '';
+    const user = this.as.currentUser()?.principal.username ?? '';
 
     const params = new URLSearchParams({
       version: String(pipeline.id),
@@ -215,7 +215,7 @@ export class TableComponent implements OnInit {
       tradingDate,
       runDate,
       processType,
-      currentUser,
+      user,
     });
 
     // return `${window.location.origin}`;
