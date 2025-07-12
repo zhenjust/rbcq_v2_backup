@@ -532,9 +532,8 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     return {
       nzDisabledHours: () => {
         const disabled: number[] = [];
-
         if (minDate && isSameDay(current, minDate)) {
-          disabled.push(...Array.from({ length: 24 }, (_, h) => h).filter(h => h < 0 || h > 23 || (h === 0 ? false : false)));
+          disabled.push(...Array.from({ length: 24 }, (_, h) => h).filter(h => h < 0 || h > 23));
         }
 
         if (maxDate && isSameDay(current, maxDate)) {
@@ -551,7 +550,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
           for (let h = endHour + 1; h < 24; h++) disabled.push(h);
         }
 
-        return Array.from(new Set(disabled)); // Remove duplicates
+        return Array.from(new Set(disabled)); // remove duplicates
       },
 
       nzDisabledMinutes: (hour: number) => {
@@ -568,11 +567,12 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
           const mStart = startDate.getMinutes();
           for (let m = 0; m <= mStart; m++) disabled.push(m);
         }
-
+        
         if (endDate && isSameDay(current, endDate) && hour === endDate.getHours() && partial === 'start') {
           const mEnd = endDate.getMinutes();
           for (let m = mEnd + 1; m < 60; m++) disabled.push(m);
         }
+
         return Array.from(new Set(disabled));
       },
 
