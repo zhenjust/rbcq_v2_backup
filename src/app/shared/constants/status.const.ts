@@ -1,22 +1,23 @@
-export enum ProcessType {
+export enum MeterDataPipelineProcess {
   METER_DATA = 'meter data',
   SETTLEMENT_READY = 'settlement ready',
   GESQ = 'gesq'
 }
 
-export enum ProcessStatus {
+export enum PipelineStatus {
   COMPLETED = 'completed - ',
   FAILED = 'failed - ',
   CANCELLED = 'cancelled - '
 }
 
 export enum MeterProcessStatus {
-  COMPLETED_METER_DATA = ProcessStatus.COMPLETED + ProcessType.METER_DATA,
-  COMPLETED_GESQ = ProcessStatus.COMPLETED + ProcessType.GESQ,
-  FAILED_SETTLEMENT_READY = ProcessStatus.FAILED + ProcessType.SETTLEMENT_READY,
-  FAILED_GESQ = ProcessStatus.FAILED + ProcessType.GESQ,
-  CANCELLED_SETTLEMENT_READY = ProcessStatus.CANCELLED + ProcessType.SETTLEMENT_READY,
-  CANCELLED_GESQ = ProcessStatus.CANCELLED + ProcessType.GESQ
+  COMPLETED_METER_DATA = PipelineStatus.COMPLETED + MeterDataPipelineProcess.METER_DATA,
+  COMPLETED_GESQ = PipelineStatus.COMPLETED + MeterDataPipelineProcess.GESQ,
+  COMPLETED_SETTLEMENT_READY = PipelineStatus.COMPLETED + MeterDataPipelineProcess.SETTLEMENT_READY,
+  FAILED_SETTLEMENT_READY = PipelineStatus.FAILED + MeterDataPipelineProcess.SETTLEMENT_READY,
+  FAILED_GESQ = PipelineStatus.FAILED + MeterDataPipelineProcess.GESQ,
+  CANCELLED_SETTLEMENT_READY = PipelineStatus.CANCELLED + MeterDataPipelineProcess.SETTLEMENT_READY,
+  CANCELLED_GESQ = PipelineStatus.CANCELLED + MeterDataPipelineProcess.GESQ
 }
 
 export enum MeterDataPipelineName {

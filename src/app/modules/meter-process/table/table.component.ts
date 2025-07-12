@@ -1,6 +1,6 @@
 import { Component, OnInit, TemplateRef, ViewChild, computed, effect, inject } from '@angular/core';
 import { AuthorizationService } from '@core/services/authorization.service';
-import { MeterDataPipelineName, MeterProcessStatus, ProcessType } from '@shared/constants';
+import { MeterDataPipelineName, MeterProcessStatus, MeterDataPipelineProcess } from '@shared/constants';
 import { MeterProcessTypes } from '@shared/enums';
 import { meterProcessPipeline, meterProcessTable } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
@@ -47,6 +47,7 @@ export class TableComponent implements OnInit {
 
   meterProcessStatus = MeterProcessStatus;
   meterDataPipelines = MeterDataPipelineName;
+  meterDataPipelineProcess = MeterDataPipelineProcess;
   processTypes = MeterProcessTypes;
   tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
   isLoading = computed(() => this.sfs.isLoading());
@@ -186,10 +187,10 @@ export class TableComponent implements OnInit {
 
   getJobTypeFromStatus(status: string): string {
     const lowerStatus = status.toLowerCase();
-    if (lowerStatus.endsWith(ProcessType.METER_DATA) ||
-      lowerStatus.endsWith(ProcessType.SETTLEMENT_READY)) {
+    if (lowerStatus.endsWith(MeterDataPipelineProcess.METER_DATA) ||
+      lowerStatus.endsWith(MeterDataPipelineProcess.SETTLEMENT_READY)) {
       return 'Settlement - Ready';
-    } else if (lowerStatus.endsWith(ProcessType.GESQ)) {
+    } else if (lowerStatus.endsWith(MeterDataPipelineProcess.GESQ)) {
       return 'Finalize - GESQ';
     }
     return 'Unknown';

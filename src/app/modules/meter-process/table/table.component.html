@@ -83,9 +83,12 @@
                                                     Finalize Settlement - Ready
                                                 </a>
                                             }
-                                            <a nz-button [href]="downloadReport(pipeline)" target="_blank" nzType="link" nzBlock >
-                                                Download MQ Report
-                                            </a>
+                                            @if ((data.processType === processTypes.DAILY && (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_GESQ || pipeline.status.toLowerCase().endsWith(meterDataPipelineProcess.SETTLEMENT_READY))) ||
+                                                    (data.processType !== processTypes.DAILY && pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_SETTLEMENT_READY)) {
+                                              <a nz-button [href]="downloadReport(pipeline)" target="_blank" nzType="link" nzBlock >
+                                                  Download MQ Report
+                                              </a>
+                                            }
                                         </nz-space>
                                     </td>
                                 </tr>
