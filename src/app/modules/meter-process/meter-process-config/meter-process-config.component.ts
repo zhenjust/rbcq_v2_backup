@@ -515,46 +515,48 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     const billingStartStr = this.meterProcessForm.get('billingStartDate')?.value;
     const billingEndStr = this.meterProcessForm.get('billingEndDate')?.value;
 
-    const minDate = processType === MeterProcessTypes.DAILY && tradingDate
+    const isDaily = processType === MeterProcessTypes.DAILY;
+
+    const minDate = isDaily && tradingDate
       ? new Date(new Date(tradingDate).setHours(0, 5, 0, 0))
       : billingStartStr
         ? new Date(new Date(billingStartStr).setHours(0, 5, 0, 0))
         : null;
 
-    const maxDate = processType === MeterProcessTypes.DAILY && tradingDate
+    const maxDate = isDaily && tradingDate
       ? new Date(new Date(tradingDate).setDate(new Date(tradingDate).getDate() + 1))
       : billingEndStr
-        ? new Date(new Date(billingEndStr).setDate(new Date(billingEndStr).getDate() + 1))
+        ? new Date(billingEndStr)
         : null;
 
     if (maxDate) maxDate.setHours(0, 0, 0, 0);
 
+    const sameDay = startDate && endDate && isSameDay(startDate, endDate);
+
     return {
       nzDisabledHours: () => {
         const disabled: number[] = [];
-        if (minDate && isSameDay(current, minDate)) {
-          disabled.push(...Array.from({ length: 24 }, (_, h) => h).filter(h => h < 0 || h > 23));
-        }
 
         if (maxDate && isSameDay(current, maxDate)) {
-          for (let h = 1; h < 24; h++) disabled.push(h);
+          disabled.push(...Array.from({ length: 24 }, (_, h) => h !== 0 ? h : -1).filter(h => h >= 0));
+        }
+        if (sameDay && isDaily && startDate && endDate) {
+          if (partial === 'end' && isSameDay(current, startDate)) {
+            const startHour = startDate.getHours();
+            for (let h = 0; h < startHour; h++) disabled.push(h);
+          }
+          if (partial === 'start' && isSameDay(current, endDate)) {
+            const endHour = endDate.getHours();
+            for (let h = endHour + 1; h < 24; h++) disabled.push(h);
+          }
         }
 
-        if (startDate && isSameDay(current, startDate) && partial === 'end') {
-          const startHour = startDate.getHours();
-          for (let h = 0; h < startHour; h++) disabled.push(h);
-        }
-
-        if (endDate && isSameDay(current, endDate) && partial === 'start') {
-          const endHour = endDate.getHours();
-          for (let h = endHour + 1; h < 24; h++) disabled.push(h);
-        }
-
-        return Array.from(new Set(disabled)); // remove duplicates
+        return Array.from(new Set(disabled));
       },
 
       nzDisabledMinutes: (hour: number) => {
         const disabled: number[] = [];
+
         if (minDate && isSameDay(current, minDate) && hour === 0) {
           for (let m = 0; m < 5; m++) disabled.push(m);
         }
@@ -563,20 +565,21 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
           for (let m = 1; m < 60; m++) disabled.push(m);
         }
 
-        if (startDate && isSameDay(current, startDate) && hour === startDate.getHours() && partial === 'end') {
-          const mStart = startDate.getMinutes();
-          for (let m = 0; m <= mStart; m++) disabled.push(m);
-        }
-        
-        if (endDate && isSameDay(current, endDate) && hour === endDate.getHours() && partial === 'start') {
-          const mEnd = endDate.getMinutes();
-          for (let m = mEnd + 1; m < 60; m++) disabled.push(m);
+        if (sameDay && isDaily && startDate && endDate) {
+          if (partial === 'end' && isSameDay(current, startDate) && hour === startDate.getHours()) {
+            const mStart = startDate.getMinutes();
+            for (let m = 0; m <= mStart; m++) disabled.push(m);
+          }
+          if (partial === 'start' && isSameDay(current, endDate) && hour === endDate.getHours()) {
+            const mEnd = endDate.getMinutes();
+            for (let m = mEnd + 1; m < 60; m++) disabled.push(m);
+          }
         }
 
         return Array.from(new Set(disabled));
       },
 
-      nzDisabledSeconds: () => [],
+      nzDisabledSeconds: () => []
     };
   }) as DisabledTimeFn;
-}
+};
