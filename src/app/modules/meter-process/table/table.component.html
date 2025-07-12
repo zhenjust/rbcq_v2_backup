@@ -57,7 +57,7 @@
                                     <td>{{ pipeline.parameters.endDatetime }}</td>
                                     <td>{{ pipeline.parameters.mtn || 'ALL' }}</td>
                                   <td>
-                                    <nz-tag nz-tooltip [nzTooltipTitle]="pipeline.status === 'Failed' ? pipeline.message : ''">
+                                    <nz-tag >
                                       {{ pipeline.status }}
                                     </nz-tag>
                                   </td>
@@ -119,9 +119,9 @@
                                                             <td>{{runs.duration}}</td>
                                                             <td>{{runs.runBy}}</td>
                                                             <td>
-                                                                <nz-tag>
-                                                                    {{runs.status}}
-                                                                </nz-tag>
+                                                              <nz-tag nz-tooltip [nzTooltipTitle]="runs.status === 'Failed' ? runs.message : ''">
+                                                                {{ runs.status }}
+                                                              </nz-tag>
                                                             </td>
                                                         </tr>
                                                     }
