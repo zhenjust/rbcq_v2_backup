@@ -88,7 +88,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
     this.meterProcessParams = Object.fromEntries(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       Object.entries(configuration).filter(([_key, val]) => 
-        val !== null && val !== undefined && val !== "" && _key !== 'regionGroup'
+        val !== null && val !== undefined && val !== "" &&  _key !== 'regionGroup' && _key !== 'datetimeRange'
       )
     ) as Partial<meterProcessParams>;
   }

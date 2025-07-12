@@ -61,39 +61,21 @@
         }
         
         <nz-space nzWrap="wrap">
-            <div class="form-item" *nzSpaceItem>
-                <label class="form-label">Start Date Time:</label>
-                <nz-date-picker
-                    nzShowNow="false"
-                    formControlName="startDatetime"
+            <div class="form-item">
+                <label class="form-label">Date Time Range:</label>
+                <nz-range-picker
+                    formControlName="datetimeRange"
                     class="select-size"
-                    nzPlaceHolder="Select start date and time"
-                    [nzDisabledDate]="disableStartDateRange"
+                    nzShowNow="false"
+                    [nzDisabledDate]="disableRangeDate"
                     [nzShowTime]="{
                         nzFormat: 'HH:mm',
                         nzHourStep: 1,
                         nzMinuteStep: 5
                     }"
-                    [nzDisabledTime]="disabledStartTime"
+                    [nzDisabledTime]="disabledRangeTime"
                     nzFormat="yyyy-MM-dd HH:mm"
-                ></nz-date-picker>
-            </div>
-            <div class="form-item" *nzSpaceItem>
-                <label class="form-label">End Date Time:</label>
-                <nz-date-picker
-                    nzShowNow="false"
-                    formControlName="endDatetime"
-                    class="select-size"
-                    nzPlaceHolder="Select end date and time"
-                    [nzDisabledDate]="disableEndDateRange"
-                    [nzShowTime]="{
-                        nzFormat: 'HH:mm',
-                        nzHourStep: 1,
-                        nzMinuteStep: 5
-                    }"
-                    [nzDisabledTime]="disabledEndTime"
-                    nzFormat="yyyy-MM-dd HH:mm"
-                ></nz-date-picker>
+                ></nz-range-picker>
             </div>
         </nz-space>
         
