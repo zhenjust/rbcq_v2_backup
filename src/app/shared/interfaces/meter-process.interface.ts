@@ -87,6 +87,7 @@ export interface meterProcessPipeline {
     name: string
     id: number
     status: string
+    message: string
     lastModifiedBy: string
     lastModifiedDatetime: Date
     parameters: meterProcessParameters,

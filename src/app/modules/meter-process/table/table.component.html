@@ -56,11 +56,11 @@
                                     <td>{{ pipeline.parameters.startDatetime }}</td>
                                     <td>{{ pipeline.parameters.endDatetime }}</td>
                                     <td>{{ pipeline.parameters.mtn || 'ALL' }}</td>
-                                    <td>
-                                        <nz-tag>
-                                            {{ pipeline.status }}
-                                        </nz-tag>
-                                    </td>
+                                  <td>
+                                    <nz-tag nz-tooltip [nzTooltipTitle]="pipeline.status === 'Failed' ? pipeline.message : ''">
+                                      {{ pipeline.status }}
+                                    </nz-tag>
+                                  </td>
                                     <td>
                                         <!-- PROGRESS SECTION -->
                                     </td>

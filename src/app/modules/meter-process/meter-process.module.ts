@@ -26,6 +26,7 @@ import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzTooltipDirective } from "ng-zorro-antd/tooltip";
 
 
 @NgModule({
@@ -35,29 +36,30 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
     MeterProcessConfigComponent,
     RunJobSearchComponent
   ],
-  imports: [
-    CommonModule,
-    MeterProcessRoutingModule,
-    NzCardModule,
-    NzTableModule,
-    NzFlexModule,
-    FormsModule, 
-    NzSelectModule,
-    ReactiveFormsModule,
-    NzDatePickerModule,
-    NzSpaceModule,
-    NzInputNumberModule,
-    SharedModule,
-    NzButtonModule,
-    NzInputModule,
-    NzResultModule,
-    NzTagModule,
-    NzProgressModule,
-    NzDividerModule,
-    NzTimePickerModule,
-    NzSpinModule,
-    NzTableModule
-  ],
+    imports: [
+        CommonModule,
+        MeterProcessRoutingModule,
+        NzCardModule,
+        NzTableModule,
+        NzFlexModule,
+        FormsModule,
+        NzSelectModule,
+        ReactiveFormsModule,
+        NzDatePickerModule,
+        NzSpaceModule,
+        NzInputNumberModule,
+        SharedModule,
+        NzButtonModule,
+        NzInputModule,
+        NzResultModule,
+        NzTagModule,
+        NzProgressModule,
+        NzDividerModule,
+        NzTimePickerModule,
+        NzSpinModule,
+        NzTableModule,
+        NzTooltipDirective
+    ],
   providers: [
     RunJobService,
     SearchFilterService,
