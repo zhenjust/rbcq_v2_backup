@@ -99,11 +99,6 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(status => {
         this.rjs.updateFormValidity(status === 'VALID');
-
-        const hasDateError = this.meterProcessForm.errors?.['dateRangeInvalid'];
-        if (status === 'INVALID' && hasDateError) {
-          this.toast.error('End Date must be after Start Date.', 'Date Range Error');
-        }
       });
 
     this.meterProcessForm.get('processType')?.valueChanges
@@ -569,16 +564,6 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
         if (maxDate && isSameDay(current, maxDate)) {
           disabled.push(...Array.from({ length: 24 }, (_, h) => h !== 0 ? h : -1).filter(h => h >= 0));
         }
-        if (sameDay && isDaily && startDate && endDate) {
-          if (partial === 'end' && isSameDay(current, startDate)) {
-            const startHour = startDate.getHours();
-            for (let h = 0; h < startHour; h++) disabled.push(h);
-          }
-          if (partial === 'start' && isSameDay(current, endDate)) {
-            const endHour = endDate.getHours();
-            for (let h = endHour + 1; h < 24; h++) disabled.push(h);
-          }
-        }
 
         return Array.from(new Set(disabled));
       },
@@ -590,19 +575,8 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
           for (let m = 0; m < 5; m++) disabled.push(m);
         }
 
-        if (maxDate && isSameDay(current, maxDate) && hour === 0) {
+        if (maxDate && isSameDay(current, maxDate)) {
           for (let m = 1; m < 60; m++) disabled.push(m);
-        }
-
-        if (sameDay && isDaily && startDate && endDate) {
-          if (partial === 'end' && isSameDay(current, startDate) && hour === startDate.getHours()) {
-            const mStart = startDate.getMinutes();
-            for (let m = 0; m <= mStart; m++) disabled.push(m);
-          }
-          if (partial === 'start' && isSameDay(current, endDate) && hour === endDate.getHours()) {
-            const mEnd = endDate.getMinutes();
-            for (let m = mEnd + 1; m < 60; m++) disabled.push(m);
-          }
         }
 
         return Array.from(new Set(disabled));
