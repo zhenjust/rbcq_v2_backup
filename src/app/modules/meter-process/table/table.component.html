@@ -2,10 +2,12 @@
     #nzTable
     [nzData]="tableData().pipelineGroup"
     [nzPageSize]="tableData().size"
-    [nzPageIndex]="tableData().number"
+    [nzPageIndex]="tableData().number + 1" 
     [nzTotal]="tableData().totalElements"
     [nzFrontPagination]="false"
     [nzLoading]="isLoading()"
+    (nzPageIndexChange)="onPageChange($event)"
+    (nzPageSizeChange)="onPageSizeChange($event)"
 >
     <thead>
         <tr>

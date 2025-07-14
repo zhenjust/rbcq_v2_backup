@@ -117,6 +117,21 @@ export class TableComponent implements OnInit {
     }
   }
 
+  onPageChange(newPageIndex: number): void {
+    const currentSize = this.tableData().size || 10;
+    this.sfs.refreshJobs({
+      page: newPageIndex - 1,
+      size: currentSize
+    });
+  }
+
+  onPageSizeChange(newSize: number): void {
+    this.sfs.refreshJobs({
+      page: 0,
+      size: newSize
+    });
+  }
+
   onPipelineExpandChange(checked: boolean, parentIndex: number, pipelineIndex: number): void {
     const uniqueKey = `${parentIndex}-${pipelineIndex}`;
     if (checked) {
