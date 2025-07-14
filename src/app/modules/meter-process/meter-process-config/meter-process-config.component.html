@@ -72,7 +72,9 @@
                         nzFormat: 'HH:mm',
                         nzMinuteStep: 5,
                     }"
+                    [nzAllowClear]="false"
                     [nzDisabledTime]="disabledRangeTime"
+                    (nzOnOk)="onRangePickerOk()"
                     nzFormat="yyyy-MM-dd HH:mm"
                 ></nz-range-picker>
             </div>

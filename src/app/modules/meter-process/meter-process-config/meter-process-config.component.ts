@@ -141,8 +141,24 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
 
     this.meterProcessForm.get('datetimeRange')?.valueChanges
       .pipe(takeUntil(this.destroy$), debounceTime(100))
-      .subscribe(() => {
-        this.meterProcessForm.updateValueAndValidity({ emitEvent: false });
+      .subscribe((range: [Date, Date]) => {
+        const processType = this.meterProcessForm.get('processType')?.value;
+
+        if (range && range.length === 2) {
+          const [start, end] = range;
+          if (!start || !end) return;
+
+          if (processType === MeterProcessTypes.DAILY) {
+            if (isSameDay(start, end)) {
+              if (start > end) {
+                const correctedEnd = new Date(start);
+                correctedEnd.setMinutes(correctedEnd.getMinutes() + 5);
+                this.meterProcessForm.patchValue({ datetimeRange: [start, correctedEnd] }, { emitEvent: false });
+              }
+            }
+          }
+        }
+        this.meterProcessForm.updateValueAndValidity({ onlySelf: false, emitEvent: false });
       });
   }
 
@@ -463,13 +479,26 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   }
 
   // Date validation methods
+  public onRangePickerOk(): void {
+    this.meterProcessForm.get('datetimeRange')?.updateValueAndValidity({ onlySelf: false });
+  };
+
   dateRangeValidator(): ValidatorFn {
     return (group: AbstractControl): { [key: string]: any } | null => {
       const range = group.get('datetimeRange')?.value;
       if (range && range.length === 2) {
         const [start, end] = range;
-        if (start && end && new Date(start) > new Date(end)) {
+        if (!start || !end) return null;
+
+        if (new Date(start) > new Date(end)) {
           return { dateRangeInvalid: true };
+        }
+
+        if (isSameDay(start, end)) {
+          const diff = (new Date(end).getTime() - new Date(start).getTime()) / (1000 * 60); // minutes
+          if (diff < 5) {
+            return { dateRangeTooShort: true };
+          }
         }
       }
       return null;
