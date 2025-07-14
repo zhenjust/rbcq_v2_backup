@@ -531,8 +531,8 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     return true;
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   disabledRangeTime: DisabledTimeFn = ((current: Date, partial?: 'start' | 'end') => {
-    const [startDate, endDate] = this.meterProcessForm.get('datetimeRange')?.value || [null, null];
     const processType = this.meterProcessForm.get('processType')?.value;
 
     const tradingDate = this.meterProcessForm.get('tradingDate')?.value;
@@ -554,9 +554,6 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
         : null;
 
     if (maxDate) maxDate.setHours(0, 0, 0, 0);
-
-    const sameDay = startDate && endDate && isSameDay(startDate, endDate);
-
     return {
       nzDisabledHours: () => {
         const disabled: number[] = [];
