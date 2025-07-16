@@ -429,10 +429,11 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: mtnListPage) => {
+          const updatedList = [...this._mtnList(), ...response.data];
+          this._mtnList.set(updatedList);
+
           if (response.hasMore) {
             this._nextPage.set(currentPage + 1);
-            const updatedList = [...this._mtnList(), ...response.data];
-            this._mtnList.set(updatedList);
           }
         },
         error: (error) => console.error('Error loading MTN list:', error.message),

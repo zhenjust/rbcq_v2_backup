@@ -57,7 +57,7 @@ export class MeterprocessService {
           "pageNo": pageNumber ? pageNumber : 0,
           "pageSize": 10,
           "mapParams": {
-            "name": search ? search : '',
+            "mtnName": search ? search : '',
             "region": region ? region : ''
           }
       }
