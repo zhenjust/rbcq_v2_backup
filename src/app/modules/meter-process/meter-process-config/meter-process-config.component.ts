@@ -45,6 +45,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   public readonly mtnIsLoading = this._mtnIsLoading.asReadonly();
   public readonly meterProcessBillingPeriod = this._meterProcessBillingPeriod.asReadonly();
   public readonly mtnList = this._mtnList.asReadonly();
+  public initialAdjNo = signal<number>(1); // adjustment number initial value
 
   //Computed Signals
   public readonly isAdjustmentType = computed(() => this._processType() === MeterProcessTypes.ADJUSTMENT);

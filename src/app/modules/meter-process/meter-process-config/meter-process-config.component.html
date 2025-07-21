@@ -20,6 +20,8 @@
                     <nz-input-number 
                         formControlName="adjNo" 
                         class="select-size"
+                        nzMin="1"
+                        [ngModel]="initialAdjNo()"
                         nzPlaceHolder="Enter adjustment number"
                     >
                     </nz-input-number>
