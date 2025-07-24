@@ -164,8 +164,8 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
         const currentBillingPeriod = this.meterProcessForm.get('billingPeriodName')?.value;
         if (!currentBillingPeriod) {
           const firstPeriod = this._meterProcessBillingPeriod()[0];
-          this.meterProcessForm.patchValue({ 
-            billingPeriodName: firstPeriod.name 
+          this.meterProcessForm.patchValue({
+            billingPeriodName: firstPeriod.name
           }, { emitEvent: true });
         }
       }
@@ -192,7 +192,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   private getDefaultDates() {
     const startDate = new Date(this.today);
     startDate.setHours(0, 5, 0, 0);
-    
+
     const endDate = new Date(this.today);
     endDate.setDate(endDate.getDate() + 1);
     endDate.setHours(0, 0, 0, 0);
@@ -235,7 +235,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
 
   private handleProcessTypeChange(processType: string): void {
     const resetValues = this.getResetValuesForProcessType(processType);
-    
+
     this.meterProcessForm.patchValue(resetValues, { emitEvent: false });
 
     this.updateFieldStates(processType);
@@ -274,9 +274,9 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   }
 
   private getResetValuesForProcessType(processType: string): any {
-    const baseReset = { 
-      tradingDate: null, 
-      billingPeriodName: null, 
+    const baseReset = {
+      tradingDate: null,
+      billingPeriodName: null,
       adjNo: null,
       datetimeRange: [null, null],
       billingStartDate: null,
@@ -326,7 +326,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       tradingControl?.disable();
       billingControl?.enable();
       billingControl?.setValidators(Validators.required);
-      
+
       if (processType === MeterProcessTypes.ADJUSTMENT) {
         adjControl?.enable();
         adjControl?.setValidators(Validators.required);
@@ -376,7 +376,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   private loadMtnList(): void {
     const regionValues = this.getSelectedRegions();
     const regionString = regionValues.join(',');
-    
+
     this.mpa.getMtnList(0, '', regionString)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -408,10 +408,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
 
     const startDate = new Date(billingPeriod.startDate);
     const endDate = new Date(billingPeriod.endDate);
-    endDate.setDate(endDate.getDate() + 1);
-    
     startDate.setHours(0, 5);
-    endDate.setHours(0, 0);
 
     this.meterProcessForm.patchValue({
       datetimeRange: [startDate, endDate],
@@ -527,6 +524,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     if (billingStartStr && billingEndStr) {
       const billingStart = startOfDay(new Date(billingStartStr));
       const billingEnd = startOfDay(new Date(billingEndStr));
+      billingEnd.setDate(billingEnd.getDate() + 1);
       return isBefore(date, billingStart) || isAfter(date, billingEnd);
     }
 
@@ -534,7 +532,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  disabledRangeTime: DisabledTimeFn = ((current: Date, partial?: 'start' | 'end') => {
+  disabledRangeTime: DisabledTimeFn = ((current: Date) => {
     const processType = this.meterProcessForm.get('processType')?.value;
 
     const tradingDate = this.meterProcessForm.get('tradingDate')?.value;
@@ -549,11 +547,10 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
         ? new Date(new Date(billingStartStr).setHours(0, 5, 0, 0))
         : null;
 
-    const maxDate = isDaily && tradingDate
-      ? new Date(new Date(tradingDate).setDate(new Date(tradingDate).getDate() + 1))
-      : billingEndStr
-        ? new Date(billingEndStr)
-        : null;
+    const dateToModify = isDaily && tradingDate ? tradingDate : billingEndStr;
+    const maxDate = dateToModify
+      ? new Date(new Date(dateToModify).setDate(new Date(dateToModify).getDate() + 1))
+      : null;
 
     if (maxDate) maxDate.setHours(0, 0, 0, 0);
     return {
@@ -584,4 +581,4 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       nzDisabledSeconds: () => []
     };
   }) as DisabledTimeFn;
-};
+}
