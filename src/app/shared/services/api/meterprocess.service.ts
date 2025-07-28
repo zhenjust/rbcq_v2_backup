@@ -52,15 +52,16 @@ export class MeterprocessService {
   }
 
   public getMtnList(pageNumber?: number, search?: string, region?: string): Observable<mtnListPage> {
-    // manually adding parameters
+    const mapParams: Record<string, any> = {};
+    if (search) mapParams['mtnName'] = search;
+    if (region) mapParams['region'] = region;
+
     const payload = {
-          "pageNo": pageNumber ? pageNumber : 0,
-          "pageSize": 10,
-          "mapParams": {
-            "mtnName": search ? search : '',
-            "region": region ? region : ''
-          }
-      }
+      pageNo: pageNumber ?? 0,
+      pageSize: 10,
+      mapParams,
+    };
+
     return this.http.post<mtnListPage>(this.MTN_LIST, payload);
   }
 }
