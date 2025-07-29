@@ -34,6 +34,7 @@
                     <nz-select
                     formControlName="billingPeriod"
                     class="select-size"
+                    nzShowSearch
                     nzPlaceHolder="Enter Billing Period">
                     @for (billing of meterProcessBillingPeriod; track billing.id) {
                         <nz-option [nzValue]="billing.name" [nzLabel]="billing.supplyMonth"></nz-option>
