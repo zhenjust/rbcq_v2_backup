@@ -18,7 +18,7 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './meter-process-config.component.scss',
 })
 export class MeterProcessConfigComponent implements OnInit, OnDestroy {
-  private readonly today: Date = new Date();
+  private readonly yesterday: Date = new Date(Date.now() - 24 * 60 * 60 * 1000);
   private readonly destroy$ = new Subject<void>();
 
   private readonly rjs = inject(RunJobService);
@@ -78,7 +78,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
 
     this.meterProcessForm = this.fb.group({
       processType: [MeterProcessTypes.DAILY, Validators.required],
-      tradingDate: [new Date()],
+      tradingDate: [this.yesterday],
       billingPeriodName: [null],
       datetimeRange: [[startDate, endDate], Validators.required],
       regionGroup: [null],
@@ -190,10 +190,10 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   }
 
   private getDefaultDates() {
-    const startDate = new Date(this.today);
+    const startDate = new Date(this.yesterday);
     startDate.setHours(0, 5, 0, 0);
 
-    const endDate = new Date(this.today);
+    const endDate = new Date(this.yesterday);
     endDate.setDate(endDate.getDate() + 1);
     endDate.setHours(0, 0, 0, 0);
 
@@ -289,13 +289,12 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       case MeterProcessTypes.DAILY:
         return {
           ...baseReset,
-          tradingDate: currentTradingDate ?? new Date(),
+          tradingDate: currentTradingDate ?? this.yesterday,
           datetimeRange: [
-            currentTradingDate ?? new Date(),
-            new Date(new Date(currentTradingDate ?? new Date()).getTime() + 24 * 60 * 60 * 1000)
+            currentTradingDate ?? this.yesterday,
+            new Date(new Date(currentTradingDate ?? this.yesterday).getTime() + 24 * 60 * 60 * 1000)
           ]
         };
-
       case MeterProcessTypes.ADJUSTMENT:
       case MeterProcessTypes.FINAL:
       case MeterProcessTypes.PRELIMINARY:
@@ -410,6 +409,9 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     const endDate = new Date(billingPeriod.endDate);
     startDate.setHours(0, 5);
 
+    endDate.setDate(endDate.getDate() + 1);
+    endDate.setHours(0, 0, 0, 0);
+
     this.meterProcessForm.patchValue({
       datetimeRange: [startDate, endDate],
       billingStartDate: this.dfp.formatDateOnly(startDate),
@@ -501,7 +503,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
 
   disableTradingDateRange = (date: Date): boolean => {
       if (!this.isDailyType()) return false;
-      return isAfter(startOfDay(date), this.today);
+      return isAfter(startOfDay(date), this.yesterday);
   };
 
   disableRangeDate = (date: Date): boolean => {
@@ -524,14 +526,13 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     if (billingStartStr && billingEndStr) {
       const billingStart = startOfDay(new Date(billingStartStr));
       const billingEnd = startOfDay(new Date(billingEndStr));
-      billingEnd.setDate(billingEnd.getDate() + 1);
+      billingEnd.setDate(billingEnd.getDate());
       return isBefore(date, billingStart) || isAfter(date, billingEnd);
     }
 
     return true;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   disabledRangeTime: DisabledTimeFn = ((current: Date) => {
     const processType = this.meterProcessForm.get('processType')?.value;
 
@@ -547,12 +548,19 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
         ? new Date(new Date(billingStartStr).setHours(0, 5, 0, 0))
         : null;
 
-    const dateToModify = isDaily && tradingDate ? tradingDate : billingEndStr;
-    const maxDate = dateToModify
-      ? new Date(new Date(dateToModify).setDate(new Date(dateToModify).getDate() + 1))
-      : null;
 
-    if (maxDate) maxDate.setHours(0, 0, 0, 0);
+    let maxDate: Date | null = null;
+    if (isDaily && tradingDate) {
+      const tDate = new Date(tradingDate);
+      maxDate = new Date(tDate);
+      maxDate.setDate(tDate.getDate() + 1);
+      maxDate.setHours(0, 0, 0, 0);
+    } else if (billingEndStr) {
+      const parsedEnd = new Date(billingEndStr + 'T00:00:00');
+      maxDate = new Date(parsedEnd);
+      maxDate.setHours(0, 0, 0, 0);
+    }
+
     return {
       nzDisabledHours: () => {
         const disabled: number[] = [];

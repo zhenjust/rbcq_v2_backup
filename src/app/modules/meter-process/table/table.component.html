@@ -8,6 +8,7 @@
     [nzLoading]="isLoading()"
     (nzPageIndexChange)="onPageChange($event)"
     (nzPageSizeChange)="onPageSizeChange($event)"
+    class="nested-table-striped"
 >
     <thead>
         <tr>
@@ -19,7 +20,7 @@
     </thead>
     <tbody>
         @for (data of nzTable.data; track data; let parentIndex = $index) {
-            <tr>
+            <tr [class]="getParentRowClass(parentIndex)">
                 <td [nzExpand]="expandSet.has(parentIndex)" (nzExpandChange)="onExpandChange($event, parentIndex)"></td>
                 <td>{{ data.processType === processTypes.ADJUSTMENT ? data.processType + " - " + data.adjNo : data.processType }}</td>
                 <td>{{ data.billingPeriod ? data.billingStartDate + " - " + data.billingEndDate : data.tradingDate }}</td>
@@ -29,14 +30,15 @@
                     </nz-tag>
                 </td>
             </tr>
-            <tr [nzExpand]="expandSet.has(parentIndex)">
+            <tr [nzExpand]="expandSet.has(parentIndex)" [class]="getParentRowClass(parentIndex) + '-expanded'">
                 <td [attr.colspan]="columnItem.length + 1" style="padding: 0;">
                     <nz-table
                         #innerTable
-                        nzBordered="true"
                         [nzData]="data.pipelines || []"
                         [nzSize]="'small'"
                         [nzShowPagination]="false"
+                        [nzTableLayout]="'fixed'"
+                        class="child-table"
                     >
                         <thead>
                             <tr>
@@ -48,7 +50,7 @@
                         </thead>
                         <tbody>
                             @for (pipeline of innerTable.data; track pipeline; let pipelineIndex = $index) {
-                                <tr>
+                                <tr [class]="getChildRowClass(parentIndex, pipelineIndex)">
                                     <td [nzExpand]="isPipelineExpanded(parentIndex, pipelineIndex)"
                                         (nzExpandChange)="onPipelineExpandChange($event, parentIndex, pipelineIndex)"></td>
                                     <td>{{ pipeline.id }}</td>
@@ -57,9 +59,9 @@
                                     <td>{{ data.processType }}</td>
                                     <td>{{ pipeline.parameters.startDatetime }}</td>
                                     <td>{{ pipeline.parameters.endDatetime }}</td>
-                                    <td class="text-break">{{ pipeline.parameters.mtn || 'ALL' }}</td>
-                                  <td>
-                                    <nz-tag >
+                                    <td nzBreakWord>{{ pipeline.parameters.mtn || 'ALL' }}</td>
+                                  <td nzBreakWord>
+                                    <nz-tag class="break-word-tag">
                                       {{ pipeline.status }}
                                     </nz-tag>
                                   </td>
@@ -67,42 +69,42 @@
                                         <!-- PROGRESS SECTION -->
                                     </td>
                                     <td>
-                                        <nz-space nzDirection="vertical" nzAlign="center" nzSize="small">
-                                            @if (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_METER_DATA ||
-                                                    pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_GESQ ||
-                                                      pipeline.status.toLowerCase() === meterProcessStatus.FAILED_GESQ ||
-                                                        pipeline.status.toLowerCase() === meterProcessStatus.CANCELLED_GESQ) {
-                                                <a nz-button nzType="link" nzBlock
-                                                    (click)="openJobModal(pipeline, getJobTypeFromStatus(pipeline.status), meterDataPipelines.SETTLEMENT_READY, data)">
-                                                    Run Settlement-Ready
-                                                </a>
-                                            }
-                                            @if (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_GESQ ||
-                                                    pipeline.status.toLowerCase() === meterProcessStatus.FAILED_SETTLEMENT_READY ||
-                                                      pipeline.status.toLowerCase() === meterProcessStatus.CANCELLED_SETTLEMENT_READY) {
-                                                <a nz-button nzType="link" nzBlock
-                                                    (click)="openJobModal(pipeline, getJobTypeFromStatus(pipeline.status), meterDataPipelines.FINALIZE_READY, data)">
-                                                    Finalize Settlement - Ready
-                                                </a>
-                                            }
-                                            @if ((data.processType === processTypes.DAILY && (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_GESQ || pipeline.status.toLowerCase().endsWith(meterDataPipelineProcess.SETTLEMENT_READY))) ||
-                                                    (data.processType !== processTypes.DAILY && pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_SETTLEMENT_READY)) {
-                                              <a nz-button [href]="downloadReport(pipeline)" target="_blank" nzType="link" nzBlock >
-                                                  Download Report
-                                              </a>
-                                            }
-                                        </nz-space>
+                                        @if (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_METER_DATA ||
+                                                pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_GESQ ||
+                                                    pipeline.status.toLowerCase() === meterProcessStatus.FAILED_GESQ ||
+                                                    pipeline.status.toLowerCase() === meterProcessStatus.CANCELLED_GESQ) {
+                                            <a nz-button nzType="link" nzBlock class="break-word-button"
+                                                (click)="openJobModal(pipeline, getJobTypeFromStatus(pipeline.status), meterDataPipelines.SETTLEMENT_READY, data)">
+                                                Run Settlement-Ready
+                                            </a>
+                                        }
+                                        @if (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_GESQ ||
+                                                pipeline.status.toLowerCase() === meterProcessStatus.FAILED_SETTLEMENT_READY ||
+                                                    pipeline.status.toLowerCase() === meterProcessStatus.CANCELLED_SETTLEMENT_READY) {
+                                            <a nz-button nzType="link" nzBlock class="break-word-button"
+                                                (click)="openJobModal(pipeline, getJobTypeFromStatus(pipeline.status), meterDataPipelines.FINALIZE_READY, data)">
+                                                Finalize Settlement - Ready
+                                            </a>
+                                        }
+                                        @if ((data.processType === processTypes.DAILY && (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_GESQ || pipeline.status.toLowerCase().endsWith(meterDataPipelineProcess.SETTLEMENT_READY))) ||
+                                                (data.processType !== processTypes.DAILY && pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_SETTLEMENT_READY)) {
+                                            <a nz-button [href]="downloadReport(pipeline)" target="_blank" nzType="link" nzBlock class="break-word-button">
+                                                Download Report
+                                            </a>
+                                        }
                                     </td>
                                 </tr>
-                                <tr [nzExpand]="isPipelineExpanded(parentIndex, pipelineIndex)">
+                                <tr [nzExpand]="isPipelineExpanded(parentIndex, pipelineIndex)" [class]="getChildRowClass(parentIndex, pipelineIndex) + '-expanded'">
                                     <td [attr.colspan]="childColumnItem.length + 1" style="padding: 0;">
                                         <div style="padding: 16px; background-color: #fafafa;">
                                             <nz-table
                                                 #pipelineTable
-                                                nzBordered="true"
                                                 [nzData]="pipeline.pipelineRuns || []"
                                                 [nzSize]="'small'"
                                                 [nzShowPagination]="false"
+                                                [nzTableLayout]="'fixed'"
+                                                style="width: 100%;"
+                                                class="grandchild-table"
                                             >
                                                 <thead>
                                                     <tr>
@@ -112,8 +114,8 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @for (runs of pipelineTable.data; track runs) {
-                                                        <tr>
+                                                    @for (runs of pipelineTable.data; track runs; let runIndex = $index) {
+                                                        <tr [class]="getGrandchildRowClass(parentIndex, pipelineIndex, runIndex)">
                                                             <td>{{runs.name}}</td>
                                                             <td>{{runs.runId}}</td>
                                                             <td>{{dfs.formatDateTime(runs.runStart)}}</td>
@@ -121,16 +123,16 @@
                                                             <td>{{runs.duration}}</td>
                                                             <td>{{runs.runBy}}</td>
                                                             <td>
-                                                              <nz-tag nz-tooltip [nzTooltipTitle]="runs.status === 'Failed' ? runs.message : ''">
+                                                              <nz-tag class="break-word-tag" nz-tooltip [nzTooltipTitle]="runs.status === 'Failed' ? runs.message : ''">
                                                                 {{ runs.status }}
                                                               </nz-tag>
                                                             </td>
                                                         </tr>
                                                     }
                                                     @if (!pipeline.pipelineRuns || pipeline.pipelineRuns.length === 0) {
-                                                        <tr>
+                                                        <tr class="no-data-row">
                                                             <td [attr.colspan]="pipelineColumnItem.length" style="text-align: center; color: #999;">
-                                                                No pipeline runs found
+                                                                No pipeline runs
                                                             </td>
                                                         </tr>
                                                     }
@@ -141,7 +143,7 @@
                                 </tr>
                             }
                             @if (!data.pipelines || data.pipelines.length === 0) {
-                                <tr>
+                                <tr class="no-data-row">
                                     <td [attr.colspan]="childColumnItem.length + 1" style="text-align: center; color: #999;">
                                         No jobs found
                                     </td>

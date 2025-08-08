@@ -1,0 +1,110 @@
+.nested-table-striped {
+    .parent-even td {
+        background-color: #ffffff !important;
+    }
+    
+    .parent-odd td {
+        background-color: #f8f9fa !important;
+    }
+    
+    .parent-even-expanded td {
+        background-color: #f8f9fa !important;
+    }
+    
+    .parent-odd-expanded td {
+        background-color: #ffffff !important;
+    }
+}
+
+.child-table {
+    .parent-even {
+        &.child-even td {
+            background-color: #ffffff !important;
+        }
+        
+        &.child-odd td {
+            background-color: #f8f9fa !important;
+        }
+        
+        &.child-even-expanded td {
+            background-color: #f0f2f5 !important;
+        }
+        
+        &.child-odd-expanded td {
+            background-color: #fafbfc !important;
+        }
+    }
+    
+    .parent-odd {
+        &.child-even td {
+            background-color: #f8f9fa !important;
+        }
+        
+        &.child-odd td {
+            background-color: #ffffff !important;
+        }
+        
+        &.child-even-expanded td {
+            background-color: #fafbfc !important;
+        }
+        
+        &.child-odd-expanded td {
+            background-color: #f0f2f5 !important;
+        }
+    }
+}
+
+.grandchild-table {
+    .parent-even.child-even {
+        &.grandchild-even td {
+            background-color: #ffffff !important;
+        }
+        
+        &.grandchild-odd td {
+            background-color: #f8f9fa !important;
+        }
+    }
+    
+    .parent-even.child-odd {
+        &.grandchild-even td {
+            background-color: #f8f9fa !important;
+        }
+        
+        &.grandchild-odd td {
+            background-color: #e9ecef !important;
+        }
+    }
+    
+    .parent-odd.child-even {
+        &.grandchild-even td {
+            background-color: #f8f9fa !important;
+        }
+        
+        &.grandchild-odd td {
+            background-color: #e9ecef !important;
+        }
+    }
+    
+    .parent-odd.child-odd {
+        &.grandchild-even td {
+            background-color: #ffffff !important;
+        }
+        
+        &.grandchild-odd td {
+            background-color: #f8f9fa !important;
+        }
+    }
+}
+
+.break-word-button {
+  white-space: normal;
+  word-break: break-word;
+  text-align: left;
+}
+
+.break-word-tag {
+  display: inline-block;
+  white-space: normal;
+  word-break: break-word;
+  max-width: 100%;
+}

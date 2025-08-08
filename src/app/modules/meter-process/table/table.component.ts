@@ -26,7 +26,8 @@ interface ModalData {
 @Component({
   selector: 'app-table',
   standalone: false,
-  templateUrl: './table.component.html'
+  templateUrl: './table.component.html',
+  styleUrl: './table.component.scss',
 })
 export class TableComponent implements OnInit {
   // Default table data structure
@@ -146,6 +147,24 @@ export class TableComponent implements OnInit {
     return this.pipelineExpandSet.has(uniqueKey);
   }
 
+  //for row color functions
+  getParentRowClass(parentIndex: number): string {
+    return parentIndex % 2 === 0 ? 'parent-even' : 'parent-odd';
+  }
+
+  getChildRowClass(parentIndex: number, childIndex: number): string {
+    const parentClass = this.getParentRowClass(parentIndex);
+    const childClass = childIndex % 2 === 0 ? 'child-even' : 'child-odd';
+    return `${parentClass} ${childClass}`;
+  }
+
+  getGrandchildRowClass(parentIndex: number, childIndex: number, grandchildIndex: number): string {
+    const parentClass = this.getParentRowClass(parentIndex);
+    const childClass = childIndex % 2 === 0 ? 'child-even' : 'child-odd';
+    const grandchildClass = grandchildIndex % 2 === 0 ? 'grandchild-even' : 'grandchild-odd';
+    return `${parentClass} ${childClass} ${grandchildClass}`;
+  }
+
   refreshData(): void {
     this.sfs.refreshJobs({});
   }
@@ -210,7 +229,6 @@ export class TableComponent implements OnInit {
     }
     return 'Unknown';
   }
-
 
   downloadReport(pipeline: meterProcessPipeline): string {
     const baseUrl = 'meter-process/reports/download/zip';
