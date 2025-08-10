@@ -52,7 +52,7 @@ deploy:
     APP_VERSION: ${APP_VERSION}
   trigger:
     project: exist-software-labs/iemop/crss/gitops
-    branch: main
+    branch: uat
     strategy: depend
   environment:
     name: dev
