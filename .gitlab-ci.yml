@@ -39,7 +39,7 @@ package:
     entrypoint: [""]
   script:
     - echo "{\"auths\":{\"$EXIST_REGISTRY\":{\"username\":\"$EXIST_REGISTRY_USERNAME\",\"password\":\"$EXIST_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination exist.azurecr.io/iemop/crss-ui-bsmd2:${APP_VERSION}-b${CI_COMMIT_SHA:0:7}
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $EXIST_REGISTRY/iemop/crss-ui-bsmd2:${APP_VERSION}-b${CI_COMMIT_SHA:0:7}
   rules:
     - if: $CI_DEPLOY_FREEZE == null && ($CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH =~ /RC[0-9]+$/)
     - if: $CI_PIPELINE_SOURCE == "web"
