@@ -50,7 +50,14 @@ export class TableComponent implements OnInit {
   meterDataPipelines = MeterDataPipelineName;
   meterDataPipelineProcess = MeterDataPipelineProcess;
   processTypes = MeterProcessTypes;
-  tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
+  // tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
+  tableData = computed(() => {
+    const data = this.sfs.jobs() || this.defaultTableData;
+    return {
+      ...data,
+      pipelineGroup: this.sortPipelineGroup(data.pipelineGroup || [])
+    };
+  });
   isLoading = computed(() => this.sfs.isLoading());
 
   // Add property to store current modal data
@@ -63,7 +70,6 @@ export class TableComponent implements OnInit {
   ];
 
   childColumnItem: tableColumn[] = [
-    { name: 'Workspace ID' },
     { name: 'Last Activity Date Time' },
     { name: 'Last Activity By' },
     { name: 'Process Type' },
@@ -109,6 +115,36 @@ export class TableComponent implements OnInit {
   ngOnInit(): void {
     this.sfs.refreshJobs({});
   }
+
+  // ui side sorting
+  private sortPipelineGroup(pipelineGroup: any[]): any[] {
+    const resolveDate = (item: any): Date | null => {
+      if (item.billingStartDate) {
+        return new Date(item.billingStartDate);
+      }
+      if (item.billingPeriod) {
+        const [start] = item.billingPeriod.split(' - ');
+        return new Date(start);
+      }
+      if (item.tradingDate) {
+        return new Date(item.tradingDate);
+      }
+      return null;
+    };
+
+    return [...pipelineGroup].sort((a, b) => {
+      const dateA = resolveDate(a);
+      const dateB = resolveDate(b);
+
+      if (!dateA && !dateB) return 0;
+      if (!dateA) return 1;
+      if (!dateB) return -1;
+
+      return dateA.getTime() - dateB.getTime();
+    });
+  }
+
+
 
   onExpandChange(checked: boolean, index: number): void {
     if (checked) {
