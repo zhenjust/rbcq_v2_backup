@@ -46,6 +46,8 @@ export class TableComponent implements OnInit {
 
   @ViewChild('runJobs', { static: true }) runJobs!: TemplateRef<void>;
 
+  downloadingReports = new Set<number>();
+
   meterProcessStatus = MeterProcessStatus;
   meterDataPipelines = MeterDataPipelineName;
   meterDataPipelineProcess = MeterDataPipelineProcess;
@@ -266,8 +268,9 @@ export class TableComponent implements OnInit {
     return 'Unknown';
   }
 
-  downloadReport(pipeline: meterProcessPipeline): string {
-    const baseUrl = 'meter-process/reports/download/zip';
+  downloadReport(pipeline: meterProcessPipeline): void {
+    const pipelineId = pipeline.id;
+    this.downloadingReports.add(pipelineId);
 
     const processType = pipeline.parameters.processType ?? '';
     const isDaily = processType.toUpperCase?.() === 'DAILY';
@@ -279,16 +282,44 @@ export class TableComponent implements OnInit {
     const runDate = this.dfs.formatDate(pipeline.lastModifiedDatetime, 'yyyyMMddHHmmss');
     const user = this.as.currentUser()?.principal.username ?? '';
 
-    const params = new URLSearchParams({
+    const params = {
       version: String(pipeline.id),
       isDaily: String(isDaily),
       tradingDate,
       runDate,
       processType,
-      user,
-    });
+      user
+    };
 
-    // return `${window.location.origin}`;
-    return `${window.location.origin}/${baseUrl}?${params.toString()}`;
+    this.mpa.downloadReport(params).subscribe({
+      next: (response) => {
+        const blob = response.body as Blob;
+        let fileName = `report_${pipelineId}.zip`; //as default filename
+        const contentDisposition = response.headers.get('Content-Disposition');
+        if (contentDisposition) {
+          const match = /filename="?([^"]+)"?/.exec(contentDisposition);
+          if (match?.[1]) {
+            fileName = match[1];
+          }
+        }
+
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = fileName;
+        link.click();
+
+        window.URL.revokeObjectURL(downloadUrl);
+        this.downloadingReports.delete(pipelineId);
+      },
+      error: (err) => {
+        console.error('Download Error:', err);
+        this.downloadingReports.delete(pipelineId);
+      }
+    });
+  }
+
+  isDownloadingReport(pipelineId: number): boolean {
+    return this.downloadingReports.has(pipelineId);
   }
 }
