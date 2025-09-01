@@ -295,7 +295,7 @@ export class TableComponent implements OnInit {
     this.mpa.downloadReport(params).subscribe({
       next: (response) => {
         const blob = response.body as Blob;
-        let fileName = `report_${pipelineId}.zip`;
+        let fileName = `${processType}_MeteringData_${tradingDate}_${runDate}.zip`; //enforcing default filename base from previous files
         const contentDisposition = response.headers.get('Content-Disposition');
         console.log(response);
         if (contentDisposition) {
