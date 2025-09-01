@@ -96,8 +96,10 @@
                                                 @if(!isDownloadingReport(pipeline.id)){
                                                     <span>Download Report</span>
                                                 }@else {
-                                                    <nz-spin nzSimple nzSize="small"></nz-spin>
-                                                    <span>Downloading...</span>
+                                                    <nz-space>
+                                                        <nz-spin nzSimple nzSize="small"></nz-spin>
+                                                        <span>Downloading...</span>
+                                                    </nz-space>
                                                 }
                                             </button>
                                         }
