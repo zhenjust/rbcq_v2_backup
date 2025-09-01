@@ -89,22 +89,18 @@
                                         }
                                         @if ((data.processType === processTypes.DAILY && (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_GESQ || pipeline.status.toLowerCase().endsWith(meterDataPipelineProcess.SETTLEMENT_READY))) ||
                                                 (data.processType !== processTypes.DAILY && pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_SETTLEMENT_READY)) {
-                                            <!-- <button nz-button nzType="link" nzBlock class="break-word-button" 
+                                            <button nz-button nzType="link" nzBlock class="break-word-button" 
                                                     [nzLoading]="isDownloadingReport(pipeline.id)"
                                                     [disabled]="isDownloadingReport(pipeline.id)"
                                                     (click)="downloadReport(pipeline)">
                                                 @if(!isDownloadingReport(pipeline.id)){
                                                     <span>Download Report</span>
                                                 }@else {
-                                                    <nz-space>
-                                                        <nz-spin nzSimple nzSize="small"></nz-spin>
+                                                    <nz-space nzSize="middle">
                                                         <span>Downloading...</span>
                                                     </nz-space>
                                                 }
-                                            </button> -->
-                                            <a nz-button [href]="downloadReport(pipeline)" target="_blank" nzType="link" nzBlock class="break-word-button">
-                                                Download Report
-                                            </a>    
+                                            </button> 
                                         }
                                     </td>
                                 </tr>

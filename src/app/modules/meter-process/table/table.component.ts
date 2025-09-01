@@ -6,6 +6,7 @@ import { meterProcessPipeline, meterProcessTable } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { SearchFilterService } from '@shared/services/meterProcess';
 import { DateFormatterUtilService } from '@shared/services/utils';
+import { saveAs } from 'file-saver';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { ToastrService } from 'ngx-toastr';
 
@@ -268,51 +269,9 @@ export class TableComponent implements OnInit {
     return 'Unknown';
   }
 
-  // downloadReport(pipeline: meterProcessPipeline): void {
-  //   const pipelineId = pipeline.id;
-  //   this.downloadingReports.add(pipelineId);
-
-  //   const processType = pipeline.parameters.processType ?? '';
-  //   const isDaily = processType.toUpperCase?.() === 'DAILY';
-
-  //   const tradingDate = isDaily
-  //     ? this.dfs.formatDate(pipeline.parameters.tradingDate, 'yyyyMMdd')
-  //     : this.dfs.formatDate(pipeline.parameters.endDatetime, 'yyyyMMdd');
-
-  //   const runDate = this.dfs.formatDate(pipeline.lastModifiedDatetime, 'yyyyMMddHHmmss');
-  //   const user = this.as.currentUser()?.principal.username ?? '';
-
-  //   const params = {
-  //     version: String(pipeline.id),
-  //     isDaily: String(isDaily),
-  //     tradingDate,
-  //     runDate,
-  //     processType,
-  //     user
-  //   };
-
-  //   this.mpa.downloadReport(params).subscribe({
-  //     next: (response) => {
-  //       const blob = response.body as Blob;
-  //       const downloadUrl = window.URL.createObjectURL(blob);
-  //       const link = document.createElement('a');
-  //       link.href = downloadUrl;
-  //       link.click();
-  //       window.URL.revokeObjectURL(downloadUrl);
-  //       this.downloadingReports.delete(pipelineId);
-  //     },
-  //     error: (err) => {
-  //       console.error('Download Error:', err);
-  //       this.downloadingReports.delete(pipelineId);
-  //     }
-  //   });
-  // }
-
-  // isDownloadingReport(pipelineId: number): boolean {
-  //   return this.downloadingReports.has(pipelineId);
-  // }
-  downloadReport(pipeline: meterProcessPipeline): string {
-    const baseUrl = 'meter-process/reports/download/zip';
+  downloadReport(pipeline: meterProcessPipeline): void {
+    const pipelineId = pipeline.id;
+    this.downloadingReports.add(pipelineId);
 
     const processType = pipeline.parameters.processType ?? '';
     const isDaily = processType.toUpperCase?.() === 'DAILY';
@@ -324,16 +283,38 @@ export class TableComponent implements OnInit {
     const runDate = this.dfs.formatDate(pipeline.lastModifiedDatetime, 'yyyyMMddHHmmss');
     const user = this.as.currentUser()?.principal.username ?? '';
 
-    const params = new URLSearchParams({
+    const params = {
       version: String(pipeline.id),
       isDaily: String(isDaily),
       tradingDate,
       runDate,
       processType,
-      user,
-    });
+      user
+    };
 
-    // return `${window.location.origin}`;
-    return `${window.location.origin}/${baseUrl}?${params.toString()}`;
+    this.mpa.downloadReport(params).subscribe({
+      next: (response) => {
+        const blob = response.body as Blob;
+        let fileName = `report_${pipelineId}.zip`;
+        const contentDisposition = response.headers.get('Content-Disposition');
+        console.log(response);
+        if (contentDisposition) {
+          const match = /filename="?([^"]+)"?/.exec(contentDisposition);
+          if (match?.[1]) {
+            fileName = match[1];
+          }
+        }
+        saveAs(blob, fileName);
+        this.downloadingReports.delete(pipelineId);
+      },
+      error: (err) => {
+        console.error('Download Error:', err);
+        this.downloadingReports.delete(pipelineId);
+      }
+    });
+  }
+
+  isDownloadingReport(pipelineId: number): boolean {
+    return this.downloadingReports.has(pipelineId);
   }
 }
