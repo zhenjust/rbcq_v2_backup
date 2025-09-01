@@ -268,9 +268,51 @@ export class TableComponent implements OnInit {
     return 'Unknown';
   }
 
-  downloadReport(pipeline: meterProcessPipeline): void {
-    const pipelineId = pipeline.id;
-    this.downloadingReports.add(pipelineId);
+  // downloadReport(pipeline: meterProcessPipeline): void {
+  //   const pipelineId = pipeline.id;
+  //   this.downloadingReports.add(pipelineId);
+
+  //   const processType = pipeline.parameters.processType ?? '';
+  //   const isDaily = processType.toUpperCase?.() === 'DAILY';
+
+  //   const tradingDate = isDaily
+  //     ? this.dfs.formatDate(pipeline.parameters.tradingDate, 'yyyyMMdd')
+  //     : this.dfs.formatDate(pipeline.parameters.endDatetime, 'yyyyMMdd');
+
+  //   const runDate = this.dfs.formatDate(pipeline.lastModifiedDatetime, 'yyyyMMddHHmmss');
+  //   const user = this.as.currentUser()?.principal.username ?? '';
+
+  //   const params = {
+  //     version: String(pipeline.id),
+  //     isDaily: String(isDaily),
+  //     tradingDate,
+  //     runDate,
+  //     processType,
+  //     user
+  //   };
+
+  //   this.mpa.downloadReport(params).subscribe({
+  //     next: (response) => {
+  //       const blob = response.body as Blob;
+  //       const downloadUrl = window.URL.createObjectURL(blob);
+  //       const link = document.createElement('a');
+  //       link.href = downloadUrl;
+  //       link.click();
+  //       window.URL.revokeObjectURL(downloadUrl);
+  //       this.downloadingReports.delete(pipelineId);
+  //     },
+  //     error: (err) => {
+  //       console.error('Download Error:', err);
+  //       this.downloadingReports.delete(pipelineId);
+  //     }
+  //   });
+  // }
+
+  // isDownloadingReport(pipelineId: number): boolean {
+  //   return this.downloadingReports.has(pipelineId);
+  // }
+  downloadReport(pipeline: meterProcessPipeline): string {
+    const baseUrl = 'meter-process/reports/download/zip';
 
     const processType = pipeline.parameters.processType ?? '';
     const isDaily = processType.toUpperCase?.() === 'DAILY';
@@ -282,33 +324,16 @@ export class TableComponent implements OnInit {
     const runDate = this.dfs.formatDate(pipeline.lastModifiedDatetime, 'yyyyMMddHHmmss');
     const user = this.as.currentUser()?.principal.username ?? '';
 
-    const params = {
+    const params = new URLSearchParams({
       version: String(pipeline.id),
       isDaily: String(isDaily),
       tradingDate,
       runDate,
       processType,
-      user
-    };
-
-    this.mpa.downloadReport(params).subscribe({
-      next: (response) => {
-        const blob = response.body as Blob;
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.click();
-        window.URL.revokeObjectURL(downloadUrl);
-        this.downloadingReports.delete(pipelineId);
-      },
-      error: (err) => {
-        console.error('Download Error:', err);
-        this.downloadingReports.delete(pipelineId);
-      }
+      user,
     });
-  }
 
-  isDownloadingReport(pipelineId: number): boolean {
-    return this.downloadingReports.has(pipelineId);
+    // return `${window.location.origin}`;
+    return `${window.location.origin}/${baseUrl}?${params.toString()}`;
   }
 }
