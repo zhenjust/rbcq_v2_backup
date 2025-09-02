@@ -69,11 +69,10 @@ export class MeterprocessService {
 
   downloadReport(params: ReportDownloadParams) {
     const httpParams = this.paramUtil.buildParams(params);
-    return this.http.get(`${this.baseUrl}/reports/download/zip`, {
+    return this.http.get(`${window.location.origin}/${this.baseUrl}/reports/download/zip`, {
       params: httpParams,
       responseType: 'blob',
       observe: 'response'
     });
   }
-
 }
