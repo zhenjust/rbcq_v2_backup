@@ -230,7 +230,7 @@ export class TableComponent implements OnInit {
       nzOkText: 'Run Job',
       nzCancelText: 'Cancel',
       nzOnOk: () => {
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<void>((resolve) => {
           this.mpa.runJob({}, this.currentModalData?.actionType, this.currentModalData?.pipeline.id)
             .subscribe({
               next: () => {
@@ -242,12 +242,9 @@ export class TableComponent implements OnInit {
                 resolve();
               },
               error: (err) => {
-                this.modal.error({
-                  nzTitle: 'Error',
-                  nzContent: 'Failed to run the job.'
-                });
-                console.error('Run Job Error:', err);
-                reject();
+                const { error } = err;
+                this.toast.error(error.message, error.error);
+                resolve();
               }
             })
         })
