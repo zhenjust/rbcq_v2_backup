@@ -75,8 +75,8 @@ const MO_USER_MANAGEMENT = {
 }
 
 const DATA_INTERFACE_MANAGEMENT = {
-    MANAGE_TRADING_OPERATIONS_DATA_INTERFACES: `${environment.__PHASE_TWO_URL__}/bsmd/#/data-interface-config`,
-    IMPORT_TRADING_OPERATIONS_DATA: `${environment.__PHASE_TWO_URL__}/bsmd/#/data-interface"`
+    MANAGE_TRADING_OPERATIONS_DATA_INTERFACES: `${environment.__PHASE_TWO_URL__}/#/data-interface-config`,
+    IMPORT_TRADING_OPERATIONS_DATA: `${environment.__PHASE_TWO_URL__}/#/data-interface"`
 }
 
 const ADMIN = {
@@ -110,7 +110,7 @@ const MQ_MENU_FOR_MSP = {
 }
 
 const MTR_MENU_FOR_MSP = {
-    MANAGE_METER_TROUBLE_REPORTS: `${environment.__PHASE_TWO_URL__}/bsmd/#/mtr`
+    MANAGE_METER_TROUBLE_REPORTS: `${environment.__PHASE_TWO_URL__}/#/mtr`
 }
 
 //BCQ MENU FOR TP ROUTE
@@ -145,44 +145,44 @@ const MANAGE_BCQ = {
 }
 
 const MAINTENANCE = {
-    MANAGE_BILLING_ID_MASTERLIST: `${environment.__PHASE_TWO_URL__}/bsmd/#/billing-id-masterlist`,
-    MANAGE_BILLING_PERIOD: `${environment.__PHASE_TWO_URL__}/bsmd/#/billing-period`,
-    MANAGE_RESERVE_CALCULATION_CONFIGURATION: `${environment.__PHASE_TWO_URL__}/bsmd/#/reserve-config`,
-    MANAGE_CHARGE_IDS: `${environment.__PHASE_TWO_URL__}/bsmd/#/charge-id-config`,
-    MANAGE_MARKET_FEE_CALCULATION: `${environment.__PHASE_TWO_URL__}/bsmd/#/market-fee-config`,
-    MANAGE_MRU: `${environment.__PHASE_TWO_URL__}/bsmd/#/mru-maintenance`,
-    MANAGE_OUTPUT_FILE_LOCATION: `${environment.__PHASE_TWO_URL__}/bsmd/#/settlement-file-location`,
-    MANAGE_PASSWORD_PREFIX_FOR_OUTPUT_FILES: `${environment.__PHASE_TWO_URL__}/bsmd/#/billing-id-password`,
-    GENERAL_CALCULATION_CONFIGURATION: `${environment.__PHASE_TWO_URL__}/bsmd/#/system-config`,
-    MANAGE_SINGLE_BUYER: `${environment.__PHASE_TWO_URL__}/bsmd/#/single-buyer-config`
+    MANAGE_BILLING_ID_MASTERLIST: `${environment.__PHASE_TWO_URL__}/#/billing-id-masterlist`,
+    MANAGE_BILLING_PERIOD: `${environment.__PHASE_TWO_URL__}/#/billing-period`,
+    MANAGE_RESERVE_CALCULATION_CONFIGURATION: `${environment.__PHASE_TWO_URL__}/#/reserve-config`,
+    MANAGE_CHARGE_IDS: `${environment.__PHASE_TWO_URL__}/#/charge-id-config`,
+    MANAGE_MARKET_FEE_CALCULATION: `${environment.__PHASE_TWO_URL__}/#/market-fee-config`,
+    MANAGE_MRU: `${environment.__PHASE_TWO_URL__}/#/mru-maintenance`,
+    MANAGE_OUTPUT_FILE_LOCATION: `${environment.__PHASE_TWO_URL__}/#/settlement-file-location`,
+    MANAGE_PASSWORD_PREFIX_FOR_OUTPUT_FILES: `${environment.__PHASE_TWO_URL__}/#/billing-id-password`,
+    GENERAL_CALCULATION_CONFIGURATION: `${environment.__PHASE_TWO_URL__}/#/system-config`,
+    MANAGE_SINGLE_BUYER: `${environment.__PHASE_TWO_URL__}/#/single-buyer-config`
 }
 
 const CALCULATE_SETTLEMENT_AMOUNTS = {
-    CALCULATE_ENERGY_TRADING_AMOUNTS: `${environment.__PHASE_TWO_URL__}/bsmd/#/settlement/trading-amounts-calculation`,
-    CALCULATE_RESERVE_TRADING_AMOUNTS: `${environment.__PHASE_TWO_URL__}/bsmd/#/settlement/reserve-trading-amounts-calculation`,
-    CALCULATE_ENERGY_MARKET_FEE: `${environment.__PHASE_TWO_URL__}/bsmd/#/settlement/energy-market-fee-calculation`,
-    CALCULATE_RESERVE_MARKET_FEE: `${environment.__PHASE_TWO_URL__}/bsmd/#/settlement/reserve-market-fee-calculation`,
-    MANAGE_ADDITIONAL_COMPENSATION_CLAIMS: `${environment.__PHASE_TWO_URL__}/bsmd/#/additional-compensation`,
-    UPDATE_ADDITIONAL_COMPENSATION_INVOICE: `${environment.__PHASE_TWO_URL__}/bsmd/#/addtl-comp-ams-update`
+    CALCULATE_ENERGY_TRADING_AMOUNTS: `${environment.__PHASE_TWO_URL__}/#/settlement/trading-amounts-calculation`,
+    CALCULATE_RESERVE_TRADING_AMOUNTS: `${environment.__PHASE_TWO_URL__}/#/settlement/reserve-trading-amounts-calculation`,
+    CALCULATE_ENERGY_MARKET_FEE: `${environment.__PHASE_TWO_URL__}/#/settlement/energy-market-fee-calculation`,
+    CALCULATE_RESERVE_MARKET_FEE: `${environment.__PHASE_TWO_URL__}/#/settlement/reserve-market-fee-calculation`,
+    MANAGE_ADDITIONAL_COMPENSATION_CLAIMS: `${environment.__PHASE_TWO_URL__}/#/additional-compensation`,
+    UPDATE_ADDITIONAL_COMPENSATION_INVOICE: `${environment.__PHASE_TWO_URL__}/#/addtl-comp-ams-update`
 }
 
 const DATA_ANALYSIS_AND_VALIDATION = {
     VIEW_SUBMITTED_METER_DATA: `${environment.__PHASE_ONE_URL__}/#/metering/list/meter-data`,
-    RTU_COMPARISON: `${environment.__PHASE_TWO_URL__}/bsmd/#/rtu-comparison`
+    RTU_COMPARISON: `${environment.__PHASE_TWO_URL__}/#/rtu-comparison`
 }
 
 const CALCULATION_MAINTENANCE_AND_CONFIGURATION = {
-    IMPORT_METERING_CONFIGURATION: `${environment.__PHASE_TWO_URL__}/bsmd/#/import-metering-config`,
-    IMPORT_SETTLEMENT_METERING_POINT_CONFIGURATION: `${environment.__PHASE_TWO_URL__}/bsmd/#/import-stl-mpconfig`,
-    SETTLEMENT_SEIN_MASTERLIST: `${environment.__PHASE_TWO_URL__}/bsmd/#/settlement-mpoint`,
-    HISTORICAL_FACTOR_MAINTENANCE: `${environment.__PHASE_TWO_URL__}/bsmd/#/historical-factor`,
-    VIRTUAL_SEIN_MAPPING: `${environment.__PHASE_TWO_URL__}/bsmd/#/virtual-sein-mapping`,
-    MTN_MODEL_CONFIGURATION: `${environment.__PHASE_TWO_URL__}/bsmd/#/mtn-model-config`,
-    MTN_GROUP_AND_SCHEDULE: `${environment.__PHASE_TWO_URL__}/bsmd/#/mtn-group-sched`,
-    RCOA_CHANNEL_CONFIGURATION: `${environment.__PHASE_TWO_URL__}/bsmd/#/rcoa-config`,
-    FILE_LOCATION: `${environment.__PHASE_TWO_URL__}/bsmd/#/meterprocess-file-loc-config`,
-    MANAGE_VIRTUAL_METERING_POINT: `${environment.__PHASE_TWO_URL__}/bsmd/#/virtual-metering-point`,
-    METER_REGISTRY_MAINTENANCE: `${environment.__PHASE_TWO_URL__}/bsmd/#/mtr-meter-list`
+    IMPORT_METERING_CONFIGURATION: `${environment.__PHASE_TWO_URL__}/#/import-metering-config`,
+    IMPORT_SETTLEMENT_METERING_POINT_CONFIGURATION: `${environment.__PHASE_TWO_URL__}/#/import-stl-mpconfig`,
+    SETTLEMENT_SEIN_MASTERLIST: `${environment.__PHASE_TWO_URL__}/#/settlement-mpoint`,
+    HISTORICAL_FACTOR_MAINTENANCE: `${environment.__PHASE_TWO_URL__}/#/historical-factor`,
+    VIRTUAL_SEIN_MAPPING: `${environment.__PHASE_TWO_URL__}/#/virtual-sein-mapping`,
+    MTN_MODEL_CONFIGURATION: `${environment.__PHASE_TWO_URL__}/#/mtn-model-config`,
+    MTN_GROUP_AND_SCHEDULE: `${environment.__PHASE_TWO_URL__}/#/mtn-group-sched`,
+    RCOA_CHANNEL_CONFIGURATION: `${environment.__PHASE_TWO_URL__}/#/rcoa-config`,
+    FILE_LOCATION: `${environment.__PHASE_TWO_URL__}/#/meterprocess-file-loc-config`,
+    MANAGE_VIRTUAL_METERING_POINT: `${environment.__PHASE_TWO_URL__}/#/virtual-metering-point`,
+    METER_REGISTRY_MAINTENANCE: `${environment.__PHASE_TWO_URL__}/#/mtr-meter-list`
 }
 
 // SETTLEMENT MENU FOR PEMC USER ROUTES
@@ -190,18 +190,18 @@ const SETTLEMENT_MENU_FOR_PEMC_USER = {
     MANAGE_BCQ: MANAGE_BCQ,
     MAINTENANCE: MAINTENANCE,
     CALCULATE_SETTLEMENT_AMOUNTS: CALCULATE_SETTLEMENT_AMOUNTS,
-    VIEW_SETTLEMENT_WORKSPACE: `${environment.__PHASE_TWO_URL__}/bsmd/#/workspace`,
-    WORKLIST: `${environment.__PHASE_TWO_URL__}/bsmd/#/tp-worklist`,
-    UPLOAD_BILLING_STATEMENT: `${environment.__PHASE_TWO_URL__}/bsmd/#/upload-billing-statement`
+    VIEW_SETTLEMENT_WORKSPACE: `${environment.__PHASE_TWO_URL__}/#/workspace`,
+    WORKLIST: `${environment.__PHASE_TWO_URL__}/#/tp-worklist`,
+    UPLOAD_BILLING_STATEMENT: `${environment.__PHASE_TWO_URL__}/#/upload-billing-statement`
 }
 
 //METERING MENU FOR PEMC USER ROUTES
 const METERING_MENU_FOR_PEMC_USER = {
-    CALCULATIONS: `${environment.__PHASE_TWO_URL__}/bsmd/#/meter-process`,
-    METER_STREAMING_STATISTICS: `${environment.__PHASE_TWO_URL__}/bsmd/#/meter-streaming-stats`,
+    CALCULATIONS: `${environment.__PHASE_TWO_URL__}/#/meter-process`,
+    METER_STREAMING_STATISTICS: `${environment.__PHASE_TWO_URL__}/#/meter-streaming-stats`,
     CALCULATION_MAINTENANCE_AND_CONFIGURATION: CALCULATION_MAINTENANCE_AND_CONFIGURATION,
-    MANAGE_MTR: `${environment.__PHASE_TWO_URL__}/bsmd/#/mtr`,
-    WORKLIST: `${environment.__PHASE_TWO_URL__}/bsmd/#/mpoint-worklist`,
+    MANAGE_MTR: `${environment.__PHASE_TWO_URL__}/#/mtr`,
+    WORKLIST: `${environment.__PHASE_TWO_URL__}/#/mpoint-worklist`,
     DATA_ANALYSIS_AND_VALIDATION: DATA_ANALYSIS_AND_VALIDATION
 }
 
@@ -254,8 +254,8 @@ export const externalRoutes = {
     CONTRACT_MANAGEMENT_FOR_TP: CONTRACT_MANAGEMENT_FOR_TP,
     SETTLEMENT_MENU_FOR_PEMC_USER: SETTLEMENT_MENU_FOR_PEMC_USER,
     METERING_MENU_FOR_PEMC_USER: METERING_MENU_FOR_PEMC_USER,
-    ACTIVITY_LOGS: `${environment.__PHASE_TWO_URL__}/bsmd/#/audit-log/list`, 
-    JOB_QUEUE: `${environment.__PHASE_TWO_URL__}/bsmd/#/job-queue`,
+    ACTIVITY_LOGS: `${environment.__PHASE_TWO_URL__}/#/audit-log/list`, 
+    JOB_QUEUE: `${environment.__PHASE_TWO_URL__}/#/job-queue`,
     USER_ACCOUNTS_FOR_TP: `${environment.__PHASE_ONE_URL__}/#/user-account`,
     CALENDAR: `${environment.__PHASE_ONE_URL__}/#/calendar`,
     FILE_SUMMARY_FOR_TP: `${environment.__PHASE_ONE_URL__}/#/tp-files`,
