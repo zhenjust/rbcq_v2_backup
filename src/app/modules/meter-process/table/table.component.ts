@@ -6,6 +6,7 @@ import { meterProcessPipeline, meterProcessTable } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { SearchFilterService } from '@shared/services/meterProcess';
 import { DateFormatterUtilService } from '@shared/services/utils';
+import { saveAs } from 'file-saver';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { ToastrService } from 'ngx-toastr';
 
@@ -46,11 +47,20 @@ export class TableComponent implements OnInit {
 
   @ViewChild('runJobs', { static: true }) runJobs!: TemplateRef<void>;
 
+  downloadingReports = new Set<number>();
+
   meterProcessStatus = MeterProcessStatus;
   meterDataPipelines = MeterDataPipelineName;
   meterDataPipelineProcess = MeterDataPipelineProcess;
   processTypes = MeterProcessTypes;
-  tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
+  // tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
+  tableData = computed(() => {
+    const data = this.sfs.jobs() || this.defaultTableData;
+    return {
+      ...data,
+      pipelineGroup: this.sortPipelineGroup(data.pipelineGroup || [])
+    };
+  });
   isLoading = computed(() => this.sfs.isLoading());
 
   // Add property to store current modal data
@@ -63,7 +73,6 @@ export class TableComponent implements OnInit {
   ];
 
   childColumnItem: tableColumn[] = [
-    { name: 'Workspace ID' },
     { name: 'Last Activity Date Time' },
     { name: 'Last Activity By' },
     { name: 'Process Type' },
@@ -109,6 +118,36 @@ export class TableComponent implements OnInit {
   ngOnInit(): void {
     this.sfs.refreshJobs({});
   }
+
+  // ui side sorting
+  private sortPipelineGroup(pipelineGroup: any[]): any[] {
+    const resolveDate = (item: any): Date | null => {
+      if (item.billingStartDate) {
+        return new Date(item.billingStartDate);
+      }
+      if (item.billingPeriod) {
+        const [start] = item.billingPeriod.split(' - ');
+        return new Date(start);
+      }
+      if (item.tradingDate) {
+        return new Date(item.tradingDate);
+      }
+      return null;
+    };
+
+    return [...pipelineGroup].sort((a, b) => {
+      const dateA = resolveDate(a);
+      const dateB = resolveDate(b);
+
+      if (!dateA && !dateB) return 0;
+      if (!dateA) return 1;
+      if (!dateB) return -1;
+
+      return dateA.getTime() - dateB.getTime();
+    });
+  }
+
+
 
   onExpandChange(checked: boolean, index: number): void {
     if (checked) {
@@ -191,7 +230,7 @@ export class TableComponent implements OnInit {
       nzOkText: 'Run Job',
       nzCancelText: 'Cancel',
       nzOnOk: () => {
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<void>((resolve) => {
           this.mpa.runJob({}, this.currentModalData?.actionType, this.currentModalData?.pipeline.id)
             .subscribe({
               next: () => {
@@ -203,12 +242,9 @@ export class TableComponent implements OnInit {
                 resolve();
               },
               error: (err) => {
-                this.modal.error({
-                  nzTitle: 'Error',
-                  nzContent: 'Failed to run the job.'
-                });
-                console.error('Run Job Error:', err);
-                reject();
+                const { error } = err;
+                this.toast.error(error.message, error.error);
+                resolve();
               }
             })
         })
@@ -230,8 +266,9 @@ export class TableComponent implements OnInit {
     return 'Unknown';
   }
 
-  downloadReport(pipeline: meterProcessPipeline): string {
-    const baseUrl = 'meter-process/reports/download/zip';
+  downloadReport(pipeline: meterProcessPipeline): void {
+    const pipelineId = pipeline.id;
+    this.downloadingReports.add(pipelineId);
 
     const processType = pipeline.parameters.processType ?? '';
     const isDaily = processType.toUpperCase?.() === 'DAILY';
@@ -243,16 +280,38 @@ export class TableComponent implements OnInit {
     const runDate = this.dfs.formatDate(pipeline.lastModifiedDatetime, 'yyyyMMddHHmmss');
     const user = this.as.currentUser()?.principal.username ?? '';
 
-    const params = new URLSearchParams({
+    const params = {
       version: String(pipeline.id),
       isDaily: String(isDaily),
       tradingDate,
       runDate,
       processType,
-      user,
-    });
+      user
+    };
 
-    // return `${window.location.origin}`;
-    return `${window.location.origin}/${baseUrl}?${params.toString()}`;
+    this.mpa.downloadReport(params).subscribe({
+      next: (response) => {
+        const blob = response.body as Blob;
+        let fileName = `${processType}_MeteringData_${tradingDate}_${runDate}.zip`; //enforcing default filename base from previous files
+        const contentDisposition = response.headers.get('Content-Disposition');
+        console.log(response);
+        if (contentDisposition) {
+          const match = /filename="?([^"]+)"?/.exec(contentDisposition);
+          if (match?.[1]) {
+            fileName = match[1];
+          }
+        }
+        saveAs(blob, fileName);
+        this.downloadingReports.delete(pipelineId);
+      },
+      error: (err) => {
+        console.error('Download Error:', err);
+        this.downloadingReports.delete(pipelineId);
+      }
+    });
+  }
+
+  isDownloadingReport(pipelineId: number): boolean {
+    return this.downloadingReports.has(pipelineId);
   }
 }

@@ -6,7 +6,8 @@ import {
   meterProcessParams,
   meterProcessRunJobPayload,
   meterProcessTable,
-  mtnListPage
+  mtnListPage,
+  ReportDownloadParams
 } from '@shared/interfaces';
 import {Observable} from 'rxjs';
 import {ParamsUtilService} from '../utils';
@@ -21,6 +22,7 @@ export class MeterprocessService {
   private METER_PROCESS: string = '/meter-process/billing-period/find-all';
   private MTN_LIST: string = '/reg/mtn/list/region';
   private PIPELINE_NAME: string = 'runMeterData';
+  private baseUrl: string = 'meter-process';
 
   private paramUtil = inject(ParamsUtilService);
   private http = inject(HttpClient);
@@ -63,5 +65,14 @@ export class MeterprocessService {
     };
 
     return this.http.post<mtnListPage>(this.MTN_LIST, payload);
+  }
+
+  downloadReport(params: ReportDownloadParams) {
+    const httpParams = this.paramUtil.buildParams(params);
+    return this.http.get(`${window.location.origin}/${this.baseUrl}/reports/download/zip`, {
+      params: httpParams,
+      responseType: 'blob',
+      observe: 'response'
+    });
   }
 }

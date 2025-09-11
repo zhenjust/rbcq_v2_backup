@@ -414,8 +414,8 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
 
     this.meterProcessForm.patchValue({
       datetimeRange: [startDate, endDate],
-      billingStartDate: this.dfp.formatDateOnly(startDate),
-      billingEndDate: this.dfp.formatDateOnly(endDate)
+      billingStartDate: this.dfp.formatDateOnly(billingPeriod.startDate),
+      billingEndDate: this.dfp.formatDateOnly(billingPeriod.endDate)
     }, { emitEvent: false });
   }
 

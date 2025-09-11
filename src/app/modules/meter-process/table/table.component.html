@@ -43,6 +43,7 @@
                         <thead>
                             <tr>
                                 <th nzWidth="40px"></th>
+                                <th nzWidth="110px">Workspace ID</th>
                                 @for (column of childColumnItem; track column) {
                                     <th>{{column.name}}</th>
                                 }
@@ -88,9 +89,18 @@
                                         }
                                         @if ((data.processType === processTypes.DAILY && (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_GESQ || pipeline.status.toLowerCase().endsWith(meterDataPipelineProcess.SETTLEMENT_READY))) ||
                                                 (data.processType !== processTypes.DAILY && pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_SETTLEMENT_READY)) {
-                                            <a nz-button [href]="downloadReport(pipeline)" target="_blank" nzType="link" nzBlock class="break-word-button">
-                                                Download Report
-                                            </a>
+                                                @if(!isDownloadingReport(pipeline.id)){
+                                                    <button nz-button nzType="link" nzBlock class="break-word-button"
+                                                        [disabled]="isDownloadingReport(pipeline.id)"
+                                                        (click)="downloadReport(pipeline)">
+                                                            <span>Download Report</span>
+                                                    </button> 
+                                                }@else {
+                                                    <div nz-flex nzGap="middle">
+                                                        <nz-spin></nz-spin>
+                                                        <span>Downloading</span>
+                                                    </div>
+                                                }
                                         }
                                     </td>
                                 </tr>

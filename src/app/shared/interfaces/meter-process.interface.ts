@@ -144,3 +144,12 @@ export interface mtnListPage {
     recordsFiltered: any
     hasMore: boolean
 }
+
+export interface ReportDownloadParams {
+    version: string;
+    isDaily: string;
+    tradingDate: string;
+    runDate: string;
+    processType: string;
+    user: string;
+}
