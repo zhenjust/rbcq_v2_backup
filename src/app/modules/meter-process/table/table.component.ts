@@ -283,6 +283,7 @@ export class TableComponent implements OnInit {
     const params = {
       version: String(pipeline.id),
       isDaily: String(isDaily),
+      status: pipeline.status,
       tradingDate,
       runDate,
       processType,
