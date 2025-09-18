@@ -182,7 +182,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
               error: (err) => {
                 this.modal.error({
                   nzTitle: 'Error',
-                  nzContent: 'Failed to run the job.'
+                  nzContent: err.message
                 });
                 console.error('Run Job Error:', err);
                 reject();
