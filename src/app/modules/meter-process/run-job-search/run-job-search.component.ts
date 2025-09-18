@@ -180,9 +180,10 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
                 resolve();
               },
               error: (err) => {
+                const { error } = err;
                 this.modal.error({
-                  nzTitle: 'Error',
-                  nzContent: err.message
+                  nzTitle: error.error,
+                  nzContent: error.message
                 });
                 console.error('Run Job Error:', err);
                 reject();
