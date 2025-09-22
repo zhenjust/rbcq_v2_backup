@@ -5,6 +5,7 @@ import { settlementPipeline, settlementTableDate } from '@shared/interfaces';
 import { RunSettlementService, SearchFilterService } from '@shared/services/settlement';
 import { ToastrService } from 'ngx-toastr';
 import { MeterProcessTypes } from '@shared/enums';
+import { DateFormatterUtilService } from '@shared/services/utils';
 
 interface tableColumn {
   name: string;
@@ -64,6 +65,7 @@ export class TableComponent implements OnInit, OnDestroy {
   private sfs = inject(SearchFilterService);
   private router = inject(ActivatedRoute);
   public toast = inject(ToastrService);
+  private dfs = inject(DateFormatterUtilService);
   tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
   isLoading = computed(() => this.sfs.isLoading());
 
@@ -105,7 +107,7 @@ export class TableComponent implements OnInit, OnDestroy {
       case 'workspaceId':
         return data.workspaceId;
       case 'runDatetime':
-        return data.runDatetime;
+        return this.dfs.formatDateTime(data.runDatetime);
       case 'processType':
         return data.processType === MeterProcessTypes.ADJUSTMENT ? `${data.processType} ${data.adjNo}` : data.processType;
       case 'tradingDate':
