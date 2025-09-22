@@ -1,6 +1,6 @@
 <nz-table
     #nzTable
-    [nzData]="tableData().pipelines"
+    [nzData]="tableData().pipelineGroup"
     [nzPageSize]="tableData().size"
     [nzPageIndex]="tableData().number"
     [nzTotal]="tableData().totalElements"
@@ -20,6 +20,8 @@
                     <td>
                         @if (isActionColumn(column)) {
                             <nz-select
+                                nzPlacement="bottomRight"
+                                [nzDropdownMatchSelectWidth]="false"
                                 [ngModel]="''"
                                 nzPlaceHolder="Select Action"
                                 (ngModelChange)="onActionSelect($event, data)">
@@ -36,3 +38,5 @@
         }
     </tbody>
 </nz-table>
+
+

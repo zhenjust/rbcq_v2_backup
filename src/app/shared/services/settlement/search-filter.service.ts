@@ -18,6 +18,7 @@ export class SearchFilterService {
     this.sts.search(searchParams, searchName).subscribe({
       next: (data) => {
         this.jobs.set(data); // Emit to subscribers
+        this.error.set(null);
       },
       error: (err) => {
         console.error(err);

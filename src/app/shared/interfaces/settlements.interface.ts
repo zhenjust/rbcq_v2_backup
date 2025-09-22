@@ -53,18 +53,21 @@ export interface settlementPipelineParameters {
 
 export interface settlementPipeline {
     name: string
-    runId: string
+    adjNo: string
+    processType: MeterProcessTypes
+    tradingDate: string
+    billingPeriod: string
+    billingEndDate: string
+    billingStartDate: string
     status: string
-    runStart: string
-    runEnd: string
-    parameters: settlementPipelineParameters,
-    lineRentalStatus?: string,
-    progress?: string,
-    pricingCondition?: string
+    runDatetime: string
+    lineRentalStatus?: string
+    workspaceId: string
+    pipelines: [] //create interface once sample pipeline view calculations has values
 }
 
 export interface settlementTableDate {
-    pipelines: settlementPipeline[]
+    pipelineGroup: settlementPipeline[]
     last: boolean
     totalPages: number
     totalElements: number

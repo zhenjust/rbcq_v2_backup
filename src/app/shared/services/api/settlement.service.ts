@@ -23,7 +23,7 @@ export class SettlementService {
       name: searchName
     }
     const params = this.paramUtil.buildParams(withName);
-    return this.http.get<settlementTableDate>(`${this.API_URL}/search`, { params });
+    return this.http.get<settlementTableDate>(`${this.API_URL}/search-group`, { params });
   }
 
   public getBillingId(acPc: string, startDate: string, endDate: string): Observable<[]>{

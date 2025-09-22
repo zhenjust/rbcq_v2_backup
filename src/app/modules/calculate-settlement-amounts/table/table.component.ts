@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { settlementPipeline, settlementTableDate } from '@shared/interfaces';
 import { RunSettlementService, SearchFilterService } from '@shared/services/settlement';
 import { ToastrService } from 'ngx-toastr';
+import { MeterProcessTypes } from '@shared/enums';
 
 interface tableColumn {
   name: string;
@@ -23,7 +24,7 @@ interface jobSelect {
 export class TableComponent implements OnInit, OnDestroy {
   isLineRentalStatus: boolean = false;
   defaultTableData: settlementTableDate = {
-    pipelines: [],
+    pipelineGroup: [],
     first: true,
     last: false,
     number: 0,
@@ -34,11 +35,10 @@ export class TableComponent implements OnInit, OnDestroy {
   };
   searchName: string = '';
   private baseTableItem: tableColumn[] = [
-    { name: 'GroupId', key: 'name' },
-    { name: 'Run Date and Time', key: 'runStart' },
+    { name: 'Workspace ID', key: 'workspaceId' },
+    { name: 'Run Date and Time', key: 'runDatetime' },
     { name: 'Process Type', key: 'processType' },
     { name: 'Trading Date', key: 'tradingDate' },
-    { name: 'Region', key: 'regionGroup' },
     { name: 'Status', key: 'status' },
     { name: 'Line Rental Status', key: 'lineRentalStatus' },
     { name: 'Progress', key: 'progress' },
@@ -88,7 +88,7 @@ export class TableComponent implements OnInit, OnDestroy {
       this.isLineRentalStatus = data['isLineRentalStatus'] as boolean;
       this.searchName = data['searchName'] as string;
     });
-    this.sfs.fetchJobs({}, this.searchName); // initial load
+    this.sfs.fetchJobs({}, this.searchName);
   }
 
   ngOnDestroy(): void {
@@ -102,24 +102,22 @@ export class TableComponent implements OnInit, OnDestroy {
 
   getCellValue(data: settlementPipeline, column: tableColumn): string {
     switch (column.key) {
-      case 'name':
-        return data.name || '';
-      case 'runStart':
-        return data.runStart || '';
+      case 'workspaceId':
+        return data.workspaceId;
+      case 'runDatetime':
+        return data.runDatetime;
       case 'processType':
-        return data.parameters?.processType || '';
+        return data.processType === MeterProcessTypes.ADJUSTMENT ? `${data.processType} ${data.adjNo}` : data.processType;
       case 'tradingDate':
-        return data.parameters?.billingPeriod 
-          ? `${data.parameters.startDatetime} - ${data.parameters.endDatetime}`
-          : data.parameters?.tradingDate || '';
-      case 'regionGroup':
-        return data.parameters?.regionGroup || '';
+        return data.billingPeriod 
+          ? `${data.billingStartDate} - ${data.billingEndDate}`
+          : data.tradingDate || '';
       case 'status':
-        return data.status || '';
+        return data.status;
       case 'lineRentalStatus':
         return data?.lineRentalStatus || '';
       case 'progress':
-        return data?.progress || '';
+        return '';
       case 'actions':
         return '';
       default:

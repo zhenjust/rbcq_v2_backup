@@ -791,13 +791,8 @@ export class NavbarComponent implements OnInit {
             ],
             children: [
               {
-                title: 'Calculate Energey Trading Amounts',
+                title: 'Calculate Energy Trading Amounts',
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.CALCULATE_SETTLEMENT_AMOUNTS.CALCULATE_ENERGY_TRADING_AMOUNTS,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
-              },
-              {
-                title: 'Calculate Energey Trading Amounts v2',
-                path: NEW_ROUTES.TRADING_AMOUNTS_CALCULATION,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
               },
               {
@@ -806,18 +801,8 @@ export class NavbarComponent implements OnInit {
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
               },
               {
-                title: 'Calculate Reserve Trading Amounts v2',
-                path: NEW_ROUTES.RESERVE_TRADING_AMOUNTS_CALCULATION,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
-              },
-              {
                 title: 'Calculate Energy Market Fee',
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.CALCULATE_SETTLEMENT_AMOUNTS.CALCULATE_ENERGY_MARKET_FEE,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
-              },
-              {
-                title: 'Calculate Energy Market Fee v2',
-                path: NEW_ROUTES.ENERGY_MARKET_FEE_CALCULATION,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
               },
               {
@@ -826,18 +811,8 @@ export class NavbarComponent implements OnInit {
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
               },
               {
-                title: 'Calculate Reserve Market Fee v2',
-                path: NEW_ROUTES.RESERVE_MARKET_FEE_CALCULATION,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
-              },
-              {
                 title: 'Manage Additional Compensation Claims',
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.CALCULATE_SETTLEMENT_AMOUNTS.MANAGE_ADDITIONAL_COMPENSATION_CLAIMS,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_ADDTL_COMP]
-              },
-              {
-                title: 'Manage Additional Compensation Claims v2',
-                path: NEW_ROUTES.ADDITIONAL_COMPENSATION_LIST,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_ADDTL_COMP]
               },
               {
@@ -845,8 +820,43 @@ export class NavbarComponent implements OnInit {
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.CALCULATE_SETTLEMENT_AMOUNTS.UPDATE_ADDITIONAL_COMPENSATION_INVOICE,
                 permission: [PHASE_TWO_AUTHORITIES.AC_VIEW_AMS_INV_FOR_UPDATE]
               },
+            ]
+          },
+          {
+            title: 'Calculate Settlement Amounts v2',
+            permission: [
+              PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS, 
+              PHASE_TWO_AUTHORITIES.VIEW_ADDTL_COMP,
+              PHASE_TWO_AUTHORITIES.AC_VIEW_AMS_INV_FOR_UPDATE 
+            ],
+            children: [
               {
-                title: 'Update Additional Compensation Invoice v2',
+                title: 'Calculate Energy Trading Amounts',
+                path: NEW_ROUTES.TRADING_AMOUNTS_CALCULATION,
+                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
+              },
+              {
+                title: 'Calculate Reserve Trading Amounts',
+                path: NEW_ROUTES.RESERVE_TRADING_AMOUNTS_CALCULATION,
+                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
+              },
+              {
+                title: 'Calculate Energy Market Fee',
+                path: NEW_ROUTES.ENERGY_MARKET_FEE_CALCULATION,
+                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
+              },
+              {
+                title: 'Calculate Reserve Market Fee',
+                path: NEW_ROUTES.RESERVE_MARKET_FEE_CALCULATION,
+                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
+              },
+              {
+                title: 'Manage Additional Compensation Claims',
+                path: NEW_ROUTES.ADDITIONAL_COMPENSATION_LIST,
+                permission: [PHASE_TWO_AUTHORITIES.VIEW_ADDTL_COMP]
+              },
+              {
+                title: 'Update Additional Compensation Invoice',
                 path: NEW_ROUTES.ADDITIONAL_COMPENSATION_INVOICE,
                 permission: [PHASE_TWO_AUTHORITIES.AC_VIEW_AMS_INV_FOR_UPDATE]
               }

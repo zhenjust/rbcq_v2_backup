@@ -24,7 +24,7 @@ export class TableComponent implements OnInit, OnDestroy {
   isLineRentalStatus: boolean = false;
   selectedAction: string = '';
   defaultTableData: settlementTableDate = {
-    pipelines: [],
+    pipelineGroup: [],
     first: true,
     last: false,
     number: 0,
@@ -100,15 +100,15 @@ export class TableComponent implements OnInit, OnDestroy {
       case 'name':
         return data.name || '';
       case 'tradingDate':
-        return data.parameters?.billingPeriod 
-          ? `${data.parameters.startDatetime} - ${data.parameters.endDatetime}`
-          : data.parameters?.tradingDate || '';
+        return data.billingPeriod 
+          ? `${data.billingStartDate} - ${data.billingEndDate}`
+          : data.tradingDate || '';
       case 'pricingCondition':
-        return data.parameters?.pricingCondition ? data.parameters?.pricingCondition : ''; 
+        return ''; 
       case 'status':
         return data.status || '';
       case 'progress':
-        return data.progress || '';
+        return '';
       case 'actions':
         return '';
       default:
