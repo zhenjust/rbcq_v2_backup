@@ -75,6 +75,7 @@ export interface meterProcessParameters {
 
 export interface meterProcessPipelineRuns {
     name: string,
+    description: string,
     runId: string,
     runBy: string,
     runStart: string,
