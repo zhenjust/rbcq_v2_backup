@@ -36,4 +36,16 @@ export class RunSettlementService {
   viewValidations(data: settlementPipeline): void {
     console.log('View Validations - Full row data:', data);
   }
+
+  calculateEnergyTransactionAllocation(data: settlementPipeline){
+    console.log('Validate Input - Full row data:', data);
+  }
+
+  generateTransactionReport(data: settlementPipeline){
+    console.log('Validate Input - Full row data:', data);
+  }
+
+  generateEnergyFiles(data: settlementPipeline){
+    console.log('Validate Input - Full row data:', data);
+  }
 }

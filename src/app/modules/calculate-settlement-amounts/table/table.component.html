@@ -22,7 +22,7 @@
                             <nz-select
                                 nzPlacement="bottomRight"
                                 [nzDropdownMatchSelectWidth]="false"
-                                [ngModel]="''"
+                                [ngModel]="getSelectedAction(data)"
                                 nzPlaceHolder="Select Action"
                                 (ngModelChange)="onActionSelect($event, data)">
                                 @for (action of settlementJobActions; track action.value) {
@@ -40,3 +40,24 @@
 </nz-table>
 
 
+<ng-template #runSettlementJobs>
+    <nz-flex nzVertical="true">
+        @if (currentModalData) {
+        <nz-result
+            nzStatus="info"
+            [nzTitle]="currentModalData.actionType">
+        </nz-result>
+        <nz-flex nzVertical="true" nzAlign="center" nzJustify="center">
+            @if (currentModalData.billingPeriod) {
+            <h6><strong>Billing Period:</strong> {{ currentModalData.billingPeriod }}</h6>
+            <p>{{currentModalData?.startDate}} - {{currentModalData?.endDate}}</p>
+            }
+            @if (currentModalData.tradingDate) {
+            <h6><strong>Trading Date:</strong> {{ currentModalData.tradingDate }}</h6>
+            }
+        </nz-flex>
+        } @else {
+        <nz-result nzStatus="info" nzTitle="Loading job information..."></nz-result>
+        }
+    </nz-flex>
+</ng-template>
