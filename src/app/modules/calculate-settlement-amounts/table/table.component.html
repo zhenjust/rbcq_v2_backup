@@ -43,21 +43,72 @@
 <ng-template #runSettlementJobs>
     <nz-flex nzVertical="true">
         @if (currentModalData) {
-        <nz-result
-            nzStatus="info"
-            [nzTitle]="currentModalData.actionType">
-        </nz-result>
-        <nz-flex nzVertical="true" nzAlign="center" nzJustify="center">
-            @if (currentModalData.billingPeriod) {
-            <h6><strong>Billing Period:</strong> {{ currentModalData.billingPeriod }}</h6>
-            <p>{{currentModalData?.startDate}} - {{currentModalData?.endDate}}</p>
+            @switch (currentModalData.actionType) {
+                @case ('generate') {
+                    @if (currentModalData.processType === processTypes.DAILY) {
+                        <nz-result
+                            nzStatus="info"
+                            [nzTitle]="currentModalData.actionMessage">
+                        </nz-result>
+                        <nz-flex nzVertical="true" nzAlign="center" nzJustify="center">
+                            @if (currentModalData.tradingDate) {
+                                <h6><strong>Trading Date:</strong> {{ currentModalData.tradingDate }}</h6>
+                            }
+                        </nz-flex>
+                    } @else {
+                        <nz-flex nzVertical="true" nzGap="middle" nzAlign="start" nzJustify="center">
+                            <span><strong>Select Date Range:</strong></span>
+                            <nz-range-picker
+                                [ngModel]="selectedRange()"
+                                (ngModelChange)="onRangeChange($event)"
+                                nzShowNow="false"
+                                [nzAllowClear]="false"
+                                [nzDisabledDate]="disabledDateFn"
+                                nzFormat="yyyy-MM-dd"
+                                nzSize="large"
+                                style="width: 100%;"
+                            ></nz-range-picker>
+                        </nz-flex>
+                    }
+                }
+                @case ('finalize') {
+                    <nz-result
+                        nzStatus="warning"
+                        nzTitle="Finalize Energy Trading Amounts">
+                    </nz-result>
+                }
+                @case ('calculations') {
+                    <nz-result
+                        nzStatus="info"
+                        nzTitle="View Calculations"
+                        nzSubTitle="No available calculations">
+                    </nz-result>
+                }
+                @case ('validate_input') {
+                    <nz-result
+                        nzStatus="info"
+                        nzTitle="Validate Input">
+                    </nz-result>
+                }
+                @case ('calculate_transactions') {
+                    <nz-result
+                        nzStatus="info"
+                        nzTitle="Calculate Energy Transaction Allocation">
+                    </nz-result>
+                }
+                @case ('generate_transac_reports') {
+                    <nz-result
+                        nzStatus="info"
+                        nzTitle="Generate Transaction Report">
+                    </nz-result>
+                }
+                @case ('generate_energy_files') {
+                    <nz-result
+                        nzStatus="info"
+                        nzTitle="Generate Energy Files">
+                    </nz-result>
+                }
             }
-            @if (currentModalData.tradingDate) {
-            <h6><strong>Trading Date:</strong> {{ currentModalData.tradingDate }}</h6>
-            }
-        </nz-flex>
-        } @else {
-        <nz-result nzStatus="info" nzTitle="Loading job information..."></nz-result>
         }
     </nz-flex>
 </ng-template>

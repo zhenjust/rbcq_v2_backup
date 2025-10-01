@@ -7,6 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { MeterProcessTypes } from '@shared/enums';
 import { DateFormatterUtilService } from '@shared/services/utils';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { isAfter, isBefore, startOfDay } from 'date-fns';
 
 interface tableColumn {
   name: string;
@@ -74,22 +75,23 @@ export class TableComponent implements OnInit, OnDestroy {
   public toast = inject(ToastrService);
   public modal = inject(NzModalService);
   private dfs = inject(DateFormatterUtilService);
+
   tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
   isLoading = computed(() => this.sfs.isLoading());
 
+  public minDate = signal<Date | null>(null);
+  public maxDate = signal<Date | null>(null);
+  public selectedRange = signal<Date[] | null>(null);
+
   @ViewChild('runSettlementJobs', { static: true }) runSettlementJobs!: TemplateRef<void>;
   currentModalData: any | null = null;
+  processTypes = MeterProcessTypes;
 
   constructor(){
     effect(() => {
-      const jobs = this.sfs.jobs();
       const error = this.sfs.error();
       const loading = this.sfs.isLoading();
-      
-      if (jobs && !loading) {
-        this.toast.success('Jobs Loaded!');
-      }
-      
+
       if (error && !loading) {
         this.toast.error('Failed to load jobs', error);
       }
@@ -198,10 +200,11 @@ export class TableComponent implements OnInit, OnDestroy {
           try {
             serviceCall();
             this.resetActionSelection(rowData);
+            this.clearDateRange();
             resolve(true);
           } catch (error) {
-            this.toast.error('Action failed', 'Please try again');
             this.resetActionSelection(rowData);
+            this.clearDateRange();
             reject(error);
           }
         });
@@ -216,18 +219,8 @@ export class TableComponent implements OnInit, OnDestroy {
     modalRef.afterClose.subscribe(() => {
       this.currentModalData = null;
       this.resetActionSelection(rowData);
+      this.clearDateRange();
     });
-  }
-
-  private handleDirectAction(rowData: settlementPipeline, serviceCall: () => void): void {
-    try {
-      serviceCall();
-      this.resetActionSelection(rowData);
-    } catch (error) {
-      this.toast.error('Action failed', 'Please try again');
-      this.resetActionSelection(rowData);
-      console.error('Direct action error:', error);
-    }
   }
 
   onActionSelect(selectedValue: string | any, rowData: settlementPipeline): void {
@@ -240,54 +233,165 @@ export class TableComponent implements OnInit, OnDestroy {
     
     this.setActionSelection(rowData, actionValue);
 
+    const baseModalData = {
+      pipeline: rowData,
+      tradingDate: rowData.tradingDate,
+      billingPeriod: rowData.billingPeriod,
+      startDate: rowData.billingStartDate,
+      endDate: rowData.billingEndDate,
+      processType: rowData.processType
+    };
+
     switch (actionValue) {
       case 'generate':
+        if(rowData.processType !== MeterProcessTypes.DAILY){
+          const startDate = new Date(rowData.billingStartDate);
+          const endDate = new Date(rowData.billingEndDate);
+
+          this.minDate.set(startDate);
+          this.maxDate.set(endDate);
+          this.selectedRange.set([startDate, endDate]);
+        } else {
+          this.clearDateRange();
+        }
+
         this.handleModalAction(
           rowData,
           () => this.runSettlements.generateInputWorkspace(rowData),
           {
-            pipeline: rowData,
-            actionType: 'You are going to generate input workspace for the following dates:',
-            tradingDate: rowData.tradingDate,
-            billingPeriod: rowData.billingPeriod,
-            startDate: rowData.billingStartDate,
-            endDate: rowData.billingEndDate
+            ...baseModalData,
+            actionMessage: 'You are going to generate input workspace for the following dates:',
+            actionType: 'generate'
           }
         );
         break;
 
       case 'finalize':
-        this.handleDirectAction(rowData, () => this.runSettlements.finalizeTradingAmounts(rowData));
+        this.handleModalAction(
+          rowData,
+          () => this.runSettlements.finalizeTradingAmounts(rowData),
+          {
+            ...baseModalData,
+            actionMessage: 'Finalize Energy Trading Amounts',
+            actionType: 'finalize'
+          }
+        );
         break;
 
       case 'calculations':
-        this.handleDirectAction(rowData, () => this.runSettlements.viewCalculations(rowData));
+        this.handleModalAction(
+          rowData,
+          () => this.runSettlements.viewCalculations(rowData),
+          {
+            ...baseModalData,
+            actionMessage: 'View Calculations',
+            actionType: 'calculations'
+          }
+        );
         break;
 
       case 'validate_input':
-        this.handleDirectAction(rowData, () => this.runSettlements.validateInput(rowData));
+        this.handleModalAction(
+          rowData,
+          () => this.runSettlements.validateInput(rowData),
+          {
+            ...baseModalData,
+            actionMessage: 'Validate Input',
+            actionType: 'validate_input'
+          }
+        );
         break;
 
       case 'validations':
-        this.handleDirectAction(rowData, () => this.runSettlements.viewValidations(rowData));
+        this.handleModalAction(
+          rowData,
+          () => this.runSettlements.viewValidations(rowData),
+          {
+            ...baseModalData,
+            actionMessage: 'View Validations',
+            actionType: 'validations'
+          }
+        );
         break;
 
       case 'calculate_transactions':
-        this.handleDirectAction(rowData, () => this.runSettlements.calculateEnergyTransactionAllocation(rowData));
+        this.handleModalAction(
+          rowData,
+          () => this.runSettlements.calculateEnergyTransactionAllocation(rowData),
+          {
+            ...baseModalData,
+            actionMessage: 'Calculate Energy Transaction Allocation',
+            actionType: 'calculate_transactions'
+          }
+        );
         break;
 
       case 'generate_transac_reports':
-        this.handleDirectAction(rowData, () => this.runSettlements.generateTransactionReport(rowData));
+        this.handleModalAction(
+          rowData,
+          () => this.runSettlements.generateTransactionReport(rowData),
+          {
+            ...baseModalData,
+            actionMessage: 'Generate Transaction Report',
+            actionType: 'generate_transac_reports'
+          }
+        );
         break;
 
       case 'generate_energy_files':
-        this.handleDirectAction(rowData, () => this.runSettlements.generateEnergyFiles(rowData));
+        this.handleModalAction(
+          rowData,
+          () => this.runSettlements.generateEnergyFiles(rowData),
+          {
+            ...baseModalData,
+            actionMessage: 'Generate Energy Files',
+            actionType: 'generate_energy_files'
+          }
+        );
         break;
 
       default:
-        console.warn('Unknown action:', actionValue);
+        this.clearDateRange();
         this.resetActionSelection(rowData);
-        this.toast.warning('Unknown action selected', 'Please select a valid action');
     }
+  }
+
+  // helper functions
+  setDisabledDateRange = (date: Date): boolean => {
+    const min = this.minDate();
+    const max = this.maxDate();
+
+    if (!min || !max) {
+      return false;
+    }
+    const dateOnly = startOfDay(date);
+    const minOnly = startOfDay(min);
+    const maxOnly = startOfDay(max);
+    return isBefore(dateOnly, minOnly) || isAfter(dateOnly, maxOnly);
+  };
+
+  get disabledDateFn() {
+    return (date: Date) => this.setDisabledDateRange(date);
+  }
+
+  onRangeChange(value: Date[] | null): void {
+    if (!value || value.length !== 2) {
+      this.selectedRange.set(value);
+      return;
+    }
+
+    const [start, end] = value;
+    if (start && end && isAfter(start, end)) {
+      this.selectedRange.set(null);
+      return;
+    }
+
+    this.selectedRange.set(value);
+  }
+
+  private clearDateRange(): void {
+    this.minDate.set(null);
+    this.maxDate.set(null);
+    this.selectedRange.set(null);
   }
 }
