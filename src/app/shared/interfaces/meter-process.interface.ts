@@ -92,6 +92,8 @@ export interface meterProcessPipeline {
     lastModifiedBy: string
     lastModifiedDatetime: Date
     parameters: meterProcessParameters,
+    partial: boolean,
+    consolidate: boolean
     pipelineRuns: meterProcessPipelineRuns[]
 }
 
