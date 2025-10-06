@@ -105,7 +105,7 @@ export class ConsolidateComponent implements OnInit {
       .pipe(this.untilDestroy$)
       .subscribe(() => {
         this.notif.success(LABELS.SUCCESS, MESSAGES.SUCCESS_CONSOLIDATE_ITEM('items'));
-        this.modalRef.destroy();
+        this.modalRef.destroy(true);
       });
   }
 

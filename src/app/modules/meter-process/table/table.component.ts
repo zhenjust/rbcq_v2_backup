@@ -336,7 +336,11 @@ export class TableComponent implements OnInit {
       nzWidth: 1500
     });
 
-    modal.afterClose.subscribe(() => this.sfs.refreshJobs({}));
+    modal.afterClose.subscribe(res => {
+      if (res) {
+        this.sfs.refreshJobs({});
+      }
+    });
 
   }
 }
