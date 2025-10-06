@@ -320,10 +320,11 @@ export class TableComponent implements OnInit {
   }
 
   consolidate(baseTableData: meterProcessPipeline, pipeline: meterProcessPipelineGroup): void {
-    const isRerunOptional = [MeterProcessTypes.PRELIMINARY, MeterProcessTypes.FINAL].includes(pipeline.processType) && pipeline?.published;
     const isAdjustment = pipeline.processType === MeterProcessTypes.ADJUSTMENT;
+    const isRerunOptional = [MeterProcessTypes.PRELIMINARY, MeterProcessTypes.FINAL]
+      .includes(pipeline.processType) && pipeline?.published;
 
-    this.modal.create({
+    const modal = this.modal.create({
       nzTitle: LABELS.CONSOLIDATE,
       nzCentered: true,
       nzContent: ConsolidateComponent,
@@ -334,5 +335,8 @@ export class TableComponent implements OnInit {
       },
       nzWidth: 1500
     });
+
+    modal.afterClose.subscribe(() => this.sfs.refreshJobs({}));
+
   }
 }

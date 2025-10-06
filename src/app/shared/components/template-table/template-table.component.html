@@ -1,8 +1,10 @@
-<nz-table nzTemplateMode [nzWidthConfig]="widthConfig" nzSize="small" [nzLoading]="isLoading" [nzOuterBordered]="true" [nzScroll]="{ x: 'auto'}">
+<!-- Reusable Table Component for Fixed Data, implementing NgZorro nzTemplateMode -->
+
+<nz-table #table nzTemplateMode [nzWidthConfig]="widthConfig" nzSize="small" [nzLoading]="isLoading" [nzOuterBordered]="true" [nzScroll]="{ x: 'auto'}">
   <thead>
     @if (enableCheckbox) {
       <th
-        [nzShowCheckbox]="enableCheckbox"
+        [nzShowCheckbox]="enableCheckbox && !disableSelectAll"
         [nzDisabled]="!tableData.length"
         [nzIndeterminate]="isIndeterminate"
         [nzChecked]="isAllChecked"
@@ -20,7 +22,11 @@
     @for (row of tableData; track row.id) {
       <tr>
         @if (enableCheckbox) {
-          <td	[nzChecked]="selectedItems.has(row[checkboxProperty])" class="px-3" (nzCheckedChange)="checkRow($event, row[checkboxProperty])"></td>
+          <td
+            [nzChecked]="selectedItems.has(row[checkboxProperty])"
+            [nzDisabled]="checkboxCondition(row)"
+            (nzCheckedChange)="checkRow($event, row[checkboxProperty])"
+            class="px-3"></td>
         }
 
         @for (column of tableColumns; track column.label) {

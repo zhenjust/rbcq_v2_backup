@@ -34,9 +34,12 @@
                 <td [attr.colspan]="columnItem.length + 1" style="padding: 0;">
                     <nz-table
                         #innerTable
+                        nzTemplateMode
                         [nzData]="data.pipelines || []"
                         [nzSize]="'small'"
                         [nzShowPagination]="false"
+                        [nzTotal]="data.pipelines?.length"
+                        [nzPageSize]="data.pipelines?.length"
                         [nzTableLayout]="'fixed'"
                         class="child-table"
                     >

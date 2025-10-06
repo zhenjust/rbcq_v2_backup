@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { TPL_TABLE_COLUMN } from '@shared/interfaces';
+import { NzTableComponent } from 'ng-zorro-antd/table';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -9,12 +10,18 @@ import { Subscription } from 'rxjs';
 })
 export class TemplateTableComponent {
 
+  @ViewChild('table') table!: NzTableComponent<any>;
+
   @Input({ required: true }) tableColumns!: TPL_TABLE_COLUMN[];
   @Input({ required: true }) tableData!: any[];
 
   @Input() loading$!: Subscription;
+
+  // Checkbox configurations
   @Input() enableCheckbox = false;
   @Input() checkboxProperty = 'id';
+  @Input() disableSelectAll = false;
+  @Input() checkboxCondition!: (rowData: any) => boolean;
 
   selectedItems = new Set<number>();
 
@@ -24,7 +31,6 @@ export class TemplateTableComponent {
     if (value) {
       this.tableData.forEach(data => {
         this.selectedItems.add(data[this.checkboxProperty]);
-        console.log({value}, this.selectedItems.values(), data[this.checkboxProperty])
       });
     } else {
       this.selectedItems.clear();

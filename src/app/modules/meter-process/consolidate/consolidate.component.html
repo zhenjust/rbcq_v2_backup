@@ -5,11 +5,21 @@
 
   <!-- Base -->
   <h6 class="mb-3">{{ LABELS.BASE }}</h6>
-  <app-template-table [tableColumns]="baseTableColumns" [tableData]="data?.baseTableData"></app-template-table>
+  <app-template-table
+    [tableColumns]="baseTableColumns"
+    [tableData]="data?.baseTableData">
+  </app-template-table>
 
   <!-- Reruns -->
   <h6 class="mt-5 mb-3">{{ LABELS.RERUNS }}</h6>
-  <app-template-table #rerunTable [tableColumns]="baseTableColumns" [tableData]="rerunList || []" [enableCheckbox]="true" [loading$]="busy$"></app-template-table>
+  <app-template-table #rerunTable
+    [tableColumns]="baseTableColumns"
+    [tableData]="rerunList || []"
+    [enableCheckbox]="true"
+    [loading$]="busy$"
+    [checkboxCondition]="disableCheck"
+    [disableSelectAll]="true">
+  </app-template-table>
 
   <!-- Templates for Columns -->
   <ng-template #tradingDateTpl let-allData="allData">
@@ -32,7 +42,7 @@
   <div *nzModalFooter class="justify-content-end">
     <nz-space>
       <button nz-button type="button" (click)="modalRef.destroy()">{{ LABELS.CANCEL }}</button>
-      <button nz-button type="button" nzType="primary" (click)="consolidate()">{{ LABELS.CONSOLIDATE }}</button>
+      <button nz-button type="button" nzType="primary" (click)="confirmConsolidate()">{{ LABELS.CONSOLIDATE }}</button>
     </nz-space>
   </div>
 </nz-spin>
