@@ -35,7 +35,7 @@
   </ng-template>
 
   <ng-template #processTypeTpl let-processType="data" let-allData="allData">
-    @let adjNo = data?.baseTableData[0]?.parameters?.adjNo;
+    @let adjNo = allData?.parameters?.adjNo;
 
     {{ processType }} @if (adjNo) { - {{ adjNo }} }
   </ng-template>
