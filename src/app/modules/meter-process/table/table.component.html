@@ -70,6 +70,13 @@
                                         <!-- PROGRESS SECTION -->
                                     </td>
                                     <td>
+
+                                        @if (pipeline?.consolidate) {
+                                            <a nz-button nzType="link" nzBlock class="break-word-button" (click)="consolidate(pipeline, data)">
+                                                {{ labels.CONSOLIDATE }}
+                                            </a>
+                                        }
+
                                         @if (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_METER_DATA ||
                                                 pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_GESQ ||
                                                     pipeline.status.toLowerCase() === meterProcessStatus.FAILED_GESQ ||

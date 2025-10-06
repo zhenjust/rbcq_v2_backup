@@ -1,8 +1,9 @@
 .navbar-container {
+  padding-top: 15px;
   display: flex;
   flex-direction: column;
   height: 100%;
-    
+
   .menu-container {
     flex-grow: 1;
     overflow-y: auto;
@@ -38,8 +39,13 @@
   .nav-link {
     display: flex;
     align-items: center;
-    color: rgba(255, 255, 255, 0.85);
     text-decoration: none;
+    // color: #808FA4;
+    line-height: 1.2;
+
+    :hover {
+      color: #00b1f8 !important;
+    }
   }
 
   .nav-icon {
@@ -63,8 +69,29 @@
   }
 
   .subChildColor {
-    background-color: #3e4a58 !important;
     margin: 0;
     padding: 6px 0;
+    color: #808FA4;
+
+    :hover {
+      color: #00b1f8 !important;
+    }
   }
+}
+
+
+// Refactored Classes
+
+* {
+  font-family: "Roboto","Helvetica Neue",Helvetica,Arial,sans-serif !important;
+}
+
+.sd-nav-icon {
+  display: flex;
+  width: 30px;
+  align-items: center;
+}
+
+li {
+  margin-bottom: 0px !important;
 }

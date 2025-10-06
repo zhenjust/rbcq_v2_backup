@@ -1,14 +1,16 @@
 import { Component, OnInit, TemplateRef, ViewChild, computed, effect, inject } from '@angular/core';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { MeterDataPipelineName, MeterProcessStatus, MeterDataPipelineProcess } from '@shared/constants';
+import { LABELS } from '@shared/constants/labels.const';
 import { MeterProcessTypes } from '@shared/enums';
-import { meterProcessPipeline, meterProcessTable } from '@shared/interfaces';
+import { meterProcessPipeline, meterProcessPipelineGroup, meterProcessTable } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { SearchFilterService } from '@shared/services/meterProcess';
 import { DateFormatterUtilService } from '@shared/services/utils';
 import { saveAs } from 'file-saver';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { ToastrService } from 'ngx-toastr';
+import { ConsolidateComponent } from '../consolidate/consolidate.component';
 
 interface tableColumn {
   name: string;
@@ -53,6 +55,7 @@ export class TableComponent implements OnInit {
   meterDataPipelines = MeterDataPipelineName;
   meterDataPipelineProcess = MeterDataPipelineProcess;
   processTypes = MeterProcessTypes;
+  labels = LABELS;
   // tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
   tableData = computed(() => {
     const data = this.sfs.jobs() || this.defaultTableData;
@@ -314,5 +317,22 @@ export class TableComponent implements OnInit {
 
   isDownloadingReport(pipelineId: number): boolean {
     return this.downloadingReports.has(pipelineId);
+  }
+
+  consolidate(baseTableData: meterProcessPipeline, pipeline: meterProcessPipelineGroup): void {
+    const isRerunOptional = [MeterProcessTypes.PRELIMINARY, MeterProcessTypes.FINAL].includes(pipeline.processType) && pipeline?.published;
+    const isAdjustment = pipeline.processType === MeterProcessTypes.ADJUSTMENT;
+
+    this.modal.create({
+      nzTitle: LABELS.CONSOLIDATE,
+      nzCentered: true,
+      nzContent: ConsolidateComponent,
+      nzData: {
+        baseTableData: [baseTableData],
+        isRerunOptional,
+        isAdjustment
+      },
+      nzWidth: 1500
+    });
   }
 }

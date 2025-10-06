@@ -1,4 +1,4 @@
-<div class="d-flex justify-content-between align-items-center">
+<div class="d-flex justify-content-between align-items-center bg-white">
     <nz-space class="d-flex align-items-center">
         <img src="assets/images/svg/crss_logo_topbar.svg" alt="logo" class="header-logo" />
         @for (link of headerLinks; track link) {
@@ -33,20 +33,20 @@
     <nz-space nzDirection="vertical">
       <button nz-button nzType="text" nzBlock nzSize="large">Profile</button>
       <button nz-button nzType="text" nzBlock nzSize="large">Change Password</button>
-  
+
       <button
-        nz-button 
-        nzType="text" 
-        nzBlock 
+        nz-button
+        nzType="text"
+        nzBlock
         nzSize="large"
         (click)="handleSwitchClick()">
         {{ userOptions }}
       </button>
-  
+
       <button nz-button nzType="text" nzBlock (click)="logoutUser()">Logout</button>
     </nz-space>
   </ng-template>
-  
+
   <ng-template #superUserModal let-modal>
     <nz-spin [nzSpinning]="!isModalReady">
       @if (isModalReady) {
@@ -65,7 +65,7 @@
               ></nz-option>
             }
           </nz-select>
-  
+
           <nz-space nzAlign="end">
               <button nz-button nzType="default" (click)="modal.destroy()">Cancel</button>
               <button

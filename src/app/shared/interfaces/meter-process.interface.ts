@@ -41,7 +41,13 @@ export interface meterProcessParams {
     billingEndDate: string,
     processType: MeterProcessTypes,
     adjNo: number | string,
-    mtn: string | []
+    mtn: string | [],
+    reRunId: string;
+}
+
+export interface ConsolidateParams {
+    baseWorkspaceId: number;
+    reRunWorkspaceId?: string;
 }
 
 export interface meterProcessRunJobPayload {
@@ -105,6 +111,7 @@ export interface meterProcessPipelineGroup {
     billingEndDate: string
     adjNo?: number
     pipelines: meterProcessPipeline[]
+    published?: boolean;
 }
 
 export interface meterProcessTable {

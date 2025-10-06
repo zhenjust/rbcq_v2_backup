@@ -291,10 +291,10 @@ export class NavbarComponent implements OnInit {
         title: 'Admin',
         icon: faUserLarge,
         permission: [
-          PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS, 
+          PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS,
           PHASE_ONE_AUTHORITIES.MANAGE_SYS_CONFIG,
-          PHASE_ONE_AUTHORITIES.MANAGE_JOB_SCHEDULER, 
-          PHASE_ONE_AUTHORITIES.MANAGE_WESM_MARKET_PRODUCTS, 
+          PHASE_ONE_AUTHORITIES.MANAGE_JOB_SCHEDULER,
+          PHASE_ONE_AUTHORITIES.MANAGE_WESM_MARKET_PRODUCTS,
           PHASE_ONE_AUTHORITIES.MANAGE_FIELD_SETTINGS,
           PHASE_ONE_AUTHORITIES.MANAGE_SEC
         ],
@@ -408,8 +408,8 @@ export class NavbarComponent implements OnInit {
         title: 'Prudential Requirements',
         icon: faAddressBook,
         permission: [
-          PHASE_ONE_AUTHORITIES.MARGIN_CALL_SUMMARY_CONFIRMATION_VIEW, 
-          PHASE_ONE_AUTHORITIES.VIEW_HISTORICAL_DRAWDOWN_SUMMARY, 
+          PHASE_ONE_AUTHORITIES.MARGIN_CALL_SUMMARY_CONFIRMATION_VIEW,
+          PHASE_ONE_AUTHORITIES.VIEW_HISTORICAL_DRAWDOWN_SUMMARY,
           PHASE_ONE_AUTHORITIES.VIEW_FINANCIAL_INFO_PAGE,
           PHASE_ONE_AUTHORITIES.VIEW_PRUDENTIAL_REQ_SECURITY_DEPOSIT_LIST,
           PHASE_ONE_AUTHORITIES.VIEW_PRUDENTIAL_REQ_EXEMPTION_LIST,
@@ -510,11 +510,11 @@ export class NavbarComponent implements OnInit {
         title: 'Facility Management',
         icon: faBuildingUn,
         permission: [
-          PHASE_ONE_AUTHORITIES.VIEW_MARKET_TRADING_NODE, 
+          PHASE_ONE_AUTHORITIES.VIEW_MARKET_TRADING_NODE,
           PHASE_ONE_AUTHORITIES.UPDATE_MARKET_TRADING_NODE,
-          PHASE_ONE_AUTHORITIES.VIEW_MIRF, 
+          PHASE_ONE_AUTHORITIES.VIEW_MIRF,
           PHASE_ONE_AUTHORITIES.VIEW_FACILITY_LIST,
-          PHASE_ONE_AUTHORITIES.VIEW_FACILITIES_FOR_ACTIVATION, 
+          PHASE_ONE_AUTHORITIES.VIEW_FACILITIES_FOR_ACTIVATION,
           PHASE_ONE_AUTHORITIES.VIEW_FACILITIES_FOR_TRANSFER
         ],
         children: [
@@ -597,11 +597,11 @@ export class NavbarComponent implements OnInit {
         icon: faContactCard,
         permission: [
           PHASE_ONE_AUTHORITIES.VIEW_COUNTERPARTY_LIST,
-          PHASE_ONE_AUTHORITIES.VIEW_CUSTOMER_ENROLLMENT_LIST, 
+          PHASE_ONE_AUTHORITIES.VIEW_CUSTOMER_ENROLLMENT_LIST,
           PHASE_ONE_AUTHORITIES.VIEW_CUSTOMER_SWITCHING_LIST,
           PHASE_ONE_AUTHORITIES.MANAGE_SOLR_EVENT,
           PHASE_ONE_AUTHORITIES.VIEW_COUNTERPARTY_LIST,
-          PHASE_ONE_AUTHORITIES.VIEW_CUSTOMER_ENROLLMENT_LIST, 
+          PHASE_ONE_AUTHORITIES.VIEW_CUSTOMER_ENROLLMENT_LIST,
           PHASE_ONE_AUTHORITIES.VIEW_CUSTOMER_SWITCHING_LIST
         ],
         children: [
@@ -659,24 +659,24 @@ export class NavbarComponent implements OnInit {
         title: 'Settlement',
         icon: faHandHoldingHand,
         permission: [
-          PHASE_ONE_AUTHORITIES.UPLOAD_BCQ, 
-          PHASE_ONE_AUTHORITIES.VIEW_BCQ, 
+          PHASE_ONE_AUTHORITIES.UPLOAD_BCQ,
+          PHASE_ONE_AUTHORITIES.VIEW_BCQ,
           PHASE_ONE_AUTHORITIES.BCQ_VIEW_SPECIAL_EVENT,
           PHASE_ONE_AUTHORITIES.BCQ_VIEW_PROHIBITED,
           PHASE_TWO_AUTHORITIES.SET_BILLING_ID_CONFIG,
-          PHASE_TWO_AUTHORITIES.SET_BILLING_PERIOD_CONFIG, 
+          PHASE_TWO_AUTHORITIES.SET_BILLING_PERIOD_CONFIG,
           PHASE_TWO_AUTHORITIES.SET_RESERVE_PROCESS_CONFIG,
-          PHASE_TWO_AUTHORITIES.SET_COST_RECOVERY_MODE, 
+          PHASE_TWO_AUTHORITIES.SET_COST_RECOVERY_MODE,
           PHASE_TWO_AUTHORITIES.SET_CHARGE_ID_CONFIG,
-          PHASE_TWO_AUTHORITIES.SET_MARKET_FEE_MODE, 
+          PHASE_TWO_AUTHORITIES.SET_MARKET_FEE_MODE,
           PHASE_TWO_AUTHORITIES.SET_STL_FILE_LOCATION,
-          PHASE_TWO_AUTHORITIES.SET_MRU_CONFIG, 
+          PHASE_TWO_AUTHORITIES.SET_MRU_CONFIG,
           PHASE_TWO_AUTHORITIES.SET_TP_PASSWORD_CONFIG,
           PHASE_TWO_AUTHORITIES.SET_STL_GEN_CONFIG,
-          PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS, 
+          PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS,
           PHASE_TWO_AUTHORITIES.VIEW_ADDTL_COMP,
           PHASE_TWO_AUTHORITIES.AC_VIEW_AMS_INV_FOR_UPDATE,
-          PHASE_TWO_AUTHORITIES.VIEW_WORKSPACE, 
+          PHASE_TWO_AUTHORITIES.VIEW_WORKSPACE,
           PHASE_TWO_AUTHORITIES.APPROVE_STL_TP_WORKLIST
         ],
         children: [
@@ -684,8 +684,8 @@ export class NavbarComponent implements OnInit {
           {
             title: 'Manage BCQs',
             permission: [
-              PHASE_ONE_AUTHORITIES.UPLOAD_BCQ, 
-              PHASE_ONE_AUTHORITIES.VIEW_BCQ, 
+              PHASE_ONE_AUTHORITIES.UPLOAD_BCQ,
+              PHASE_ONE_AUTHORITIES.VIEW_BCQ,
               PHASE_ONE_AUTHORITIES.BCQ_VIEW_SPECIAL_EVENT,
               PHASE_ONE_AUTHORITIES.BCQ_VIEW_PROHIBITED
             ],
@@ -716,13 +716,13 @@ export class NavbarComponent implements OnInit {
             title: 'Maintenance',
             permission: [
               PHASE_TWO_AUTHORITIES.SET_BILLING_ID_CONFIG,
-              PHASE_TWO_AUTHORITIES.SET_BILLING_PERIOD_CONFIG, 
+              PHASE_TWO_AUTHORITIES.SET_BILLING_PERIOD_CONFIG,
               PHASE_TWO_AUTHORITIES.SET_RESERVE_PROCESS_CONFIG,
-              PHASE_TWO_AUTHORITIES.SET_COST_RECOVERY_MODE, 
+              PHASE_TWO_AUTHORITIES.SET_COST_RECOVERY_MODE,
               PHASE_TWO_AUTHORITIES.SET_CHARGE_ID_CONFIG,
-              PHASE_TWO_AUTHORITIES.SET_MARKET_FEE_MODE, 
+              PHASE_TWO_AUTHORITIES.SET_MARKET_FEE_MODE,
               PHASE_TWO_AUTHORITIES.SET_STL_FILE_LOCATION,
-              PHASE_TWO_AUTHORITIES.SET_MRU_CONFIG, 
+              PHASE_TWO_AUTHORITIES.SET_MRU_CONFIG,
               PHASE_TWO_AUTHORITIES.SET_TP_PASSWORD_CONFIG,
               PHASE_TWO_AUTHORITIES.SET_STL_GEN_CONFIG
             ],
@@ -785,7 +785,7 @@ export class NavbarComponent implements OnInit {
           {
             title: 'Calculate Settlement Amounts',
             permission: [
-              PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS, 
+              PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS,
               PHASE_TWO_AUTHORITIES.VIEW_ADDTL_COMP,
               PHASE_TWO_AUTHORITIES.AC_VIEW_AMS_INV_FOR_UPDATE
             ],
@@ -825,9 +825,9 @@ export class NavbarComponent implements OnInit {
           {
             title: 'Calculate Settlement Amounts v2',
             permission: [
-              PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS, 
+              PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS,
               PHASE_TWO_AUTHORITIES.VIEW_ADDTL_COMP,
-              PHASE_TWO_AUTHORITIES.AC_VIEW_AMS_INV_FOR_UPDATE 
+              PHASE_TWO_AUTHORITIES.AC_VIEW_AMS_INV_FOR_UPDATE
             ],
             children: [
               {
@@ -885,17 +885,17 @@ export class NavbarComponent implements OnInit {
         icon: faTachometerAverage,
         permission: [
           PHASE_TWO_AUTHORITIES.VIEW_IMPORT_METERING_CONFIGURATION,
-          PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SETTLEMENT_METERING_CONFIGURATION, 
+          PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SETTLEMENT_METERING_CONFIGURATION,
           PHASE_TWO_AUTHORITIES.SET_STL_SEIN_CONFIG,
-          PHASE_TWO_AUTHORITIES.SET_VSEIN_MAPPING, 
+          PHASE_TWO_AUTHORITIES.SET_VSEIN_MAPPING,
           PHASE_TWO_AUTHORITIES.SET_MTN_MODEL_CONFIG,
-          PHASE_TWO_AUTHORITIES.SET_MTN_GROUP_SCHED_SCHED, 
+          PHASE_TWO_AUTHORITIES.SET_MTN_GROUP_SCHED_SCHED,
           PHASE_TWO_AUTHORITIES.SET_MTN_LOOP_CONFIG,
-          PHASE_TWO_AUTHORITIES.SET_RCOA_CHANNEL_CONFIG, 
+          PHASE_TWO_AUTHORITIES.SET_RCOA_CHANNEL_CONFIG,
           PHASE_TWO_AUTHORITIES.SET_MET_GEN_CONFIG,
-          PHASE_TWO_AUTHORITIES.VIEW_METER_PROCESS, 
+          PHASE_TWO_AUTHORITIES.VIEW_METER_PROCESS,
           PHASE_TWO_AUTHORITIES.VIEW_MTR,
-          PHASE_ONE_AUTHORITIES.MQ_VIEW_METERING_QUANTITY, 
+          PHASE_ONE_AUTHORITIES.MQ_VIEW_METERING_QUANTITY,
           PHASE_TWO_AUTHORITIES.VIEW_SHIFTING_ANALYSIS,
           PHASE_TWO_AUTHORITIES.APPROVE_MET_MP_WORKLIST
         ],
@@ -919,13 +919,13 @@ export class NavbarComponent implements OnInit {
             title: 'Calculation Maintenance and Configuration',
             permission: [
               PHASE_TWO_AUTHORITIES.VIEW_IMPORT_METERING_CONFIGURATION,
-              PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SETTLEMENT_METERING_CONFIGURATION, 
+              PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SETTLEMENT_METERING_CONFIGURATION,
               PHASE_TWO_AUTHORITIES.SET_STL_SEIN_CONFIG,
-              PHASE_TWO_AUTHORITIES.SET_VSEIN_MAPPING, 
+              PHASE_TWO_AUTHORITIES.SET_VSEIN_MAPPING,
               PHASE_TWO_AUTHORITIES.SET_MTN_MODEL_CONFIG,
-              PHASE_TWO_AUTHORITIES.SET_MTN_GROUP_SCHED_SCHED, 
+              PHASE_TWO_AUTHORITIES.SET_MTN_GROUP_SCHED_SCHED,
               PHASE_TWO_AUTHORITIES.SET_MTN_LOOP_CONFIG,
-              PHASE_TWO_AUTHORITIES.SET_RCOA_CHANNEL_CONFIG, 
+              PHASE_TWO_AUTHORITIES.SET_RCOA_CHANNEL_CONFIG,
               PHASE_TWO_AUTHORITIES.SET_MET_GEN_CONFIG
             ],
             children: [
@@ -1032,15 +1032,15 @@ export class NavbarComponent implements OnInit {
 
     this.navItems = this.navItems.filter(item => this.hasPermission(item)); //for checking
   }
-  
+
   toggleCollapse(): void {
     this.navbarToggle.emit();
   }
-  
-  shouldShowText(): boolean {
+
+  get shouldShowText(): boolean {
     return !this.isCollapsed || this.isHovered;
   }
-  
+
   navigateTo(item: navItems): void {
     if (item.externalLink && item.externalLink.trim() !== '') {
       window.location.href = item.externalLink;
@@ -1048,26 +1048,26 @@ export class NavbarComponent implements OnInit {
       this.r.navigate([item.path]);
     }
   }
-  
+
   toggleDropdown(item: navItems, isOpen: boolean): void {
     this.openDropdowns[item.title] = isOpen;
   }
-  
+
   isDropdownOpen(item: navItems): boolean {
     return this.openDropdowns[item.title] as boolean || false;
   }
-  
+
   toggleChildDropdown(parent: navItems, child: navItems, isOpen: boolean): void {
     if (!this.openDropdowns[parent.title] || typeof this.openDropdowns[parent.title] !== 'object') {
       this.openDropdowns[parent.title] = {};
     }
     (this.openDropdowns[parent.title] as Record<string, boolean>)[child.title] = isOpen;
   }
-  
+
   isChildDropdownOpen(parent: navItems, child: navItems): boolean {
     return (this.openDropdowns[parent.title] as Record<string, boolean>)?.[child.title] || false;
   }
-  
+
   hasPermission(item: navItems): boolean {
     const user = this.userData();
     if (!item.permission || item.permission.length === 0) {
@@ -1080,4 +1080,5 @@ export class NavbarComponent implements OnInit {
 
     return isAuthorizedAny(user.principal.privileges, item.permission);
   }
+
 }

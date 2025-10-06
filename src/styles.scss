@@ -1,1 +1,40 @@
 /* You can add global styles to this file, and also import other style files */
+.ant-menu, .ant-menu-sub.ant-menu-inline {
+  background: #3e4a58 !important;
+}
+
+.ant-menu-item:active, .ant-menu-submenu-title:active {
+  background-color: transparent;
+}
+
+.ant-menu-title-content .nav-link {
+  color: #808FA4 !important;
+}
+
+.ant-menu, .ant-menu-submenu-title {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  line-height: 1.2;
+  margin-bottom: 0px !important;
+  margin-top: 0px !important;
+
+  .nav-text.subChildColor:hover {
+        color: #00b1f8 !important;
+
+  }
+  :hover {
+    color: #00b1f8 !important;
+  }
+
+  .ant-menu-submenu.ant-menu-submenu-inline .nav-text.subChildColor:hover {
+    color: #00b1f8 !important;
+  }
+}
+
+.ant-menu-inline, .ant-menu-vertical, .ant-menu-vertical-left {
+  border-right: none;
+}
+
+// .ant-menu-submenu.ant-menu-submenu-inline .nav-text:hover {
+//   color: #00b1f8 !important;
+// }

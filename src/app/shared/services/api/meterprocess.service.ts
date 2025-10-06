@@ -1,16 +1,17 @@
-import {HttpClient} from '@angular/common/http';
-import {inject, Injectable} from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
 import {
   meterProcessBillingPeriod,
   meterProcessJobSearchGroupParams,
   meterProcessParams,
+  meterProcessPipeline,
   meterProcessRunJobPayload,
   meterProcessTable,
   mtnListPage,
-  ReportDownloadParams
+  ReportDownloadParams,
 } from '@shared/interfaces';
-import {Observable} from 'rxjs';
-import {ParamsUtilService} from '../utils';
+import { Observable } from 'rxjs';
+import { ParamsUtilService } from '../utils';
 import { MeterDataPipelineName } from '@shared/constants';
 
 @Injectable({
@@ -38,11 +39,14 @@ export class MeterprocessService {
   }
 
   public runJob(data: Partial<meterProcessParams>, pipelineName?: MeterDataPipelineName, refId?: number): Observable<meterProcessParams>{
+    const isRerun = pipelineName === MeterDataPipelineName.CONSOLIDATE;
+
     const bodyParams: Partial<meterProcessRunJobPayload> = {
-      pipelineName: `${this.PIPELINE_NAME}-${pipelineName}`,
+      pipelineName: isRerun ? pipelineName : `${this.PIPELINE_NAME}-${pipelineName}`,
       refId: refId,
       isGroup: true
-    }
+    };
+
     if (data && Object.keys(data).length > 0) {
       bodyParams.parameters = data;
     }
@@ -65,6 +69,10 @@ export class MeterprocessService {
     };
 
     return this.http.post<mtnListPage>(this.MTN_LIST, payload);
+  }
+
+  public getRerunList(workspaceId: number): Observable<meterProcessPipeline[]> {
+    return this.http.get<meterProcessPipeline[]>(`${this.API_URL}/run-list/${workspaceId}`);
   }
 
   downloadReport(params: ReportDownloadParams) {

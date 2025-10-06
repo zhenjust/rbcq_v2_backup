@@ -23,5 +23,6 @@ export enum MeterProcessStatus {
 export enum MeterDataPipelineName {
     SETTLEMENT_READY = 'settlementReady',
     FINALIZE_READY = 'finalizeSettlementData',
-    INITIALIZE = 'initialize'
+    INITIALIZE = 'initialize',
+    CONSOLIDATE = 'consolidateMeterData'
 }

@@ -27,39 +27,42 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTooltipDirective } from "ng-zorro-antd/tooltip";
-
+import { ConsolidateComponent } from './consolidate/consolidate.component';
+import { NzModalFooterDirective } from "ng-zorro-antd/modal";
 
 @NgModule({
   declarations: [
     BaseComponent,
     TableComponent,
     MeterProcessConfigComponent,
-    RunJobSearchComponent
+    RunJobSearchComponent,
+    ConsolidateComponent
   ],
-    imports: [
-        CommonModule,
-        MeterProcessRoutingModule,
-        NzCardModule,
-        NzTableModule,
-        NzFlexModule,
-        FormsModule,
-        NzSelectModule,
-        ReactiveFormsModule,
-        NzDatePickerModule,
-        NzSpaceModule,
-        NzInputNumberModule,
-        SharedModule,
-        NzButtonModule,
-        NzInputModule,
-        NzResultModule,
-        NzTagModule,
-        NzProgressModule,
-        NzDividerModule,
-        NzTimePickerModule,
-        NzSpinModule,
-        NzTableModule,
-        NzTooltipDirective
-    ],
+  imports: [
+    CommonModule,
+    MeterProcessRoutingModule,
+    NzCardModule,
+    NzTableModule,
+    NzFlexModule,
+    FormsModule,
+    NzSelectModule,
+    ReactiveFormsModule,
+    NzDatePickerModule,
+    NzSpaceModule,
+    NzInputNumberModule,
+    SharedModule,
+    NzButtonModule,
+    NzInputModule,
+    NzResultModule,
+    NzTagModule,
+    NzProgressModule,
+    NzDividerModule,
+    NzTimePickerModule,
+    NzSpinModule,
+    NzTableModule,
+    NzTooltipDirective,
+    NzModalFooterDirective
+],
   providers: [
     RunJobService,
     SearchFilterService,
