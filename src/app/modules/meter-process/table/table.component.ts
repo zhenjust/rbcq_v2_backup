@@ -226,7 +226,6 @@ export class TableComponent implements OnInit {
       adjustmentNumber: parentData.adjNo
     };
 
-    // console.log(this.currentModalData);
     this.modal.create({
       nzTitle: actionType,
       nzContent: this.runJobs,
@@ -298,7 +297,6 @@ export class TableComponent implements OnInit {
         const blob = response.body as Blob;
         let fileName = `${processType}_MeteringData_${tradingDate}_${runDate}.zip`; //enforcing default filename base from previous files
         const contentDisposition = response.headers.get('Content-Disposition');
-        console.log(response);
         if (contentDisposition) {
           const match = /filename="?([^"]+)"?/.exec(contentDisposition);
           if (match?.[1]) {

@@ -10,7 +10,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { MeterDataPipelineName } from '@shared/constants';
 import { MeterProcessTypes } from '@shared/enums';
-import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-consolidate',
   standalone: false,
@@ -30,8 +30,8 @@ export class ConsolidateComponent implements OnInit {
   readonly modalRef = inject(NzModalRef);
   readonly untilDestroy$ = takeUntilDestroyed();
   readonly nzms = inject(NzMessageService);
-  readonly notif = inject(NzNotificationService);
   readonly modal = inject(NzModalService);
+  readonly toastr = inject(ToastrService);
 
   LABELS = LABELS;
   baseTableColumns!: TPL_TABLE_COLUMN[];
@@ -104,7 +104,7 @@ export class ConsolidateComponent implements OnInit {
     this.modalBusy$ = this.mpService.runJob(params, MeterDataPipelineName.CONSOLIDATE, this.workspaceId)
       .pipe(this.untilDestroy$)
       .subscribe(() => {
-        this.notif.success(LABELS.SUCCESS, MESSAGES.SUCCESS_CONSOLIDATE_ITEM('items'));
+        this.toastr.success(MESSAGES.SUCCESS_CONSOLIDATE_ITEM('items'));
         this.modalRef.destroy(true);
       });
   }

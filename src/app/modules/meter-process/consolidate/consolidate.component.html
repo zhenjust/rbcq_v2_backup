@@ -43,8 +43,8 @@
   <!-- Footer -->
   <div *nzModalFooter class="justify-content-end">
     <nz-space>
-      <button nz-button type="button" (click)="modalRef.destroy()">{{ LABELS.CANCEL }}</button>
-      <button nz-button type="button" nzType="primary" (click)="confirmConsolidate()">{{ LABELS.CONSOLIDATE }}</button>
+      <button nz-button type="button" (click)="modalRef.destroy()" [disabled]="modalBusy$ && !modalBusy$.closed">{{ LABELS.CANCEL }}</button>
+      <button nz-button type="button" nzType="primary" (click)="confirmConsolidate()" [disabled]="modalBusy$ && !modalBusy$.closed">{{ LABELS.CONSOLIDATE }}</button>
     </nz-space>
   </div>
 </nz-spin>
