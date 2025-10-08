@@ -526,14 +526,14 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     if (billingStartStr && billingEndStr) {
       const billingStart = startOfDay(new Date(billingStartStr));
       const billingEnd = startOfDay(new Date(billingEndStr));
-      billingEnd.setDate(billingEnd.getDate());
+      billingEnd.setDate(billingEnd.getDate() + 1);
       return isBefore(date, billingStart) || isAfter(date, billingEnd);
     }
 
     return true;
   };
 
-  disabledRangeTime: DisabledTimeFn = ((current: Date) => {
+  disabledRangeTime: DisabledTimeFn = ((current: Date, partial: 'start' | 'end') => {
     const processType = this.meterProcessForm.get('processType')?.value;
 
     const tradingDate = this.meterProcessForm.get('tradingDate')?.value;
@@ -558,6 +558,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
     } else if (billingEndStr) {
       const parsedEnd = new Date(billingEndStr + 'T00:00:00');
       maxDate = new Date(parsedEnd);
+      maxDate.setDate(parsedEnd.getDate() + 1);
       maxDate.setHours(0, 0, 0, 0);
     }
 
@@ -565,8 +566,8 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       nzDisabledHours: () => {
         const disabled: number[] = [];
 
-        if (maxDate && isSameDay(current, maxDate)) {
-          disabled.push(...Array.from({ length: 24 }, (_, h) => h !== 0 ? h : -1).filter(h => h >= 0));
+        if (partial === 'end' && maxDate && isSameDay(current, maxDate)) {
+          disabled.push(...Array.from({ length: 24 }, (_, h) => h).filter(h => h !== 0));
         }
 
         return Array.from(new Set(disabled));
@@ -575,11 +576,11 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       nzDisabledMinutes: (hour: number) => {
         const disabled: number[] = [];
 
-        if (minDate && isSameDay(current, minDate) && hour === 0) {
+        if (partial === 'start' && minDate && isSameDay(current, minDate) && hour === 0) {
           for (let m = 0; m < 5; m++) disabled.push(m);
         }
 
-        if (maxDate && isSameDay(current, maxDate)) {
+        if (partial === 'end' && maxDate && isSameDay(current, maxDate) && hour === 0) {
           for (let m = 1; m < 60; m++) disabled.push(m);
         }
 
