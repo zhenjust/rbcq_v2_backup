@@ -26,7 +26,9 @@
                                 nzPlaceHolder="Select Action"
                                 (ngModelChange)="onActionSelect($event, data)">
                                 @for (action of settlementJobActions; track action.value) {
-                                    <nz-option [nzValue]="action.value" [nzLabel]="action.label"></nz-option>
+                                    @if (!(action.value === 'publish' && !data.published)) {
+                                        <nz-option [nzValue]="action.value" [nzLabel]="action.label"></nz-option>
+                                    }
                                 }
                             </nz-select>
                         } @else {

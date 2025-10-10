@@ -7,3 +7,7 @@ export interface TPL_TABLE_COLUMN {
   width?: string,
   template?: any,
 }
+
+export interface BaseResponse {
+  message?: string;
+}

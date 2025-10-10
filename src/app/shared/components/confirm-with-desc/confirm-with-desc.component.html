@@ -1,0 +1,14 @@
+<p class="mb-0">{{ data.message }}</p>
+
+@if (data?.descriptions?.length) {
+  <nz-descriptions nzBordered [nzColumn]="1" nzSize="small" class="mt-3">
+    @for (item of data?.descriptions; track item.value) {
+      <nz-descriptions-item [nzTitle]="item.label">{{ item.value }}</nz-descriptions-item>
+    }
+  </nz-descriptions>
+}
+
+<div class="d-flex justify-content-end" *nzModalFooter>
+  <button nz-button (click)="onBtnClose()">{{ data.closeAction || LABELS.CLOSE  }}</button>
+  <button nz-button nzType="primary" (click)="onBtnClick()">{{ data.okAction || LABELS.YES }}</button>
+</div>

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ParamsUtilService } from '../utils';
-import { settlementParams, settlementTableDate } from '@shared/interfaces';
+import { BaseResponse, PublishSettlement, settlementParams, settlementTableDate } from '@shared/interfaces';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -12,6 +12,7 @@ export class SettlementService {
   private API_URL: string = '/stl-data-pipeline/job';
   private BILLING_ID: string = '/settlement/addtl-comp/billing-id-list';
   private ADD_COMP: string = '/data-flow/task-executions/additional-compensation/multi';
+  private REG = `reg/stl-meter-file`;
 
   private paramUtil = inject(ParamsUtilService);
   private http = inject(HttpClient);
@@ -42,4 +43,9 @@ export class SettlementService {
   public addtnlCompensationClaim(payload: any): Observable<any>{
     return this.http.post<any>(this.ADD_COMP, payload);
   }
+
+  public publish(payload: PublishSettlement): Observable<BaseResponse> {
+    return this.http.post<BaseResponse>(`${this.REG}/publish`, payload);
+  }
+
 }

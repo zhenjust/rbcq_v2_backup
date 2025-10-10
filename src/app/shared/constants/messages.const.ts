@@ -6,4 +6,5 @@ export const MESSAGES = {
 
   // Confirm
   CONFIRM_CONSOLIDATE_ITEMS: (item: string) => `Do you want to consolidate the selected ${item}?`,
+  CONFIRM_PUBLISH_ITEM: (item: string) => `Do you want to publish this ${item}?`,
 }

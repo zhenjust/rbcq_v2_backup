@@ -1,13 +1,18 @@
 import { Component, OnInit, OnDestroy, effect, computed, inject, ViewChild, TemplateRef, signal } from '@angular/core';
 import { ActivatedRoute, Data } from '@angular/router';
 import { Subject } from 'rxjs';
-import { settlementPipeline, settlementTableDate } from '@shared/interfaces';
+import { PublishSettlement, settlementPipeline, settlementTableDate } from '@shared/interfaces';
 import { RunSettlementService, SearchFilterService } from '@shared/services/settlement';
 import { ToastrService } from 'ngx-toastr';
 import { MeterProcessTypes } from '@shared/enums';
 import { DateFormatterUtilService } from '@shared/services/utils';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { isAfter, isBefore, startOfDay } from 'date-fns';
+import { SettlementService } from '@shared/services/api';
+import { LABELS } from '@shared/constants/labels.const';
+import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
+import { MESSAGES } from '@shared/constants/messages.const';
+import { DatePipe } from '@angular/common';
 
 interface tableColumn {
   name: string;
@@ -22,7 +27,8 @@ interface jobSelect {
 @Component({
   selector: 'app-table',
   standalone: false,
-  templateUrl: './table.component.html'
+  templateUrl: './table.component.html',
+  providers: [ DatePipe ]
 })
 export class TableComponent implements OnInit, OnDestroy {
   isLineRentalStatus: boolean = false;
@@ -57,14 +63,15 @@ export class TableComponent implements OnInit, OnDestroy {
     { label: 'View Validations', value: 'validations' },
     { label: 'Calculate Energy Transaction Allocation', value: 'calculate_transactions'},
     { label: 'Generate Transaction Report', value: 'generate_transac_reports'},
-    { label: 'Generate Energy Files', value: 'generate_energy_files'}
+    { label: 'Generate Energy Files', value: 'generate_energy_files'},
+    { label: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`, value: 'publish' }
   ];
 
   private selectedActionsSignal = signal<Map<string, string>>(new Map());
   selectedActions = computed(() => this.selectedActionsSignal());
 
   get tableItem(): tableColumn[] {
-    return this.baseTableItem.filter(column => 
+    return this.baseTableItem.filter(column =>
       column.name !== 'Line Rental Status' || this.isLineRentalStatus
     );
   }
@@ -75,6 +82,8 @@ export class TableComponent implements OnInit, OnDestroy {
   public toast = inject(ToastrService);
   public modal = inject(NzModalService);
   private dfs = inject(DateFormatterUtilService);
+  private ss = inject(SettlementService);
+  private dp = inject(DatePipe);
 
   tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
   isLoading = computed(() => this.sfs.isLoading());
@@ -100,12 +109,12 @@ export class TableComponent implements OnInit, OnDestroy {
     effect(() => {
       const currentJobs = this.tableData().pipelineGroup;
       const currentSelectedActions = this.selectedActions();
-      
+
       if (currentJobs.length > 0) {
         const existingWorkspaceIds = new Set(currentJobs.map(job => job.workspaceId));
         const outdatedSelections = Array.from(currentSelectedActions.keys())
           .filter(workspaceId => !existingWorkspaceIds.has(workspaceId));
-        
+
         if (outdatedSelections.length > 0) {
           this.selectedActionsSignal.update(actions => {
             const newActions = new Map(actions);
@@ -168,7 +177,7 @@ export class TableComponent implements OnInit, OnDestroy {
       case 'processType':
         return data.processType === MeterProcessTypes.ADJUSTMENT ? `${data.processType} ${data.adjNo}` : data.processType;
       case 'tradingDate':
-        return data.billingPeriod 
+        return data.billingPeriod
           ? `${data.billingStartDate} - ${data.billingEndDate}`
           : data.tradingDate || '';
       case 'status':
@@ -190,7 +199,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
   private handleModalAction(rowData: settlementPipeline, serviceCall: () => void, modalData: any): void {
     this.currentModalData = modalData;
-    
+
     const modalRef = this.modal.create({
       nzContent: this.runSettlementJobs,
       nzOkText: 'Proceed',
@@ -225,12 +234,12 @@ export class TableComponent implements OnInit, OnDestroy {
 
   onActionSelect(selectedValue: string | any, rowData: settlementPipeline): void {
     const actionValue = typeof selectedValue === 'string' ? selectedValue : selectedValue?.toString();
-    
+
     if (!actionValue || actionValue === '') {
       this.resetActionSelection(rowData);
       return;
     }
-    
+
     this.setActionSelection(rowData, actionValue);
 
     const baseModalData = {
@@ -350,10 +359,54 @@ export class TableComponent implements OnInit, OnDestroy {
         );
         break;
 
+      case 'publish':
+        this.handlePublishAction(rowData)
+        break;
       default:
         this.clearDateRange();
         this.resetActionSelection(rowData);
     }
+  }
+
+  handlePublishAction(rowData: settlementPipeline): void {
+    const payload: PublishSettlement = {
+      stlGroupId: +rowData.workspaceId,
+      processType: rowData.processType,
+      stlSource: 'ENERGY'
+    };
+
+    const api$ = () => {
+      this.ss.publish(payload)
+        .subscribe((res => this.toast.success(res.message)));
+    };
+
+    // test data
+    const value = this.dp.transform(new Date(), 'yyyy-MM-dd');
+
+    const nzData = {
+      message: MESSAGES.CONFIRM_PUBLISH_ITEM(LABELS.TRANSACTION_REPORT.toLowerCase()),
+      okAction: LABELS.PUBLISH,
+      descriptions: [
+        {
+          label: LABELS.DUE_DATE,
+          value
+        },
+        {
+          label: `${LABELS.TRADING_DATE}/${LABELS.BILLING_PERIOD}`,
+          value:`${value} to ${value}`
+        },
+      ]
+    };
+
+    this.modal.create({
+      nzTitle: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`,
+      nzContent: ConfirmWithDescComponent,
+      nzCentered: true,
+      nzFooter: null,
+      nzData,
+      nzWidth: '600px',
+      nzOnOk: () => api$()
+    });
   }
 
   // helper functions

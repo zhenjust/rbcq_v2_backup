@@ -63,6 +63,7 @@ export interface settlementPipeline {
     runDatetime: string
     lineRentalStatus?: string
     workspaceId: string
+    published?: boolean;
     pipelines: [] //create interface once sample pipeline view calculations has values
 }
 
@@ -96,4 +97,10 @@ export interface AddtlCompensationRunDto {
 
 export interface addtlCompensationRunDtos {
     addtlCompensationRunDtos: AddtlCompensationRunDto[]
+}
+
+export interface PublishSettlement {
+    stlGroupId: number,
+    processType: string,
+    stlSource: string
 }
