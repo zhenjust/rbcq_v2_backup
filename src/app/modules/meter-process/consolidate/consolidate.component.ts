@@ -97,9 +97,11 @@ export class ConsolidateComponent implements OnInit {
   }
 
   consolidate(reRunWorkspaceId?: number[]): void {
-    const params = {
-      reRunId: reRunWorkspaceId?.join(',')
-    };
+    const params: Partial<{ reRunId: string }> = {};
+
+    if (reRunWorkspaceId?.length) {
+      params.reRunId = reRunWorkspaceId.join(',');
+    }
 
     this.modalBusy$ = this.mpService.runJob(params, MeterDataPipelineName.CONSOLIDATE, this.workspaceId)
       .pipe(this.untilDestroy$)
