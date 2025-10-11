@@ -57,13 +57,7 @@ export class TableComponent implements OnInit {
   processTypes = MeterProcessTypes;
   labels = LABELS;
   // tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
-  tableData = computed(() => {
-    const data = this.sfs.jobs() || this.defaultTableData;
-    return {
-      ...data,
-      pipelineGroup: data.pipelineGroup
-    };
-  });
+  tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
   isLoading = computed(() => this.sfs.isLoading());
 
   // Add property to store current modal data
