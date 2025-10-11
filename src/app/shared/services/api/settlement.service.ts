@@ -18,10 +18,10 @@ export class SettlementService {
   private http = inject(HttpClient);
 
   public search(data: Partial<settlementParams>, searchName: string): Observable<settlementTableDate>{
-    //hardcoding meterprocess job list
     const withName = {
       ...data,
-      name: searchName
+      name: searchName,
+      sort: 'id,desc'
     }
     const params = this.paramUtil.buildParams(withName);
     return this.http.get<settlementTableDate>(`${this.API_URL}/search-group`, { params });

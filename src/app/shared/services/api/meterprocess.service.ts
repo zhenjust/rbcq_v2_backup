@@ -29,10 +29,10 @@ export class MeterprocessService {
   private http = inject(HttpClient);
 
   public search(data: Partial<meterProcessJobSearchGroupParams>): Observable<meterProcessTable>{
-    //hardcoding meterprocess job list
     const withName = {
       ...data,
-      name: this.PIPELINE_NAME
+      name: this.PIPELINE_NAME,
+      sort: 'id,desc'
     }
     const params = this.paramUtil.buildParams(withName);
     return this.http.get<meterProcessTable>(`${this.API_URL}/search-group`, { params });
