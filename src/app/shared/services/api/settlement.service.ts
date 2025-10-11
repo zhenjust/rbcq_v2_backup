@@ -20,8 +20,7 @@ export class SettlementService {
   public search(data: Partial<settlementParams>, searchName: string): Observable<settlementTableDate>{
     const withName = {
       ...data,
-      name: searchName,
-      sort: 'id,desc'
+      name: searchName
     }
     const params = this.paramUtil.buildParams(withName);
     return this.http.get<settlementTableDate>(`${this.API_URL}/search-group`, { params });

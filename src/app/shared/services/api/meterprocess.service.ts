@@ -31,8 +31,7 @@ export class MeterprocessService {
   public search(data: Partial<meterProcessJobSearchGroupParams>): Observable<meterProcessTable>{
     const withName = {
       ...data,
-      name: this.PIPELINE_NAME,
-      sort: 'id,desc'
+      name: this.PIPELINE_NAME
     }
     const params = this.paramUtil.buildParams(withName);
     return this.http.get<meterProcessTable>(`${this.API_URL}/search-group`, { params });
