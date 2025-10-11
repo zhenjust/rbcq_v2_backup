@@ -38,6 +38,8 @@
                         [nzData]="data.pipelines || []"
                         [nzSize]="'small'"
                         [nzShowPagination]="false"
+                        [nzTotal]="data?.pipelines?.length || 0"
+                        [nzPageSize]="data?.pipelines?.length || 0"
                         [nzTableLayout]="'fixed'"
                         class="child-table"
                     >
