@@ -56,7 +56,6 @@ export class TableComponent implements OnInit {
   meterDataPipelineProcess = MeterDataPipelineProcess;
   processTypes = MeterProcessTypes;
   labels = LABELS;
-  // tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
   tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
   isLoading = computed(() => this.sfs.isLoading());
 
