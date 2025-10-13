@@ -26,4 +26,6 @@ export const LABELS = {
   ALL: 'All',
   TRANSACTION_REPORT: 'Transaction Report',
   DUE_DATE: 'Due Date',
+  CALCULATE_ENERGY_TRADING_AMOUNT: 'Calculate Energy Trading Amount',
+  GENERATE_MONTHLY_SUMMARY: 'Generate Monthly Summary'
 }

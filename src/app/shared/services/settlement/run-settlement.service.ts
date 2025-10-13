@@ -1,10 +1,18 @@
-import { Injectable } from '@angular/core';
-import { settlementPipeline } from '@shared/interfaces';
+import { inject, Injectable } from '@angular/core';
+import { EnergyTradingAmounts, settlementPipeline } from '@shared/interfaces';
+import { ETA_JOBS, MeterProcessTypes } from '@shared/enums';
+import { SettlementService } from '../api';
+import { ToastrService } from 'ngx-toastr';
+import { DateFormatterUtilService } from '../utils';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RunSettlementService {
+  private stlApi = inject(SettlementService);
+  private dateFormatter = inject(DateFormatterUtilService);
+  public toast = inject(ToastrService);
+
   runSummary(data: settlementPipeline): void {
     console.log('Full row data for view:', data);
   }
@@ -17,8 +25,10 @@ export class RunSettlementService {
     console.log('Full row data for download:', data);
   }
 
-  generateInputWorkspace(data: settlementPipeline): void {
-    console.log('Generate Input Workspace - Full row data:', data);
+  etaStlJobs(data: settlementPipeline, range: Date[] | null, jobName: ETA_JOBS): void {
+    const payload = this.buildPayload(data, range, jobName);
+    // console.log(payload);
+    this.stlApi.etaJobs(payload).subscribe((res => this.toast.success(res.message)));
   }
 
   finalizeTradingAmounts(data: settlementPipeline): void {
@@ -47,5 +57,26 @@ export class RunSettlementService {
 
   generateEnergyFiles(data: settlementPipeline){
     console.log('Validate Input - Full row data:', data);
+  }
+
+
+  // helper functions
+  private buildPayload(data: settlementPipeline, range: Date[] | null, pipelineName: ETA_JOBS ): EnergyTradingAmounts {
+    const [start, end] = range ?? [];
+    return {
+      pipelineName,
+      refId: data.workspaceId,
+      isGroup: true,
+      parameters: {
+        billingStartDate: start ? this.dateFormatter.formatDateOnly(start) : null,
+        billingEndDate: end ? this.dateFormatter.formatDateOnly(end) : null,
+        tradingDate:
+          data.tradingDate !== null && data.processType === MeterProcessTypes.DAILY
+            ? data.tradingDate
+            : null,
+        processType: data.processType,
+        workspaceId: data.workspaceId
+      }
+    };
   }
 }

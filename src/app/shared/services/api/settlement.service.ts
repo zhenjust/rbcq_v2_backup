@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ParamsUtilService } from '../utils';
-import { BaseResponse, PublishSettlement, settlementParams, settlementTableDate } from '@shared/interfaces';
+import { BaseResponse, EnergyTradingAmounts, PublishSettlement, settlementParams, settlementTableDate } from '@shared/interfaces';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -47,4 +47,7 @@ export class SettlementService {
     return this.http.post<BaseResponse>(`${this.REG}/publish`, payload);
   }
 
+  public etaJobs(payload: EnergyTradingAmounts): Observable<BaseResponse>{
+    return this.http.post<BaseResponse>(this.API_URL, payload);
+  }
 }

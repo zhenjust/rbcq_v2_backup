@@ -1,4 +1,4 @@
-import { MeterProcessTypes, pricingConditions, settlementPageTitles, settlementProcessTypes } from "@shared/enums";
+import { ETA_JOBS, MeterProcessTypes, pricingConditions, settlementPageTitles, settlementProcessTypes } from "@shared/enums";
 
 export interface settlementPageData {
     pageTitle: settlementPageTitles | string,
@@ -103,4 +103,17 @@ export interface PublishSettlement {
     stlGroupId: number,
     processType: string,
     stlSource: string
+}
+
+export interface EnergyTradingAmounts {
+    pipelineName: ETA_JOBS,
+    refId: number | string,
+    isGroup: boolean,
+    parameters: {
+        billingStartDate: string | null,
+        billingEndDate: string | null,
+        tradingDate: string | null,
+        processType: string,
+        workspaceId: number | string
+    }
 }

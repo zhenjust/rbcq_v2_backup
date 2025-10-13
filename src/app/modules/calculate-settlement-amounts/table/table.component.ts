@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { PublishSettlement, settlementPipeline, settlementTableDate } from '@shared/interfaces';
 import { RunSettlementService, SearchFilterService } from '@shared/services/settlement';
 import { ToastrService } from 'ngx-toastr';
-import { MeterProcessTypes } from '@shared/enums';
+import { ETA_JOBS, MeterProcessTypes } from '@shared/enums';
 import { DateFormatterUtilService } from '@shared/services/utils';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { isAfter, isBefore, startOfDay } from 'date-fns';
@@ -58,6 +58,8 @@ export class TableComponent implements OnInit, OnDestroy {
     { label: 'Select Action', value: '' },
     { label: 'Generate Input Workspace', value: 'generate' },
     { label: 'Finalize Energy Trading Amounts', value: 'finalize' },
+    { label: LABELS.CALCULATE_ENERGY_TRADING_AMOUNT, value: 'calculateEnergyTradingAmount'},
+    { label: LABELS.GENERATE_MONTHLY_SUMMARY, value: 'generateMonthlySummary'},
     { label: 'View Calculations', value: 'calculations' },
     { label: 'Validate Input', value: 'validate_input' },
     { label: 'View Validations', value: 'validations' },
@@ -197,41 +199,6 @@ export class TableComponent implements OnInit, OnDestroy {
     return column.key === 'actions';
   }
 
-  private handleModalAction(rowData: settlementPipeline, serviceCall: () => void, modalData: any): void {
-    this.currentModalData = modalData;
-
-    const modalRef = this.modal.create({
-      nzContent: this.runSettlementJobs,
-      nzOkText: 'Proceed',
-      nzCancelText: 'Cancel',
-      nzOnOk: () => {
-        return new Promise((resolve, reject) => {
-          try {
-            serviceCall();
-            this.resetActionSelection(rowData);
-            this.clearDateRange();
-            resolve(true);
-          } catch (error) {
-            this.resetActionSelection(rowData);
-            this.clearDateRange();
-            reject(error);
-          }
-        });
-      },
-      nzOnCancel: () => {
-        this.currentModalData = null;
-        this.resetActionSelection(rowData);
-      },
-      nzMaskClosable: false
-    });
-
-    modalRef.afterClose.subscribe(() => {
-      this.currentModalData = null;
-      this.resetActionSelection(rowData);
-      this.clearDateRange();
-    });
-  }
-
   onActionSelect(selectedValue: string | any, rowData: settlementPipeline): void {
     const actionValue = typeof selectedValue === 'string' ? selectedValue : selectedValue?.toString();
 
@@ -253,25 +220,29 @@ export class TableComponent implements OnInit, OnDestroy {
 
     switch (actionValue) {
       case 'generate':
-        if(rowData.processType !== MeterProcessTypes.DAILY){
-          const startDate = new Date(rowData.billingStartDate);
-          const endDate = new Date(rowData.billingEndDate);
-
-          this.minDate.set(startDate);
-          this.maxDate.set(endDate);
-          this.selectedRange.set([startDate, endDate]);
-        } else {
-          this.clearDateRange();
-        }
-
-        this.handleModalAction(
+        this.handleDateRangeAction(
           rowData,
-          () => this.runSettlements.generateInputWorkspace(rowData),
-          {
-            ...baseModalData,
-            actionMessage: 'You are going to generate input workspace for the following dates:',
-            actionType: 'generate'
-          }
+          ETA_JOBS.GEN_INPUT_WORKSPACE,
+          'You are going to generate input workspace for the following dates:',
+          'generate'
+        );
+        break;
+
+      case 'calculateEnergyTradingAmount':
+        this.handleDateRangeAction(
+          rowData,
+          ETA_JOBS.CAL_TRADING_AMOUNTS,
+          'Calculate Energy Trading Amount for the following dates:',
+          'calculateEnergyTradingAmount'
+        );
+        break;
+
+      case 'generateMonthlySummary':
+        this.handleDateRangeAction(
+          rowData,
+          ETA_JOBS.GEN_MONTHLY_SUMMARY,
+          'Generate Monthly Summary for the following dates:',
+          'generateMonthlySummary'
         );
         break;
 
@@ -360,7 +331,7 @@ export class TableComponent implements OnInit, OnDestroy {
         break;
 
       case 'publish':
-        this.handlePublishAction(rowData)
+        this.handlePublishAction(rowData);
         break;
       default:
         this.clearDateRange();
@@ -446,5 +417,74 @@ export class TableComponent implements OnInit, OnDestroy {
     this.minDate.set(null);
     this.maxDate.set(null);
     this.selectedRange.set(null);
+  }
+
+
+  private handleModalAction(rowData: settlementPipeline, serviceCall: () => void, modalData: any): void {
+    this.currentModalData = modalData;
+
+    const modalRef = this.modal.create({
+      nzContent: this.runSettlementJobs,
+      nzCentered: true,
+      nzOkText: 'Proceed',
+      nzCancelText: 'Cancel',
+      nzOnOk: () => {
+        return new Promise((resolve, reject) => {
+          try {
+            serviceCall();
+            this.resetActionSelection(rowData);
+            this.clearDateRange();
+            resolve(true);
+          } catch (error) {
+            this.resetActionSelection(rowData);
+            this.clearDateRange();
+            reject(error);
+          }
+        });
+      },
+      nzOnCancel: () => {
+        this.currentModalData = null;
+        this.resetActionSelection(rowData);
+      },
+      nzMaskClosable: false
+    });
+
+    modalRef.afterClose.subscribe(() => {
+      this.currentModalData = null;
+      this.resetActionSelection(rowData);
+      this.clearDateRange();
+    });
+  }
+
+  private handleDateRangeAction(rowData: settlementPipeline, jobName: ETA_JOBS, actionMessage: string, actionType: string ): void {
+    this.clearDateRange();
+    
+    if (rowData.processType !== MeterProcessTypes.DAILY) {
+      const startDate = new Date(rowData.billingStartDate);
+      const endDate = new Date(rowData.billingEndDate);
+
+      this.minDate.set(startDate);
+      this.maxDate.set(endDate);
+      this.selectedRange.set([startDate, endDate]);
+    }
+
+    const baseModalData = {
+      pipeline: rowData,
+      tradingDate: rowData.tradingDate,
+      billingPeriod: rowData.billingPeriod,
+      startDate: rowData.billingStartDate,
+      endDate: rowData.billingEndDate,
+      processType: rowData.processType
+    };
+
+    this.handleModalAction(
+      rowData,
+      () => this.runSettlements.etaStlJobs(rowData, this.selectedRange(), jobName),
+      {
+        ...baseModalData,
+        actionMessage,
+        actionType
+      }
+    );
   }
 }

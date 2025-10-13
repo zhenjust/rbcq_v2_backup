@@ -30,3 +30,9 @@ export enum pricingConditions {
     PSM = "PSM",
     MOT = "MOT"
 }
+
+export enum ETA_JOBS {
+  GEN_INPUT_WORKSPACE = 'energyTradingAmounts-generateInputWorkspace',
+  CAL_TRADING_AMOUNTS = 'energyTradingAmounts-calculateEnergyTradingAmount',
+  GEN_MONTHLY_SUMMARY = 'energyTradingAmounts-generateMonthlySummary'
+}

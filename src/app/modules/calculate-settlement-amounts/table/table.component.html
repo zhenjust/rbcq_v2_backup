@@ -41,37 +41,56 @@
     </tbody>
 </nz-table>
 
+<ng-template #dateRangeSelection let-actionMessage="actionMessage" let-tradingDate="tradingDate" let-processType="processType">
+    @if (processType === processTypes.DAILY) {
+        <nz-result
+            nzStatus="info"
+            [nzTitle]="actionMessage">
+        </nz-result>
+        <nz-flex nzVertical="true" nzAlign="center" nzJustify="center">
+            <h6><strong>Trading Date:</strong> {{ tradingDate }}</h6>
+        </nz-flex>
+    } @else {
+        <nz-flex nzVertical="true" nzGap="middle" nzAlign="start" nzJustify="center">
+            <span><strong>Select Date Range:</strong></span>
+            <nz-range-picker
+                [ngModel]="selectedRange()"
+                (ngModelChange)="onRangeChange($event)"
+                nzShowNow="false"
+                [nzAllowClear]="false"
+                [nzDisabledDate]="disabledDateFn"
+                nzFormat="yyyy-MM-dd"
+                nzSize="large"
+                style="width: 100%;"
+            ></nz-range-picker>
+        </nz-flex>
+    }
+</ng-template>
 
 <ng-template #runSettlementJobs>
     <nz-flex nzVertical="true">
         @if (currentModalData) {
             @switch (currentModalData.actionType) {
                 @case ('generate') {
-                    @if (currentModalData.processType === processTypes.DAILY) {
-                        <nz-result
-                            nzStatus="info"
-                            [nzTitle]="currentModalData.actionMessage">
-                        </nz-result>
-                        <nz-flex nzVertical="true" nzAlign="center" nzJustify="center">
-                            @if (currentModalData.tradingDate) {
-                                <h6><strong>Trading Date:</strong> {{ currentModalData.tradingDate }}</h6>
-                            }
-                        </nz-flex>
-                    } @else {
-                        <nz-flex nzVertical="true" nzGap="middle" nzAlign="start" nzJustify="center">
-                            <span><strong>Select Date Range:</strong></span>
-                            <nz-range-picker
-                                [ngModel]="selectedRange()"
-                                (ngModelChange)="onRangeChange($event)"
-                                nzShowNow="false"
-                                [nzAllowClear]="false"
-                                [nzDisabledDate]="disabledDateFn"
-                                nzFormat="yyyy-MM-dd"
-                                nzSize="large"
-                                style="width: 100%;"
-                            ></nz-range-picker>
-                        </nz-flex>
-                    }
+                    <ng-container *ngTemplateOutlet="dateRangeSelection; context: {
+                        actionMessage: currentModalData.actionMessage,
+                        tradingDate: currentModalData.tradingDate,
+                        processType: currentModalData.processType
+                    }"></ng-container>
+                }
+                @case ('calculateEnergyTradingAmount') {
+                    <ng-container *ngTemplateOutlet="dateRangeSelection; context: {
+                        actionMessage: currentModalData.actionMessage,
+                        tradingDate: currentModalData.tradingDate,
+                        processType: currentModalData.processType
+                    }"></ng-container>
+                }
+                @case ('generateMonthlySummary') {
+                    <ng-container *ngTemplateOutlet="dateRangeSelection; context: {
+                        actionMessage: currentModalData.actionMessage,
+                        tradingDate: currentModalData.tradingDate,
+                        processType: currentModalData.processType
+                    }"></ng-container>
                 }
                 @case ('finalize') {
                     <nz-result
