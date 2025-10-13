@@ -29,6 +29,7 @@
                         {{ data.pipelines.length || 0 }} Jobs
                     </nz-tag>
                 </td>
+                <td>{{ data.published ? 'Yes' : 'No' }}</td>
             </tr>
             <tr [nzExpand]="expandSet.has(parentIndex)" [class]="getParentRowClass(parentIndex) + '-expanded'">
                 <td [attr.colspan]="columnItem.length + 1" style="padding: 0;">

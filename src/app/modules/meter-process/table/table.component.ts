@@ -65,7 +65,8 @@ export class TableComponent implements OnInit {
   columnItem: tableColumn[] = [
     { name: 'Process Type' },
     { name: 'Billing Period / Trading Date' },
-    { name: 'Jobs Count' }
+    { name: 'Jobs Count' },
+    { name: 'Published' }
   ];
 
   childColumnItem: tableColumn[] = [
