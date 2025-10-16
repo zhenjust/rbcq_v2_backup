@@ -434,6 +434,8 @@ export class TableComponent implements OnInit, OnDestroy {
             serviceCall();
             this.resetActionSelection(rowData);
             this.clearDateRange();
+            this.sfs.fetchJobs({}, this.searchName);
+            this.toast.success("Jobs Successfully Triggered!");
             resolve(true);
           } catch (error) {
             this.resetActionSelection(rowData);
