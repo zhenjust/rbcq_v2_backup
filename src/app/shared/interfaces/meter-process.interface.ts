@@ -100,7 +100,9 @@ export interface meterProcessPipeline {
     parameters: meterProcessParameters,
     partial: boolean,
     consolidate: boolean
-    pipelineRuns: meterProcessPipelineRuns[]
+    pipelineRuns: meterProcessPipelineRuns[];
+    currentDownloadedFile?: string | null;
+    currentDownloadedPercentage?: number | null;
 }
 
 export interface meterProcessPipelineGroup {

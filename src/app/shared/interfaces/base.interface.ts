@@ -11,3 +11,8 @@ export interface TPL_TABLE_COLUMN {
 export interface BaseResponse {
   message?: string;
 }
+
+export interface HttpResponseProgress {
+  loaded: number;
+  total?: number;
+}

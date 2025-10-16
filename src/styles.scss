@@ -35,6 +35,18 @@
   border-right: none;
 }
 
-// .ant-menu-submenu.ant-menu-submenu-inline .nav-text:hover {
-//   color: #00b1f8 !important;
-// }
+.notif-progress {
+  width: 500px;
+
+  .ant-notification-notice-message {
+    margin-bottom: 0px !important;
+  }
+
+  .ant-notification-notice-close {
+    display: none;
+  }
+
+  .text-muted {
+    color: #b1b1b1 !important
+  }
+}

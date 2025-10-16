@@ -9,6 +9,7 @@ import { ConfirmWithDescComponent } from './components/confirm-with-desc/confirm
 import { NzModalFooterDirective } from "ng-zorro-antd/modal";
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzProgressModule } from 'ng-zorro-antd/progress';
 
 const ngZorroConfig: NzConfig = {
   notification: { nzDuration: 300, nzMaxStack: 3, nzTop: '150px' }
@@ -19,7 +20,8 @@ const ngZorroModules = [
   NzEmptyModule,
   NzAlertModule,
   NzDescriptionsModule,
-  NzButtonModule
+  NzButtonModule,
+  NzProgressModule
 ];
 
 @NgModule({

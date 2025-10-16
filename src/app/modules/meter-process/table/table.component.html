@@ -100,18 +100,11 @@
                                         }
                                         @if ((data.processType === processTypes.DAILY && (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_GESQ || pipeline.status.toLowerCase().endsWith(meterDataPipelineProcess.SETTLEMENT_READY))) ||
                                                 (data.processType !== processTypes.DAILY && pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_SETTLEMENT_READY)) {
-                                                @if(!isDownloadingReport(pipeline.id)){
-                                                    <button nz-button nzType="link" nzBlock class="break-word-button"
-                                                        [disabled]="isDownloadingReport(pipeline.id)"
-                                                        (click)="downloadReport(pipeline)">
-                                                            <span>Download Report</span>
-                                                    </button>
-                                                }@else {
-                                                    <div nz-flex nzGap="middle">
-                                                        <nz-spin></nz-spin>
-                                                        <span>Downloading</span>
-                                                    </div>
-                                                }
+                                                <button nz-button nzType="link" nzBlock class="break-word-button"
+                                                    [disabled]="isDownloadingReport(pipeline.id)"
+                                                    (click)="downloadReport(pipeline)">
+                                                        <span>Download Report</span>
+                                                </button>
                                         }
                                     </td>
                                 </tr>
@@ -204,4 +197,11 @@
             <nz-result nzStatus="info" nzTitle="Loading job information..."></nz-result>
         }
     </nz-flex>
+</ng-template>
+
+<ng-template #downloadTpl let-data="data">
+    <div class="d-flex progress-bar flex-row" style="--percent: {{ data.percentage }}">
+        <p class="mb-0">Downloading report for: {{ data.id }} ({{ data.percentage }}%)</p>
+        <span><p class="mb-0 text-right text-muted">{{ data.size }}</p></span>
+    </div>
 </ng-template>

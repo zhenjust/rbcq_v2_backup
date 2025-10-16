@@ -79,7 +79,8 @@ export class MeterprocessService {
     return this.http.get(`${window.location.origin}/${this.baseUrl}/reports/download/zip`, {
       params: httpParams,
       responseType: 'blob',
-      observe: 'response'
+      observe: 'events',
+      reportProgress: true,
     });
   }
 }

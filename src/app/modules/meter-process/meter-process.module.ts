@@ -36,7 +36,7 @@ import { NzModalFooterDirective } from "ng-zorro-antd/modal";
     TableComponent,
     MeterProcessConfigComponent,
     RunJobSearchComponent,
-    ConsolidateComponent
+    ConsolidateComponent,
   ],
   imports: [
     CommonModule,

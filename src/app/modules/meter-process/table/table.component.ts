@@ -3,7 +3,7 @@ import { AuthorizationService } from '@core/services/authorization.service';
 import { MeterDataPipelineName, MeterProcessStatus, MeterDataPipelineProcess } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { MeterProcessTypes } from '@shared/enums';
-import { meterProcessPipeline, meterProcessPipelineGroup, meterProcessTable } from '@shared/interfaces';
+import { HttpResponseProgress, meterProcessPipeline, meterProcessPipelineGroup, meterProcessTable } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { SearchFilterService } from '@shared/services/meterProcess';
 import { DateFormatterUtilService } from '@shared/services/utils';
@@ -11,7 +11,10 @@ import { saveAs } from 'file-saver';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { ToastrService } from 'ngx-toastr';
 import { ConsolidateComponent } from '../consolidate/consolidate.component';
-
+import { HttpEventType } from '@angular/common/http';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzNotificationDataOptions, NzNotificationService } from 'ng-zorro-antd/notification';
+import { MESSAGES } from '@shared/constants/messages.const';
 interface tableColumn {
   name: string;
 }
@@ -48,6 +51,7 @@ export class TableComponent implements OnInit {
   };
 
   @ViewChild('runJobs', { static: true }) runJobs!: TemplateRef<void>;
+  @ViewChild('downloadTpl', { static: false }) downloadTpl!: TemplateRef<void>;
 
   downloadingReports = new Set<number>();
 
@@ -100,6 +104,8 @@ export class TableComponent implements OnInit {
 
   private mpa = inject(MeterprocessService);
   private as = inject(AuthorizationService);
+  private readonly ms = inject(NzMessageService);
+  private readonly ns = inject(NzNotificationService);
 
   constructor() {
     effect(() => {
@@ -232,49 +238,99 @@ export class TableComponent implements OnInit {
     return 'Unknown';
   }
 
+  handleProgress(response: HttpResponseProgress, pipeline: meterProcessPipeline): void {
+    const currentDownloaded = response.loaded ?? 0;
+    const currentTotal = response.total ? this.formatFileSize(response.total) : 0;
+    const currentSize = this.formatFileSize(currentDownloaded);
+
+    pipeline.currentDownloadedFile = currentDownloaded ? `${currentSize} / ${currentTotal}` : null;
+    pipeline.currentDownloadedPercentage = response.total && +((response.loaded / response.total) * 100).toFixed(0);
+
+    const config: NzNotificationDataOptions = {
+      nzPlacement: 'bottomRight',
+      nzDuration: 0,
+      nzKey: pipeline.id.toString(),
+      nzCloseIcon: '',
+      nzClass: 'notif-progress',
+      nzData: {
+        size: pipeline.currentDownloadedFile,
+        percentage: pipeline.currentDownloadedPercentage,
+        id: pipeline.id
+      },
+      nzStyle: {
+        padding: '0px'
+      }
+    };
+
+    this.ns.blank('', this.downloadTpl, config);
+  }
+
+  handleDownloadReport(response: any, pipeline: meterProcessPipeline, fileName: string): void {
+    this.ns.remove(pipeline.id.toString());
+    pipeline.currentDownloadedFile = null;
+    pipeline.currentDownloadedPercentage = null;
+
+    const blob = response.body as Blob;
+    const contentDisposition = response.headers.get('Content-Disposition');
+    if (contentDisposition) {
+      const match = /filename="?([^"]+)"?/.exec(contentDisposition);
+      if (match?.[1]) {
+        fileName = match[1];
+      }
+    }
+
+    saveAs(blob, fileName);
+    this.downloadingReports.delete(pipeline.id);
+
+    this.toast.success(MESSAGES.SUCCESS_DOWNLOAD_ITEM(`report for ${pipeline.id}`));
+  }
+
   downloadReport(pipeline: meterProcessPipeline): void {
-    const pipelineId = pipeline.id;
-    this.downloadingReports.add(pipelineId);
-
-    const processType = pipeline.parameters.processType ?? '';
-    const isDaily = processType.toUpperCase?.() === 'DAILY';
-
-    const tradingDate = isDaily
-      ? this.dfs.formatDate(pipeline.parameters.tradingDate, 'yyyyMMdd')
-      : this.dfs.formatDate(pipeline.parameters.endDatetime, 'yyyyMMdd');
-
-    const runDate = this.dfs.formatDate(pipeline.lastModifiedDatetime, 'yyyyMMddHHmmss');
+    const { id, parameters, lastModifiedDatetime, status } = pipeline;
+    const { processType, tradingDate, endDatetime } = parameters;
+    const isDaily = processType?.toUpperCase?.() === 'DAILY';
+    const formattedTradingDate = this.dfs.formatDate(isDaily ? tradingDate : endDatetime, 'yyyyMMdd')
+    const runDate = this.dfs.formatDate(lastModifiedDatetime, 'yyyyMMddHHmmss');
     const user = this.as.currentUser()?.principal.username ?? '';
+    const filename = `${processType}_MeteringData_${formattedTradingDate}_${runDate}.zip`;
+
+    this.downloadingReports.add(id);
 
     const params = {
-      version: String(pipeline.id),
+      version: String(id),
       isDaily: String(isDaily),
-      status: pipeline.status.replace(/\s/g, ''),
-      tradingDate,
+      status: status.replace(/\s/g, ''),
+      tradingDate: formattedTradingDate,
       runDate,
       processType,
       user
     };
 
-    this.mpa.downloadReport(params).subscribe({
-      next: (response) => {
-        const blob = response.body as Blob;
-        let fileName = `${processType}_MeteringData_${tradingDate}_${runDate}.zip`; //enforcing default filename base from previous files
-        const contentDisposition = response.headers.get('Content-Disposition');
-        if (contentDisposition) {
-          const match = /filename="?([^"]+)"?/.exec(contentDisposition);
-          if (match?.[1]) {
-            fileName = match[1];
+    this.mpa.downloadReport(params)
+      .subscribe({
+        next: (response) => {
+          if (response.type === HttpEventType.DownloadProgress) {
+            this.handleProgress(response, pipeline);
+          } else if (response.type === HttpEventType.Response) {
+            this.handleDownloadReport(response, pipeline, filename)
           }
+        },
+        error: () => {
+          this.downloadingReports.delete(id);
         }
-        saveAs(blob, fileName);
-        this.downloadingReports.delete(pipelineId);
-      },
-      error: (err) => {
-        console.error('Download Error:', err);
-        this.downloadingReports.delete(pipelineId);
-      }
     });
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) {
+      return '0 Bytes'
+    };
+
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
   isDownloadingReport(pipelineId: number): boolean {
