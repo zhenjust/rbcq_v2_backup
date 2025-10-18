@@ -4,10 +4,10 @@ import { AuthorizationService } from '@core/services/authorization.service';
 import { LABELS } from '@shared/constants/labels.const';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
 import { ToastrService } from 'ngx-toastr';
-import { Subscription, switchMap, tap } from 'rxjs';
+import { Subscription, switchMap } from 'rxjs';
 import { environment } from 'environments/environment';
 import { MESSAGES } from '@shared/constants/messages.const';
-import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
+import { NzModalRef } from 'ng-zorro-antd/modal';
 
 @Component({
   selector: 'app-switch-user',
