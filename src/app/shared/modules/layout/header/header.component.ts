@@ -1,13 +1,15 @@
-import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { faEllipsisVertical, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { apiPath, HEADER_ROUTES } from '@shared/constants';
 import { CurrentUser } from '@shared/interfaces';
 import { ToastrService } from 'ngx-toastr';
-import { switchMap, tap } from 'rxjs';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { environment } from 'environments/environment';
+import { LABELS } from '@shared/constants/labels.const';
+import { SwitchUserComponent } from '../switch-user/switch-user.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MESSAGES } from '@shared/constants/messages.const';
 
 @Component({
   selector: 'app-header',
@@ -16,17 +18,18 @@ import { environment } from 'environments/environment';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent implements OnInit{
-  public userData: CurrentUser | null = null;
-  isSuper: boolean = false;
-  isLoading: boolean = false;
+
   visible: boolean = false;
   ellipsisIcon: IconDefinition = faEllipsisVertical;
-  userOptions: string = '';
-  selectedSuperUser: string = '';
-  userList: string[] = [];
-  isModalReady = false;
 
-  @ViewChild('superUserModal', { static: true }) superUserModal!: TemplateRef<HTMLBodyElement>;
+  private userData: CurrentUser | null = null;
+
+  private readonly toast = inject(ToastrService);
+  private readonly modal = inject(NzModalService);
+  private readonly untilDestroy$ = takeUntilDestroyed();
+  private readonly  as = inject(AuthorizationService);
+
+  isNormalUser = true;
 
   headerLinks = [
     { label: 'ABOUT', url: HEADER_ROUTES.ABOUT_US },
@@ -34,127 +37,73 @@ export class HeaderComponent implements OnInit{
     { label: 'FAQs', url: HEADER_ROUTES.FAQ }
   ];
 
-  private authServices = inject(AuthorizationService);
-  public toast = inject(ToastrService);
-  public router = inject(Router);
-  public modal = inject(NzModalService);
+  menuOptions = [
+    { id: 1, label: LABELS.PROFILE, action: () => {}, show: true},
+    { id: 2, label: LABELS.CHANGE_PASSWORD, action: () => {}, show: true },
+    { id: 3, label: LABELS.SWITCH_TO_NORMAL_USER, action: () => this.switchUser(), show: this.isSuperUser },
+    { id: 4, label: LABELS.SWITCH_TO_SUPER_USER, action: () => this.switchUser(), show: !this.isSuperUser },
+    { id: 5, label: LABELS.SIGN_OUT, action: () => this.signout(), show: true },
+  ];
 
   ngOnInit(): void {
-      this.checkUser();
+    this.checkUser();
   }
 
   checkUser(): void {
-    this.isLoading = true;
-
-    const currentUser = this.authServices.currentUser();
+    const currentUser = this.as.currentUser();
 
     if (currentUser) {
       this.userData = currentUser;
-      this.isSuper = !!currentUser.principal.superUserName;
-      this.userOptions = this.isSuper ? 'Switch to Normal User' : 'Switch to Super User';
-      this.isLoading = false;
     } else {
-      this.authServices.loadUser().subscribe({
-        next: (data) => {
-          this.userData = data;
-          this.isSuper = !!data.principal.superUserName;
-          this.userOptions = this.isSuper ? 'Switch to Normal User' : 'Switch to Super User';
-        },
-        error: (err) => {
-          this.toast.error(err.message);
-        },
-        complete: () => {
-          this.isLoading = false;
-        }
+      this.as.loadUser()
+        .subscribe({
+          next: (data) => this.userData = data
       });
     }
   }
 
-  getLdapUsers(): void{
-    this.isLoading = true;
-    this.authServices.userNameList().subscribe({
-      next: (data) => {
-        console.log(data)
-      },
-      error: (err) => {
-        this.toast.error(err.message);
-      }
-    })
+  switchUser(): void {
+    if (this.isNormalUser) {
+      this.changeToSuperUser();
+    } else {
+      this.changeToNormal();
+    }
   }
 
-  getUserDisplayName(): string {
-    if (!this.userData) return '';
-    return this.userData.principal.superUserName || this.userData.principal.username || '';
+  changeToSuperUser(): void {
+    this.modal.create({
+      nzCentered: true,
+      nzTitle: `${LABELS.SWITCH} ${LABELS.USER}`,
+      nzContent: SwitchUserComponent,
+      nzFooter: null
+    });
   }
 
+  changeToNormal(): void {
+    if (!this.userData) {
+      return;
+    }
 
-  //TODO review how to go super user
-  handleSwitchClick(): void {
-    if (this.isSuper) {
-      if (!this.userData) return;
-      this.authServices.changeToNormalUser(this.userData.principal.username).subscribe({
+    this.as.changeToNormalUser(this.userData?.principal?.username)
+      .pipe(this.untilDestroy$)
+      .subscribe({
         next: () => {
-          this.toast.success('Switched to Normal User!');
+          this.toast.success(MESSAGES.SUCCESS_SWITCH('Normal'));
           window.location.href = environment.__PHASE_ONE_URL__;
-        },
-        error: (err) => {
-          this.toast.error(err.message);
         }
       });
-    } else {
-      this.openSuperUserModal();
-    }
   }
 
-  openSuperUserModal(): void {
-    this.isModalReady = false;
-    this.authServices.userNameList().subscribe({
-      next: (data) => {
-        this.userList = data;
-        this.isModalReady = true;
-        this.modal.create({
-          nzContent: this.superUserModal,
-          nzFooter: null
-        });
-      },
-      error: (err) => {
-        this.toast.error('Failed to load user list. ->', err.message);
-      }
-    });
+  signout(): void {
+    this.as.logout()
+      .subscribe({
+        next: () => {
+          localStorage.clear();
+          window.location.href = `${apiPath.__AUTH_PATH__}/logout`;
+        }
+      });
   }
 
-  confirmSuperUser(modalRef: any): void {
-    if (!this.selectedSuperUser) return;
-    const username = this.selectedSuperUser.split(' ')[0];
-    this.authServices.changeToSuperUser(username).pipe(
-      switchMap(() => this.authServices.logSuperUserLogin()),
-      tap(() => {
-        this.toast.success('Switched to Super User!');
-        modalRef.destroy();
-      })
-    ).subscribe({
-      next: () => {
-        window.location.href = environment.__PHASE_ONE_URL__;
-      },
-      error: (err) => {
-        console.log(err);
-        this.toast.error(err.message);
-      }
-    });
-  }
-
-  logoutUser(): void {
-    this.authServices.logout().subscribe({
-      next: () => {
-        return this.toast.success('Logout successfully!');
-      },
-      error: (err) => {
-        return this.toast.error(err.message);
-        //TODO investigate error message but 200 response 
-      }
-    }).add(() => {
-      localStorage.clear();
-      window.location.href = `${apiPath.__AUTH_PATH__}/logout`;
-    });
-  }
+  get isSuperUser(): boolean { return !!this.userData?.principal.superUserName; }
+  get displayName(): string { return this.userData?.principal?.superUserName || this.userData?.principal?.dn || ''; }
 }

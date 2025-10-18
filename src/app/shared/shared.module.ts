@@ -10,6 +10,7 @@ import { NzModalFooterDirective } from "ng-zorro-antd/modal";
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
+import { NzFormModule } from 'ng-zorro-antd/form';
 
 const ngZorroConfig: NzConfig = {
   notification: { nzDuration: 300, nzMaxStack: 3, nzTop: '150px' }
@@ -21,7 +22,8 @@ const ngZorroModules = [
   NzAlertModule,
   NzDescriptionsModule,
   NzButtonModule,
-  NzProgressModule
+  NzProgressModule,
+  NzFormModule,
 ];
 
 @NgModule({

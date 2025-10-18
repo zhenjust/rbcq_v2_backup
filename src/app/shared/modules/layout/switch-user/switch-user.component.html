@@ -1,0 +1,13 @@
+<div class="d-flex w-100">
+  <nz-form-item class="w-100 mb-0">
+    <nz-form-label>{{ LABELS.SELECT }} {{ LABELS.USER }}</nz-form-label>
+    <nz-form-control>
+      <nz-select class="w-100" [nzOptions]="userOpts" [(ngModel)]="selectedUser"></nz-select>
+    </nz-form-control>
+  </nz-form-item>
+</div>
+
+<nz-space class="d-flex justify-content-end" *nzModalFooter>
+  <button nz-button *nzSpaceItem (click)="modalRef.destroy()">{{ LABELS.CANCEL }}</button>
+  <button nz-button *nzSpaceItem nzType="primary" [disabled]="!selectedUser" (click)="switchToSuperUser()">{{ LABELS.SWITCH }}</button>
+</nz-space>

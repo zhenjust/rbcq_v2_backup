@@ -1,82 +1,75 @@
 <div class="d-flex justify-content-between align-items-center bg-white">
-    <nz-space class="d-flex align-items-center">
-        <img src="assets/images/svg/crss_logo_topbar.svg" alt="logo" class="header-logo" />
-        @for (link of headerLinks; track link) {
-            <a nz-button nzType="text" [href]="link.url">{{ link.label }}</a>
-        }
-    </nz-space>
-    <div class="d-flex align-items-center">
-        <app-bell class="px-2"></app-bell>
-        @if (userOptions) {
-            <span class="px-2">
-                {{ getUserDisplayName() }}
-            </span>
-        }
-        <button
-            class="account-dropdown"
-            nz-button
-            nz-popover
-            nzType="text"
-            nzSize="large"
-            nzPopoverTrigger="click"
-            [nzPopoverContent]="contentTemplate"
-            [nzPopoverVisible]="visible"
-            nzPopoverPlacement="bottomRight"
-            >
-                <fa-icon [icon]="ellipsisIcon"></fa-icon>
-        </button
-        >
-    </div>
-</div>
+  <nz-space class="d-flex align-items-center">
+      <img src="assets/images/svg/crss_logo_topbar.svg" alt="logo" class="header-logo" />
+      @for (link of headerLinks; track link) {
+        <a nz-button nzType="text" [href]="link.url">{{ link.label }}</a>
+      }
+  </nz-space>
 
-<ng-template #contentTemplate>
-    <nz-space nzDirection="vertical">
-      <button nz-button nzType="text" nzBlock nzSize="large">Profile</button>
-      <button nz-button nzType="text" nzBlock nzSize="large">Change Password</button>
+  <div class="d-flex align-items-center">
+      <app-bell class="px-1"></app-bell>
+      <span class="px-2">
+        {{ displayName | uppercase }}
+      </span>
 
       <button
-        nz-button
-        nzType="text"
-        nzBlock
-        nzSize="large"
-        (click)="handleSwitchClick()">
-        {{ userOptions }}
-      </button>
+          class="account-dropdown"
+          nz-button
+          nz-popover
+          nzType="text"
+          nzSize="large"
+          nzPopoverTrigger="click"
+          [nzPopoverContent]="contentTemplate"
+          [nzPopoverVisible]="visible"
+          nzPopoverOverlayClassName="user-options"
+          nzPopoverPlacement="bottomRight">
+          <fa-icon [icon]="ellipsisIcon"></fa-icon>
+      </button
+      >
+  </div>
+</div>
 
-      <button nz-button nzType="text" nzBlock (click)="logoutUser()">Logout</button>
-    </nz-space>
-  </ng-template>
-
-  <ng-template #superUserModal let-modal>
-    <nz-spin [nzSpinning]="!isModalReady">
-      @if (isModalReady) {
-        <div>
-          <h3>Select User</h3>
-          <nz-select
-            nzShowSearch
-            nzPlaceHolder="Select a user"
-            style="width: 100%;"
-            [(ngModel)]="selectedSuperUser"
-          >
-            @for (user of userList; track user) {
-              <nz-option
-                [nzValue]="user"
-                [nzLabel]="user"
-              ></nz-option>
-            }
-          </nz-select>
-
-          <nz-space nzAlign="end">
-              <button nz-button nzType="default" (click)="modal.destroy()">Cancel</button>
-              <button
-                nz-button
-                nzType="primary"
-                [disabled]="!selectedSuperUser"
-                (click)="confirmSuperUser(modal)">
-                Switch
-              </button>
-          </nz-space>
-        </div>
+<!-- Dropdown Menu Actions -->
+<ng-template #contentTemplate>
+  <nz-space nzDirection="vertical">
+    @for (menu of menuOptions; track menu.label) {
+      @if (menu.show) {
+        <button nz-button nzType="text" nzBlock nzSize="large" (click)="menu.action()">{{ menu.label }}</button>
       }
-    </nz-spin>
-  </ng-template>
+    }
+  </nz-space>
+</ng-template>
+
+<!-- <ng-template #superUserModal let-modal>
+  <nz-spin [nzSpinning]="!isModalReady">
+    @if (isModalReady) {
+      <div>
+        <h3>Select User</h3>
+        <nz-select
+          nzShowSearch
+          nzPlaceHolder="Select a user"
+          style="width: 100%;"
+          [(ngModel)]="selectedSuperUser"
+        >
+          @for (user of userList; track user) {
+            <nz-option
+              [nzValue]="user"
+              [nzLabel]="user"
+            ></nz-option>
+          }
+        </nz-select>
+
+        <nz-space nzAlign="end">
+            <button nz-button nzType="default" (click)="modal.destroy()">Cancel</button>
+            <button
+              nz-button
+              nzType="primary"
+              [disabled]="!selectedSuperUser"
+              (click)="confirmSuperUser(modal)">
+              Switch
+            </button>
+        </nz-space>
+      </div>
+    }
+  </nz-spin>
+</ng-template> -->

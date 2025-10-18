@@ -4,6 +4,7 @@ export interface CurrentUser {
         superUserName: string,
         privileges: string[],
         email: string,
+        dn?: string,
         roles: string[]
     }
 }

@@ -9,6 +9,10 @@ export const LABELS = {
   PUBLISH: 'Publish',
   YES: 'Yes',
   NO: 'No',
+  SELECT: 'Select',
+  SWITCH: 'Switch',
+  OK: 'Ok',
+  CONTINUE: 'Continue',
 
   // Field Labels
   CONSOLIDATE: 'Consolidate',
@@ -27,5 +31,12 @@ export const LABELS = {
   TRANSACTION_REPORT: 'Transaction Report',
   DUE_DATE: 'Due Date',
   CALCULATE_ENERGY_TRADING_AMOUNT: 'Calculate Energy Trading Amount',
-  GENERATE_MONTHLY_SUMMARY: 'Generate Monthly Summary'
+  GENERATE_MONTHLY_SUMMARY: 'Generate Monthly Summary',
+
+  PROFILE: 'Profile',
+  CHANGE_PASSWORD: 'Change Password',
+  SIGN_OUT: 'Sign Out',
+  SWITCH_TO_SUPER_USER: 'Switch to Super User',
+  SWITCH_TO_NORMAL_USER: 'Switch to Normal User',
+  USER: 'User',
 }

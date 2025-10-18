@@ -19,6 +19,8 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { FormsModule } from '@angular/forms';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { SwitchUserComponent } from './switch-user/switch-user.component';
+import { NzFormModule } from 'ng-zorro-antd/form';
 
 
 @NgModule({
@@ -26,7 +28,8 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
     BaseComponent,
     HeaderComponent,
     NavbarComponent,
-    BellComponent
+    BellComponent,
+    SwitchUserComponent,
   ],
   imports: [
     CommonModule,
@@ -44,7 +47,8 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
     NzSelectModule,
     NzSpinModule,
     FormsModule,
-    NzModalModule
+    NzModalModule,
+    NzFormModule
   ]
 })
 export class LayoutModule { }
