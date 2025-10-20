@@ -13,6 +13,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideHttpClient } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
 import { CoreModule } from '@core/core.module';
+import { NgxPermissionsModule } from 'ngx-permissions';
 
 registerLocaleData(en);
 
@@ -27,6 +28,7 @@ registerLocaleData(en);
     LayoutModule,
     FormsModule,
     ToastrModule.forRoot(),
+    NgxPermissionsModule.forRoot()
   ],
   providers: [
     provideNzI18n(en_US),

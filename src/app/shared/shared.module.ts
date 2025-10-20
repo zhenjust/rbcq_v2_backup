@@ -11,6 +11,7 @@ import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { NzFormModule } from 'ng-zorro-antd/form';
+import { NgxPermissionsModule } from 'ngx-permissions';
 
 const ngZorroConfig: NzConfig = {
   notification: { nzDuration: 300, nzMaxStack: 3, nzTop: '150px' }
@@ -34,7 +35,8 @@ const ngZorroModules = [
   imports: [
     CommonModule,
     ngZorroModules,
-    NzModalFooterDirective
+    NzModalFooterDirective,
+    NgxPermissionsModule
 ],
   exports: [
     TemplateTableComponent,

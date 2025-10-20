@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable, Signal, signal } from '@angular/core';
 import { apiPath } from '@shared/constants';
 import { AuthToken, CurrentUser } from '@shared/interfaces';
+import { NgxPermissionsService } from 'ngx-permissions';
 import { map, Observable, tap } from 'rxjs';
 
 @Injectable({
@@ -14,9 +15,15 @@ export class AuthorizationService {
 
   readonly currentUser: Signal<CurrentUser | null> = this._currentUser.asReadonly();
 
+  private readonly ps = inject(NgxPermissionsService);
+
   loadUser(): Observable<CurrentUser> {
     return this.http.get<CurrentUser>(`${apiPath.__AUTH_PATH__}/user`).pipe(
-      tap(user => this._currentUser.set(user))
+      tap(user => {
+        this.ps.loadPermissions(user?.principal?.privileges);
+        console.log(this.ps.getPermissions())
+        this._currentUser.set(user)
+      })
     );
   }
 

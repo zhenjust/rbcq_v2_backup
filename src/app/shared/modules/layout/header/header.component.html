@@ -34,42 +34,8 @@
   <nz-space nzDirection="vertical">
     @for (menu of menuOptions; track menu.label) {
       @if (menu.show) {
-        <button nz-button nzType="text" nzBlock nzSize="large" (click)="menu.action()">{{ menu.label }}</button>
+        <button *ngxPermissionsOnly="menu.perms" nz-button nzType="text" nzBlock nzSize="large" (click)="menu.action()">{{ menu.label }}</button>
       }
     }
   </nz-space>
 </ng-template>
-
-<!-- <ng-template #superUserModal let-modal>
-  <nz-spin [nzSpinning]="!isModalReady">
-    @if (isModalReady) {
-      <div>
-        <h3>Select User</h3>
-        <nz-select
-          nzShowSearch
-          nzPlaceHolder="Select a user"
-          style="width: 100%;"
-          [(ngModel)]="selectedSuperUser"
-        >
-          @for (user of userList; track user) {
-            <nz-option
-              [nzValue]="user"
-              [nzLabel]="user"
-            ></nz-option>
-          }
-        </nz-select>
-
-        <nz-space nzAlign="end">
-            <button nz-button nzType="default" (click)="modal.destroy()">Cancel</button>
-            <button
-              nz-button
-              nzType="primary"
-              [disabled]="!selectedSuperUser"
-              (click)="confirmSuperUser(modal)">
-              Switch
-            </button>
-        </nz-space>
-      </div>
-    }
-  </nz-spin>
-</ng-template> -->

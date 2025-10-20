@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { BaseComponent } from './base/base.component';
 import { HeaderComponent } from './header/header.component';
 import { NavbarComponent } from './navbar/navbar.component';
-import {NzLayoutModule} from 'ng-zorro-antd/layout';
+import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { BellComponent } from './bell/bell.component';
@@ -21,6 +21,7 @@ import { FormsModule } from '@angular/forms';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { SwitchUserComponent } from './switch-user/switch-user.component';
 import { NzFormModule } from 'ng-zorro-antd/form';
+import { NgxPermissionsModule } from "ngx-permissions";
 
 
 @NgModule({
@@ -48,7 +49,8 @@ import { NzFormModule } from 'ng-zorro-antd/form';
     NzSpinModule,
     FormsModule,
     NzModalModule,
-    NzFormModule
-  ]
+    NzFormModule,
+    NgxPermissionsModule
+]
 })
 export class LayoutModule { }

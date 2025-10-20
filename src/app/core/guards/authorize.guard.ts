@@ -3,15 +3,17 @@ import { ActivatedRouteSnapshot, CanActivate, UrlTree } from '@angular/router';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { apiPath } from '@shared/constants';
 import { environment } from 'environments/environment';
+import { NgxPermissionsService } from 'ngx-permissions';
 import { catchError, map, Observable, of, switchMap, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthorizeGuard implements CanActivate {  
+export class AuthorizeGuard implements CanActivate {
   private auth_url: string = environment.__API_URL__ + apiPath.__AUTH_PATH__;
 
   private authService = inject(AuthorizationService);
+  private readonly ngp = inject(NgxPermissionsService);
 
   searchCode(): string | null {
     const urlParams = new URLSearchParams(window.location.search);
@@ -35,7 +37,10 @@ export class AuthorizeGuard implements CanActivate {
         return this.authService.authorize(code, baseRedirectUri).pipe(
           switchMap(() => this.authService.userInit()),
           tap(() => {
-            window.location.href = baseRedirectUri + location.pathname !== '/' ? location.pathname : '';
+            this.authService.loadUser().subscribe(user => {
+              this.ngp.loadPermissions(user?.principal?.privileges);
+              window.location.href = baseRedirectUri + location.pathname !== '/' ? location.pathname : '';
+            });
           }),
           map(() => true),
           catchError(() => {
@@ -44,6 +49,10 @@ export class AuthorizeGuard implements CanActivate {
           })
         );
       }
+    } else {
+      this.authService.loadUser().subscribe(user => {
+        this.ngp.loadPermissions(user?.principal?.privileges);
+      });
     }
 
     return this.authService.userInit().pipe(
