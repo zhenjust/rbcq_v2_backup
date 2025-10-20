@@ -39,16 +39,11 @@ export class HeaderComponent implements OnInit {
     { label: 'FAQs', url: HEADER_ROUTES.FAQ }
   ];
 
-  menuOptions = [
-    { id: 1, label: LABELS.PROFILE, action: () => {}, show: true, perms: [] },
-    { id: 2, label: LABELS.CHANGE_PASSWORD, action: () => {}, show: true, perms: []  },
-    { id: 3, label: LABELS.SWITCH_TO_NORMAL_USER, action: () => this.switchUser(), show: this.isSuperUser, perms: [ PHASE_ONE_AUTHORITIES.ADM_SUPER_USER ] },
-    { id: 4, label: LABELS.SWITCH_TO_SUPER_USER, action: () => this.switchUser(), show: !this.isSuperUser, perms: [ PHASE_ONE_AUTHORITIES.ADM_SUPER_USER ] },
-    { id: 5, label: LABELS.SIGN_OUT, action: () => this.signout(), show: true, perms: [] },
-  ];
+  menuOptions: any = [];
 
   ngOnInit(): void {
     this.checkUser();
+    this.assignMenuOpts();
   }
 
   checkUser(): void {
@@ -59,13 +54,26 @@ export class HeaderComponent implements OnInit {
     } else {
       this.as.loadUser()
         .subscribe({
-          next: (data) => this.userData = data
+          next: (data) => {
+            this.userData = data;
+            this.assignMenuOpts();
+          }
       });
     }
   }
 
+  assignMenuOpts(): void {
+    this.menuOptions = [
+      { id: 1, label: LABELS.PROFILE, action: () => {}, show: true, perms: [] },
+      { id: 2, label: LABELS.CHANGE_PASSWORD, action: () => {}, show: true, perms: []  },
+      { id: 3, label: LABELS.SWITCH_TO_NORMAL_USER, action: () => this.switchUser(), show: this.isSuperUser, perms: [] },
+      { id: 4, label: LABELS.SWITCH_TO_SUPER_USER, action: () => this.switchUser(), show: !this.isSuperUser, perms: [ PHASE_ONE_AUTHORITIES.ADM_SUPER_USER ] },
+      { id: 5, label: LABELS.SIGN_OUT, action: () => this.signout(), show: true, perms: [] },
+    ];
+  }
+
   switchUser(): void {
-    if (this.isNormalUser) {
+    if (!this.isSuperUser) {
       this.changeToSuperUser();
     } else {
       this.changeToNormal();
@@ -107,5 +115,5 @@ export class HeaderComponent implements OnInit {
   }
 
   get isSuperUser(): boolean { return !!this.userData?.principal.superUserName; }
-  get displayName(): string { return this.userData?.principal?.superUserName || this.userData?.principal?.dn || ''; }
+  get displayName(): string { return this.userData?.principal?.username || this.userData?.principal?.superUserName || this.userData?.principal?.dn || ''; }
 }

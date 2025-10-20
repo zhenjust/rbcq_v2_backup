@@ -33,7 +33,7 @@
 <ng-template #contentTemplate>
   <nz-space nzDirection="vertical">
     @for (menu of menuOptions; track menu.label) {
-      @if (menu.show) {
+      @if (menu?.show) {
         <button *ngxPermissionsOnly="menu.perms" nz-button nzType="text" nzBlock nzSize="large" (click)="menu.action()">{{ menu.label }}</button>
       }
     }
