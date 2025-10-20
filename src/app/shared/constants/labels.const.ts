@@ -13,6 +13,7 @@ export const LABELS = {
   SWITCH: 'Switch',
   OK: 'Ok',
   CONTINUE: 'Continue',
+  ERROR: 'Error',
 
   // Field Labels
   CONSOLIDATE: 'Consolidate',

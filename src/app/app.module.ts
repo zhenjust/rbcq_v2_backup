@@ -27,7 +27,9 @@ registerLocaleData(en);
     AppRoutingModule,
     LayoutModule,
     FormsModule,
-    ToastrModule.forRoot(),
+    ToastrModule.forRoot({
+      toastClass: 'ngx-toastr w-toastr'
+    }),
     NgxPermissionsModule.forRoot()
   ],
   providers: [
