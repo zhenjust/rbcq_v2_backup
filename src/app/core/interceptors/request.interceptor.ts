@@ -36,13 +36,14 @@ export class RequestInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         switch (error.status) {
-          case 401:
+          case 401: {
             const refreshToken = localStorage.getItem('refresh_token');
 
             if (refreshToken) {
               this.authService.logout();
             }
             break;
+          }
           case 400:
             this.toast.error(error?.error?.message || '', error?.error?.error || LABELS.ERROR);
             break;
