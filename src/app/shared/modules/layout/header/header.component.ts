@@ -64,8 +64,8 @@ export class HeaderComponent implements OnInit {
 
   assignMenuOpts(): void {
     this.menuOptions = [
-      { id: 1, label: LABELS.PROFILE, action: () => {}, show: true, perms: [] },
-      { id: 2, label: LABELS.CHANGE_PASSWORD, action: () => {}, show: true, perms: []  },
+      { id: 1, label: LABELS.PROFILE, action: () => this.goToProfile(), show: true, perms: [] },
+      { id: 2, label: LABELS.CHANGE_PASSWORD, action: () => this.changePassword(), show: true, perms: []  },
       { id: 3, label: LABELS.SWITCH_TO_NORMAL_USER, action: () => this.switchUser(), show: this.isSuperUser, perms: [] },
       { id: 4, label: LABELS.SWITCH_TO_SUPER_USER, action: () => this.switchUser(), show: !this.isSuperUser, perms: [ PHASE_ONE_AUTHORITIES.ADM_SUPER_USER ] },
       { id: 5, label: LABELS.SIGN_OUT, action: () => this.signout(), show: true, perms: [] },
@@ -87,6 +87,14 @@ export class HeaderComponent implements OnInit {
       nzContent: SwitchUserComponent,
       nzFooter: null
     });
+  }
+
+  goToProfile(): void {
+    window.location.href = `${environment.__PHASE_ONE_URL__}/#/user-profile`;
+  }
+
+  changePassword(): void {
+    window.location.href = `${environment.__API_URL__}/uaa/change-password`;
   }
 
   changeToNormal(): void {
