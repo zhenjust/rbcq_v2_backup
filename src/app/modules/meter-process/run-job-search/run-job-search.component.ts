@@ -146,6 +146,8 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
 
   resetFilter(): void {
     this.filterForm.reset();
+    this.filterForm.get('billingPeriod')?.disable();
+    this.filterForm.get('tradingDate')?.disable();
     this.hasFilter = false;
     this.meterProcessParams = null;
     this.sfs.refreshJobs({});
