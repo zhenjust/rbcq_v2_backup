@@ -117,3 +117,8 @@ export interface EnergyTradingAmounts {
         workspaceId: number | string
     }
 }
+
+export interface JobSelect {
+  label: string,
+  value: string
+}

@@ -4,6 +4,7 @@ import { ETA_JOBS, MeterProcessTypes } from '@shared/enums';
 import { SettlementService } from '../api';
 import { ToastrService } from 'ngx-toastr';
 import { DateFormatterUtilService } from '../utils';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'

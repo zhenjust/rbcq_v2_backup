@@ -16,3 +16,8 @@ export interface HttpResponseProgress {
   loaded: number;
   total?: number;
 }
+
+export interface TableColumn {
+  name: string;
+  key: string;
+}

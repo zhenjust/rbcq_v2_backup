@@ -26,3 +26,7 @@ export enum MeterDataPipelineName {
     INITIALIZE = 'initialize',
     CONSOLIDATE = 'consolidateMeterData'
 }
+
+export enum SettlementStatus {
+  NULLIFIED = 'Nullified'
+}

@@ -5,6 +5,7 @@
     [nzPageIndex]="tableData().number"
     [nzTotal]="tableData().totalElements"
     [nzLoading]="isLoading()"
+    [nzWidthConfig]="nzWidthConfig"
     [nzFrontPagination]="false">
     <thead>
         <tr>
@@ -18,21 +19,21 @@
             <tr>
                 @for (column of tableItem; track column.key) {
                     <td>
-                        @if (isActionColumn(column)) {
-                            <nz-select
-                                nzPlacement="bottomRight"
-                                [nzDropdownMatchSelectWidth]="false"
-                                [ngModel]="getSelectedAction(data)"
-                                nzPlaceHolder="Select Action"
-                                (ngModelChange)="onActionSelect($event, data)">
-                                @for (action of settlementJobActions; track action.value) {
-                                    @if (action.value !== 'publish' || (action.value === 'publish' && !data.published)) {
-                                        <nz-option [nzValue]="action.value" [nzLabel]="action.label"></nz-option>
-                                    }
-                                }
-                            </nz-select>
+                        @if (column.key === 'actions') {
+                            @if (data.status !== SettlementStatus.NULLIFIED) {
+                                <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu" nzBlock>{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
+                                <nz-dropdown-menu #menu="nzDropdownMenu">
+                                    <ul nz-menu nzSelectable>
+                                        @for (action of settlementJobActions; track action.value) {
+                                            @if (action.value !== 'publish' || (action.value === 'publish' && !data.published)) {
+                                                <li nz-menu-item (click)="onActionSelect(action.value, data)">{{ action.label }}</li>
+                                            }
+                                        }
+                                    </ul>
+                                </nz-dropdown-menu>
+                            }
                         } @else {
-                            {{getCellValue(data, column)}}
+                            {{ data | settlementTblFormatter: column}}
                         }
                     </td>
                 }

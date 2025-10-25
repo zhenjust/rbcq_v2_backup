@@ -14,6 +14,8 @@ export const LABELS = {
   OK: 'Ok',
   CONTINUE: 'Continue',
   ERROR: 'Error',
+  SELECT_ACTION: 'Select Action',
+  PROCEED: 'Proceed',
 
   // Field Labels
   CONSOLIDATE: 'Consolidate',

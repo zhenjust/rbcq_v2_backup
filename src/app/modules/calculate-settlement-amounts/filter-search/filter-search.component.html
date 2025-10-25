@@ -1,7 +1,7 @@
 <nz-flex nzVertical="true" nzJustify="center" nzAlign="start" class="form-container" nzWrap="wrap">
-    <button 
-        nz-button 
-        [nzType]="hasFilter ? 'default' : 'primary'" 
+    <button
+        nz-button
+        [nzType]="hasFilter ? 'default' : 'primary'"
         (click)=" !hasFilter ? toggleFilter() : resetFilter()"
         >{{ hasFilter ? 'Clear Filter' : 'Set Filter' }}</button>
 
@@ -10,13 +10,16 @@
         <form [formGroup]="filterSettlementForm" class="form-container">
             <div class="form-item">
                 <label class="form-label">Meter Process Type:</label>
-                <nz-select 
+                <nz-select
+                [nzShowSearch]="true"
+                [nzAllowClear]="true"
                 formControlName="processType"
                 class="select-size"
                 nzPlaceHolder="Enter Process Type"
                 [nzOptions]="settlementOptions">
                 </nz-select>
             </div>
+
             @if (filterSettlementForm.get('tradingStartDate')?.enabled && filterSettlementForm.get('tradingEndDate')?.enabled) {
                 <nz-space>
                     <div class="form-item" *nzSpaceItem>
@@ -41,10 +44,12 @@
             @if (filterSettlementForm.get('billingPeriod')?.enabled) {
                 <div class="form-item">
                     <label class="form-label">Billing Period:</label>
-                    <nz-select 
-                    formControlName="billingPeriod"
-                    class="select-size"
-                    nzPlaceHolder="Enter Billing Period">
+                    <nz-select
+                        [nzShowSearch]="true"
+                        [nzAllowClear]="true"
+                        formControlName="billingPeriod"
+                        class="select-size"
+                        nzPlaceHolder="Enter Billing Period">
                     <nz-option
                         *ngFor="let billing of meterProcessBillingPeriod"
                         [nzValue]="billing.billingPeriod"

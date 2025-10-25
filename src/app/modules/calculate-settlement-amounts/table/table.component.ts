@@ -1,11 +1,10 @@
 import { Component, OnInit, OnDestroy, effect, computed, inject, ViewChild, TemplateRef, signal } from '@angular/core';
 import { ActivatedRoute, Data } from '@angular/router';
 import { Subject } from 'rxjs';
-import { PublishSettlement, settlementPipeline, settlementTableDate } from '@shared/interfaces';
+import { PublishSettlement, settlementPipeline, TableColumn } from '@shared/interfaces';
 import { RunSettlementService, SearchFilterService } from '@shared/services/settlement';
 import { ToastrService } from 'ngx-toastr';
 import { ETA_JOBS, MeterProcessTypes } from '@shared/enums';
-import { DateFormatterUtilService } from '@shared/services/utils';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { isAfter, isBefore, startOfDay } from 'date-fns';
 import { SettlementService } from '@shared/services/api';
@@ -13,16 +12,7 @@ import { LABELS } from '@shared/constants/labels.const';
 import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { DatePipe } from '@angular/common';
-
-interface tableColumn {
-  name: string;
-  key: string;
-}
-
-interface jobSelect {
-  label: string,
-  value: string
-}
+import { BaseTableItem, DefaultTableData, modalConfig, SettlementJobActions, SettlementStatus } from '@shared/constants';
 
 @Component({
   selector: 'app-table',
@@ -31,74 +21,41 @@ interface jobSelect {
   providers: [ DatePipe ]
 })
 export class TableComponent implements OnInit, OnDestroy {
-  isLineRentalStatus: boolean = false;
-  defaultTableData: settlementTableDate = {
-    pipelineGroup: [],
-    first: true,
-    last: false,
-    number: 0,
-    numberOfElements: 0,
-    size: 0,
-    totalElements: 0,
-    totalPages: 0
-  };
-  searchName: string = '';
-  private baseTableItem: tableColumn[] = [
-    { name: 'Workspace ID', key: 'workspaceId' },
-    { name: 'Run Date and Time', key: 'runDatetime' },
-    { name: 'Process Type', key: 'processType' },
-    { name: 'Trading Date', key: 'tradingDate' },
-    { name: 'Status', key: 'status' },
-    { name: 'Line Rental Status', key: 'lineRentalStatus' },
-    { name: 'Progress', key: 'progress' },
-    { name: 'Actions', key: 'actions' }
-  ];
 
-  settlementJobActions: jobSelect[] = [
-    { label: 'Select Action', value: '' },
-    { label: 'Generate Input Workspace', value: 'generate' },
-    { label: 'Finalize Energy Trading Amounts', value: 'finalize' },
-    { label: LABELS.CALCULATE_ENERGY_TRADING_AMOUNT, value: 'calculateEnergyTradingAmount'},
-    { label: LABELS.GENERATE_MONTHLY_SUMMARY, value: 'generateMonthlySummary'},
-    { label: 'View Calculations', value: 'calculations' },
-    { label: 'Validate Input', value: 'validate_input' },
-    { label: 'View Validations', value: 'validations' },
-    { label: 'Calculate Energy Transaction Allocation', value: 'calculate_transactions'},
-    { label: 'Generate Transaction Report', value: 'generate_transac_reports'},
-    { label: 'Generate Energy Files', value: 'generate_energy_files'},
-    { label: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`, value: 'publish' }
-  ];
+  @ViewChild('runSettlementJobs', { static: true }) runSettlementJobs!: TemplateRef<void>;
+
+  isLineRentalStatus: boolean = false;
+  LABELS = LABELS;
+  settlementJobActions = SettlementJobActions;
+  baseTableItem = BaseTableItem;
+  defaultTableData = DefaultTableData;
+  searchName: string = '';
 
   private selectedActionsSignal = signal<Map<string, string>>(new Map());
   selectedActions = computed(() => this.selectedActionsSignal());
 
-  get tableItem(): tableColumn[] {
-    return this.baseTableItem.filter(column =>
-      column.name !== 'Line Rental Status' || this.isLineRentalStatus
-    );
-  }
+  tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
+  isLoading = computed(() => this.sfs.isLoading());
+
+
   private destroy$ = new Subject<void>();
   private runSettlements = inject(RunSettlementService);
   private sfs = inject(SearchFilterService);
   private router = inject(ActivatedRoute);
   public toast = inject(ToastrService);
   public modal = inject(NzModalService);
-  private dfs = inject(DateFormatterUtilService);
   private ss = inject(SettlementService);
   private dp = inject(DatePipe);
-
-  tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
-  isLoading = computed(() => this.sfs.isLoading());
 
   public minDate = signal<Date | null>(null);
   public maxDate = signal<Date | null>(null);
   public selectedRange = signal<Date[] | null>(null);
 
-  @ViewChild('runSettlementJobs', { static: true }) runSettlementJobs!: TemplateRef<void>;
   currentModalData: any | null = null;
   processTypes = MeterProcessTypes;
+  SettlementStatus = SettlementStatus;
 
-  constructor(){
+  constructor() {
     effect(() => {
       const error = this.sfs.error();
       const loading = this.sfs.isLoading();
@@ -133,6 +90,7 @@ export class TableComponent implements OnInit, OnDestroy {
       this.isLineRentalStatus = data['isLineRentalStatus'] as boolean;
       this.searchName = data['searchName'] as string;
     });
+
     this.sfs.fetchJobs({}, this.searchName);
   }
 
@@ -170,37 +128,10 @@ export class TableComponent implements OnInit, OnDestroy {
     this.selectedActionsSignal.set(new Map());
   }
 
-  getCellValue(data: settlementPipeline, column: tableColumn): string {
-    switch (column.key) {
-      case 'workspaceId':
-        return data.workspaceId;
-      case 'runDatetime':
-        return this.dfs.formatDateTime(data.runDatetime);
-      case 'processType':
-        return data.processType === MeterProcessTypes.ADJUSTMENT ? `${data.processType} ${data.adjNo}` : data.processType;
-      case 'tradingDate':
-        return data.billingPeriod
-          ? `${data.billingStartDate} - ${data.billingEndDate}`
-          : data.tradingDate || '';
-      case 'status':
-        return data.status;
-      case 'lineRentalStatus':
-        return data?.lineRentalStatus || '';
-      case 'progress':
-        return '';
-      case 'actions':
-        return '';
-      default:
-        return '';
-    }
-  }
-
-  isActionColumn(column: tableColumn): boolean {
-    return column.key === 'actions';
-  }
-
   onActionSelect(selectedValue: string | any, rowData: settlementPipeline): void {
     const actionValue = typeof selectedValue === 'string' ? selectedValue : selectedValue?.toString();
+    const label = this.settlementJobActions.find(act => act.value === actionValue)?.label.toString();
+    const processType = rowData.processType;
 
     if (!actionValue || actionValue === '') {
       this.resetActionSelection(rowData);
@@ -215,17 +146,12 @@ export class TableComponent implements OnInit, OnDestroy {
       billingPeriod: rowData.billingPeriod,
       startDate: rowData.billingStartDate,
       endDate: rowData.billingEndDate,
-      processType: rowData.processType
+      processType
     };
 
     switch (actionValue) {
       case 'generate':
-        this.handleDateRangeAction(
-          rowData,
-          ETA_JOBS.GEN_INPUT_WORKSPACE,
-          'You are going to generate input workspace for the following dates:',
-          'generate'
-        );
+        this.handleGenerate(rowData, label as string);
         break;
 
       case 'calculateEnergyTradingAmount':
@@ -247,15 +173,8 @@ export class TableComponent implements OnInit, OnDestroy {
         break;
 
       case 'finalize':
-        this.handleModalAction(
-          rowData,
-          () => this.runSettlements.finalizeTradingAmounts(rowData),
-          {
-            ...baseModalData,
-            actionMessage: 'Finalize Energy Trading Amounts',
-            actionType: 'finalize'
-          }
-        );
+        const message = MESSAGES.CONFIRM_SETTLEMENT_MSG(label?.toLowerCase() as string);
+        this.handleAction(label as string, rowData, message, null, () => this.runSettlements.finalizeTradingAmounts(rowData))
         break;
 
       case 'calculations':
@@ -339,6 +258,27 @@ export class TableComponent implements OnInit, OnDestroy {
     }
   }
 
+  // for handling of actions; new implementation of modal
+  handleAction(label: string, rowData: settlementPipeline, msg: string | TemplateRef<HTMLElement>, job?: ETA_JOBS | null, api$?: () => any): void {
+    this.modal.confirm({
+      ...modalConfig,
+      nzTitle: label,
+      nzContent: msg as any,
+      nzOnOk: () => {
+        if (job) {
+          this.runSettlements.etaStlJobs(rowData, null, job);
+        }
+
+        if (api$) {
+          api$();
+        }
+
+        this.sfs.fetchJobs({}, this.searchName);
+        this.toast.success(MESSAGES.SUCCESS_JOB_TRIGGER);
+      }
+    });
+  }
+
   handlePublishAction(rowData: settlementPipeline): void {
     const payload: PublishSettlement = {
       stlGroupId: +rowData.workspaceId,
@@ -379,6 +319,16 @@ export class TableComponent implements OnInit, OnDestroy {
       nzOnOk: () => api$()
     });
   }
+
+  // for 'generate' action
+  handleGenerate(rowData: settlementPipeline, label: string): void {
+    const { processType, tradingDate, billingStartDate, billingEndDate } = rowData;
+    const isDaily = processType === MeterProcessTypes.DAILY;
+    const msg = MESSAGES.GENERATE_INPUT_WORKSPACE_TD(isDaily ? tradingDate : `${billingStartDate} to ${billingEndDate}`);
+
+    this.handleAction(label, rowData, msg, ETA_JOBS.GEN_INPUT_WORKSPACE);
+  }
+
 
   // helper functions
   setDisabledDateRange = (date: Date): boolean => {
@@ -458,9 +408,17 @@ export class TableComponent implements OnInit, OnDestroy {
     });
   }
 
+  confirmAction(nzTitle: string, nzContent: string): void {
+    this.modal.confirm({
+      nzTitle,
+      nzContent,
+
+    })
+  }
+
   private handleDateRangeAction(rowData: settlementPipeline, jobName: ETA_JOBS, actionMessage: string, actionType: string ): void {
     this.clearDateRange();
-    
+
     if (rowData.processType !== MeterProcessTypes.DAILY) {
       const startDate = new Date(rowData.billingStartDate);
       const endDate = new Date(rowData.billingEndDate);
@@ -489,4 +447,12 @@ export class TableComponent implements OnInit, OnDestroy {
       }
     );
   }
+
+  get tableItem(): TableColumn[] {
+    return this.baseTableItem.filter(column =>
+      column.name !== 'Line Rental Status' || this.isLineRentalStatus
+    );
+  }
+
+  get nzWidthConfig(): string[] { return ['150px', '200px', '180px', '200px', '200px', '200px', '100px', '150px']; }
 }
