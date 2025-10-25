@@ -5,12 +5,12 @@ BRANCH=$(git rev-parse --abbrev-ref HEAD)
 BRANCHES="develop"
 
 if echo "$BRANCHES" | grep -w "$BRANCH" > /dev/null; then
-  echo "🚀 Detected branch '$BRANCH' — running build before commit..."
+  echo "Detected branch '$BRANCH' — running build before commit..."
   npm run build || {
-    echo "❌ Build failed. Commit aborted."
+    echo "Build failed. Commit aborted."
     exit 1
   }
-  echo "✅ Build succeeded. Continuing commit..."
+  echo "Build succeeded. Continuing commit..."
 else
-  echo "ℹ️ Skipping build for branch '$BRANCH'."
+  echo "Skipping build for branch '$BRANCH'."
 fi

@@ -153,7 +153,6 @@ export class TableComponent implements OnInit, OnDestroy {
       case 'generate':
         this.handleGenerate(rowData, label as string);
         break;
-
       case 'calculateEnergyTradingAmount':
         this.handleDateRangeAction(
           rowData,
@@ -172,10 +171,11 @@ export class TableComponent implements OnInit, OnDestroy {
         );
         break;
 
-      case 'finalize':
+      case 'finalize': {
         const message = MESSAGES.CONFIRM_SETTLEMENT_MSG(label?.toLowerCase() as string);
         this.handleAction(label as string, rowData, message, null, () => this.runSettlements.finalizeTradingAmounts(rowData))
         break;
+      }
 
       case 'calculations':
         this.handleModalAction(

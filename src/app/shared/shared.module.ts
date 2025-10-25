@@ -1,4 +1,4 @@
-import { NgModule, Pipe } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TemplateTableComponent } from './components/template-table/template-table.component';
 import { NzTableModule } from 'ng-zorro-antd/table';
@@ -34,7 +34,7 @@ const NgZorroModules = [
 
 const Pipes = [
   SettlementTableFormatterPipe,
-]
+];
 
 @NgModule({
   declarations: [
