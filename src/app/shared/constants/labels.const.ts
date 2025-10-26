@@ -42,4 +42,12 @@ export const LABELS = {
   SWITCH_TO_SUPER_USER: 'Switch to Super User',
   SWITCH_TO_NORMAL_USER: 'Switch to Normal User',
   USER: 'User',
+
+  NAME: 'Name',
+  RUN_ID: 'Run ID',
+  RUN_START: 'Run Start',
+  RUN_END: 'Run End',
+  DURATION: 'Duration',
+  RUN_BY: 'Run By',
+
 }

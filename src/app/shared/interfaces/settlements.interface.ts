@@ -122,3 +122,27 @@ export interface JobSelect {
   label: string,
   value: string
 }
+
+export interface SettlementPipelineWithRun {
+  id: number;
+  name: string;
+  lastModifiedDatetime: string;
+  lastModifiedBy: string;
+  partial: boolean;
+  consolidate: boolean;
+  pipelineRuns: PipelineRun[];
+  status?: string;
+}
+
+export interface PipelineRun {
+  name: string;
+  description: any;
+  runBy: string;
+  runId: string;
+  status: string;
+  message: any;
+  runStart: string;
+  runEnd?: string;
+  duration: string;
+  workspaceId: number;
+}

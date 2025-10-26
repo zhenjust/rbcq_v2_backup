@@ -6,9 +6,12 @@
     [nzTotal]="tableData().totalElements"
     [nzLoading]="isLoading()"
     [nzWidthConfig]="nzWidthConfig"
+    nzSize="small"
+    class="calc-stl-amt-tbl"
     [nzFrontPagination]="false">
     <thead>
         <tr>
+            <th></th>
             @for (column of tableItem; track column.key) {
                 <th>{{column.name}}</th>
             }
@@ -17,6 +20,8 @@
     <tbody>
         @for (data of nzTable.data; track data;) {
             <tr>
+                <td [nzExpand]="expandSet.has(+data.workspaceId)" (nzExpandChange)="onExpandChange(+data.workspaceId, $event)" [nzShowExpand]="!!data.pipelines.length"></td>
+
                 @for (column of tableItem; track column.key) {
                     <td>
                         @if (column.key === 'actions') {
@@ -37,6 +42,14 @@
                         }
                     </td>
                 }
+            </tr>
+            <tr [nzExpand]="expandSet.has(+data.workspaceId)">
+                <div class="my-2">
+                    <app-template-table
+                        [tableColumns]="expandableTableCols"
+                        [tableData]="data.pipelines | stlPipelineFormatterPipe">
+                    </app-template-table>
+                </div>
             </tr>
         }
     </tbody>
@@ -133,4 +146,8 @@
             }
         }
     </nz-flex>
+</ng-template>
+
+<ng-template #statusTpl let-data="data">
+    <nz-tag class="break-word-tag">{{ data }}</nz-tag>
 </ng-template>

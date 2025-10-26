@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, effect, computed, inject, ViewChild, TemplateRef, signal } from '@angular/core';
 import { ActivatedRoute, Data } from '@angular/router';
 import { Subject } from 'rxjs';
-import { PublishSettlement, settlementPipeline, TableColumn } from '@shared/interfaces';
+import { PublishSettlement, settlementPipeline, TableColumn, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { RunSettlementService, SearchFilterService } from '@shared/services/settlement';
 import { ToastrService } from 'ngx-toastr';
 import { ETA_JOBS, MeterProcessTypes } from '@shared/enums';
@@ -23,6 +23,7 @@ import { BaseTableItem, DefaultTableData, modalConfig, SettlementJobActions, Set
 export class TableComponent implements OnInit, OnDestroy {
 
   @ViewChild('runSettlementJobs', { static: true }) runSettlementJobs!: TemplateRef<void>;
+  @ViewChild('statusTpl', { static: true }) statusTpl!: TemplateRef<HTMLElement>;
 
   isLineRentalStatus: boolean = false;
   LABELS = LABELS;
@@ -30,6 +31,8 @@ export class TableComponent implements OnInit, OnDestroy {
   baseTableItem = BaseTableItem;
   defaultTableData = DefaultTableData;
   searchName: string = '';
+  expandSet = new Set<number>();
+  expandableTableCols: TPL_TABLE_COLUMN[] = [];
 
   private selectedActionsSignal = signal<Map<string, string>>(new Map());
   selectedActions = computed(() => this.selectedActionsSignal());
@@ -92,6 +95,9 @@ export class TableComponent implements OnInit, OnDestroy {
     });
 
     this.sfs.fetchJobs({}, this.searchName);
+
+    expandedTableCols[LABELS.STATUS].template = this.statusTpl;
+    this.expandableTableCols = Object.values(expandedTableCols);
   }
 
   ngOnDestroy(): void {
@@ -448,11 +454,31 @@ export class TableComponent implements OnInit, OnDestroy {
     );
   }
 
+  onExpandChange(id: number, value: boolean): void {
+    if (value) {
+      this.expandSet.add(id);
+    } else {
+      this.expandSet.delete(id);
+    }
+
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 10);
+  }
+
   get tableItem(): TableColumn[] {
     return this.baseTableItem.filter(column =>
       column.name !== 'Line Rental Status' || this.isLineRentalStatus
     );
   }
 
-  get nzWidthConfig(): string[] { return ['150px', '200px', '180px', '200px', '200px', '200px', '100px', '150px']; }
+  get nzWidthConfig(): string[] { return ['25px', '120px', '160px', '150px', '200px', '200px', '200px', '100px', '150px']; }
+}
+
+const expandedTableCols: Record<string, TPL_TABLE_COLUMN> = {
+  [LABELS.NAME]: { label: LABELS.NAME, propName: 'name', width: '240px' },
+  [LABELS.RUN_ID]: { label: LABELS.RUN_ID, propName: 'runId', type: 'string', width: '180px' },
+  [LABELS.RUN_START]: { label: LABELS.RUN_START, propName: 'runStart', type: 'date', width: '100px' },
+  [LABELS.RUN_END]: { label: LABELS.RUN_END, propName: 'runEnd', type: 'date', width: '100px' },
+  [LABELS.DURATION]: { label: LABELS.DURATION, propName: 'duration', type: 'string', width: '60px' },
+  [LABELS.RUN_BY]: { label: LABELS.RUN_BY, propName: 'runBy', type: 'string', width: '100px'},
+  [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', type: 'template', width: '100px' }
 }
