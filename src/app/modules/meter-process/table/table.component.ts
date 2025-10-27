@@ -177,10 +177,6 @@ export class TableComponent implements OnInit {
     return `${parentClass} ${childClass} ${grandchildClass}`;
   }
 
-  refreshData(): void {
-    this.sfs.refreshJobs({});
-  }
-
   openJobModal(pipelineRunData: meterProcessPipeline,
     jobType: string,
     actionType: MeterDataPipelineName,
@@ -283,6 +279,10 @@ export class TableComponent implements OnInit {
     this.downloadingReports.delete(pipeline.id);
 
     this.toast.success(MESSAGES.SUCCESS_DOWNLOAD_ITEM(`report for ${pipeline.id}`));
+  }
+
+  hasSuccessfulReportGeneration(pipeline: meterProcessPipeline): boolean {
+    return pipeline.pipelineRuns.some(p => p.name === "Zip Report" && p.status === "Succeeded");
   }
 
   downloadReport(pipeline: meterProcessPipeline): void {

@@ -98,13 +98,12 @@
                                                 Finalize Settlement - Ready
                                             </a>
                                         }
-                                        @if ((data.processType === processTypes.DAILY && (pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_GESQ || pipeline.status.toLowerCase().endsWith(meterDataPipelineProcess.SETTLEMENT_READY))) ||
-                                                (data.processType !== processTypes.DAILY && pipeline.status.toLowerCase() === meterProcessStatus.COMPLETED_SETTLEMENT_READY)) {
-                                                <button nz-button nzType="link" nzBlock class="break-word-button"
-                                                    [disabled]="isDownloadingReport(pipeline.id)"
-                                                    (click)="downloadReport(pipeline)">
-                                                        <span>Download Report</span>
-                                                </button>
+                                        @if (hasSuccessfulReportGeneration(pipeline)) {
+                                            <button nz-button nzType="link" nzBlock class="break-word-button"
+                                                [disabled]="isDownloadingReport(pipeline.id)"
+                                                (click)="downloadReport(pipeline)">
+                                                    <span>Download Report</span>
+                                            </button>
                                         }
                                     </td>
                                 </tr>
