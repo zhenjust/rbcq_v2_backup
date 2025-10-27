@@ -282,7 +282,7 @@ export class TableComponent implements OnInit {
   }
 
   hasSuccessfulReportGeneration(pipeline: meterProcessPipeline): boolean {
-    return pipeline.pipelineRuns.some(p => p.name === "Zip Report" && p.status === "Succeeded");
+    return pipeline.pipelineRuns.some(p => p.name === "runMeterData-zipReport" && p.status === "Succeeded");
   }
 
   downloadReport(pipeline: meterProcessPipeline): void {
