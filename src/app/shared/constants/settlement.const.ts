@@ -27,17 +27,17 @@ export const PRICING_CONDITIONS: settlementJobInstanceOptions[] = [
 ]
 
 export const SettlementJobActions: JobSelect[] = [
-  { label: 'Generate Input Workspace', value: 'generate' },
-  { label: 'Finalize Energy Trading Amounts', value: 'finalize' },
-  { label: LABELS.CALCULATE_ENERGY_TRADING_AMOUNT, value: 'calculateEnergyTradingAmount'},
-  { label: LABELS.GENERATE_MONTHLY_SUMMARY, value: 'generateMonthlySummary'},
-  { label: 'View Calculations', value: 'calculations' },
-  { label: 'Validate Input', value: 'validate_input' },
-  { label: 'View Validations', value: 'validations' },
-  { label: 'Calculate Energy Transaction Allocation', value: 'calculate_transactions'},
-  { label: 'Generate Transaction Report', value: 'generate_transac_reports'},
-  { label: 'Generate Energy Files', value: 'generate_energy_files'},
-  { label: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`, value: 'publish' }
+  { label: LABELS.GENERATE_INPUT_WORKSPACE, value: 'generate', show: false },
+  { label: 'Finalize Energy Trading Amounts', value: 'finalize', show: false },
+  { label: LABELS.CALCULATE_ENERGY_TRADING_AMOUNT, value: 'calculateEnergyTradingAmount', show: false},
+  { label: LABELS.GENERATE_MONTHLY_SUMMARY, value: 'generateMonthlySummary', show: false},
+  { label: 'View Calculations', value: 'calculations', show: false },
+  { label: 'Validate Input', value: 'validate_input', show: false },
+  { label: 'View Validations', value: 'validations', show: false },
+  { label: 'Calculate Energy Transaction Allocation', value: 'calculate_transactions', show: false},
+  { label: 'Generate Transaction Report', value: 'generate_transac_reports', show: false},
+  { label: 'Generate Energy Files', value: 'generate_energy_files', show: false},
+  { label: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`, value: 'publish', show: false }
 ];
 
 export const BaseTableItem: TableColumn[] = [

@@ -64,7 +64,7 @@ export interface settlementPipeline {
     lineRentalStatus?: string
     workspaceId: string
     published?: boolean;
-    pipelines: [] //create interface once sample pipeline view calculations has values
+    pipelines: [] //create interface once sample pipeline view calculations has values,
 }
 
 export interface settlementTableDate {
@@ -120,7 +120,8 @@ export interface EnergyTradingAmounts {
 
 export interface JobSelect {
   label: string,
-  value: string
+  value: string,
+  show?: boolean
 }
 
 export interface SettlementPipelineWithRun {

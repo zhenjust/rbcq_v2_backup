@@ -15,7 +15,7 @@ import { NgxPermissionsModule } from 'ngx-permissions';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { SettlementTableFormatterPipe } from './pipes/table-data-formatter.pipe';
-import { SettlementPipelineFormatterPipe } from './pipes';
+import { SettlementActionsPipe, SettlementPipelineFormatterPipe } from './pipes';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 
 const ngZorroConfig: NzConfig = {
@@ -38,6 +38,7 @@ const NgZorroModules = [
 const Pipes = [
   SettlementTableFormatterPipe,
   SettlementPipelineFormatterPipe,
+  SettlementActionsPipe,
 ];
 
 @NgModule({

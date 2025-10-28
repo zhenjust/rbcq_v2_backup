@@ -28,5 +28,7 @@ export enum MeterDataPipelineName {
 }
 
 export enum SettlementStatus {
-  NULLIFIED = 'Nullified'
+  NULLIFIED = 'Nullified',
+  COMPLETED_SETTLEMENT_READY = 'Completed - Settlement Ready',
+  COMPLETED_GENERATE_INPUT_WORKSPACE =  'Completed - Generate Input Workspace',
 }
