@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ParamsUtilService } from '../utils';
-import { BaseResponse, EnergyTradingAmounts, PublishSettlement, settlementParams, settlementTableDate } from '@shared/interfaces';
+import { BaseResponse, EnergyTradingAmounts, PublishSettlement, settlementParams, settlementTableDate, TableParams } from '@shared/interfaces';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -17,12 +17,12 @@ export class SettlementService {
   private paramUtil = inject(ParamsUtilService);
   private http = inject(HttpClient);
 
-  public search(data: Partial<settlementParams>, searchName: string): Observable<settlementTableDate>{
+  public search(data: Partial<settlementParams>, searchName: string, tableParams?: TableParams): Observable<settlementTableDate>{
     const withName = {
       ...data,
       name: searchName
     }
-    const params = this.paramUtil.buildParams(withName);
+    const params = this.paramUtil.buildParams(withName, tableParams);
     return this.http.get<settlementTableDate>(`${this.API_URL}/search-group`, { params });
   }
 

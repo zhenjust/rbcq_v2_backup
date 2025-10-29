@@ -1,4 +1,4 @@
 <nz-card [nzTitle]="pageTitle">
-    <app-filter-search></app-filter-search>
-    <app-table></app-table>
+    <app-filter-search (filtersEvent)="table.filters = $event; table.search()"></app-filter-search>
+    <app-table #table></app-table>
 </nz-card>

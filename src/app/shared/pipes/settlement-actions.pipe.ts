@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { SettlementStatus } from '@shared/constants';
-import { JobSelect, settlementPipeline, SettlementPipelineWithRun } from '@shared/interfaces';
+import { JobSelect, settlementPipeline } from '@shared/interfaces';
 
 @Pipe({
   name: 'stlActions',
@@ -24,15 +24,21 @@ export class SettlementActionsPipe implements PipeTransform {
         if (value === 'generate') {
           const generateStatuses = [
             stlStatus.COMPLETED_SETTLEMENT_READY,
-            stlStatus.COMPLETED_GENERATE_INPUT_WORKSPACE
+            stlStatus.COMPLETED_GENERATE_INPUT_WORKSPACE,
+            stlStatus.CANCELLED_GENERATE_INPUT_WORKSPACE,
+            stlStatus.FAILED_GENERATE_INPUT_WORKSPACE,
+            stlStatus.COMPLETED_SETTLEMENT_CALCULATION
           ];
 
-          console.log({data, status}, generateStatuses.includes(status as SettlementStatus))
           action.show = generateStatuses.includes(status as SettlementStatus);
         }
 
         if (value === 'calculateEnergyTradingAmount') {
           action.show = status === SettlementStatus.COMPLETED_GENERATE_INPUT_WORKSPACE;
+        }
+
+        if (value === 'generateMonthlySummary') {
+          action.show = status === SettlementStatus.COMPLETED_SETTLEMENT_COMPLETE
         }
 
         return action;

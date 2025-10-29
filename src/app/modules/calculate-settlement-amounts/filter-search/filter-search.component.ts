@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, inject, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Data } from '@angular/router';
 import { FULL_SETTLEMENT_OPTIONS, MARKET_FEE_SETTLEMENT_OPTIONS } from '@shared/constants';
@@ -16,14 +16,16 @@ import { Subject, takeUntil } from 'rxjs';
   styleUrl: './filter-search.component.scss'
 })
 export class FilterSearchComponent implements OnInit, OnDestroy {
+
+  @Output() filtersEvent = new EventEmitter<Partial<settlementParams>>();
   hasFilter: boolean = false;
   filterSettlementForm!: FormGroup;
   searchName:string = ''
   settlementOptions: settlementJobInstanceOptions[] = [];
-  meterProcessBillingPeriod: meterProcessBillingPeriod[] = []; 
+  meterProcessBillingPeriod: meterProcessBillingPeriod[] = [];
   private destroy$ = new Subject<void>();
   protected settlementFilterParams: Partial<settlementParams> | null = null;
-  
+
   private ptc = inject(ProcessTypeUtilService);
   private fb = inject(FormBuilder);
   private fdp = inject(DateFormatterUtilService);
@@ -32,15 +34,15 @@ export class FilterSearchComponent implements OnInit, OnDestroy {
   private router = inject(ActivatedRoute);
 
   private setSettlementOptions(): void {
-    if (this.searchName === settlementSearchNames.RESERVE_MARKET_FEE || 
+    if (this.searchName === settlementSearchNames.RESERVE_MARKET_FEE ||
         this.searchName === settlementSearchNames.ENERGY_MARKET_FEE) {
       this.settlementOptions = MARKET_FEE_SETTLEMENT_OPTIONS;
     } else {
       this.settlementOptions = FULL_SETTLEMENT_OPTIONS;
     }
   }
-  
-  ngOnInit(): void {    
+
+  ngOnInit(): void {
     this.initFilterForm();
     this.router.data.subscribe((data: Data) => {
       this.searchName = data['searchName'] as string;
@@ -121,7 +123,8 @@ export class FilterSearchComponent implements OnInit, OnDestroy {
     this.filterSettlementForm.reset();
     this.hasFilter = false;
     this.settlementFilterParams = null;
-    this.searchFilterService.fetchJobs({}, this.searchName);
+
+    this.filtersEvent.emit();
   }
 
   applyFilter(): void {
@@ -135,8 +138,10 @@ export class FilterSearchComponent implements OnInit, OnDestroy {
         tradingStartDate: rawValues.tradingStartDate ? this.fdp.transformDate(rawValues.tradingStartDate) : undefined,
         tradingEndDate: rawValues.tradingEndDate ? this.fdp.transformDate(rawValues.tradingEndDate) : undefined
       };
-      this.searchFilterService.fetchJobs(formattedValues, this.searchName);
+      // this.searchFilterService.fetchJobs(formattedValues, this.searchName);
       this.settlementFilterParams = null;
+
+      this.filtersEvent.emit(formattedValues);
     }
   }
 }

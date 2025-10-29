@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, effect, computed, inject, ViewChild, TemplateRef, signal } from '@angular/core';
 import { ActivatedRoute, Data } from '@angular/router';
-import { Subject } from 'rxjs';
-import { PublishSettlement, settlementPipeline, TableColumn, TPL_TABLE_COLUMN } from '@shared/interfaces';
-import { RunSettlementService, SearchFilterService } from '@shared/services/settlement';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { PublishSettlement, settlementParams, settlementPipeline, TableColumn, TPL_TABLE_COLUMN } from '@shared/interfaces';
+import { RunSettlementService } from '@shared/services/settlement';
 import { ToastrService } from 'ngx-toastr';
 import { ETA_JOBS, MeterProcessTypes } from '@shared/enums';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -13,6 +13,7 @@ import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/c
 import { MESSAGES } from '@shared/constants/messages.const';
 import { DatePipe } from '@angular/common';
 import { BaseTableItem, DefaultTableData, modalConfig, SettlementJobActions, SettlementStatus } from '@shared/constants';
+import { SearchListBase } from '@shared/services/utils/list.util.service';
 
 @Component({
   selector: 'app-table',
@@ -20,7 +21,7 @@ import { BaseTableItem, DefaultTableData, modalConfig, SettlementJobActions, Set
   templateUrl: './table.component.html',
   providers: [ DatePipe ]
 })
-export class TableComponent implements OnInit, OnDestroy {
+export class TableComponent extends SearchListBase implements OnInit, OnDestroy  {
 
   @ViewChild('runSettlementJobs', { static: true }) runSettlementJobs!: TemplateRef<void>;
   @ViewChild('statusTpl', { static: true }) statusTpl!: TemplateRef<HTMLElement>;
@@ -37,13 +38,8 @@ export class TableComponent implements OnInit, OnDestroy {
   private selectedActionsSignal = signal<Map<string, string>>(new Map());
   selectedActions = computed(() => this.selectedActionsSignal());
 
-  tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
-  isLoading = computed(() => this.sfs.isLoading());
-
-
   private destroy$ = new Subject<void>();
   private runSettlements = inject(RunSettlementService);
-  private sfs = inject(SearchFilterService);
   private router = inject(ActivatedRoute);
   public toast = inject(ToastrService);
   public modal = inject(NzModalService);
@@ -58,18 +54,15 @@ export class TableComponent implements OnInit, OnDestroy {
   processTypes = MeterProcessTypes;
   SettlementStatus = SettlementStatus;
 
+  override busy$: Subscription;
+  override resultsProp = 'pipelineGroup';
+  filters: Partial<settlementParams>;
+
   constructor() {
-    effect(() => {
-      const error = this.sfs.error();
-      const loading = this.sfs.isLoading();
-
-      if (error && !loading) {
-        this.toast.error('Failed to load jobs', error);
-      }
-    });
+    super();
 
     effect(() => {
-      const currentJobs = this.tableData().pipelineGroup;
+      const currentJobs = this.tableData;
       const currentSelectedActions = this.selectedActions();
 
       if (currentJobs.length > 0) {
@@ -88,13 +81,15 @@ export class TableComponent implements OnInit, OnDestroy {
     });
   }
 
+  override getListUrl(): Observable<any> {
+    return this.ss.search(this.filters, this.searchName, this.tableParams);
+  }
+
   ngOnInit(): void {
     this.router.data.subscribe((data: Data) => {
       this.isLineRentalStatus = data['isLineRentalStatus'] as boolean;
       this.searchName = data['searchName'] as string;
     });
-
-    this.sfs.fetchJobs({}, this.searchName);
 
     expandedTableCols[LABELS.STATUS].template = this.statusTpl;
     this.expandableTableCols = Object.values(expandedTableCols);
@@ -279,7 +274,7 @@ export class TableComponent implements OnInit, OnDestroy {
           api$();
         }
 
-        this.sfs.fetchJobs({}, this.searchName);
+        this.search();
         this.toast.success(MESSAGES.SUCCESS_JOB_TRIGGER);
       }
     });
@@ -390,7 +385,7 @@ export class TableComponent implements OnInit, OnDestroy {
             serviceCall();
             this.resetActionSelection(rowData);
             this.clearDateRange();
-            this.sfs.fetchJobs({}, this.searchName);
+            this.search();
             this.toast.success("Jobs Successfully Triggered!");
             resolve(true);
           } catch (error) {

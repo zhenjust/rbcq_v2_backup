@@ -21,3 +21,12 @@ export interface TableColumn {
   name: string;
   key: string;
 }
+
+export class TableParams {
+  totalPages: number;
+  totalElements: number;
+  sortBy: number;
+  numberOfElements: number;
+  size = 20;
+  page = 0;
+}

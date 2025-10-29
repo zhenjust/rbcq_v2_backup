@@ -1,13 +1,14 @@
 import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { TableParams } from '@shared/interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ParamsUtilService {
-  public buildParams(data: Record<string, any>): HttpParams {
+  public buildParams(data: Record<string, any>, tableParams?: TableParams): HttpParams {
       let params = new HttpParams();
-      
+
       Object.entries(data).forEach(([key, value]) => {
         if (this.isValidValue(value)) {
           if (Array.isArray(value)) {
@@ -18,14 +19,23 @@ export class ParamsUtilService {
           }
         }
       });
-      
+
+    if (tableParams) {
+      const _tableParams = {...tableParams};
+      const page = _tableParams?.page ? _tableParams.page - 1 : 0;
+
+      params = params
+        .append('page', page?.toString())
+        .append('size', _tableParams?.size?.toString());
+    }
+
       return params;
     }
 
     private isValidValue(value: any): boolean {
-      return value !== undefined && 
-            value !== null && 
-            value !== '' && 
+      return value !== undefined &&
+            value !== null &&
+            value !== '' &&
             (!Array.isArray(value) || value.length > 0);
     }
 }

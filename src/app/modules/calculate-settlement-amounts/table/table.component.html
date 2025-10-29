@@ -1,13 +1,15 @@
 <nz-table
     #nzTable
-    [nzData]="tableData().pipelineGroup"
-    [nzPageSize]="tableData().size"
-    [nzPageIndex]="tableData().number"
-    [nzTotal]="tableData().totalElements"
-    [nzLoading]="isLoading()"
+    [nzData]="tableData"
+    [nzPageSize]="tableParams.size"
+    [nzPageIndex]="tableParams.page"
+    [nzTotal]="tableParams.totalElements"
+    [nzLoading]="busy$ && !busy$.closed"
     [nzWidthConfig]="nzWidthConfig"
     nzSize="small"
+    (nzQueryParams)="onQueryParamsChange($event)"
     class="calc-stl-amt-tbl"
+    [nzScroll]="{ y: '65vh'}"
     [nzFrontPagination]="false">
     <thead>
         <tr>
