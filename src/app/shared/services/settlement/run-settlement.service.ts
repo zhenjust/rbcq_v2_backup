@@ -1,9 +1,10 @@
 import { inject, Injectable } from '@angular/core';
-import { EnergyTradingAmounts, settlementPipeline } from '@shared/interfaces';
+import { BaseResponse, EnergyTradingAmounts, settlementPipeline } from '@shared/interfaces';
 import { ETA_JOBS, MeterProcessTypes } from '@shared/enums';
 import { SettlementService } from '../api';
 import { ToastrService } from 'ngx-toastr';
 import { DateFormatterUtilService } from '../utils';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -25,10 +26,9 @@ export class RunSettlementService {
     console.log('Full row data for download:', data);
   }
 
-  etaStlJobs(data: settlementPipeline, range: Date[] | null, jobName: ETA_JOBS): void {
+  etaStlJobs(data: settlementPipeline, range: Date[] | null, jobName: ETA_JOBS): Observable<BaseResponse> {
     const payload = this.buildPayload(data, range, jobName);
-    // console.log(payload);
-    this.stlApi.etaJobs(payload).subscribe((res => this.toast.success(res.message)));
+    return this.stlApi.etaJobs(payload)
   }
 
   finalizeTradingAmounts(data: settlementPipeline): void {

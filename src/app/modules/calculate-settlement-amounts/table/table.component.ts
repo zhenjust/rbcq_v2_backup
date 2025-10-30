@@ -267,15 +267,19 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       nzContent: msg as any,
       nzOnOk: () => {
         if (job) {
-          this.runSettlements.etaStlJobs(rowData, null, job);
+          this.toast.success(MESSAGES.SUCCESS_JOB_TRIGGER);
+          this.busy$ = this.runSettlements.etaStlJobs(rowData, null, job)
+            .subscribe(res => {
+              this.search();
+              this.toast.success(res.message);
+            });
         }
 
         if (api$) {
           api$();
+          this.search();
         }
 
-        this.search();
-        this.toast.success(MESSAGES.SUCCESS_JOB_TRIGGER);
       }
     });
   }
