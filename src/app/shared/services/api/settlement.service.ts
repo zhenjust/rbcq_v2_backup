@@ -12,7 +12,7 @@ export class SettlementService {
   private API_URL: string = '/stl-data-pipeline/job';
   private BILLING_ID: string = '/settlement/addtl-comp/billing-id-list';
   private ADD_COMP: string = '/data-flow/task-executions/additional-compensation/multi';
-  private REG = `reg/stl-meter-file`;
+  private REG = `/reg/stl-meter-file`;
 
   private paramUtil = inject(ParamsUtilService);
   private http = inject(HttpClient);
