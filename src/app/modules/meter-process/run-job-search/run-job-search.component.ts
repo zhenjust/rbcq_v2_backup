@@ -1,12 +1,14 @@
 import { Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild, effect } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { METER_PROCESS_TYPE_OPTION, MeterDataPipelineName } from '@shared/constants';
+import { MESSAGES } from '@shared/constants/messages.const';
 import { MeterProcessTypes } from '@shared/enums';
 import { meterProcessBillingPeriod, meterProcessJobSearchGroupParams, meterProcessOptions, meterProcessParams } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { RunJobService, SearchFilterService } from '@shared/services/meterProcess';
 import { DateFormatterUtilService, ProcessTypeUtilService } from '@shared/services/utils';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -38,6 +40,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
   private mpa = inject(MeterprocessService);
   private fb = inject(FormBuilder);
   private sfs = inject(SearchFilterService);
+  private readonly toast = inject(ToastrService);
 
   constructor() {
     this.setupServiceEffects();
@@ -87,7 +90,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
   private processConfigurationForSearch(configuration: meterProcessParams): void {
     this.meterProcessParams = Object.fromEntries(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      Object.entries(configuration).filter(([_key, val]) => 
+      Object.entries(configuration).filter(([_key, val]) =>
         val !== null && val !== undefined && val !== "" &&  _key !== 'regionGroup' && _key !== 'datetimeRange'
       )
     ) as Partial<meterProcessParams>;
@@ -161,7 +164,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    // console.log(this.rjs.latestConfiguration());
+
     this.modal.create({
       nzTitle: 'Run Meter Data Job',
       nzContent: this.runMeterDataModal,
@@ -173,21 +176,11 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
           this.mpa.runJob(this.meterProcessParams!, this.meterDataName.INITIALIZE)
             .subscribe({
               next: () => {
-                this.modal.success({
-                  nzCentered: true,
-                  nzTitle: 'Jobs Successfully Triggered!',
-                });
+                this.toast.success(MESSAGES.SUCCESS_JOB_TRIGGER);
                 this.sfs.refreshJobs({});
-                // this.rjs.clearConfiguration();
                 resolve();
               },
-              error: (err) => {
-                const { error } = err;
-                this.modal.error({
-                  nzTitle: error.error,
-                  nzContent: error.message
-                });
-                console.error('Run Job Error:', err);
+              error: () => {
                 reject();
               }
             })

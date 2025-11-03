@@ -65,7 +65,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       const currentJobs = this.tableData;
       const currentSelectedActions = this.selectedActions();
 
-      if (currentJobs.length > 0) {
+      if (currentJobs?.length > 0) {
         const existingWorkspaceIds = new Set(currentJobs.map(job => job.workspaceId));
         const outdatedSelections = Array.from(currentSelectedActions.keys())
           .filter(workspaceId => !existingWorkspaceIds.has(workspaceId));
@@ -293,7 +293,11 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
     const api$ = () => {
       this.ss.publish(payload)
-        .subscribe((res => this.toast.success(res.message)));
+        .subscribe((res => {
+          this.toast.success(res.message);
+          this.search();
+        }
+      ));
     };
 
     // test data

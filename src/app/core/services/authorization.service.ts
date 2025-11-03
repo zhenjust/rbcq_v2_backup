@@ -21,7 +21,6 @@ export class AuthorizationService {
     return this.http.get<CurrentUser>(`${apiPath.__AUTH_PATH__}/user`).pipe(
       tap(user => {
         this.ps.loadPermissions(user?.principal?.privileges);
-        console.log(this.ps.getPermissions())
         this._currentUser.set(user)
       })
     );
