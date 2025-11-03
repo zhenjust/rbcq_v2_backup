@@ -112,7 +112,6 @@ export interface EnergyTradingAmounts {
     parameters: {
         billingStartDate: string | null,
         billingEndDate: string | null,
-        tradingDate: string | null,
         processType: string,
         workspaceId: number | string
     }

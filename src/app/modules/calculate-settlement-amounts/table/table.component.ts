@@ -268,7 +268,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       nzOnOk: () => {
         if (job) {
           this.toast.success(MESSAGES.SUCCESS_JOB_TRIGGER);
-          this.busy$ = this.runSettlements.etaStlJobs(rowData, null, job)
+          this.busy$ = this.runSettlements.etaStlJobs(rowData, job)
             .subscribe(res => {
               this.search();
               this.toast.success(res.message);
@@ -378,7 +378,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     this.selectedRange.set(null);
   }
 
-
   private handleModalAction(rowData: settlementPipeline, serviceCall: () => void, modalData: any): void {
     this.currentModalData = modalData;
 
@@ -417,14 +416,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     });
   }
 
-  confirmAction(nzTitle: string, nzContent: string): void {
-    this.modal.confirm({
-      nzTitle,
-      nzContent,
-
-    })
-  }
-
   private handleDateRangeAction(rowData: settlementPipeline, jobName: ETA_JOBS, actionMessage: string, actionType: string ): void {
     this.clearDateRange();
 
@@ -448,7 +439,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
     this.handleModalAction(
       rowData,
-      () => this.runSettlements.etaStlJobs(rowData, this.selectedRange(), jobName),
+      () => this.runSettlements.etaStlJobs(rowData, jobName),
       {
         ...baseModalData,
         actionMessage,

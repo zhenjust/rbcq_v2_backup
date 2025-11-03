@@ -26,8 +26,8 @@ export class RunSettlementService {
     console.log('Full row data for download:', data);
   }
 
-  etaStlJobs(data: settlementPipeline, range: Date[] | null, jobName: ETA_JOBS): Observable<BaseResponse> {
-    const payload = this.buildPayload(data, range, jobName);
+  etaStlJobs(data: settlementPipeline, jobName: ETA_JOBS): Observable<BaseResponse> {
+    const payload = this.buildPayload(data, jobName);
     return this.stlApi.etaJobs(payload)
   }
 
@@ -59,10 +59,9 @@ export class RunSettlementService {
     console.log('Validate Input - Full row data:', data);
   }
 
-
   // helper functions
-  private buildPayload(data: settlementPipeline, range: Date[] | null, pipelineName: ETA_JOBS ): EnergyTradingAmounts {
-    const [start, end] = range ?? [];
+  private buildPayload(data: settlementPipeline, pipelineName: ETA_JOBS ): EnergyTradingAmounts {
+    const [start, end] = this.getDateRangeForProcessType(data);
     return {
       pipelineName,
       refId: data.workspaceId,
@@ -70,13 +69,22 @@ export class RunSettlementService {
       parameters: {
         billingStartDate: start ? this.dateFormatter.formatDateOnly(start) : null,
         billingEndDate: end ? this.dateFormatter.formatDateOnly(end) : null,
-        tradingDate:
-          data.tradingDate !== null && data.processType === MeterProcessTypes.DAILY
-            ? data.tradingDate
-            : null,
         processType: data.processType,
         workspaceId: data.workspaceId
       }
     };
+  }
+
+  private getDateRangeForProcessType(rowData: settlementPipeline): [string, string] {
+    const isDaily = rowData.processType === MeterProcessTypes.DAILY;
+
+    if (isDaily) {
+      return [rowData.tradingDate, rowData.tradingDate];
+    }
+
+    return [
+      rowData.billingStartDate,
+      rowData.billingEndDate
+    ];
   }
 }
