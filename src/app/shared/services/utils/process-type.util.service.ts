@@ -14,7 +14,7 @@ export class ProcessTypeUtilService {
         endDatetime: '',
       });
       this.disableNonDailyFields(form);
-    } else if (value === MeterProcessTypes.ADJUSTMENT) {
+    } else if (value === MeterProcessTypes.ADJUSTED) {
       form.patchValue({
         tradingDate: '',
         billingPeriod: '',

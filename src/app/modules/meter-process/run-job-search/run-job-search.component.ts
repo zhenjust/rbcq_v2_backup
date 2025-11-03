@@ -131,7 +131,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
 
   get isAdjustmentType(): boolean {
     const configuration = this.rjs.getLatestConfiguration();
-    return configuration?.processType === MeterProcessTypes.ADJUSTMENT;
+    return configuration?.processType === MeterProcessTypes.ADJUSTED;
   }
 
   applyFilter(): void {

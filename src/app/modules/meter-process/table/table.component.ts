@@ -338,8 +338,8 @@ export class TableComponent implements OnInit {
   }
 
   consolidate(baseTableData: meterProcessPipeline, pipeline: meterProcessPipelineGroup): void {
-    const isAdjustment = pipeline.processType === MeterProcessTypes.ADJUSTMENT;
-    const isRerunOptional = [MeterProcessTypes.PRELIMINARY, MeterProcessTypes.FINAL]
+    const isAdjustment = pipeline.processType === MeterProcessTypes.ADJUSTED;
+    const isRerunOptional = [MeterProcessTypes.PRELIM, MeterProcessTypes.FINAL]
       .includes(pipeline.processType) && pipeline?.published;
 
     const modal = this.modal.create({

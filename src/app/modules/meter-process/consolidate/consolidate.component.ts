@@ -70,7 +70,7 @@ export class ConsolidateComponent implements OnInit {
     const selectedItem = this.rerunTable?.tableData.find(td => td.id === selectedId);
 
     if (selectedItemsArr.length) {
-      if (this.baseData[0]?.parameters.processType === MeterProcessTypes.ADJUSTMENT) {
+      if (this.baseData[0]?.parameters.processType === MeterProcessTypes.ADJUSTED) {
         return row.parameters.adjNo !== selectedItem?.parameters.adjNo;
       } else {
         return row.status !== selectedItem?.status;

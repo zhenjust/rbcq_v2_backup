@@ -1,8 +1,8 @@
 export enum MeterProcessTypes {
     DAILY = 'DAILY',
-    PRELIMINARY = 'PRELIMINARY',
+    PRELIM = 'PRELIM',
     FINAL = 'FINAL',
-    ADJUSTMENT = 'ADJUSTMENT'
+    ADJUSTED = 'ADJUSTED'
 }
 
 export enum RegionGroup {

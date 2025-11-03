@@ -48,7 +48,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
   public initialAdjNo = signal<number>(1); // adjustment number initial value
 
   //Computed Signals
-  public readonly isAdjustmentType = computed(() => this._processType() === MeterProcessTypes.ADJUSTMENT);
+  public readonly isAdjustmentType = computed(() => this._processType() === MeterProcessTypes.ADJUSTED);
   public readonly isDailyType = computed(() => this._processType() === MeterProcessTypes.DAILY);
   public readonly isNotDailyType = computed(() => this._processType() !== MeterProcessTypes.DAILY);
 
@@ -295,9 +295,9 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
             new Date(new Date(currentTradingDate ?? this.yesterday).getTime() + 24 * 60 * 60 * 1000)
           ]
         };
-      case MeterProcessTypes.ADJUSTMENT:
+      case MeterProcessTypes.ADJUSTED:
       case MeterProcessTypes.FINAL:
-      case MeterProcessTypes.PRELIMINARY:
+      case MeterProcessTypes.PRELIM:
         return {
           ...baseReset
         };
@@ -326,7 +326,7 @@ export class MeterProcessConfigComponent implements OnInit, OnDestroy {
       billingControl?.enable();
       billingControl?.setValidators(Validators.required);
 
-      if (processType === MeterProcessTypes.ADJUSTMENT) {
+      if (processType === MeterProcessTypes.ADJUSTED) {
         adjControl?.enable();
         adjControl?.setValidators(Validators.required);
       } else {
