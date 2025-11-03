@@ -70,7 +70,7 @@ export class TableComponent implements OnInit {
     { name: 'Process Type' },
     { name: 'Billing Period / Trading Date' },
     { name: 'Jobs Count' },
-    { name: 'Published' }
+    { name: 'Published in Settlement' }
   ];
 
   childColumnItem: tableColumn[] = [
