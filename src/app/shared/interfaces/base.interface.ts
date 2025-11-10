@@ -30,3 +30,9 @@ export class TableParams {
   size = 20;
   page = 0;
 }
+
+export interface TableDataResult<T> {
+  data: T[];
+  draw: number;
+  recordsTotal: number;
+}

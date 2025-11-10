@@ -1,0 +1,63 @@
+<nz-table #table nzTemplateMode [nzWidthConfig]="widthConfig" nzSize="small" [nzLoading]="isLoading" [nzOuterBordered]="true" [nzScroll]="{ x: 'auto'}">
+  <thead>
+    @if (enableCheckbox) {
+      <th
+        [nzShowCheckbox]="enableCheckbox && !disableSelectAll"
+        [nzDisabled]="!tableData?.length"
+        [nzIndeterminate]="isIndeterminate"
+        [nzChecked]="isAllChecked"
+        (nzCheckedChange)="checkAll($event)"
+        class="p-3 fw-normal"
+        nzAlign="center">
+      </th>
+    }
+
+    @for (column of tableColumns; track column.label) {
+      <th [nzAlign]="column?.align || 'left'" class="p-3">{{ column.label }}</th>
+    }
+  </thead>
+  <tbody>
+    @for (row of tableData; track row.id) {
+      <tr>
+        @if (enableCheckbox) {
+          <td
+            [nzChecked]="selectedItems.has(row[checkboxProperty])"
+            [nzDisabled]="checkboxCondition(row)"
+            (nzCheckedChange)="checkRow($event, row[checkboxProperty])"
+            class="px-3"></td>
+        }
+
+        @for (column of tableColumns; track column.label) {
+
+          @let data = (column.secondPropName ? row[column.propName][column.secondPropName] : row[column.propName]);
+          @let align = column?.align || 'left';
+
+          @switch (column.type) {
+            @case ('template') {
+              <td [nzAlign]="align" class="px-3">
+                <ng-container *ngTemplateOutlet="column?.template; context: { data, allData: row }"></ng-container>
+              </td>
+            }
+
+            @case ('date') {
+              <td [nzAlign]="align" class="px-3">{{ (data | date: 'yyyy-MM-dd HH:mm') || '-'}}</td>
+            }
+
+            @default {
+              <td [nzAlign]="align" class="px-3">{{ data || '-' }}</td>
+            }
+          }
+        }
+      </tr>
+    }
+
+    @if (!tableData?.length) {
+      <tr>
+        <td [attr.colspan]="widthConfig.length" nzAlign="center">
+          <nz-empty nzNotFoundImage="simple"></nz-empty>
+        </td>
+      </tr>
+    }
+
+  </tbody>
+</nz-table>

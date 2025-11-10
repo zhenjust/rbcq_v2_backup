@@ -9,19 +9,26 @@ const routes: Routes = [
     path: '',
     component: BaseComponent,
     canActivate: [AuthorizeGuard],
-    // canActivateChild: [AuthorizeGuard],
     children: [
       {
         path: '',
-        loadChildren: () => import('./modules/calculate-settlement-amounts/calculate-settlement-amounts.module').then(m => m.CalculateSettlementAmountsModule)
+        loadChildren: () =>
+            import('./modules/calculate-settlement-amounts/calculate-settlement-amounts.module').then(m => m.CalculateSettlementAmountsModule)
       },
       {
         path: NEW_ROUTES.METER_PROCESS,
-        loadChildren: () => import('./modules/meter-process/meter-process.module').then(m => m.MeterProcessModule)
+        loadChildren: () =>
+          import('./modules/meter-process/meter-process.module').then(m => m.MeterProcessModule)
       },
       {
         path: '',
-        loadChildren: () => import('./modules/additional-compensation-list/additional-compensation-list.module').then(m => m.AdditionalCompensationListModule)
+        loadChildren: () =>
+          import('./modules/additional-compensation-list/additional-compensation-list.module').then(m => m.AdditionalCompensationListModule)
+      },
+      {
+        path: 'metering',
+        loadChildren: () =>
+          import('./modules/metering/metering.module').then(m => m.MeteringModule)
       }
     ]
   }

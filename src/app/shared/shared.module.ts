@@ -15,8 +15,21 @@ import { NgxPermissionsModule } from 'ngx-permissions';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { SettlementTableFormatterPipe } from './pipes/table-data-formatter.pipe';
-import { SettlementActionsPipe, SettlementPipelineFormatterPipe } from './pipes';
+import { FileSizeFormatterPipe, SettlementActionsPipe, SettlementPipelineFormatterPipe } from './pipes';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { PaginatedTableComponent } from './components/paginated-table/paginated-table.component';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { ReactiveFormsModule } from '@angular/forms';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzSpaceModule } from 'ng-zorro-antd/space';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
 
 const ngZorroConfig: NzConfig = {
   notification: { nzDuration: 300, nzMaxStack: 3, nzTop: '150px' }
@@ -32,32 +45,48 @@ const NgZorroModules = [
   NzFormModule,
   NzDropDownModule,
   NzIconModule,
+  NzCardModule,
   NzTagModule,
+  NzTabsModule,
+  NzSelectModule,
+  NzRadioModule,
+  NzUploadModule,
+  NzSpaceModule,
+  NzDatePickerModule,
+  NzTimePickerModule,
+  NzDividerModule,
+  NzToolTipModule,
+  NzPopoverModule,
 ];
 
 const Pipes = [
   SettlementTableFormatterPipe,
   SettlementPipelineFormatterPipe,
   SettlementActionsPipe,
+  FileSizeFormatterPipe,
 ];
 
 @NgModule({
   declarations: [
     ...Pipes,
     TemplateTableComponent,
-    ConfirmWithDescComponent
+    ConfirmWithDescComponent,
+    PaginatedTableComponent
   ],
   imports: [
     CommonModule,
     NgZorroModules,
     NzModalFooterDirective,
-    NgxPermissionsModule
+    NgxPermissionsModule,
+    ReactiveFormsModule
 ],
   exports: [
     ...Pipes,
     TemplateTableComponent,
     NgZorroModules,
-    ConfirmWithDescComponent
+    ConfirmWithDescComponent,
+    PaginatedTableComponent,
+    ReactiveFormsModule
   ],
   providers: [
     { provide: NZ_CONFIG, useValue: ngZorroConfig }

@@ -62,11 +62,11 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     super();
 
     effect(() => {
-      const currentJobs = this.tableData;
+      const currentJobs = this.tableData || [];
       const currentSelectedActions = this.selectedActions();
 
       if (currentJobs?.length > 0) {
-        const existingWorkspaceIds = new Set(currentJobs.map(job => job.workspaceId));
+        const existingWorkspaceIds = new Set(currentJobs?.map(job => job.workspaceId));
         const outdatedSelections = Array.from(currentSelectedActions.keys())
           .filter(workspaceId => !existingWorkspaceIds.has(workspaceId));
 

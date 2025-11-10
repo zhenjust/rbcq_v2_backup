@@ -1,6 +1,7 @@
 export const MESSAGES = {
   // STATIC MESSAGES
   SUCCESS_JOB_TRIGGER: 'Jobs successfully triggered!',
+  CLEAR_ALL_FILES: 'Are you sure you want to clear all selected files?',
 
   // DYNAMIC MESSAGES
   ITEMS_REQUIRED: (item: string) => `${item} are required.`,

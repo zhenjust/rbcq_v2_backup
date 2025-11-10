@@ -9,4 +9,5 @@ export const apiPath = {
     __REG_PATH__: "/reg",
     __WORKLIST_PATH__: "/worklist",
     __ADMIN_PATH__: "/admin",
+    __METERING_PATH__: "/metering",
 }

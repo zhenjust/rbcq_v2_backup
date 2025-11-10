@@ -1,6 +1,6 @@
 <nz-table
     #nzTable
-    [nzData]="tableData"
+    [nzData]="tableData || []"
     [nzPageSize]="tableParams.size"
     [nzPageIndex]="tableParams.page"
     [nzTotal]="tableParams.totalElements"

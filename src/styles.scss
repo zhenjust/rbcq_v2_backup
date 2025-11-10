@@ -90,3 +90,7 @@ th {
 .calc-stl-amt-tbl .ant-table {
   margin: auto !important;
 }
+
+.ant-modal-confirm-body > .anticon + .ant-modal-confirm-title + .ant-modal-confirm-content {
+  margin-left: 0px;
+}

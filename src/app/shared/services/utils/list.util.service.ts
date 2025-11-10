@@ -16,7 +16,7 @@ export abstract class SearchListBase {
   abstract resultsProp: string;
 
   listComplete$ = new Subject<any>();
-  tableData: any[];
+  tableData: any[] | null;
 
   tableParams = new TableParams();
 
@@ -50,6 +50,7 @@ export abstract class SearchListBase {
     setTimeout(() => {
       this.busy$ = this.getListUrl()
         .subscribe(itemDetails => {
+          console.log({itemDetails})
           this.tableData = itemDetails[this.resultsProp];
           this.tableParams.totalElements = itemDetails?.totalElements;
 
@@ -57,5 +58,7 @@ export abstract class SearchListBase {
         });
     }, 1);
   }
+
+  get isLoading(): boolean { return this.busy$ && !this.busy$?.closed; }
 
 }

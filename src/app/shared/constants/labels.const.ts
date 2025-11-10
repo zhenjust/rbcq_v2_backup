@@ -16,6 +16,11 @@ export const LABELS = {
   ERROR: 'Error',
   SELECT_ACTION: 'Select Action',
   PROCEED: 'Proceed',
+  CHOOSE_HERE: 'Choose here',
+  UPLOAD: 'Upload',
+  CHOOSE_FILE: 'Choose File',
+  CLEAR: 'Clear',
+  UPLOAD_ERROR: 'Upload Error',
 
   // Field Labels
   CONSOLIDATE: 'Consolidate',
@@ -50,5 +55,35 @@ export const LABELS = {
   RUN_END: 'Run End',
   DURATION: 'Duration',
   RUN_BY: 'Run By',
+
+  MQ_UPLOADER: 'MQ Uploader',
+  ONGOING: 'Ongoing',
+  HISTORY: 'History',
+
+  TRANSACTION_ID: 'Transaction ID',
+  MSP: 'MSP',
+  FILE_NAME: 'File Name',
+  CATEGORY: 'Category',
+  BILLING_DATE: 'Billing Date',
+  SIZE: 'Size',
+  CONVERSION_TYPE: 'Conversion Type',
+  UPLOAD_DATA_AS_IS: 'Upload Data as is',
+  CONVERT_TO_5_MIN: 'Convert to 5 mins',
+  TRADING_DAY: 'Trading Day',
+  INTERVAL: 'Interval',
+  TRADING_MONTH: 'Trading Month',
+  SELECTED_FILES: 'Selected Files',
+  START_IMPORT: 'Start Import',
+
+  UPLOADING_DATE_AND_TIME: 'Uploading Date and Time',
+  TOTAL_NUMBER_OF_FILES_UPLOADED: 'Total Number of Files Uploaded',
+  NO_OF_FILES_SUCCESSFULLY_UPLOADED: 'No. of files successfully uploaded',
+  NO_OF_FILES_REJECTED: 'No. of files rejected',
+
+  DAILY: 'Daily',
+  MONTHLY: 'Monthly',
+  CORRECTED_METER_DATA_DAILY: 'Corrected Meter Data (Daily)',
+  CORRECTED_METER_DATA_MONTHLY: 'Corrected Meter Data (Monthly)',
+
 
 }
