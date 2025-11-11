@@ -15,6 +15,7 @@ import { HttpEventType } from '@angular/common/http';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationDataOptions, NzNotificationService } from 'ng-zorro-antd/notification';
 import { MESSAGES } from '@shared/constants/messages.const';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 interface tableColumn {
   name: string;
 }
@@ -106,6 +107,7 @@ export class TableComponent implements OnInit {
   private as = inject(AuthorizationService);
   private readonly ms = inject(NzMessageService);
   private readonly ns = inject(NzNotificationService);
+  private readonly untilDestroy$ = takeUntilDestroyed();
 
   constructor() {
     effect(() => {
@@ -359,6 +361,21 @@ export class TableComponent implements OnInit {
         this.sfs.refreshJobs({});
       }
     });
+  }
 
+  cancelRun(baseTableData: meterProcessPipeline): void {
+    this.modal.confirm({
+      nzTitle: LABELS.CANCEL_RUN,
+      nzCentered: true,
+      nzContent: MESSAGES.CANCEL_RUN,
+      nzOnOk: () => {
+        this.mpa.cancelRun(baseTableData.id)
+          .pipe(this.untilDestroy$)
+          .subscribe(() => {
+            this.sfs.refreshJobs({});
+            this.toast.success(MESSAGES.SUCCESS_CANCEL_ITEM('run'));
+          });
+      }
+    });
   }
 }

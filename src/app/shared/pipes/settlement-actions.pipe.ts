@@ -33,6 +33,10 @@ export class SettlementActionsPipe implements PipeTransform {
           action.show = generateStatuses.includes(status as SettlementStatus);
         }
 
+        if (value === 'cancelRun') {
+          action.show = status.startsWith('In-Progress');
+        }
+
         if (value === 'calculateEnergyTradingAmount') {
           action.show = status === SettlementStatus.COMPLETED_GENERATE_INPUT_WORKSPACE;
         }

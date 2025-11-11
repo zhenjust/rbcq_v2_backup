@@ -7,7 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ETA_JOBS, MeterProcessTypes } from '@shared/enums';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { isAfter, isBefore, startOfDay } from 'date-fns';
-import { SettlementService } from '@shared/services/api';
+import { MeterprocessService, SettlementService } from '@shared/services/api';
 import { LABELS } from '@shared/constants/labels.const';
 import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
 import { MESSAGES } from '@shared/constants/messages.const';
@@ -45,6 +45,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   public modal = inject(NzModalService);
   private ss = inject(SettlementService);
   private dp = inject(DatePipe);
+  private mps = inject(MeterprocessService);
 
   public minDate = signal<Date | null>(null);
   public maxDate = signal<Date | null>(null);
@@ -129,9 +130,21 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     this.selectedActionsSignal.set(new Map());
   }
 
+  cancelRun(rowData: settlementPipeline): void {
+    const filteredInProg = rowData.pipelines.filter(pipeline => pipeline.pipelineRuns[0].status.startsWith('In-Progress'));
+
+    if (filteredInProg?.length) {
+      this.mps.cancelRun(filteredInProg[0].id)
+        .subscribe(() => {
+          this.search();
+          this.toast.success(MESSAGES.SUCCESS_CANCEL_ITEM('run'));
+        });
+    }
+  }
+
   onActionSelect(selectedValue: string | any, rowData: settlementPipeline): void {
     const actionValue = typeof selectedValue === 'string' ? selectedValue : selectedValue?.toString();
-    const label = this.settlementJobActions.find(act => act.value === actionValue)?.label.toString();
+    const label = this.settlementJobActions.find(act => act.value === actionValue)?.label.toString() as string;
     const processType = rowData.processType;
 
     if (!actionValue || actionValue === '') {
@@ -151,8 +164,11 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     };
 
     switch (actionValue) {
+      case 'cancelRun':
+        this.handleAction(label, rowData, MESSAGES.CANCEL_RUN, null, () => this.cancelRun(rowData))
+        break;
       case 'generate':
-        this.handleGenerate(rowData, label as string);
+        this.handleGenerate(rowData, label);
         break;
       case 'calculateEnergyTradingAmount':
         this.handleDateRangeAction(
@@ -174,7 +190,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
       case 'finalize': {
         const message = MESSAGES.CONFIRM_SETTLEMENT_MSG(label?.toLowerCase() as string);
-        this.handleAction(label as string, rowData, message, null, () => this.runSettlements.finalizeTradingAmounts(rowData))
+        this.handleAction(label, rowData, message, null, () => this.runSettlements.finalizeTradingAmounts(rowData))
         break;
       }
 
@@ -277,7 +293,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
         if (api$) {
           api$();
-          this.search();
         }
 
       }

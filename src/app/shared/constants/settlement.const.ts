@@ -37,7 +37,9 @@ export const SettlementJobActions: JobSelect[] = [
   { label: 'Calculate Energy Transaction Allocation', value: 'calculate_transactions', show: false},
   { label: 'Generate Transaction Report', value: 'generate_transac_reports', show: false},
   { label: 'Generate Energy Files', value: 'generate_energy_files', show: false},
-  { label: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`, value: 'publish', show: false }
+  { label: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`, value: 'publish', show: false },
+  { label: `${LABELS.CANCEL_RUN}`, value: 'cancelRun', show: false }
+
 ];
 
 export const BaseTableItem: TableColumn[] = [

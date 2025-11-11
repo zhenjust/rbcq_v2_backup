@@ -21,6 +21,7 @@ export const LABELS = {
   CHOOSE_FILE: 'Choose File',
   CLEAR: 'Clear',
   UPLOAD_ERROR: 'Upload Error',
+  CANCEL_RUN: 'Cancel Run',
 
   // Field Labels
   CONSOLIDATE: 'Consolidate',

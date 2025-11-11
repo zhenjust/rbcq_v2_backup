@@ -64,7 +64,18 @@ export interface settlementPipeline {
     lineRentalStatus?: string
     workspaceId: string
     published?: boolean;
-    pipelines: [] //create interface once sample pipeline view calculations has values,
+    pipelines: pipeline[];
+}
+
+export interface pipeline {
+  id: number;
+  name: string;
+  status: string;
+  lastModifiedDatetime: string;
+  lastModifiedBy: string;
+  partial: boolean;
+  consolidate: boolean;
+  pipelineRuns: PipelineRun[];
 }
 
 export interface settlementTableDate {

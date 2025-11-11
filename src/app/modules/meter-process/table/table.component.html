@@ -75,6 +75,12 @@
                                     </td>
                                     <td>
 
+                                        @if (pipeline?.status?.startsWith('In-Progress')) {
+                                            <a nz-button nzType="link" nzBlock class="break-word-button" (click)="cancelRun(pipeline)">
+                                                {{ labels.CANCEL_RUN }}
+                                            </a>
+                                        }
+
                                         @if (pipeline?.consolidate) {
                                             <a nz-button nzType="link" nzBlock class="break-word-button" (click)="consolidate(pipeline, data)">
                                                 {{ labels.CONSOLIDATE }}

@@ -74,6 +74,10 @@ export class MeterprocessService {
     return this.http.get<meterProcessPipeline[]>(`${this.API_URL}/run-list/${workspaceId}`);
   }
 
+  public cancelRun(workspaceId: number): Observable<null> {
+    return this.http.post<null>(`${this.API_URL}/cancel/${workspaceId}`, {});
+  }
+
   downloadReport(params: ReportDownloadParams) {
     const httpParams = this.paramUtil.buildParams(params);
     return this.http.get(`${window.location.origin}/${this.baseUrl}/reports/download/zip`, {
