@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Output } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { RxwebValidators } from '@rxweb/reactive-form-validators';
 import { MQ_UPLOAD_CATEGORY, MQ_UPLOADER_STATUS } from '@shared/constants';
@@ -14,7 +14,7 @@ import { distinctUntilChanged } from 'rxjs';
   standalone: false,
   templateUrl: './mq-history-filters.component.html',
 })
-export class MqHistoryFiltersComponent {
+export class MqHistoryFiltersComponent implements OnInit {
 
   @Output() emitFiltersEvent = new EventEmitter<MqUploadFilters>();
 

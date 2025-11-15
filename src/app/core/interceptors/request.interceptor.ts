@@ -7,7 +7,7 @@ import {
   HttpErrorResponse
 } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, skip } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { ToastrService } from 'ngx-toastr';
 import { LABELS } from '@shared/constants/labels.const';
