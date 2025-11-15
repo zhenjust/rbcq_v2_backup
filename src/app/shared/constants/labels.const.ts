@@ -22,6 +22,10 @@ export const LABELS = {
   CLEAR: 'Clear',
   UPLOAD_ERROR: 'Upload Error',
   CANCEL_RUN: 'Cancel Run',
+  SET_FILTERS: 'Set Filters',
+  CLEAR_FILTERS: 'Clear Filters',
+  APPLY_FILTERS: 'Apply Filters',
+
 
   // Field Labels
   CONSOLIDATE: 'Consolidate',
@@ -85,6 +89,6 @@ export const LABELS = {
   MONTHLY: 'Monthly',
   CORRECTED_METER_DATA_DAILY: 'Corrected Meter Data (Daily)',
   CORRECTED_METER_DATA_MONTHLY: 'Corrected Meter Data (Monthly)',
-
+  QUEUED_FOR_PROCESSING: 'Queued for Processing',
 
 }

@@ -30,6 +30,10 @@ import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
+import { NzFloatButtonModule } from 'ng-zorro-antd/float-button';
+import { NzBadgeModule } from 'ng-zorro-antd/badge';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 const ngZorroConfig: NzConfig = {
   notification: { nzDuration: 300, nzMaxStack: 3, nzTop: '150px' }
@@ -57,6 +61,10 @@ const NgZorroModules = [
   NzDividerModule,
   NzToolTipModule,
   NzPopoverModule,
+  NzFloatButtonModule,
+  NzIconModule,
+  NzBadgeModule,
+  NzSpinModule,
 ];
 
 const Pipes = [
@@ -78,7 +86,8 @@ const Pipes = [
     NgZorroModules,
     NzModalFooterDirective,
     NgxPermissionsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RxReactiveFormsModule,
 ],
   exports: [
     ...Pipes,
@@ -86,7 +95,7 @@ const Pipes = [
     NgZorroModules,
     ConfirmWithDescComponent,
     PaginatedTableComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   providers: [
     { provide: NZ_CONFIG, useValue: ngZorroConfig }

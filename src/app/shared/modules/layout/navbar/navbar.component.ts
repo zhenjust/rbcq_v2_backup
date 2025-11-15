@@ -1,12 +1,13 @@
 import { Component, effect, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
 import { externalRoutes, NEW_ROUTES } from '@shared/constants';
 import { CurrentUser, navItems } from '@shared/interfaces';
-import { faBell, faHome, faChevronDown, faChevronRight, faAddressCard, faBuilding, faCopy, faUserLarge, faCircleUser, faCalendar, faFileArchive, faAddressBook, faBuildingUn, faTachometer, faTachometerAlt, faBinoculars, faContactCard, faHandHoldingHand, faTachometerAverage, faListCheck, faRoadCircleCheck } from '@fortawesome/free-solid-svg-icons';
+import { faBell, faHome, faChevronDown, faChevronRight, faAddressCard, faBuilding, faCopy, faUserLarge, faCircleUser, faCalendar, faFileArchive, faAddressBook, faBuildingUn, faTachometer, faTachometerAlt, faBinoculars, faContactCard, faHandHoldingHand, faTachometerAverage, faListCheck, faRoadCircleCheck, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { Router } from '@angular/router';
 import { PHASE_ONE_AUTHORITIES, PHASE_TWO_AUTHORITIES } from '@shared/constants';
 import { isAuthorizedAny } from '@shared/validators';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { ToastrService } from 'ngx-toastr';
+import { LABELS } from '@shared/constants/labels.const';
 
 @Component({
   selector: 'app-navbar',
@@ -58,12 +59,14 @@ export class NavbarComponent implements OnInit {
     this.navItems = [
       {
         title: 'Notifications',
+        show: true,
         externalLink: externalRoutes.NOTIFICATION,
         icon: faBell,
         permission: []
       },
       {
         title: 'Home',
+        show: true,
         externalLink: externalRoutes.HOME,
         icon: faHome,
         permission: []
@@ -71,6 +74,7 @@ export class NavbarComponent implements OnInit {
       //Registration External Routes
       {
         title: 'Registration',
+        show: true,
         icon: faAddressCard,
         permission: [
           PHASE_ONE_AUTHORITIES.VIEW_LIST_OF_REGISTRATION,
@@ -96,6 +100,7 @@ export class NavbarComponent implements OnInit {
         children: [
           {
             title: 'Registration Transaction',
+            show: true,
             permission: [
               PHASE_ONE_AUTHORITIES.VIEW_LIST_OF_REGISTRATION,
               PHASE_ONE_AUTHORITIES.UPDATE_REGISTRATION,
@@ -111,6 +116,7 @@ export class NavbarComponent implements OnInit {
               //PEMC ROUTES
               {
                 title: 'Manage Registration Transaction',
+                show: true,
                 externalLink: externalRoutes.REGISTRATION_PEMC.REGISRATION_TRANSACTIONS.MANAGE_REGISTRATION_TRANSACTION,
                 permission: [
                   PHASE_ONE_AUTHORITIES.VIEW_LIST_OF_REGISTRATION,
@@ -120,6 +126,7 @@ export class NavbarComponent implements OnInit {
               },
               {
                 title: 'Manage Sign-up Applications',
+                show: true,
                 externalLink: externalRoutes.REGISTRATION_PEMC.REGISRATION_TRANSACTIONS.MANAGE_SIGNUP_APPLICATION,
                 permission: [
                   PHASE_ONE_AUTHORITIES.ASSESS_APPLICANT,
@@ -128,6 +135,7 @@ export class NavbarComponent implements OnInit {
               },
               {
                 title: 'Manage Business Organization',
+                show: true,
                 externalLink: externalRoutes.REGISTRATION_PEMC.REGISRATION_TRANSACTIONS.MANAGE_BUSINESS_ORGANIZATION,
                 permission: [
                   PHASE_ONE_AUTHORITIES.VIEW_ORGANIZATION,
@@ -137,6 +145,7 @@ export class NavbarComponent implements OnInit {
               },
               {
                 title: 'Create New Trading Participant',
+                show: true,
                 externalLink: externalRoutes.REGISTRATION_PEMC.REGISRATION_TRANSACTIONS.CREATE_NEW_TRADING_PARTICIPANTS,
                 permission: [PHASE_ONE_AUTHORITIES.VIEW_CREATED_PARTICIPANTS]
               }
@@ -144,15 +153,18 @@ export class NavbarComponent implements OnInit {
           },
           {
             title: 'Post Registration Transactions',
+            show: true,
             permission: [PHASE_ONE_AUTHORITIES.POSTREG_VIEW_LIST],
             children: [
               {
                 title: 'Manage Post Registration Transactions',
+                show: true,
                 externalLink: externalRoutes.REGISTRATION_PEMC.POST_REGISTRATION_TRANSACTIONS.MANAGE_POST_REGISTRATION_TRANSACTIONS,
                 permission: [PHASE_ONE_AUTHORITIES.POSTREG_VIEW_LIST]
               },
               {
                 title: 'Advisory Publication',
+                show: true,
                 externalLink: externalRoutes.REGISTRATION_PEMC.POST_REGISTRATION_TRANSACTIONS.ADVISORY_PUBLICATION,
                 permission: [PHASE_ONE_AUTHORITIES.POSTREG_VIEW_LIST]
               }
@@ -160,20 +172,24 @@ export class NavbarComponent implements OnInit {
           },
           {
             title: 'Document Management',
+            show: true,
             permission: [PHASE_ONE_AUTHORITIES.MANAGE_DOCUMENTS, PHASE_ONE_AUTHORITIES.VIEW_EXPIRING_DOCS, PHASE_ONE_AUTHORITIES.VIEW_EXPIRED_DOCS],
             children: [
               {
                 title: 'Manage Document Managent',
+                show: true,
                 externalLink: externalRoutes.REGISTRATION_PEMC.DOCUMENT_MANAGEMENT.MANAGE_REGISTRATION_DOCUMENTS,
                 permission: [PHASE_ONE_AUTHORITIES.MANAGE_DOCUMENTS]
               },
               {
                 title: 'View Expiring Registration Documents',
+                show: true,
                 externalLink: externalRoutes.REGISTRATION_PEMC.DOCUMENT_MANAGEMENT.VIEW_EXPIRING_REGISTRATION_DOCUMENTS,
                 permission: [PHASE_ONE_AUTHORITIES.VIEW_EXPIRING_DOCS]
               },
               {
                 title: 'View Expired Registration Documents',
+                show: true,
                 externalLink: externalRoutes.REGISTRATION_PEMC.DOCUMENT_MANAGEMENT.VIEW_EXPIRED_REGISTRATION_DOCUMENTS,
                 permission: [PHASE_ONE_AUTHORITIES.VIEW_EXPIRED_DOCS]
               }
@@ -181,15 +197,18 @@ export class NavbarComponent implements OnInit {
           },
           {
             title: 'Reports',
+            show: true,
             permission: [PHASE_ONE_AUTHORITIES.EXPORT_WESM_REG_UPDATE_REPORT],
             children: [
               {
                 title: 'WESM Registration Updates',
+                show: true,
                 externalLink: externalRoutes.REGISTRATION_PEMC.REPORTS.WESM_REGISTRATION_UPDATES,
                 permission: [PHASE_ONE_AUTHORITIES.EXPORT_WESM_REG_UPDATE_REPORT]
               },
               {
                 title: 'Retail Compliance Reports',
+                show: true,
                 externalLink: externalRoutes.REGISTRATION_PEMC.REPORTS.RETAIL_COMPLIANCE_REPORTS,
                 permission: [PHASE_ONE_AUTHORITIES.EXPORT_WESM_REG_UPDATE_REPORT]
               }
@@ -197,36 +216,43 @@ export class NavbarComponent implements OnInit {
           },
           {
             title: 'View Suspended Participants',
+            show: true,
             externalLink: externalRoutes.REGISTRATION_PEMC.VIEW_SUSPENDED_PARTICIPANTS,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_SUSPENDED_PARTICIPANTS]
           },
           {
             title: 'Upload IPRs',
+            show: true,
             externalLink: externalRoutes.REGISTRATION_PEMC.UPLOAD_IPRS,
             permission: [PHASE_ONE_AUTHORITIES.IMPORT_IPR_DATA]
           },
           // TP Routes
           {
             title: 'Manage Registration',
+            show: true,
             externalLink: externalRoutes.REGISTRATION_TP.MANAGE_REGISTRATION,
             permission: []
           },
           {
             title: 'View GEOP End-Users',
+            show: true,
             externalLink: externalRoutes.REGISTRATION_TP.VIEW_GEOP_END_USERS,
             permission: []
           },
           {
             title: 'Manage Facilities',
+            show: true,
             permission: [PHASE_ONE_AUTHORITIES.REQUEST_TRANSFER_FACILITY],
             children: [
               {
                 title: 'Available Facilities',
+                show: true,
                 externalLink: externalRoutes.REGISTRATION_TP.MANAGE_FACILITIES.AVAILABLE_FACILITIES,
                 permission: [PHASE_ONE_AUTHORITIES.REQUEST_TRANSFER_FACILITY]
               },
               {
                 title: 'Facilities For Transfer',
+                show: true,
                 externalLink: externalRoutes.REGISTRATION_TP.MANAGE_FACILITIES.FACILITIES_FOR_TRANSFER,
                 permission: [PHASE_ONE_AUTHORITIES.REQUEST_TRANSFER_FACILITY]
               }
@@ -234,17 +260,20 @@ export class NavbarComponent implements OnInit {
           },
           {
             title: 'View Expiring / Expired Documents',
+            show: true,
             externalLink: externalRoutes.REGISTRATION_TP.VIEW_EXPIRING_EXPIRED_DOCUMENTS,
             permission:[PHASE_ONE_AUTHORITIES.VIEW_EXPIRING_EXPIRED_DOCS]
           },
           // MSP Routes
           {
             title: 'Manage Registration',
+            show: true,
             externalLink: externalRoutes.REGISTRATION_MSP.MANAGE_REGISTRATION,
             permission: []
           },
           {
             title: 'View Expiring / Expired Documents',
+            show: true,
             externalLink: externalRoutes.REGISTRATION_MSP.VIEW_EXPIRING_EXPIRED_DOCUMENTS,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_EXPIRING_EXPIRED_DOCS]
           }
@@ -253,11 +282,13 @@ export class NavbarComponent implements OnInit {
       //Manage Facility Application External Routes
       {
         title: 'Manage Facility Applications',
+        show: true,
         icon: faBuilding,
         permission: [PHASE_ONE_AUTHORITIES.VIEW_MIRF],
         children: [
           {
             title: 'View Facility Applications',
+            show: true,
             externalLink: externalRoutes.MANAGE_FACILITY_APPLICATIONS,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_MIRF]
           }
@@ -266,21 +297,25 @@ export class NavbarComponent implements OnInit {
       //MIRF External Routes
       {
         title: 'Manage MIRF',
+        show: true,
         icon: faCopy,
         permission: [PHASE_ONE_AUTHORITIES.VIEW_MIRF, PHASE_ONE_AUTHORITIES.MIRF_UPLOAD_VIEW, PHASE_ONE_AUTHORITIES.MIRF_SUMMARY_VIEW],
         children: [
           {
             title: 'Upload MIRF',
+            show: true,
             externalLink: externalRoutes.MANAGE_MIRF.UPLOAD_MIRF,
             permission: [PHASE_ONE_AUTHORITIES.MIRF_UPLOAD_VIEW]
           },
           {
             title: 'View MIRF Summary',
+            show: true,
             externalLink: externalRoutes.MANAGE_MIRF.VIEW_MIRF_SUMMARY,
             permission: [PHASE_ONE_AUTHORITIES.MIRF_SUMMARY_VIEW]
           },
           {
             title: 'MIRF Updates',
+            show: true,
             externalLink: externalRoutes.MANAGE_MIRF.MIRF_UPDATES,
             permission: [PHASE_ONE_AUTHORITIES.MIRF_UPLOAD_VIEW]
           }
@@ -289,6 +324,7 @@ export class NavbarComponent implements OnInit {
       //Admin External Routes
       {
         title: 'Admin',
+        show: true,
         icon: faUserLarge,
         permission: [
           PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS,
@@ -301,20 +337,24 @@ export class NavbarComponent implements OnInit {
         children: [
           {
             title: 'MO User Management',
+            show: true,
             permission: [PHASE_ONE_AUTHORITIES.MANAGE_MARKET_OPERATORS, PHASE_ONE_AUTHORITIES.VIEW_ROLE, PHASE_ONE_AUTHORITIES.VIEW_PRIVILEGES],
             children: [
               {
                 title: 'Manage Market Operator Users',
+                show: true,
                 externalLink: externalRoutes.ADMIN.MO_USER_MANAGEMENT.MANAGE_MARKET_OPERATOR_USERS,
                 permission: [PHASE_ONE_AUTHORITIES.MANAGE_MARKET_OPERATORS]
               },
               {
                 title: 'Manage User Roles',
+                show: true,
                 externalLink: externalRoutes.ADMIN.MO_USER_MANAGEMENT.MANAGE_USER_ROLES,
                 permission: [PHASE_ONE_AUTHORITIES.VIEW_ROLE]
               },
               {
                 title: 'View Privileges',
+                show: true,
                 externalLink: externalRoutes.ADMIN.MO_USER_MANAGEMENT.VIEW_PRIVILEGES,
                 permission:[PHASE_ONE_AUTHORITIES.VIEW_PRIVILEGES]
               }
@@ -322,26 +362,31 @@ export class NavbarComponent implements OnInit {
           },
           {
             title: 'View Audit Logs',
+            show: true,
             externalLink: externalRoutes.ADMIN.VIEW_AUDIT_LOGS,
             permission: [PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS]
           },
           {
             title: 'View XDF Audit Logs',
+            show: true,
             externalLink: externalRoutes.ADMIN.VIEW_XDF_AUDIT_LOGS,
             permission: [PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS]
           },
           {
             title: 'System Configuration',
+            show: true,
             externalLink: externalRoutes.ADMIN.SYSTEM_CONFIGURATION,
             permission: [PHASE_ONE_AUTHORITIES.MANAGE_SYS_CONFIG,]
           },
           {
             title: 'Manage Scheduled Jobs',
+            show: true,
             externalLink: externalRoutes.ADMIN.MANAGE_SCHEDULED_JOBS,
             permission: [PHASE_ONE_AUTHORITIES.MANAGE_JOB_SCHEDULER]
           },
           {
             title: 'Data Interface Management',
+            show: true,
             permission: [
               PHASE_TWO_AUTHORITIES.SET_TOD_GEN_CONFIG,
               PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY
@@ -349,11 +394,13 @@ export class NavbarComponent implements OnInit {
             children: [
               {
                 title: 'Manage Trading Operations Data Interface',
+                show: true,
                 externalLink: externalRoutes.ADMIN.DATA_INTERFACE_MANAGEMENT.MANAGE_TRADING_OPERATIONS_DATA_INTERFACES,
                 permission: [PHASE_TWO_AUTHORITIES.SET_TOD_GEN_CONFIG]
               },
               {
                 title: 'Import Trading Operations Data',
+                show: true,
                 externalLink: externalRoutes.ADMIN.DATA_INTERFACE_MANAGEMENT.IMPORT_TRADING_OPERATIONS_DATA,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY]
               }
@@ -361,16 +408,19 @@ export class NavbarComponent implements OnInit {
           },
           {
             title: 'Manage Market Products',
+            show: true,
             externalLink: externalRoutes.ADMIN.MANAGE_MARKET_PRODUCTS,
             permission: [PHASE_ONE_AUTHORITIES.MANAGE_WESM_MARKET_PRODUCTS]
           },
           {
             title: 'Manage Sub Market Products',
+            show: true,
             externalLink: externalRoutes.ADMIN.MANAGE_SUB_MARKET_PRODUCTS,
             permission: [PHASE_ONE_AUTHORITIES.MANAGE_WESM_MARKET_PRODUCTS]
           },
           {
             title: 'Manage Field Settings',
+            show: true,
             externalLink: externalRoutes.ADMIN.MANAGE_FIELD_SETTINGS,
             permission: [PHASE_ONE_AUTHORITIES.MANAGE_FIELD_SETTINGS]
           }
@@ -379,6 +429,7 @@ export class NavbarComponent implements OnInit {
       //User Account Route
       {
         title: 'Manage User Accounts',
+        show: true,
         icon: faCircleUser,
         permission: [PHASE_ONE_AUTHORITIES.POSTREG_VIEW_LIST_USERACCOUNT, PHASE_ONE_AUTHORITIES.POSTREG_VIEW_USERACCOUNT_DETAILS],
         externalLink: externalRoutes.USER_ACCOUNTS_FOR_TP
@@ -386,12 +437,14 @@ export class NavbarComponent implements OnInit {
       //Calendar route
       {
         title: 'Calendar',
+        show: true,
         icon: faCalendar,
         permission: [PHASE_ONE_AUTHORITIES.VIEW_CALENDAR],
         externalLink: externalRoutes.CALENDAR
       },
       {
         title: 'View Metering and Settlement Data',
+        show: true,
         icon: faFileArchive,
         permission: [PHASE_ONE_AUTHORITIES.VIEW_DOWNLOAD_METER_STL_DATA],
         externalLink: externalRoutes.FILE_SUMMARY_FOR_TP
@@ -399,6 +452,7 @@ export class NavbarComponent implements OnInit {
       //MTN link route
       {
         title: 'View MTNs',
+        show: true,
         icon: faCopy,
         permission: [PHASE_ONE_AUTHORITIES.VIEW_MARKET_TRADING_NODE, PHASE_ONE_AUTHORITIES.UPDATE_MARKET_TRADING_NODE],
         externalLink: externalRoutes.MTN_LINK_FOR_MSP
@@ -406,6 +460,7 @@ export class NavbarComponent implements OnInit {
       //Prudential requirements for tp routes
       {
         title: 'Prudential Requirements',
+        show: true,
         icon: faAddressBook,
         permission: [
           PHASE_ONE_AUTHORITIES.MARGIN_CALL_SUMMARY_CONFIRMATION_VIEW,
@@ -430,22 +485,26 @@ export class NavbarComponent implements OnInit {
           //TP ROUTES
           {
             title: 'View Margin Call Reports',
+            show: true,
             externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_TP.VIEW_MARGIN_CALL_REPORTS,
             permission: [PHASE_ONE_AUTHORITIES.MARGIN_CALL_SUMMARY_CONFIRMATION_VIEW]
           },
           {
             title: 'Financial Information',
+            show: true,
             externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_TP.FINANCIAL_INFORMATION,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_FINANCIAL_INFO_PAGE]
           },
           {
             title: 'View Drawdown Reports',
+            show: true,
             externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_TP.VIEW_DRAWDOWN_REPORTS,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_HISTORICAL_DRAWDOWN_SUMMARY]
           },
           //PEMC ROUTES
           {
             title: 'Security Deposit',
+            show: true,
             externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_PEMC_USER.SECURITY_DEPOSIT,
             permission: [
               PHASE_ONE_AUTHORITIES.VIEW_PRUDENTIAL_REQ_SECURITY_DEPOSIT_LIST,
@@ -455,46 +514,55 @@ export class NavbarComponent implements OnInit {
           },
           {
             title: 'Manage PR Exemptions',
+            show: true,
             externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_PEMC_USER.MANAGE_PR_EXEMPTIONS,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_PRUDENTIAL_REQ_EXEMPTION_LIST]
           },
           {
             title: 'Manage Holiday',
+            show: true,
             externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_PEMC_USER.MANAGE_HOLIDAY,
             permission: [PHASE_ONE_AUTHORITIES.ADM_VIEW_HOLIDAY_LIST]
           },
           {
             title: 'Manage Contact List (For Financial Transactions)',
+            show: true,
             externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_PEMC_USER.MANAGE_CONTACT_LIST_FOR_FINANCIAL_TRANSACTIONS,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_PR_SEC_DEP_EMAIL_LIST]
           },
           {
             title: 'Manage Outstanding Balance',
+            show: true,
             externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_PEMC_USER.MANAGE_OUTSTANDING_BALANCE,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_PR_OUT_BAL_LIST]
           },
           {
             title: 'Maximum Exposure',
+            show: true,
             externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_PEMC_USER.MAXIMUM_EXPOSURE,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_MAXIMUM_EXPOSURE_LIST]
           },
           {
             title: 'Manage Margin Calls',
+            show: true,
             externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_PEMC_USER.MANAGE_MARGIN_CALLS,
             permission: [PHASE_ONE_AUTHORITIES.MARGIN_CALL_SUMMARY_VIEW]
           },
           {
             title: 'Monitoring Reports',
+            show: true,
             externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_PEMC_USER.MONITORING_REPORTS,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_PR_MONITOR_REPORT]
           },
           {
             title: 'Extract Historical WESM Bill Information',
+            show: true,
             externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_PEMC_USER.EXTRACT_HISTORICAL_WESM_BILL_INFORMATION,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_HISTORICAL_WESM_BILL]
           },
           {
             title: 'Manage Drawdown Summary',
+            show: true,
             externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_PEMC_USER.MANAGE_DRAWDOWN_SUMMARY,
             permission: [
               PHASE_ONE_AUTHORITIES.VIEW_GENERATE_DRAWDOWN_SUMMARY,
@@ -508,6 +576,7 @@ export class NavbarComponent implements OnInit {
       //Facility Managent Routes
       {
         title: 'Facility Management',
+        show: true,
         icon: faBuildingUn,
         permission: [
           PHASE_ONE_AUTHORITIES.VIEW_MARKET_TRADING_NODE,
@@ -520,30 +589,36 @@ export class NavbarComponent implements OnInit {
         children: [
           {
             title: 'Manage Market Trading Nodes',
+            show: true,
             externalLink: externalRoutes.FACILITY_MANAGEMENT_PEMC_USER.MANAGE_MARKET_TRADING_NODES,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_MARKET_TRADING_NODE, PHASE_ONE_AUTHORITIES.UPDATE_MARKET_TRADING_NODE]
           },
           {
             title: 'Manage Facilities',
+            show: true,
             externalLink: externalRoutes.FACILITY_MANAGEMENT_PEMC_USER.MANAGE_FACILITIES,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_FACILITY_LIST]
           },
           {
             title: 'Facilities For Activatiton',
+            show: true,
             externalLink: externalRoutes.FACILITY_MANAGEMENT_PEMC_USER.FACILITIES_FOR_ACTIVATION,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_FACILITIES_FOR_ACTIVATION]
           },
           {
             title: 'Facilities For Transfer',
+            show: true,
             externalLink: externalRoutes.FACILITY_MANAGEMENT_PEMC_USER.FACILITIES_FOR_TRANSFER,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_FACILITIES_FOR_TRANSFER]
           },
           {
             title: 'MIRF',
+            show: true,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_MIRF],
             children: [
               {
                 title: 'View Facility Application',
+                show: true,
                 externalLink: externalRoutes.FACILITY_MANAGEMENT_PEMC_USER.MIRF.VIEW_FACILITY_APPLICATIONS,
                 permission: [PHASE_ONE_AUTHORITIES.VIEW_MIRF]
               }
@@ -554,6 +629,7 @@ export class NavbarComponent implements OnInit {
       //MQ Menu Route
       {
         title: 'View Submitted Meter Data',
+        show: true,
         icon: faTachometer,
         externalLink: externalRoutes.MQ_MENU_FOR_MSP.VIEW_SUBMITTED_METER_DATA,
         permission: [PHASE_ONE_AUTHORITIES.MQ_VIEW_METERING_QUANTITY]
@@ -561,6 +637,7 @@ export class NavbarComponent implements OnInit {
       //MTE Menu Route
       {
         title: 'Manage Meter Trouble Reports',
+        show: true,
         icon: faTachometerAlt,
         externalLink: externalRoutes.MTR_MENU_FOR_MSP.MANAGE_METER_TROUBLE_REPORTS,
         permission: [PHASE_TWO_AUTHORITIES.VIEW_MTR]
@@ -569,6 +646,7 @@ export class NavbarComponent implements OnInit {
       //TODO Finalize permission to this list
       {
         title: 'Manage BCQs',
+        show: true,
         icon: faBinoculars,
         permission: [
 
@@ -576,16 +654,19 @@ export class NavbarComponent implements OnInit {
         children: [
           {
             title: 'Submit BCQs (as Seller)',
+            show: true,
             externalLink: externalRoutes.BCQ_MENU_FOR_TP.SUBMIT_BCQ_AS_SELLER,
             permission: []
           },
           {
             title: 'Confirm (as Buyer) / View BCQs',
+            show: true,
             externalLink: externalRoutes.BCQ_MENU_FOR_TP.CONFIRM_AS_BUYER_VIEW_BCQ,
             permission: []
           },
           {
             title: 'BCQ Download Template',
+            show: true,
             externalLink: externalRoutes.BCQ_MENU_FOR_TP.BCQ_DOWNLOAD_TEMPLATE,
             permission: []
           }
@@ -594,6 +675,7 @@ export class NavbarComponent implements OnInit {
       //Contract Management Routes
       {
         title: 'Counterparties and Contract Management',
+        show: true,
         icon: faContactCard,
         permission: [
           PHASE_ONE_AUTHORITIES.VIEW_COUNTERPARTY_LIST,
@@ -608,47 +690,56 @@ export class NavbarComponent implements OnInit {
           //PEMC ROUTES
           {
             title: 'Manage TP Counterparties',
+            show: true,
             externalLink: externalRoutes.CONTRACT_MANAGEMENT_FOR_PEMC_USERS.MANAGE_TP_COUNTERPARTIES,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_COUNTERPARTY_LIST]
           },
           {
             title: 'Manage Supply Contracts',
+            show: true,
             externalLink: externalRoutes.CONTRACT_MANAGEMENT_FOR_PEMC_USERS.MANAGE_SUPPLY_CONTRACTS,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_CUSTOMER_ENROLLMENT_LIST]
           },
           {
             title: 'Manage Customer Switch Request',
+            show: true,
             externalLink: externalRoutes.CONTRACT_MANAGEMENT_FOR_PEMC_USERS.MANAGE_CUSTOMER_SWITCH_REQUESTS,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_CUSTOMER_SWITCHING_LIST]
           },
           {
             title: 'Manage SOLR Events',
+            show: true,
             externalLink: externalRoutes.CONTRACT_MANAGEMENT_FOR_PEMC_USERS.MANAGE_SOLR_EVENTS,
             permission: [PHASE_ONE_AUTHORITIES.MANAGE_SOLR_EVENT]
           },
           //TP ROUTES
           {
             title: 'Manage Contestable Management',
+            show: true,
             externalLink: externalRoutes.CONTRACT_MANAGEMENT_FOR_TP.MANAGE_CONTESTABLE_CUSTOMER,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_INDIRECT_CC_LIST]
           },
           {
             title: 'Manage Indirect Member Counterparties',
+            show: true,
             externalLink: externalRoutes.CONTRACT_MANAGEMENT_FOR_TP.MANAGE_INDIRECT_MEMBER_COUNTERPARTIES,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_COUNTERPARTY_LIST]
           },
           {
             title: 'Manage Supply Contracts',
+            show: true,
             externalLink: externalRoutes.CONTRACT_MANAGEMENT_FOR_TP.MANAGE_SUPPLY_CONTRACTS,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_CUSTOMER_ENROLLMENT_LIST]
           },
           {
             title: 'Manage Customer Switch Request',
+            show: true,
             externalLink: externalRoutes.CONTRACT_MANAGEMENT_FOR_TP.MANAGE_CUSTOMER_SWITCH_REQUEST,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_CUSTOMER_SWITCHING_LIST]
           },
           {
             title: 'SOLR Event Request',
+            show: true,
             externalLink: externalRoutes.CONTRACT_MANAGEMENT_FOR_TP.SOLR_EVENT_REQUEST,
             permission: [PHASE_ONE_AUTHORITIES.VIEW_SOLR_EVENT]
           }
@@ -657,6 +748,7 @@ export class NavbarComponent implements OnInit {
       //Settlement routes
       {
         title: 'Settlement',
+        show: true,
         icon: faHandHoldingHand,
         permission: [
           PHASE_ONE_AUTHORITIES.UPLOAD_BCQ,
@@ -683,6 +775,7 @@ export class NavbarComponent implements OnInit {
           //PEMC ROUTES
           {
             title: 'Manage BCQs',
+            show: true,
             permission: [
               PHASE_ONE_AUTHORITIES.UPLOAD_BCQ,
               PHASE_ONE_AUTHORITIES.VIEW_BCQ,
@@ -692,21 +785,25 @@ export class NavbarComponent implements OnInit {
             children: [
               {
                 title: 'Override BCQ',
+                show: true,
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MANAGE_BCQ.OVERRIDE_BCQ,
                 permission: [PHASE_ONE_AUTHORITIES.UPLOAD_BCQ]
               },
               {
                 title: 'View BCQs',
+                show: true,
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MANAGE_BCQ.VIEW_BCQ,
                 permission: [PHASE_ONE_AUTHORITIES.VIEW_BCQ]
               },
               {
                 title: 'Special Events',
+                show: true,
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MANAGE_BCQ.SPECIAL_EVENTS,
                 permission: [PHASE_ONE_AUTHORITIES.BCQ_VIEW_SPECIAL_EVENT]
               },
               {
                 title: 'Manage Prohibited List',
+                show: true,
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MANAGE_BCQ.MANAGE_PROHIBITED_LIST,
                 permission: [PHASE_ONE_AUTHORITIES.BCQ_VIEW_PROHIBITED]
               }
@@ -714,6 +811,7 @@ export class NavbarComponent implements OnInit {
           },
           {
             title: 'Maintenance',
+            show: true,
             permission: [
               PHASE_TWO_AUTHORITIES.SET_BILLING_ID_CONFIG,
               PHASE_TWO_AUTHORITIES.SET_BILLING_PERIOD_CONFIG,
@@ -729,16 +827,19 @@ export class NavbarComponent implements OnInit {
             children: [
               {
                 title: 'Manage Billing ID Masterlist',
+                show: true,
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MAINTENANCE.MANAGE_BILLING_ID_MASTERLIST,
                 permission: [PHASE_TWO_AUTHORITIES.SET_BILLING_ID_CONFIG]
               },
               {
                 title: 'Manage Billing Period',
+                show: true,
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MAINTENANCE.MANAGE_BILLING_PERIOD,
                 permission: [PHASE_TWO_AUTHORITIES.SET_BILLING_PERIOD_CONFIG]
               },
               {
                 title: 'Manage Reserve Calculation Configuration',
+                show: true,
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MAINTENANCE.MANAGE_RESERVE_CALCULATION_CONFIGURATION,
                 permission: [
                   PHASE_TWO_AUTHORITIES.SET_RESERVE_PROCESS_CONFIG,
@@ -747,36 +848,43 @@ export class NavbarComponent implements OnInit {
               },
               {
                 title: 'Manage Charge IDs',
+                show: true,
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MAINTENANCE.MANAGE_CHARGE_IDS,
                 permission: [PHASE_TWO_AUTHORITIES.SET_CHARGE_ID_CONFIG]
               },
               {
                 title: 'Manage Market Fee Calculation',
+                show: true,
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MAINTENANCE.MANAGE_MARKET_FEE_CALCULATION,
                 permission: [PHASE_TWO_AUTHORITIES.SET_MARKET_FEE_MODE]
               },
               {
                 title: 'Manage MRUs',
+                show: true,
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MAINTENANCE.MANAGE_MRU,
                 permission: [PHASE_TWO_AUTHORITIES.SET_MRU_CONFIG]
               },
               {
                 title: 'Manage Output File Location',
+                show: true,
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MAINTENANCE.MANAGE_OUTPUT_FILE_LOCATION,
                 permission: [PHASE_TWO_AUTHORITIES.SET_STL_FILE_LOCATION]
               },
               {
                 title: 'Manage Password Prefix For Output Files',
+                show: true,
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MAINTENANCE.MANAGE_PASSWORD_PREFIX_FOR_OUTPUT_FILES,
                 permission: [PHASE_TWO_AUTHORITIES.SET_TP_PASSWORD_CONFIG]
               },
               {
                 title: 'General Calculation Configuration',
+                show: true,
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MAINTENANCE.GENERAL_CALCULATION_CONFIGURATION,
                 permission: [PHASE_TWO_AUTHORITIES.SET_STL_GEN_CONFIG]
               },
               {
                 title: 'Manage Single Buyer',
+                show: true,
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MAINTENANCE.MANAGE_SINGLE_BUYER,
                 permission: []
               }
@@ -784,6 +892,7 @@ export class NavbarComponent implements OnInit {
           },
           {
             title: 'Calculate Settlement Amounts',
+            show: true,
             permission: [
               PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS,
               PHASE_TWO_AUTHORITIES.VIEW_ADDTL_COMP,
@@ -792,31 +901,37 @@ export class NavbarComponent implements OnInit {
             children: [
               {
                 title: 'Calculate Energy Trading Amounts',
+                show: true,
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.CALCULATE_SETTLEMENT_AMOUNTS.CALCULATE_ENERGY_TRADING_AMOUNTS,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
               },
               {
                 title: 'Calculate Reserve Trading Amounts',
+                show: true,
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.CALCULATE_SETTLEMENT_AMOUNTS.CALCULATE_RESERVE_TRADING_AMOUNTS,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
               },
               {
                 title: 'Calculate Energy Market Fee',
+                show: true,
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.CALCULATE_SETTLEMENT_AMOUNTS.CALCULATE_ENERGY_MARKET_FEE,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
               },
               {
                 title: 'Calculate Reserve Market Fee',
+                show: true,
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.CALCULATE_SETTLEMENT_AMOUNTS.CALCULATE_RESERVE_MARKET_FEE,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
               },
               {
                 title: 'Manage Additional Compensation Claims',
+                show: true,
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.CALCULATE_SETTLEMENT_AMOUNTS.MANAGE_ADDITIONAL_COMPENSATION_CLAIMS,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_ADDTL_COMP]
               },
               {
                 title: 'Update Additional Compensation Invoice',
+                show: true,
                 externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.CALCULATE_SETTLEMENT_AMOUNTS.UPDATE_ADDITIONAL_COMPENSATION_INVOICE,
                 permission: [PHASE_TWO_AUTHORITIES.AC_VIEW_AMS_INV_FOR_UPDATE]
               },
@@ -824,6 +939,7 @@ export class NavbarComponent implements OnInit {
           },
           {
             title: 'Calculate Settlement Amounts v2',
+            show: true,
             permission: [
               PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS,
               PHASE_TWO_AUTHORITIES.VIEW_ADDTL_COMP,
@@ -832,31 +948,37 @@ export class NavbarComponent implements OnInit {
             children: [
               {
                 title: 'Calculate Energy Trading Amounts',
+                show: true,
                 path: NEW_ROUTES.TRADING_AMOUNTS_CALCULATION,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
               },
               {
                 title: 'Calculate Reserve Trading Amounts',
+                show: true,
                 path: NEW_ROUTES.RESERVE_TRADING_AMOUNTS_CALCULATION,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
               },
               {
                 title: 'Calculate Energy Market Fee',
+                show: true,
                 path: NEW_ROUTES.ENERGY_MARKET_FEE_CALCULATION,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
               },
               {
                 title: 'Calculate Reserve Market Fee',
+                show: true,
                 path: NEW_ROUTES.RESERVE_MARKET_FEE_CALCULATION,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
               },
               {
                 title: 'Manage Additional Compensation Claims',
+                show: true,
                 path: NEW_ROUTES.ADDITIONAL_COMPENSATION_LIST,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_ADDTL_COMP]
               },
               {
                 title: 'Update Additional Compensation Invoice',
+                show: true,
                 path: NEW_ROUTES.ADDITIONAL_COMPENSATION_INVOICE,
                 permission: [PHASE_TWO_AUTHORITIES.AC_VIEW_AMS_INV_FOR_UPDATE]
               }
@@ -864,16 +986,19 @@ export class NavbarComponent implements OnInit {
           },
           {
             title: 'View Settlement Workspace',
+            show: true,
             externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.VIEW_SETTLEMENT_WORKSPACE,
             permission: [PHASE_TWO_AUTHORITIES.VIEW_WORKSPACE]
           },
           {
             title: 'Worklist',
+            show: true,
             externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.WORKLIST,
             permission: [PHASE_TWO_AUTHORITIES.APPROVE_STL_TP_WORKLIST]
           },
           {
             title: 'Upload Billing Statement',
+            show: true,
             externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.UPLOAD_BILLING_STATEMENT,
             permission: [PHASE_TWO_AUTHORITIES.UPLOAD_BILLING_STATEMENT]
           }
@@ -882,6 +1007,7 @@ export class NavbarComponent implements OnInit {
       //METERING ROUTES
       {
         title: 'Metering',
+        show: true,
         icon: faTachometerAverage,
         permission: [
           PHASE_TWO_AUTHORITIES.VIEW_IMPORT_METERING_CONFIGURATION,
@@ -902,21 +1028,31 @@ export class NavbarComponent implements OnInit {
         children: [
           {
             title: 'Calculations',
+            show: true,
             externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATIONS,
             permission: [PHASE_TWO_AUTHORITIES.VIEW_METER_PROCESS]
           },
           {
             title: 'Calculations v2',
+            show: true,
             path: NEW_ROUTES.METER_PROCESS,
             permission: [PHASE_TWO_AUTHORITIES.VIEW_METER_PROCESS]
           },
           {
+            show: this.userData()?.principal.department !== 'MSP',
+            title: LABELS.MQ_UPLOADER,
+            path: NEW_ROUTES.MQ_UPLOADER,
+            permission: [PHASE_TWO_AUTHORITIES.VIEW_METER_PROCESS]
+          },
+          {
             title: 'Meter Streaming Statistics',
+            show: true,
             externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.METER_STREAMING_STATISTICS,
             permission: [PHASE_TWO_AUTHORITIES.VIEW_METER_PROCESS]
           },
           {
             title: 'Calculation Maintenance and Configuration',
+            show: true,
             permission: [
               PHASE_TWO_AUTHORITIES.VIEW_IMPORT_METERING_CONFIGURATION,
               PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SETTLEMENT_METERING_CONFIGURATION,
@@ -931,56 +1067,67 @@ export class NavbarComponent implements OnInit {
             children: [
               {
                 title: 'Import Metering Configuration',
+                show: true,
                 externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.IMPORT_METERING_CONFIGURATION,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_IMPORT_METERING_CONFIGURATION]
               },
               {
                 title: 'Import Settlement Metering Point Configuration',
+                show: true,
                 externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.IMPORT_SETTLEMENT_METERING_POINT_CONFIGURATION,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SETTLEMENT_METERING_CONFIGURATION]
               },
               {
                 title: 'Settlement SEIN Masterlist',
+                show: true,
                 externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.SETTLEMENT_SEIN_MASTERLIST,
                 permission: [PHASE_TWO_AUTHORITIES.SET_STL_SEIN_CONFIG]
               },
               {
                 title: 'Historical Factors Maintenance',
+                show: true,
                 externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.HISTORICAL_FACTOR_MAINTENANCE,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_MET_CFG]
               },
               {
                 title: 'Virtual SEIN Mapping',
+                show: true,
                 externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.VIRTUAL_SEIN_MAPPING,
                 permission: [PHASE_TWO_AUTHORITIES.SET_VSEIN_MAPPING]
               },
               {
                 title: 'MTN Model Configuration',
+                show: true,
                 externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.MTN_MODEL_CONFIGURATION,
                 permission: [PHASE_TWO_AUTHORITIES.SET_MTN_MODEL_CONFIG]
               },
               {
                 title: 'MTN Group and Schedule',
+                show: true,
                 externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.MTN_GROUP_AND_SCHEDULE,
                 permission: [PHASE_TWO_AUTHORITIES.SET_MTN_GROUP_SCHED_SCHED]
               },
               {
                 title: 'RCOA Channel Configuration',
+                show: true,
                 externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.RCOA_CHANNEL_CONFIGURATION,
                 permission: [PHASE_TWO_AUTHORITIES.SET_RCOA_CHANNEL_CONFIG]
               },
               {
                 title: 'File Location',
+                show: true,
                 externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.FILE_LOCATION,
                 permission: [PHASE_TWO_AUTHORITIES.SET_MET_GEN_CONFIG]
               },
               {
                 title: 'Manage Virtual Metering Point',
+                show: true,
                 externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.MANAGE_VIRTUAL_METERING_POINT,
                 permission: [PHASE_ONE_AUTHORITIES.VMP_MAINTENANCE_VIEW]
               },
               {
                 title: 'Meter Registry Maintenance',
+                show: true,
                 externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.METER_REGISTRY_MAINTENANCE,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_MET_CFG]
               }
@@ -988,35 +1135,41 @@ export class NavbarComponent implements OnInit {
           },
           {
             title: 'Manage MTR',
+            show: true,
             externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.MANAGE_MTR,
             permission: [PHASE_TWO_AUTHORITIES.VIEW_MTR]
           },
           {
             title: 'Worklist',
+            show: true,
             externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.WORKLIST,
             permission: [PHASE_TWO_AUTHORITIES.APPROVE_MET_MP_WORKLIST]
           },
           {
             title: 'Data Analysis and Validation',
+            show: true,
             permission: [PHASE_ONE_AUTHORITIES.MQ_VIEW_METERING_QUANTITY, PHASE_TWO_AUTHORITIES.VIEW_SHIFTING_ANALYSIS],
             children: [
               {
                 title: 'View Submitted Meter Data',
+                show: true,
                 externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.DATA_ANALYSIS_AND_VALIDATION.VIEW_SUBMITTED_METER_DATA,
                 permission: [PHASE_ONE_AUTHORITIES.MQ_VIEW_METERING_QUANTITY]
               },
               {
                 title: 'RTU Comparison',
+                show: true,
                 externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.DATA_ANALYSIS_AND_VALIDATION.RTU_COMPARISON,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_SHIFTING_ANALYSIS]
               }
             ]
-          }
+          },
         ]
       },
       //Activity log route
       {
         title: 'Activity Logs',
+        show: true,
         icon: faListCheck,
         permission: [PHASE_TWO_AUTHORITIES.VIEW_ACTIVITY_LOG],
         externalLink: externalRoutes.ACTIVITY_LOGS
@@ -1024,10 +1177,18 @@ export class NavbarComponent implements OnInit {
       //Job Queue route
       {
         title: 'Job Queue',
+        show: true,
         icon: faRoadCircleCheck,
         permission: [PHASE_TWO_AUTHORITIES.VIEW_QUEUE],
         externalLink: externalRoutes.JOB_QUEUE
-      }
+      },
+      {
+        show: this.userData()?.principal.department === 'MSP',
+        title: LABELS.MQ_UPLOADER,
+        icon: faUpload,
+        path: NEW_ROUTES.MQ_UPLOADER,
+        permission: [],
+      },
     ];
 
     this.navItems = this.navItems.filter(item => this.hasPermission(item)); //for checking
@@ -1042,6 +1203,7 @@ export class NavbarComponent implements OnInit {
   }
 
   navigateTo(item: navItems): void {
+    console.log(JSON.stringify(item))
     if (item.externalLink && item.externalLink.trim() !== '') {
       window.location.href = item.externalLink;
     } else if (item.path && item.path.trim() !== '') {

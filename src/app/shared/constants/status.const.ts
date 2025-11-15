@@ -38,6 +38,11 @@ export enum SettlementStatus {
   FAILED_GENERATE_INPUT_WORKSPACE = `Failed - Generate Input Workspace`,
 
   CANCELLED_GENERATE_INPUT_WORKSPACE = 'Cancelled - Generate Input Workspace',
+}
 
-
+export enum Status {
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
+  QUEUED_FOR_PROCESSING = 'QUEUED_FOR_PROCESSING',
+  IN_PROGRESS = 'IN_PROGRESS'
 }

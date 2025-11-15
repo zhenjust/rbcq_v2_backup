@@ -1,23 +1,25 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { AuthorizationService } from '@core/services/authorization.service';
+import { RxwebValidators } from '@rxweb/reactive-form-validators';
 import { MQ_UPLOAD_CATEGORY } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
+import { CurrentUser } from '@shared/interfaces';
 import { MqUploaderService } from '@shared/services/api';
 import { SystemUtilService } from '@shared/services/utils';
-import { addDays, addMonths, differenceInCalendarMonths, format, set, startOfDay } from 'date-fns';
+import { addDays, addMonths, differenceInCalendarMonths, format, isWithinInterval, set, startOfDay } from 'date-fns';
 import { differenceInCalendarDays } from 'date-fns';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
-import { NzUploadChangeParam } from 'ng-zorro-antd/upload';
+import { NzUploadFile } from 'ng-zorro-antd/upload';
+import { ToastrService } from 'ngx-toastr';
 import { distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-mq-uploader-filter',
   standalone: false,
   templateUrl: './mq-uploader-filter.component.html',
-  styleUrl: './mq-uploader-filter.component.scss'
 })
 export class MqUploaderFilterComponent implements OnInit {
 
@@ -26,31 +28,34 @@ export class MqUploaderFilterComponent implements OnInit {
   private readonly sysUtil = inject(SystemUtilService);
   private readonly mqs = inject(MqUploaderService);
   private readonly as = inject(AuthorizationService);
+  private readonly modalRef = inject(NzModalRef);
+  private readonly ts = inject(ToastrService);
 
   LABELS = LABELS;
   form: FormGroup;
   categoryOpts: NzSelectOptionInterface[];
   conversionOpts: NzSelectOptionInterface[];
-  fileList: File[] = [];
-  mspOpts: NzSelectOptionInterface[];
+  fileList: NzUploadFile[] = [];
+  mspOpts: NzSelectOptionInterface[] | null = null;
   recordMq: Record<string, string> = {}
+  currentUser: CurrentUser | null;
 
   ngOnInit(): void {
+    this.currentUser = this.as.currentUser();
     this.buildForm();
     this.getReferences();
     this.getMqList();
-
-    console.log(this.as.currentUser())
   }
 
   buildForm(): void {
+    const required = RxwebValidators.required();
     this.form = this.fb.group({
-      category: [null],
-      mspShortName: [null],
+      category: [null, required],
+      mspShortName: [null, required],
       convertToFiveMin: [false],
-      tradingDay: [null],
-      tradingMonth: [null],
-      interval: [null],
+      tradingDay: [null, RxwebValidators.required({ conditionalExpression: () => this.isDaily })],
+      tradingMonth: [null, RxwebValidators.required({ conditionalExpression: () => this.isMonthly })],
+      interval: [null, [required, RxwebValidators.minLength({ value: 1 })]],
     });
 
     this.handleCategoryChange();
@@ -108,20 +113,31 @@ export class MqUploaderFilterComponent implements OnInit {
       .subscribe(mspList => {
         this.mspOpts = mspList.map(item => ({
           label: `${item.participantName} (${item.shortName})`, value: item.shortName})) as NzSelectOptionInterface[];
-        });
+
+        const currentMsp = this.currentUser?.principal?.dn;
+        if (currentMsp && this.isMspUser && this.mspOpts.length) {
+          const trimmedMspName = currentMsp.split('_');
+          const index = this.mspOpts?.findIndex(opt => opt.value.toLowerCase() === trimmedMspName[0]);
+          this.mspShortName?.setValue(this.mspOpts[index]?.value);
+          this.mspShortName?.disable();
+        }
+
+    });
   }
 
-  beforeUpload = (file: any) => {
-    // add file validations;
-    console.log({file})
-    // this.fileList.push(file);
-    return true;
-  }
+  beforeUpload = (file: NzUploadFile) => {
+    const fileType = file.name.split('.').pop();
+    const acceptedTypesArr = this.acceptedFile
+      .split(',')
+      .map(fileType => fileType.trim());
 
-  handleFileChange(uploadEvent: NzUploadChangeParam): void {
-    if (uploadEvent.type === 'error') {
-      this.fileList.push(uploadEvent.file.originFileObj!);
+    if (!acceptedTypesArr.includes(`.${fileType}`)) {
+      this.ts.error(MESSAGES.INVALID_FILE_TYPE);
+      return false;
     }
+
+    this.fileList.push(file);
+    return false;
   }
 
   clearFiles(): void {
@@ -136,7 +152,6 @@ export class MqUploaderFilterComponent implements OnInit {
 
   import(): void {
     const formValue = this.form.getRawValue();
-    const formData = new FormData();
     const isDaily = this.isDaily || this.isCorrectedDaily;
     const isMonthly = this.isMonthly || this.isCorrectedMonthly;
 
@@ -151,32 +166,34 @@ export class MqUploaderFilterComponent implements OnInit {
 
     delete payload.interval;
     delete payload.tradingDay;
-    // isDaily && delete payload.tradingMonth;
-    // isMonthly && delete payload.tradingDate;
 
-    Object.keys(payload).forEach(key => {
-      formData.append(key, payload[key].toString());
-    });
 
+    const formDataGrp: FormData[] = [];
     this.fileList.forEach(file => {
-      formData.append('file', file);
+      const formData = new FormData();
+      formData.append('file', file as any);
+      Object.keys(payload).forEach(key => {
+        formData.append(key, payload[key]?.toString());
+      });
+
+      formDataGrp.push(formData);
     });
 
-    console.log({payload, formData});
-
-    this.mqs.uploadMq(formData)
-      .subscribe(res => console.log({res}));
+    this.modalRef.destroy({payload, formDataGrp});
   }
 
 
   disabledPrevDay = (currentDate: Date) => this.isDaily ? differenceInCalendarDays(currentDate, new Date()) !== -1 : differenceInCalendarDays(currentDate, new Date()) > -1;
   disabledPrevMonth = (currentDate: Date) => this.isMonthly ? differenceInCalendarMonths(currentDate, new Date()) !== -1 : differenceInCalendarMonths(currentDate, new Date()) > -1;
-  disabledInterval = () => true;
+  disabledMonthlyInterval = (currentDate: Date) => !isWithinInterval(currentDate, { start: this.interval?.value[0], end: this.interval?.value[1]});
+  disabledDailyInterval = (currentDate: Date) => differenceInCalendarDays(currentDate, new Date()) < -1;
+  disabledInterval = (currentDate: Date) => this.isMonthly ? this.disabledMonthlyInterval(currentDate) : this.disabledDailyInterval(currentDate);
 
   get category(): AbstractControl | null { return this.form.get('category'); }
   get tradingDay(): AbstractControl | null { return this.form.get('tradingDay'); }
   get tradingMonth(): AbstractControl | null { return this.form.get('tradingMonth'); }
   get interval(): AbstractControl | null { return this.form.get('interval'); }
+  get mspShortName(): AbstractControl | null { return this.form.get('mspShortName'); }
 
   get isDaily(): boolean { return this.category?.value === MQ_UPLOAD_CATEGORY.DAILY; }
   get isCorrectedDaily(): boolean { return this.category?.value === MQ_UPLOAD_CATEGORY.CORRECTED_METER_DATA_DAILY; }
@@ -184,5 +201,6 @@ export class MqUploaderFilterComponent implements OnInit {
   get isCorrectedMonthly(): boolean { return this.category?.value === MQ_UPLOAD_CATEGORY.CORRECTED_METER_DATA_MONTHLY; }
 
   get acceptedFile(): string { return (this.isDaily || this.isMonthly) ? '.mdef, .mde, .csv' : '.csv'; }
+  get isMspUser(): boolean { return this.currentUser?.principal?.department === 'MSP'; }
 
 }

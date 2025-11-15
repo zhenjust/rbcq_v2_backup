@@ -28,7 +28,10 @@ export class MqUploaderService {
   }
 
   public uploadMq(formData: FormData): Observable<any> {
-    return this.http.post<any>(`${this.meteringCloudEndpoint}/uploadData`, formData);
+    return this.http.post<any>(`${this.meteringCloudEndpoint}/uploadData`, formData, {
+      reportProgress: true,
+      observe: 'events'
+    });
   }
 
 }

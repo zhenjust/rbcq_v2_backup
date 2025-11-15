@@ -8,7 +8,6 @@ import { Observable, Subscription } from 'rxjs';
   selector: 'app-paginated-table',
   standalone: false,
   templateUrl: './paginated-table.component.html',
-  styleUrl: './paginated-table.component.scss'
 })
 export class PaginatedTableComponent extends SearchListBase {
 
@@ -35,6 +34,7 @@ export class PaginatedTableComponent extends SearchListBase {
   override getListUrl(): Observable<any> {
     return this.url;
   }
+
   // Handling of Checkboxes
 
   checkAll(value: boolean): void {

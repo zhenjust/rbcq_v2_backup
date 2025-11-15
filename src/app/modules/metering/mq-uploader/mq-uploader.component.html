@@ -1,73 +1,87 @@
 <nz-card [nzTitle]="LABELS.MQ_UPLOADER">
-  <!-- <app-mq-uploader-filter></app-mq-uploader-filter> -->
-
-  <div class="d-flex justify-content-end">
-    <nz-space>
-      <button *nzSpaceItem nz-button nzType="primary" (click)="import()">{{ LABELS.START_IMPORT }}</button>
-    </nz-space>
+  <div class="d-flex {{tabIndex ? 'justify-content-between': 'justify-content-end'}}">
+    <button nz-button *ngIf="tabIndex" class="mb-3" [nzType]="showFilters ? 'default' : 'primary'"  (click)="showFilters ? resetFilters() : showFilters = !showFilters">{{ showFilters ? LABELS.CLEAR_FILTERS : LABELS.SET_FILTERS }}</button>
+    <button nz-button *ngIf="!tabIndex" nzType="primary" (click)="import()" [disabled]="!disableImport">{{ LABELS.START_IMPORT }}</button>
   </div>
 
-  <nz-tabset [nzDestroyInactiveTabPane]="true">
+  @if (showFilters && tabIndex) {
+    <app-mq-history-filters #filtersComp (emitFiltersEvent)="triggerSearch($event);"></app-mq-history-filters>
+  }
+
+  <nz-tabset [nzDestroyInactiveTabPane]="true" [(nzSelectedIndex)]="tabIndex" (nzSelectedIndexChange)="onTabChange($event)" class="mt-2" [nzTabBarExtraContent]="hasInProgress ? extraTpl : undefined">
     <nz-tab [nzTitle]="LABELS.ONGOING">
-      <app-paginated-table #ongoingTable [tableColumns]="tableColumns" [url]="listUrl()"></app-paginated-table>
+      <app-template-table #ongoingTable [tableColumns]="ongoingTableColumns" [tableData]="ongoingTableData"></app-template-table>
     </nz-tab>
 
     <nz-tab [nzTitle]="LABELS.HISTORY">
       <ng-template nz-tab>
-        <app-paginated-table [tableColumns]="tableColumns" [url]="listUrl()"></app-paginated-table>
+        <app-paginated-table #paginatedTable [tableColumns]="tableColumns" [url]="listUrl()"></app-paginated-table>
       </ng-template>
     </nz-tab>
   </nz-tabset>
 </nz-card>
 
+<ng-template #extraTpl>
+  <div class="d-flex">
+    <p class="mb-0 text-muted">{{ MESSAGES.UPLOAD_IN_PROGRESS }} {{ ongoingInProgress.length }} / {{ ongoingTableData.length }}</p>
+    <nz-spin nzSimple [nzIndicator]="indicatorTemplate" class="ms-2"></nz-spin>
+    <ng-template #indicatorTemplate><nz-icon nzType="loading" /></ng-template>
+  </div>
+</ng-template>
 
 
 <!-- Column Templates -->
 <ng-template #sizeTpl let-data="data">
-  {{ data | fileSize }} || '-'
+  {{ (data | fileSize) || '-' }}
 </ng-template>
 
-<ng-template #transacIdTpl let-data="data">
-  <span class="text-primary" nz-popover [nzPopoverContent]="popoverTransacId"></span>
+<ng-template #transacIdTpl let-data="data" let-allData="allData">
+  <span class="{{data && 'text-primary'}}" nz-popover nzPopoverPlacement="right" [nzPopoverContent]="data && popoverTransacId">{{ data || '-' }}</span>
 
   <ng-template #popoverTransacId>
     <div class="d-flex flex-column">
-      <div>
-        <strong>{{ LABELS.UPLOADING_DATE_AND_TIME }}:</strong>&nbsp;
-      </div>
-
-      <div>
-        <strong>{{ LABELS.TOTAL_NUMBER_OF_FILES_UPLOADED }}:</strong>&nbsp;
-      </div>
-
-      <div>
-        <strong>{{ LABELS.NO_OF_FILES_SUCCESSFULLY_UPLOADED }}:</strong>&nbsp;
-      </div>
-
-      <div>
-        <strong>{{ LABELS.NO_OF_FILES_REJECTED }}:</strong>&nbsp;
-      </div>
+      <p class="mb-0">{{ LABELS.UPLOADING_DATE_AND_TIME }}: <span class="fw-bold">{{ allData?.uploadDate }}</span></p>
+      <p class="mb-0">{{ LABELS.TOTAL_NUMBER_OF_FILES_UPLOADED }}: <span class="fw-bold">{{ allData?.fileCount }}</span></p>
+      <p class="mb-0">{{ LABELS.NO_OF_FILES_SUCCESSFULLY_UPLOADED }}: <span class="fw-bold">{{ allData?.rejected }}</span></p>
+      <p class="mb-0">{{ LABELS.NO_OF_FILES_REJECTED }}: <span class="fw-bold">{{ allData?.rejected }}</span></p>
     </div>
   </ng-template>
 </ng-template>
 
 
-<ng-template #statusTpl let-data="data">
+<ng-template #billingDateTpl let-allData="allData">
+  {{ allData.category === 'DAILY' ? (allData.tradingDate | date: 'yyyy-MM-dd') : (allData.tradingMonth | date: 'MMMM yyyy') }}
+</ng-template>
+
+<ng-template #statusTpl let-data="data" let-allData="allData">
   @switch(data) {
-    @case ('REJECTED') {
-      <span nz-tooltip [nzTooltipTitle]="tooltipTpl" class="text-danger">{{ data }}</span>
+    @case (Status.REJECTED) {
+      <nz-tag nzColor="red" class="me-0" [nzBordered]="false" nz-tooltip nzTooltipPlacement="left" nzTooltipColor="white" [nzTooltipTitle]="tooltipTpl">{{data}}</nz-tag>
       <ng-template #tooltipTpl>
-        <strong>{{ LABELS.UPLOAD_ERROR }}</strong>
-        <p class="mb-0 text-muted">Error Message</p>
+        <p class="fw-bold mb-0 text-muted">{{ LABELS.UPLOAD_ERROR }}</p>
+        <p class="mb-0 text-muted">{{ allData?.errorMessage }}</p>
       </ng-template>
     }
 
-    @case ('IN_PROGRESS') {
-      <nz-progress [nzPercent]="30"></nz-progress>
+    @case (Status.IN_PROGRESS) {
+      <nz-progress [nzPercent]="allData?.percentage || 0" [nzStrokeColor]="{ '0%': '#108ee9', '100%': '#87d068' }" nzStatus="active" [nzShowInfo]="true"></nz-progress>
+    }
+
+    @case (Status.ACCEPTED) {
+      <nz-tag nzColor="green" class="me-0" [nzBordered]="false">{{data}}</nz-tag>
     }
 
     @default {
-      {{ data }}
+      <nz-tag nzColor="cyan" class="me-0" [nzBordered]="false">{{data}}</nz-tag>
     }
   }
 </ng-template>
+
+@if (hasInProgress && tabIndex) {
+  <nz-float-button nzShape="circle" style="inset-inline-end: 50px" [nzIcon]="floatIcon">
+  </nz-float-button>
+
+  <ng-template #floatIcon>
+    <nz-icon nzType="upload"></nz-icon>
+  </ng-template>
+}

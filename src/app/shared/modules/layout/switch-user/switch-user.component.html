@@ -2,7 +2,7 @@
   <nz-form-item class="w-100 mb-0">
     <nz-form-label>{{ LABELS.SELECT }} {{ LABELS.USER }}</nz-form-label>
     <nz-form-control>
-      <nz-select class="w-100" [nzOptions]="userOpts" [(ngModel)]="selectedUser"></nz-select>
+      <nz-select class="w-100" [nzOptions]="userOpts" [(ngModel)]="selectedUser" [nzShowSearch]="true"></nz-select>
     </nz-form-control>
   </nz-form-item>
 </div>

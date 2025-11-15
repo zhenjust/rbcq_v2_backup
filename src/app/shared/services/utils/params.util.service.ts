@@ -7,8 +7,9 @@ import { TableParams } from '@shared/interfaces';
 })
 export class ParamsUtilService {
   public buildParams(data: Record<string, any>, tableParams?: TableParams): HttpParams {
-      let params = new HttpParams();
+    let params = new HttpParams();
 
+    if (data) {
       Object.entries(data).forEach(([key, value]) => {
         if (this.isValidValue(value)) {
           if (Array.isArray(value)) {
@@ -19,6 +20,7 @@ export class ParamsUtilService {
           }
         }
       });
+    }
 
     if (tableParams) {
       const _tableParams = {...tableParams};

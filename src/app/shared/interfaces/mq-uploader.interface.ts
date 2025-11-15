@@ -19,3 +19,24 @@ export interface MqList {
   accepted: number;
   rejected: number;
 }
+
+export interface OngoingTableList {
+  category: string;
+  mspShortName: string;
+  convertToFiveMin: string;
+  tradingMonth: string;
+  tradingDate: Date;
+  startInterval: string;
+  endInterval: string;
+  file: File;
+  status: string;
+  percentage: number;
+  errorMessage?: string;
+  transactionId?: string;
+}
+
+export interface MqUploadFilters {
+  category: string;
+  status: string;
+  tradingDate: string;
+}

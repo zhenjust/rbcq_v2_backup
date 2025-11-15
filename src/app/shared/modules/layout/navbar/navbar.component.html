@@ -3,13 +3,13 @@
   <div class="menu-container">
     <ul nz-menu nzMode="inline" [nzInlineCollapsed]="isCollapsed && !isHovered">
       @for (item of navItems; track item) {
-        @if ((!item.children || item.children.length === 0) && hasPermission(item)) {
+        @if ((!item.children || item.children.length === 0) && hasPermission(item) && item.show) {
           <li nz-menu-item (click)="navigateTo(item)" class="py-0 mt-0">
             <a class="nav-link">
               <ng-container *ngTemplateOutlet="menuItemTpl; context: { item }"></ng-container>
             </a>
           </li>
-        } @else {
+        } @else if (item.show) {
           <li nz-submenu nzTriggerSubMenuAction="click" [nzTitle]="parentMenuTitle" [nzOpen]="isDropdownOpen(item)" (nzOpenChange)="toggleDropdown(item, $event)" class="subChildColor py-0">
 
             <ng-template #parentMenuTitle>
@@ -18,29 +18,31 @@
 
             <ul>
               @for (child of item.children; track child) {
-                @if ((!child.children || child.children.length === 0) && hasPermission(child)) {
-                  <li nz-menu-item (click)="navigateTo(child)" class="subChildColor">
-                    <span>{{ child.title }}</span>
-                  </li>
-                } @else {
-                  <li nz-submenu nzTriggerSubMenuAction="click" [nzTitle]="childMenuTitle" [nzOpen]="isDropdownOpen(child)" (nzOpenChange)="toggleDropdown(child, $event)" class="subChildColor py-0">
+                @if (child.show) {
+                  @if ((!child.children || child.children.length === 0) && hasPermission(child)) {
+                    <li nz-menu-item (click)="navigateTo(child)" class="subChildColor">
+                      <span>{{ child.title }}</span>
+                    </li>
+                  } @else {
+                    <li nz-submenu nzTriggerSubMenuAction="click" [nzTitle]="childMenuTitle" [nzOpen]="isDropdownOpen(child)" (nzOpenChange)="toggleDropdown(child, $event)" class="subChildColor py-0">
 
-                    <ng-template #childMenuTitle>
-                      @if (shouldShowText) {
-                        <span class="nav-link">{{ child.title }}</span>
-                      }
-                    </ng-template>
-
-                    <ul>
-                      @for (child2 of child.children; track child2) {
-                        @if (hasPermission(child2)) {
-                          <li nz-menu-item (click)="navigateTo(child2)" class="subChildColor">
-                            <span>{{ child2.title }}</span>
-                          </li>
+                      <ng-template #childMenuTitle>
+                        @if (shouldShowText) {
+                          <span class="nav-link">{{ child.title }}</span>
                         }
-                      }
-                    </ul>
-                  </li>
+                      </ng-template>
+
+                      <ul>
+                        @for (child2 of child.children; track child2) {
+                          @if (hasPermission(child2)) {
+                            <li nz-menu-item (click)="navigateTo(child2)" class="subChildColor">
+                              <span>{{ child2.title }}</span>
+                            </li>
+                          }
+                        }
+                      </ul>
+                    </li>
+                  }
                 }
               }
             </ul>

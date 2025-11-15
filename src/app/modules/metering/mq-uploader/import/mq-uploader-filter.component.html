@@ -21,7 +21,7 @@
     <nz-form-item>
       <nz-form-label nzRequired>{{ LABELS.TRADING_MONTH }}</nz-form-label>
       <nz-form-control>
-        <nz-date-picker [nzInputReadOnly]="true" formControlName="tradingMonth" nzMode="month"
+        <nz-date-picker [nzInputReadOnly]="true" formControlName="tradingMonth" nzMode="month" nzFormat="MMMM yyyy"
           [nzDisabledDate]="disabledPrevMonth" class="w-100"></nz-date-picker>
       </nz-form-control>
     </nz-form-item>
@@ -41,13 +41,13 @@
   <nz-form-item>
     <nz-form-label nzRequired>{{ LABELS.MSP }}</nz-form-label>
     <nz-form-control>
-      <nz-select formControlName="mspShortName" [nzPlaceHolder]="LABELS.CHOOSE_HERE" [nzOptions]="mspOpts || []"
+      <nz-select formControlName="mspShortName" [nzPlaceHolder]="LABELS.CHOOSE_HERE" [nzOptions]="mspOpts || []" [nzLoading]="!mspOpts"
         [nzAllowClear]="true" nzShowSearch></nz-select>
     </nz-form-control>
   </nz-form-item>
 
   <nz-form-item>
-    <nz-form-label>{{ LABELS.CONVERSION_TYPE }}</nz-form-label>
+    <nz-form-label nzRequired>{{ LABELS.CONVERSION_TYPE }}</nz-form-label>
     <nz-form-control>
       <nz-radio-group formControlName="convertToFiveMin">
         @for (item of conversionOpts; track item?.value) {
@@ -58,11 +58,10 @@
   </nz-form-item>
 
   <nz-form-item>
-    <nz-form-label>{{ LABELS.UPLOAD }}</nz-form-label>
+    <nz-form-label nzRequired>{{ LABELS.UPLOAD }}</nz-form-label>
     <nz-form-control>
       <div class="d-flex justify-content-between">
-        <nz-upload [nzBeforeUpload]="beforeUpload" [nzMultiple]="true" [nzAccept]="acceptedFile"
-          (nzChange)="handleFileChange($event)" [nzShowUploadList]="false">
+        <nz-upload [nzBeforeUpload]="beforeUpload" [nzMultiple]="true" [nzAccept]="acceptedFile" [nzShowUploadList]="false">
           <nz-space>
             <button *nzSpaceItem nzSize="small" class="me-2" nz-button>{{ LABELS.CHOOSE_FILE }}</button>
           </nz-space>

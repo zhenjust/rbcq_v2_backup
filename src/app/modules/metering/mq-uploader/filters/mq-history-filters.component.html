@@ -1,0 +1,29 @@
+<form nz-form [formGroup]="form" nzLayout="horizontal" class="column">
+  <nz-form-item class="col-sm-12 col-md-6 col-lg-4">
+    <nz-form-label nzRequired nzSpan="6">{{ LABELS.CATEGORY }}</nz-form-label>
+    <nz-form-control nzSpan="18">
+      <nz-select formControlName="category" [nzOptions]="categoryOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
+        [nzAllowClear]="true" nzShowSearch></nz-select>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item class="col-sm-12 col-md-6 col-lg-4">
+    <nz-form-label nzRequired nzSpan="6">{{ LABELS.TRADING_DAY }}</nz-form-label>
+    <nz-form-control nzSpan="18">
+      <nz-date-picker [nzInputReadOnly]="true" formControlName="tradingDay" class="w-100"></nz-date-picker>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item class="col-sm-12 col-md-6 col-lg-4">
+    <nz-form-label nzSpan="6">{{ LABELS.STATUS }}</nz-form-label>
+    <nz-form-control nzSpan="18">
+      <nz-select formControlName="status" [nzOptions]="statusOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
+        [nzAllowClear]="true" nzShowSearch></nz-select>
+    </nz-form-control>
+  </nz-form-item>
+
+
+  <div class="d-flex justify-content-start">
+    <button nz-button nzType="primary" (click)="emitSearchFilters()" [disabled]="form.invalid">{{LABELS.APPLY_FILTERS }}</button>
+  </div>
+</form>

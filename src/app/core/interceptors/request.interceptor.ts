@@ -7,7 +7,7 @@ import {
   HttpErrorResponse
 } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, skip } from 'rxjs/operators';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { ToastrService } from 'ngx-toastr';
 import { LABELS } from '@shared/constants/labels.const';
@@ -35,6 +35,18 @@ export class RequestInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
+        const skipErrorsArr = [
+          'metering/uploadData'
+        ];
+
+        const shouldSkipErr = skipErrorsArr.some(urlStr => request.url.includes(urlStr));
+
+        if (shouldSkipErr) {
+          return throwError(() => error);
+        }
+
+        if(request.url.includes('metering/uploadData"'))
+
         switch (error.status) {
           case 401: {
             const refreshToken = localStorage.getItem('refresh_token');
@@ -46,6 +58,7 @@ export class RequestInterceptor implements HttpInterceptor {
           }
           case 400:
           case 500:
+            console.log({request})
             this.toast.error(error?.error?.message || '', error?.error?.error || LABELS.ERROR);
             break;
         }

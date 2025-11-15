@@ -5,6 +5,7 @@ export interface CurrentUser {
         privileges: string[],
         email: string,
         dn?: string,
-        roles: string[]
+        roles: string[],
+        department?: string;
     }
 }

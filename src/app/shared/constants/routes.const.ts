@@ -7,7 +7,8 @@ export const NEW_ROUTES = {
     ENERGY_MARKET_FEE_CALCULATION: 'energy-market-fee-calculation-v2',
     RESERVE_MARKET_FEE_CALCULATION: 'reserve-market-fee-calculation-v2',
     ADDITIONAL_COMPENSATION_LIST: 'additional-compensation-v2',
-    ADDITIONAL_COMPENSATION_INVOICE: 'addtl-comp-ams-update-v2'
+    ADDITIONAL_COMPENSATION_INVOICE: 'addtl-comp-ams-update-v2',
+    MQ_UPLOADER: 'metering/mq-uploader'
 }
 
 export const HEADER_ROUTES = {
@@ -215,7 +216,7 @@ const REGISTRATION_TP = {
 
 const REGISTRATION_MSP = {
     MANAGE_REGISTRATION: `${environment.__PHASE_ONE_URL__}/#/registration/0/`,
-    VIEW_EXPIRING_EXPIRED_DOCUMENTS: `${environment.__PHASE_ONE_URL__}/#/doc/expiry/notif`   
+    VIEW_EXPIRING_EXPIRED_DOCUMENTS: `${environment.__PHASE_ONE_URL__}/#/doc/expiry/notif`
 }
 
 const PRUDENTIAL_REQUIREMENTS_FOR_TP = {
@@ -254,7 +255,7 @@ export const externalRoutes = {
     CONTRACT_MANAGEMENT_FOR_TP: CONTRACT_MANAGEMENT_FOR_TP,
     SETTLEMENT_MENU_FOR_PEMC_USER: SETTLEMENT_MENU_FOR_PEMC_USER,
     METERING_MENU_FOR_PEMC_USER: METERING_MENU_FOR_PEMC_USER,
-    ACTIVITY_LOGS: `${environment.__PHASE_TWO_URL__}/#/audit-log/list`, 
+    ACTIVITY_LOGS: `${environment.__PHASE_TWO_URL__}/#/audit-log/list`,
     JOB_QUEUE: `${environment.__PHASE_TWO_URL__}/#/job-queue`,
     USER_ACCOUNTS_FOR_TP: `${environment.__PHASE_ONE_URL__}/#/user-account`,
     CALENDAR: `${environment.__PHASE_ONE_URL__}/#/calendar`,
