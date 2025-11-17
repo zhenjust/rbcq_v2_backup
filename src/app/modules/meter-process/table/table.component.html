@@ -195,9 +195,10 @@
                 <p><strong>Start Date Time:</strong> {{ currentModalData.pipeline.parameters.startDatetime }}</p>
                 <p><strong>End Date Time:</strong> {{ currentModalData.pipeline.parameters.endDatetime }}</p>
             </nz-flex>
-            <nz-flex nzGap="large" nzAlign="start">
-                <p><strong>MTN/s:</strong> {{ currentModalData.pipeline.parameters.mtn || 'ALL' }}</p>
-            </nz-flex>
+            <div class="d-flex flex-column text-wrap">
+                <p class="fw-bold mb-0">MTN/s:</p>
+                <p>{{ currentModalData.pipeline.parameters.mtn || 'ALL' }}</p>
+            </div>
         } @else {
             <nz-result nzStatus="info" nzTitle="Loading job information..."></nz-result>
         }
