@@ -176,6 +176,9 @@ export class MqUploaderFilterComponent implements OnInit {
         formData.append(key, payload[key]?.toString());
       });
 
+      const fileType = file.name.split('.').pop();
+
+      formData.append('fileType', fileType!.toString().toUpperCase());
       formDataGrp.push(formData);
     });
 

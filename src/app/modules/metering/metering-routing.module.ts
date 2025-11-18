@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { MqUploaderComponent } from './mq-uploader/mq-uploader.component';
 
+
 const routes: Routes = [
   {
     path: '',
@@ -9,7 +10,7 @@ const routes: Routes = [
   },
   {
     path: 'mq-uploader',
-    component: MqUploaderComponent
+    component: MqUploaderComponent,
   }
 ];
 

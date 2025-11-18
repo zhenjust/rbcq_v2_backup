@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { LABELS } from '@shared/constants/labels.const';
-import { MqList, MqUploadFilters, OngoingTableList, TableDataResult, TPL_TABLE_COLUMN } from '@shared/interfaces';
+import { MqList, MqUploadFilters, OngoingTableList, TableDataResult, TableParams, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { MqUploaderService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { catchError, concatMap, from, Observable, of, tap } from 'rxjs';
@@ -19,7 +19,7 @@ import { MQ_UPLOAD_CATEGORY, Status } from '@shared/constants';
 })
 export class MqUploaderComponent implements OnInit {
 
-  @ViewChild('paginatedTable', { static: true }) paginatedTable: PaginatedTableComponent;
+  @ViewChild('paginatedTable', { static: false }) paginatedTable: PaginatedTableComponent;
   @ViewChild('filtersComp', { static: false }) filtersComp: MqHistoryFiltersComponent;
   @ViewChild('sizeTpl', { static: true }) sizeTpl: TemplateRef<HTMLElement>;
   @ViewChild('statusTpl', { static: true }) statusTpl: TemplateRef<HTMLElement>;
@@ -61,8 +61,12 @@ export class MqUploaderComponent implements OnInit {
     this.ongoingTableColumns = Object.values(ongoingTableColumns);
   }
 
-  listUrl(): Observable<TableDataResult<MqList[]>> {
-    return this.mqs.getList(this.filters, this.paginatedTable?.tableParams)
+  listUrl(): Observable<TableDataResult<MqList[]> | null> {
+    if (!this.filters?.category || !this.filters?.status) {
+      return of(null);
+    }
+
+    return this.mqs.getList(this.filters, this.paginatedTable?.tableParams || new TableParams())
   }
 
   import(): void {
@@ -162,9 +166,9 @@ export class MqUploaderComponent implements OnInit {
 }
 
 const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
-  [LABELS.TRANSACTION_ID]: { label: LABELS.TRANSACTION_ID, propName: 'transactionId', width: '250px', type: 'template' },
+  [LABELS.TRANSACTION_ID]: { label: LABELS.TRANSACTION_ID, propName: 'transactionId', width: '330px', type: 'template' },
   [LABELS.MSP]: { label: LABELS.MSP, propName: 'msp', width: '150PX' },
-  [LABELS.FILE_NAME]: { label: LABELS.FILE_NAME, propName: 'fileName', width: '300px' },
+  [LABELS.FILE_NAME]: { label: LABELS.FILE_NAME, propName: 'fileName', width: '250px' },
   [LABELS.CATEGORY]: { label: LABELS.CATEGORY, propName: 'category', width: '100px', align: 'center' },
   [LABELS.BILLING_DATE]: { label: LABELS.BILLING_DATE, propName: 'billingDate', width: '140px', align: 'center' },
   [LABELS.SIZE]: { label: LABELS.SIZE, propName: 'fileSize', width: '100px', type: 'template' },
