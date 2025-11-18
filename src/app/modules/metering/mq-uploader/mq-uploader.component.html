@@ -50,7 +50,7 @@
 
 
 <ng-template #billingDateTpl let-allData="allData">
-  {{ allData.category === 'DAILY' ? (allData.tradingDate | date: 'yyyy-MM-dd') : (allData.tradingMonth | date: 'MMMM yyyy') }}
+  {{ allData.category === MQ_UPLOAD_CATEGORY.DAILY ? (allData.tradingDate | date: 'yyyy-MM-dd') : (allData.tradingMonth | date: 'MMMM yyyy') }}
 </ng-template>
 
 <ng-template #statusTpl let-data="data" let-allData="allData">
