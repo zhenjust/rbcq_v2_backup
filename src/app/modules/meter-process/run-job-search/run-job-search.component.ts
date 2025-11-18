@@ -177,7 +177,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
             .subscribe({
               next: () => {
                 this.toast.success(MESSAGES.SUCCESS_JOB_TRIGGER);
-                this.sfs.refreshJobs({});
+                this.applyFilter();
                 resolve();
               },
               error: () => {

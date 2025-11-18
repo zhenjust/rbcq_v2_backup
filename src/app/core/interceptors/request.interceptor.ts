@@ -45,7 +45,7 @@ export class RequestInterceptor implements HttpInterceptor {
           return throwError(() => error);
         }
 
-        if(request.url.includes('metering/uploadData"'))
+        // if(request.url.includes('metering/uploadData"'))
 
         switch (error.status) {
           case 401: {
