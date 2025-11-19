@@ -34,4 +34,8 @@ export class MqUploaderService {
     });
   }
 
+  public uploadMqHeader(payload: any): Observable<any> {
+    return this.http.post<any>(`${this.meteringCloudEndpoint}/uploadHeader`, payload);
+  }
+
 }

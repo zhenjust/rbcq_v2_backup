@@ -1,106 +1,107 @@
-<form nz-form [formGroup]="form" nzLayout="vertical" nzNoColon>
-  <nz-form-item>
-    <nz-form-label nzRequired>{{ LABELS.CATEGORY }}</nz-form-label>
-    <nz-form-control>
-      <nz-select formControlName="category" [nzOptions]="categoryOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
-        [nzAllowClear]="true" nzShowSearch></nz-select>
-    </nz-form-control>
-  </nz-form-item>
-
-  @if (isDaily || isCorrectedDaily) {
+<nz-spin [nzSpinning]="busy$ && !busy$.closed">
+  <form nz-form [formGroup]="form" nzLayout="vertical" nzNoColon>
     <nz-form-item>
-      <nz-form-label nzRequired>{{ LABELS.TRADING_DAY }}</nz-form-label>
+      <nz-form-label nzRequired>{{ LABELS.CATEGORY }}</nz-form-label>
       <nz-form-control>
-        <nz-date-picker [nzInputReadOnly]="true" formControlName="tradingDay" [nzDisabledDate]="disabledPrevDay"
-          class="w-100"></nz-date-picker>
+        <nz-select formControlName="category" [nzOptions]="categoryOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
+          [nzAllowClear]="true" nzShowSearch></nz-select>
       </nz-form-control>
     </nz-form-item>
-  }
 
-  @if (isMonthly || isCorrectedMonthly) {
+    @if (isDaily || isCorrectedDaily) {
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ LABELS.TRADING_DAY }}</nz-form-label>
+        <nz-form-control>
+          <nz-date-picker [nzInputReadOnly]="true" formControlName="tradingDay" [nzDisabledDate]="disabledPrevDay"
+            class="w-100"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    }
+
+    @if (isMonthly || isCorrectedMonthly) {
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ LABELS.TRADING_MONTH }}</nz-form-label>
+        <nz-form-control>
+          <nz-date-picker [nzInputReadOnly]="true" formControlName="tradingMonth" nzMode="month" nzFormat="MMMM yyyy"
+            [nzDisabledDate]="disabledPrevMonth" class="w-100"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    }
+
+    @if (category?.value) {
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ LABELS.INTERVAL }}</nz-form-label>
+        <nz-form-control>
+          <nz-range-picker [nzInputReadOnly]="true" formControlName="interval" nzFormat="yyyy-MM-dd HH:mm"
+            [nzShowTime]="{ nzFormat: 'HH:mm', nzMinuteStep: 5 }" [nzDisabledDate]="disabledInterval"
+            class="w-100"></nz-range-picker>
+        </nz-form-control>
+      </nz-form-item>
+    }
+
     <nz-form-item>
-      <nz-form-label nzRequired>{{ LABELS.TRADING_MONTH }}</nz-form-label>
+      <nz-form-label nzRequired>{{ LABELS.MSP }}</nz-form-label>
       <nz-form-control>
-        <nz-date-picker [nzInputReadOnly]="true" formControlName="tradingMonth" nzMode="month" nzFormat="MMMM yyyy"
-          [nzDisabledDate]="disabledPrevMonth" class="w-100"></nz-date-picker>
+        <nz-select formControlName="mspShortName" [nzPlaceHolder]="LABELS.CHOOSE_HERE" [nzOptions]="mspOpts || []" [nzLoading]="!mspOpts"
+          [nzAllowClear]="true" nzShowSearch></nz-select>
       </nz-form-control>
     </nz-form-item>
-  }
 
-  @if (category?.value) {
     <nz-form-item>
-      <nz-form-label nzRequired>{{ LABELS.INTERVAL }}</nz-form-label>
+      <nz-form-label nzRequired>{{ LABELS.CONVERSION_TYPE }}</nz-form-label>
       <nz-form-control>
-        <nz-range-picker [nzInputReadOnly]="true" formControlName="interval" nzFormat="yyyy-MM-dd HH:mm"
-          [nzShowTime]="{ nzFormat: 'HH:mm', nzMinuteStep: 5 }" [nzDisabledDate]="disabledInterval"
-          class="w-100"></nz-range-picker>
+        <nz-radio-group formControlName="convertToFiveMin">
+          @for (item of conversionOpts; track item?.value) {
+          <label nz-radio [nzValue]="item.value">{{ item.label }}</label>
+          }
+        </nz-radio-group>
       </nz-form-control>
     </nz-form-item>
-  }
 
-  <nz-form-item>
-    <nz-form-label nzRequired>{{ LABELS.MSP }}</nz-form-label>
-    <nz-form-control>
-      <nz-select formControlName="mspShortName" [nzPlaceHolder]="LABELS.CHOOSE_HERE" [nzOptions]="mspOpts || []" [nzLoading]="!mspOpts"
-        [nzAllowClear]="true" nzShowSearch></nz-select>
-    </nz-form-control>
-  </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzRequired>{{ LABELS.UPLOAD }}</nz-form-label>
+      <nz-form-control>
+        <div class="d-flex justify-content-between">
+          <nz-upload [nzBeforeUpload]="beforeUpload" [nzMultiple]="true" [nzAccept]="acceptedFile" [nzShowUploadList]="false">
+            <nz-space>
+              <button *nzSpaceItem nzSize="small" class="me-2" nz-button>{{ LABELS.CHOOSE_FILE }}</button>
+            </nz-space>
+          </nz-upload>
 
-  <nz-form-item>
-    <nz-form-label nzRequired>{{ LABELS.CONVERSION_TYPE }}</nz-form-label>
-    <nz-form-control>
-      <nz-radio-group formControlName="convertToFiveMin">
-        @for (item of conversionOpts; track item?.value) {
-        <label nz-radio [nzValue]="item.value">{{ item.label }}</label>
-        }
-      </nz-radio-group>
-    </nz-form-control>
-  </nz-form-item>
 
-  <nz-form-item>
-    <nz-form-label nzRequired>{{ LABELS.UPLOAD }}</nz-form-label>
-    <nz-form-control>
-      <div class="d-flex justify-content-between">
-        <nz-upload [nzBeforeUpload]="beforeUpload" [nzMultiple]="true" [nzAccept]="acceptedFile" [nzShowUploadList]="false">
-          <nz-space>
-            <button *nzSpaceItem nzSize="small" class="me-2" nz-button>{{ LABELS.CHOOSE_FILE }}</button>
+          <nz-space class="align-items-center">
+          @if (fileList.length === 1) {
+            <span *nzSpaceItem>{{ fileList[0].name }}</span>
+            <a *nzSpaceItem nzSize="small" nz-button nzType="link" class="lh-1" nzDanger nz-tooltip [nzTooltipTitle]="LABELS.CLEAR"
+              (click)="clearFiles()">
+              <nz-icon nzType="delete" />
+            </a>
+          }
+
+          @if (fileList.length > 1) {
+            <span *nzSpaceItem class="text-primary" nz-popover [nzPopoverContent]="selectedFilesTpl" nzPopoverPlacement="bottom">{{
+              fileList.length }} files selected</span>
+            <a *nzSpaceItem nzSize="small" nz-button class="lh-1" nzType="link" nzDanger nz-tooltip [nzTooltipTitle]="LABELS.CLEAR"
+              (click)="clearFiles()">
+              <nz-icon nzType="delete" />
+            </a>
+            <ng-template #selectedFilesTpl>
+              <div class="d-flex flex-column">
+                @for (file of fileList; track file.name) {
+                <p class="text-muted mb-0">{{ file.name }}</p>
+                }
+              </div>
+            </ng-template>
+          }
+
           </nz-space>
-        </nz-upload>
+        </div>
+      </nz-form-control>
+    </nz-form-item>
 
-
-        <nz-space class="align-items-center">
-        @if (fileList.length === 1) {
-          <span *nzSpaceItem>{{ fileList[0].name }}</span>
-          <a *nzSpaceItem nzSize="small" nz-button nzType="link" class="lh-1" nzDanger nz-tooltip [nzTooltipTitle]="LABELS.CLEAR"
-            (click)="clearFiles()">
-            <nz-icon nzType="delete" />
-          </a>
-        }
-
-        @if (fileList.length > 1) {
-          <span *nzSpaceItem class="text-primary" nz-popover [nzPopoverContent]="selectedFilesTpl" nzPopoverPlacement="bottom">{{
-            fileList.length }} files selected</span>
-          <a *nzSpaceItem nzSize="small" nz-button class="lh-1" nzType="link" nzDanger nz-tooltip [nzTooltipTitle]="LABELS.CLEAR"
-            (click)="clearFiles()">
-            <nz-icon nzType="delete" />
-          </a>
-          <ng-template #selectedFilesTpl>
-            <div class="d-flex flex-column">
-              @for (file of fileList; track file.name) {
-              <p class="text-muted mb-0">{{ file.name }}</p>
-              }
-            </div>
-          </ng-template>
-        }
-
-        </nz-space>
-      </div>
-    </nz-form-control>
-  </nz-form-item>
-
-  <div class="d-flex justify-content-end">
-    <button nz-button nzType="primary" (click)="import()" [disabled]="!fileList.length || form.invalid">{{
-      LABELS.START_IMPORT }}</button>
-  </div>
-</form>
-
+    <div class="d-flex justify-content-end">
+      <button nz-button nzType="primary" (click)="import()" [disabled]="!fileList.length || form.invalid">{{
+        LABELS.START_IMPORT }}</button>
+    </div>
+  </form>
+</nz-spin>

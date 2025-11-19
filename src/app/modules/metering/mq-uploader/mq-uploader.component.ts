@@ -116,9 +116,13 @@ export class MqUploaderComponent implements OnInit {
               }
             }),
             catchError(err => {
-              const message = err?.error?.length && (err?.error[0]?.defaultMessage || err?.error[0]?.error);
+              const errors = err?.error?.error;
+              const compiledErrs = (errors?.length && errors instanceof Array) ? errors?.map((e: any) => e.defaultMessage).join('. ') : err.error;
+              const message = compiledErrs.error ? compiledErrs.error : compiledErrs;
+
               this.ongoingTableData[index].status = Status.REJECTED;
               this.ongoingTableData[index].errorMessage = message;
+              this.ongoingTableData[index].transactionId = err.error.transactionID;
               hasError.push(this.ongoingTableData[index]);
               return of(err);
             })

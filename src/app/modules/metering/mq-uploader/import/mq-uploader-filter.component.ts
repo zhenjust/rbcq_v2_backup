@@ -14,7 +14,7 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { ToastrService } from 'ngx-toastr';
-import { distinctUntilChanged } from 'rxjs';
+import { distinctUntilChanged, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-mq-uploader-filter',
@@ -39,6 +39,7 @@ export class MqUploaderFilterComponent implements OnInit {
   mspOpts: NzSelectOptionInterface[] | null = null;
   recordMq: Record<string, string> = {}
   currentUser: CurrentUser | null;
+  busy$: Subscription;
 
   ngOnInit(): void {
     this.currentUser = this.as.currentUser();
@@ -167,24 +168,28 @@ export class MqUploaderFilterComponent implements OnInit {
     delete payload.interval;
     delete payload.tradingDay;
 
-
     const formDataGrp: FormData[] = [];
-    this.fileList.forEach(file => {
-      const formData = new FormData();
-      formData.append('file', file as any);
-      Object.keys(payload).forEach(key => {
-        formData.append(key, payload[key]?.toString());
+    const headerPayload = {...payload, fileCount: this.fileList.length};
+
+    this.busy$ = this.mqs.uploadMqHeader(headerPayload)
+      .subscribe(headerId => {
+        this.fileList.forEach(file => {
+          const formData = new FormData();
+          const fileType = file.name.split('.').pop();
+          formData.append('file', file as any);
+          formData.append('headerId', headerId);
+          formData.append('fileType', fileType!.toString().toUpperCase());
+
+          Object.keys(payload).forEach(key => {
+            formData.append(key, payload[key]?.toString());
+          });
+
+          formDataGrp.push(formData);
+        });
+
+        this.modalRef.destroy({ payload, formDataGrp });
       });
-
-      const fileType = file.name.split('.').pop();
-
-      formData.append('fileType', fileType!.toString().toUpperCase());
-      formDataGrp.push(formData);
-    });
-
-    this.modalRef.destroy({payload, formDataGrp});
   }
-
 
   disabledPrevDay = (currentDate: Date) => this.isDaily ? differenceInCalendarDays(currentDate, new Date()) !== -1 : differenceInCalendarDays(currentDate, new Date()) > -1;
   disabledPrevMonth = (currentDate: Date) => this.isMonthly ? differenceInCalendarMonths(currentDate, new Date()) !== -1 : differenceInCalendarMonths(currentDate, new Date()) > -1;
