@@ -61,7 +61,7 @@ export class MqHistoryFiltersComponent implements OnInit {
 
     const payload = {
       ...formValue,
-      tradingDate: (formValue?.tradingDay && format(formValue.tradingDay, 'yyyy-MM-dd')) || null,
+      tradingDate: (formValue?.tradingDay && format(formValue?.tradingDay, 'yyyy-MM-dd')) || null,
     }
 
     delete payload.tradingDay;

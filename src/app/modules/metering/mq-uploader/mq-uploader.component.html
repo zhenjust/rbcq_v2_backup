@@ -5,7 +5,7 @@
   </div>
 
   @if (showFilters && tabIndex) {
-    <app-mq-history-filters #filtersComp (emitFiltersEvent)="triggerSearch($event);"></app-mq-history-filters>
+    <app-mq-history-filters #filtersComp (emitFiltersEvent)="triggerSearch($event)"></app-mq-history-filters>
   }
 
   <nz-tabset [nzDestroyInactiveTabPane]="true" [(nzSelectedIndex)]="tabIndex" (nzSelectedIndexChange)="onTabChange($event)" class="mt-2" [nzTabBarExtraContent]="hasInProgress ? extraTpl : undefined">

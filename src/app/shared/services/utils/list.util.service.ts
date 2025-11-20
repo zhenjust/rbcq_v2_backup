@@ -50,11 +50,12 @@ export abstract class SearchListBase {
     setTimeout(() => {
       this.busy$ = this.getListUrl()
         .subscribe(itemDetails => {
-          console.log({itemDetails})
-          this.tableData = itemDetails[this.resultsProp || 'content'];
-          this.tableParams.totalElements = itemDetails?.totalElements;
+          if (itemDetails) {
+            this.tableData = itemDetails[this.resultsProp || 'content'];
+            this.tableParams.totalElements = itemDetails?.totalElements;
 
-          this.listComplete$.next(itemDetails);
+            this.listComplete$.next(itemDetails);
+          }
         });
     }, 1);
   }
