@@ -17,13 +17,15 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { SharedModule } from '@shared/shared.module';
 import { NzResultModule } from 'ng-zorro-antd/result';
+import { RunProcessFormComponent } from './run-process-form/run-process-form.component';
 
 
 @NgModule({
   declarations: [
     BaseComponent,
     FilterSearchComponent,
-    TableComponent
+    TableComponent,
+    RunProcessFormComponent
   ],
   imports: [
     CommonModule,

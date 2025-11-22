@@ -1,4 +1,4 @@
-import { pricingConditions, settlementProcessTypes } from "@shared/enums";
+import { pricingConditions, settlementProcessTypes, settlementSearchNames } from "@shared/enums";
 import { JobSelect, settlementJobInstanceOptions, settlementTableDate, TableColumn } from "@shared/interfaces";
 import { LABELS } from './labels.const';
 
@@ -63,3 +63,7 @@ export const DefaultTableData: settlementTableDate = {
   totalElements: 0,
   totalPages: 0
 };
+
+export const RunProcessBtnLabel: Record<string, string> = {
+  [settlementSearchNames.RESERVE_TRADING_AMOUNTS]: 'Run Reserve Settlement Ready',
+}

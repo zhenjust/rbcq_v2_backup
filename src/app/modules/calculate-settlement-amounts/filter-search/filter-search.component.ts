@@ -34,8 +34,13 @@ export class FilterSearchComponent implements OnInit, OnDestroy {
   private router = inject(ActivatedRoute);
 
   private setSettlementOptions(): void {
-    if (this.searchName === settlementSearchNames.RESERVE_MARKET_FEE ||
-        this.searchName === settlementSearchNames.ENERGY_MARKET_FEE) {
+    const noDailyFilter = [
+      settlementSearchNames.RESERVE_MARKET_FEE,
+      settlementSearchNames.ENERGY_MARKET_FEE,
+      settlementSearchNames.RESERVE_TRADING_AMOUNTS
+    ];
+
+    if (noDailyFilter.includes(this.searchName as settlementSearchNames)) {
       this.settlementOptions = MARKET_FEE_SETTLEMENT_OPTIONS;
     } else {
       this.settlementOptions = FULL_SETTLEMENT_OPTIONS;
