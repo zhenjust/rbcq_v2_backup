@@ -1,4 +1,3 @@
-
 (
   function (window: any) {
     window.__env = window.__env || {};

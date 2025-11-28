@@ -1,11 +1,3 @@
-// export const environment = {
-//     production: true,
-//     __API_URL__: "//crss-dev.exist.com.ph",
-//     __CLOUD_API_URL__: "https://crss-cloud-dev.exist.com.ph",
-//     __PHASE_ONE_URL__: "",
-//     __PHASE_TWO_URL__: "/bsmd"
-// }
-
 declare global {
   interface Window {
     __env?: {
