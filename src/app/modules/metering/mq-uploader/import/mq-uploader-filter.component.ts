@@ -208,7 +208,7 @@ export class MqUploaderFilterComponent implements OnInit {
   get isMonthly(): boolean { return this.category?.value === MQ_UPLOAD_CATEGORY.MONTHLY; }
   get isCorrectedMonthly(): boolean { return this.category?.value === MQ_UPLOAD_CATEGORY.CORRECTED_METER_DATA_MONTHLY; }
 
-  get acceptedFile(): string { return (this.isDaily || this.isMonthly) ? '.mdef, .mde, .csv' : '.csv'; }
+  get acceptedFile(): string { return (this.isDaily || this.isMonthly) ? '.mdef, .mde, .mdf, .csv' : '.csv'; }
   get isMspUser(): boolean { return this.currentUser?.principal?.department === 'MSP'; }
 
 }
