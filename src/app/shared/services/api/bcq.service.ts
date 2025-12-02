@@ -9,4 +9,5 @@ export class BcqService {
   protected baseEndpoint = environment.__API_URL__ + apiPath.__METERPROCESS_PATH__;
 
   constructor() { }
+
 }

@@ -7,8 +7,9 @@ import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { CurrentUser } from '@shared/interfaces';
 import { MqUploaderService } from '@shared/services/api';
+import { AdminService } from '@shared/services/api/admin.service';
 import { SystemUtilService } from '@shared/services/utils';
-import { addDays, addMonths, differenceInCalendarMonths, format, isWithinInterval, set, startOfDay } from 'date-fns';
+import { addDays, addMonths, differenceInCalendarMonths, format, isAfter, isToday, isWithinInterval, set, startOfDay } from 'date-fns';
 import { differenceInCalendarDays } from 'date-fns';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
@@ -26,6 +27,7 @@ export class MqUploaderFilterComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly modal = inject(NzModalService);
   private readonly sysUtil = inject(SystemUtilService);
+  private readonly admin = inject(AdminService);
   private readonly mqs = inject(MqUploaderService);
   private readonly as = inject(AuthorizationService);
   private readonly modalRef = inject(NzModalRef);
@@ -40,6 +42,7 @@ export class MqUploaderFilterComponent implements OnInit {
   recordMq: Record<string, string> = {}
   currentUser: CurrentUser | null;
   busy$: Subscription;
+  dateDeduction: number;
 
   ngOnInit(): void {
     this.currentUser = this.as.currentUser();
@@ -102,11 +105,17 @@ export class MqUploaderFilterComponent implements OnInit {
   }
 
   getReferences(): void {
+    this.getMqDays();
     this.categoryOpts = this.sysUtil.nzOptionsFormatter(MQ_UPLOAD_CATEGORY, true);
     this.conversionOpts = [
       { label: LABELS.UPLOAD_DATA_AS_IS, value: false },
       { label: LABELS.CONVERT_TO_5_MIN, value: true }
     ];
+  }
+
+  getMqDays(): void {
+    this.admin.getConfigurations('MQ_ALLOWABLE_TRADING_DATE')
+      .subscribe(value => this.dateDeduction = +value + 1 || 1);
   }
 
   getMqList(): void {
@@ -191,9 +200,9 @@ export class MqUploaderFilterComponent implements OnInit {
       });
   }
 
-  disabledPrevDay = (currentDate: Date) => this.isDaily ? differenceInCalendarDays(currentDate, new Date()) !== -1 : differenceInCalendarDays(currentDate, new Date()) > -1;
+  disabledPrevDay = (currentDate: Date) => this.isDaily ? (differenceInCalendarDays(currentDate, new Date()) <= -this.dateDeduction || isAfter(currentDate, new Date()) ||  isToday(currentDate)) : differenceInCalendarDays(currentDate, new Date()) > -1;
   disabledPrevMonth = (currentDate: Date) => this.isMonthly ? differenceInCalendarMonths(currentDate, new Date()) !== -1 : differenceInCalendarMonths(currentDate, new Date()) > -1;
-  disabledMonthlyInterval = (currentDate: Date) => !isWithinInterval(currentDate, { start: this.interval?.value[0], end: this.interval?.value[1]});
+  disabledMonthlyInterval = (currentDate: Date) => this.interval?.value?.length && !isWithinInterval(currentDate, { start: this.interval?.value[0], end: this.interval?.value[1]});
   disabledDailyInterval = (currentDate: Date) => differenceInCalendarDays(currentDate, new Date()) < -1;
   disabledInterval = (currentDate: Date) => this.isMonthly ? this.disabledMonthlyInterval(currentDate) : this.disabledDailyInterval(currentDate);
 
