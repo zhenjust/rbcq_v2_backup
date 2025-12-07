@@ -68,14 +68,14 @@ export interface settlementPipeline {
 }
 
 export interface pipeline {
-  id: number;
-  name: string;
-  status: string;
-  lastModifiedDatetime: string;
-  lastModifiedBy: string;
-  partial: boolean;
-  consolidate: boolean;
-  pipelineRuns: PipelineRun[];
+    id: number;
+    name: string;
+    status: string;
+    lastModifiedDatetime: string;
+    lastModifiedBy: string;
+    partial: boolean;
+    consolidate: boolean;
+    pipelineRuns: PipelineRun[];
 }
 
 export interface settlementTableDate {
@@ -129,31 +129,43 @@ export interface EnergyTradingAmounts {
 }
 
 export interface JobSelect {
-  label: string,
-  value: string,
-  show?: boolean
+    label: string,
+    value: string,
+    show?: boolean
 }
 
 export interface SettlementPipelineWithRun {
-  id: number;
-  name: string;
-  lastModifiedDatetime: string;
-  lastModifiedBy: string;
-  partial: boolean;
-  consolidate: boolean;
-  pipelineRuns: PipelineRun[];
-  status?: string;
+    id: number;
+    name: string;
+    lastModifiedDatetime: string;
+    lastModifiedBy: string;
+    partial: boolean;
+    consolidate: boolean;
+    pipelineRuns: PipelineRun[];
+    status?: string;
 }
 
 export interface PipelineRun {
-  name: string;
-  description: any;
-  runBy: string;
-  runId: string;
-  status: string;
-  message: any;
-  runStart: string;
-  runEnd?: string;
-  duration: string;
-  workspaceId: number;
+    name: string;
+    description: any;
+    runBy: string;
+    runId: string;
+    status: string;
+    message: any;
+    runStart: string;
+    runEnd?: string;
+    duration: string;
+    workspaceId: number;
+}
+
+export interface SettlementJob {
+    pipelineName: string;
+    isGroup: boolean;
+    parameters: SettlementJobParams;
+}
+
+export interface SettlementJobParams {
+    processType: string;
+    startDateTime?: string;
+    endDateTime?: string;
 }

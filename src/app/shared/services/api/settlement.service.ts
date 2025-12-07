@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ParamsUtilService } from '../utils';
-import { BaseResponse, EnergyTradingAmounts, PublishSettlement, settlementParams, settlementTableDate, TableParams } from '@shared/interfaces';
+import { BaseResponse, EnergyTradingAmounts, PublishSettlement, SettlementJob, SettlementJobParams, settlementParams, settlementTableDate, TableParams } from '@shared/interfaces';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -50,4 +50,18 @@ export class SettlementService {
   public etaJobs(payload: EnergyTradingAmounts): Observable<BaseResponse>{
     return this.http.post<BaseResponse>(this.API_URL, payload);
   }
+
+  public runJob(data: SettlementJobParams, pipelineName: string, isGroup = false): Observable<null>{
+    const bodyParams: Partial<SettlementJob> = {
+      pipelineName,
+      isGroup
+    };
+
+    if (data && Object.keys(data).length > 0) {
+      bodyParams.parameters = data;
+    }
+
+    return this.http.post<null>(this.API_URL, bodyParams);
+  }
+
 }

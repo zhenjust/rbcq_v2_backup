@@ -1,6 +1,6 @@
 <nz-card [nzTitle]="pageTitle">
     @if (showRunProcess) {
-        <app-run-process-form [module]="module"></app-run-process-form>
+        <app-run-process-form [module]="module" (emitJob)="table.search()"></app-run-process-form>
     }
 
     <app-filter-search (filtersEvent)="table.filters = $event; table.search()"></app-filter-search>

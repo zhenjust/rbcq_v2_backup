@@ -26,6 +26,7 @@ export const LABELS = {
   CLEAR_FILTERS: 'Clear Filters',
   APPLY_FILTERS: 'Apply Filters',
   RUN: 'Run',
+  RUN_JOB: 'Run Job',
 
   // Field Labels
   CONSOLIDATE: 'Consolidate',
