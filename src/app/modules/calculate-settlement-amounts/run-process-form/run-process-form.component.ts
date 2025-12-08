@@ -1,6 +1,7 @@
 import { Component, inject, Input, OnInit, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
+import { RxwebValidators } from '@rxweb/reactive-form-validators';
 import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
 import { FULL_SETTLEMENT_OPTIONS, MARKET_FEE_SETTLEMENT_OPTIONS, RunProcessBtnLabel } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
@@ -51,8 +52,8 @@ export class RunProcessFormComponent implements OnInit {
 
   buildForm(): void {
     this.form = this.fb.group({
-      processType: [null],
-      billingPeriod: [null],
+      processType: [null, RxwebValidators.required()],
+      billingPeriod: [null, RxwebValidators.required()],
       selectedDate: [{ value: [], disabled: true }],
     });
 
@@ -91,10 +92,13 @@ export class RunProcessFormComponent implements OnInit {
     const pipelineName = 'reserveTradingAmounts-generateInputWorkspace';
     const formValue = this.form.getRawValue();
 
+    const filteredBp = this.billingPeriods.filter(d => d.billingPeriod === this.billingPeriod?.value)[0];
+
     const data = {
       processType: formValue.processType,
-      startDatetime: format(this.selectedDate?.value[0], 'yyyy-MM-dd HH:mm'),
-      endDatetime: format(this.selectedDate?.value[1], 'yyyy-MM-dd HH:mm')
+      billingStartDate: format(new Date(filteredBp.startDate), 'yyyy-MM-dd'),
+      billingEndDate: format(new Date(filteredBp.endDate), 'yyyy-MM-dd'),
+      billingPeriodName: filteredBp.supplyMonth,
     };
 
     const api$ = () => this.ss.runJob(data, pipelineName)
@@ -112,12 +116,16 @@ export class RunProcessFormComponent implements OnInit {
           value: data.processType
         },
         {
+          label: LABELS.BILLING_PERIOD,
+          value: data.billingPeriodName
+        },
+        {
           label: LABELS.START_DATE,
-          value: data.startDatetime
+          value: data.billingStartDate
         },
         {
           label: LABELS.END_DATE,
-          value: data.endDatetime
+          value: data.billingEndDate
         },
       ]
     };
@@ -131,11 +139,9 @@ export class RunProcessFormComponent implements OnInit {
       nzWidth: '600px',
       nzOnOk: () => api$()
     });
-
   }
 
   get billingPeriod(): AbstractControl | null { return this.form.get('billingPeriod'); }
   get selectedDate(): AbstractControl | null { return this.form.get('selectedDate'); }
-
 
 }
