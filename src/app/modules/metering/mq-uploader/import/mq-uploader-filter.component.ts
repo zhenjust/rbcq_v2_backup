@@ -139,7 +139,7 @@ export class MqUploaderFilterComponent implements OnInit {
     const fileType = file.name.split('.').pop();
     const acceptedTypesArr = this.acceptedFile
       .split(',')
-      .map(fileType => fileType.trim());
+      .map(fileType => fileType.trim())
 
     if (!acceptedTypesArr.includes(`.${fileType}`)) {
       this.ts.error(MESSAGES.INVALID_FILE_TYPE);
@@ -217,7 +217,7 @@ export class MqUploaderFilterComponent implements OnInit {
   get isMonthly(): boolean { return this.category?.value === MQ_UPLOAD_CATEGORY.MONTHLY; }
   get isCorrectedMonthly(): boolean { return this.category?.value === MQ_UPLOAD_CATEGORY.CORRECTED_METER_DATA_MONTHLY; }
 
-  get acceptedFile(): string { return (this.isDaily || this.isMonthly) ? '.mdef, .mde, .mdf, .csv' : '.csv'; }
+  get acceptedFile(): string { return (this.isDaily || this.isMonthly) ? '.mdef, .mde, .mdf, .csv, .MDE, .MDF' : '.csv'; }
   get isMspUser(): boolean { return this.currentUser?.principal?.department === 'MSP'; }
 
 }
