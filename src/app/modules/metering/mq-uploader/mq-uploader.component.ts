@@ -62,7 +62,7 @@ export class MqUploaderComponent implements OnInit {
   }
 
   listUrl(): Observable<TableDataResult<MqList[]> | null> {
-    if (!this.filters?.category || !this.filters?.tradingDate) {
+    if (!this.filters?.tradingDate) {
       return of(null);
     }
 
@@ -145,6 +145,7 @@ export class MqUploaderComponent implements OnInit {
 
   triggerSearch(filters: MqUploadFilters): void {
     this.filters = filters ?? {};
+    console.debug({filters})
     this.paginatedTable?.search();
   }
 

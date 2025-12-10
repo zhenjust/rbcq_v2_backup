@@ -1,10 +1,10 @@
 <nz-card [nzTitle]="LABELS.MQ_UPLOADER">
   <div class="d-flex {{tabIndex ? 'justify-content-between': 'justify-content-end'}}">
-    <button nz-button *ngIf="tabIndex" class="{{showFilters ? 'mb-3' : ''}}" [nzType]="showFilters ? 'default' : 'primary'"  (click)="showFilters ? resetFilters() : showFilters = !showFilters">{{ showFilters ? LABELS.CLEAR_FILTERS : LABELS.SET_FILTERS }}</button>
+    <button nz-button *ngIf="tabIndex" class="mb-3" [nzType]="showFilters ? 'default' : 'primary'"  (click)="resetFilters()">{{ LABELS.CLEAR_FILTERS }}</button>
     <button nz-button *ngIf="!tabIndex" nzType="primary" (click)="import()" [disabled]="!disableImport">{{ LABELS.START_IMPORT }}</button>
   </div>
 
-  @if (showFilters && tabIndex) {
+  @if (tabIndex) {
     <app-mq-history-filters #filtersComp (emitFiltersEvent)="triggerSearch($event)"></app-mq-history-filters>
   }
 

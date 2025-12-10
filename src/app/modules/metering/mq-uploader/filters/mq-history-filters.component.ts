@@ -29,14 +29,15 @@ export class MqHistoryFiltersComponent implements OnInit {
   ngOnInit(): void {
     this.buildForm();
     this.getReferences();
+    this.emitSearchFilters();
   }
 
   buildForm(): void {
     const required = RxwebValidators.required();
 
     this.form = this.fb.group({
-      category: [null, required],
-      tradingDay: [null, required],
+      category: [null],
+      tradingDay: [new Date(), required],
       status: [null]
     });
 
@@ -65,6 +66,7 @@ export class MqHistoryFiltersComponent implements OnInit {
     }
 
     delete payload.tradingDay;
+    console.debug({payload})
     this.emitFiltersEvent.emit(payload);
   }
 

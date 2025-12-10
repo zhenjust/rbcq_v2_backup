@@ -1,6 +1,6 @@
 <form nz-form [formGroup]="form" nzLayout="horizontal" class="column">
   <nz-form-item class="col-sm-12 col-md-6 col-lg-4">
-    <nz-form-label nzRequired nzSpan="6">{{ LABELS.CATEGORY }}</nz-form-label>
+    <nz-form-label nzSpan="6">{{ LABELS.CATEGORY }}</nz-form-label>
     <nz-form-control nzSpan="18">
       <nz-select formControlName="category" [nzOptions]="categoryOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
         [nzAllowClear]="true" nzShowSearch></nz-select>
