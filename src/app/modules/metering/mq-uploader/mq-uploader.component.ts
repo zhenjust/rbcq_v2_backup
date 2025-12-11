@@ -145,7 +145,6 @@ export class MqUploaderComponent implements OnInit {
 
   triggerSearch(filters: MqUploadFilters): void {
     this.filters = filters ?? {};
-    console.debug({filters})
     this.paginatedTable?.search();
   }
 

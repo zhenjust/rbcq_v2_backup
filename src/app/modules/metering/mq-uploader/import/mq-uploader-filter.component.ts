@@ -9,7 +9,7 @@ import { CurrentUser } from '@shared/interfaces';
 import { MqUploaderService } from '@shared/services/api';
 import { AdminService } from '@shared/services/api/admin.service';
 import { SystemUtilService } from '@shared/services/utils';
-import { addDays, addMonths, differenceInCalendarMonths, format, isAfter, isToday, isWithinInterval, set, startOfDay } from 'date-fns';
+import { addDays, addMonths, differenceInCalendarMonths, format, isAfter, isSameDay, isToday, isWithinInterval, set, startOfDay } from 'date-fns';
 import { differenceInCalendarDays } from 'date-fns';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
@@ -185,9 +185,10 @@ export class MqUploaderFilterComponent implements OnInit {
         this.fileList.forEach(file => {
           const formData = new FormData();
           const fileType = file.name.split('.').pop();
+          const isMdef = ['MDE', 'MDF'].includes(fileType!) ? 'MDEF' : null;
           formData.append('file', file as any);
           formData.append('headerID', headerId);
-          formData.append('fileType', fileType!.toString().toUpperCase());
+          formData.append('fileType', isMdef || fileType!.toString().toUpperCase());
 
           Object.keys(payload).forEach(key => {
             formData.append(key, payload[key]?.toString());
@@ -203,7 +204,7 @@ export class MqUploaderFilterComponent implements OnInit {
   disabledPrevDay = (currentDate: Date) => this.isDaily ? (differenceInCalendarDays(currentDate, new Date()) <= -this.dateDeduction || isAfter(currentDate, new Date()) ||  isToday(currentDate)) : differenceInCalendarDays(currentDate, new Date()) > -1;
   disabledPrevMonth = (currentDate: Date) => this.isMonthly ? differenceInCalendarMonths(currentDate, new Date()) !== -1 : differenceInCalendarMonths(currentDate, new Date()) > -1;
   disabledMonthlyInterval = (currentDate: Date) => this.interval?.value?.length && !isWithinInterval(currentDate, { start: this.interval?.value[0], end: this.interval?.value[1]});
-  disabledDailyInterval = (currentDate: Date) => differenceInCalendarDays(currentDate, new Date()) < -1;
+  disabledDailyInterval = (currentDate: Date) => !isSameDay(this.tradingDay?.value, currentDate) && !isSameDay(addDays(this.tradingDay?.value, 1), currentDate);
   disabledInterval = (currentDate: Date) => this.isMonthly ? this.disabledMonthlyInterval(currentDate) : this.disabledDailyInterval(currentDate);
 
   get category(): AbstractControl | null { return this.form.get('category'); }
