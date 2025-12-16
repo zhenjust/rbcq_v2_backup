@@ -1,6 +1,6 @@
 import { Component, OnInit, TemplateRef, ViewChild, computed, effect, inject } from '@angular/core';
 import { AuthorizationService } from '@core/services/authorization.service';
-import { MeterDataPipelineName, MeterProcessStatus, MeterDataPipelineProcess } from '@shared/constants';
+import { MeterDataPipelineName, MeterProcessStatus, MeterDataPipelineProcess, PipelineStatus } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { MeterProcessTypes } from '@shared/enums';
 import { HttpResponseProgress, meterProcessPipeline, meterProcessPipelineGroup, meterProcessTable } from '@shared/interfaces';
@@ -60,6 +60,7 @@ export class TableComponent implements OnInit {
   meterDataPipelines = MeterDataPipelineName;
   meterDataPipelineProcess = MeterDataPipelineProcess;
   processTypes = MeterProcessTypes;
+  pipelineStatus = PipelineStatus;
   labels = LABELS;
   tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
   isLoading = computed(() => this.sfs.isLoading());
@@ -326,7 +327,7 @@ export class TableComponent implements OnInit {
   formatFileSize(bytes: number): string {
     if (bytes === 0) {
       return '0 Bytes'
-    };
+    }
 
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
