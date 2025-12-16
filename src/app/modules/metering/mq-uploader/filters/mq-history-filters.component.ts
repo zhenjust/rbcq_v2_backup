@@ -36,7 +36,7 @@ export class MqHistoryFiltersComponent implements OnInit {
     const required = RxwebValidators.required();
 
     this.form = this.fb.group({
-      category: [null],
+      category: [MQ_UPLOAD_CATEGORY.DAILY],
       tradingDay: [new Date(), required],
       status: [null]
     });
