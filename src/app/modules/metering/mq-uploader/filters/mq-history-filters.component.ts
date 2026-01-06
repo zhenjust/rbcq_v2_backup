@@ -66,7 +66,6 @@ export class MqHistoryFiltersComponent implements OnInit {
     }
 
     delete payload.tradingDay;
-    console.debug({payload})
     this.emitFiltersEvent.emit(payload);
   }
 

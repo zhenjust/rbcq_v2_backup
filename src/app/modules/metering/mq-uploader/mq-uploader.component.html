@@ -14,9 +14,7 @@
     </nz-tab>
 
     <nz-tab [nzTitle]="LABELS.HISTORY">
-      <ng-template nz-tab>
-        <app-paginated-table #paginatedTable [tableColumns]="tableColumns" [url]="listUrl()"></app-paginated-table>
-      </ng-template>
+      <app-paginated-table #paginatedTable [tableColumns]="tableColumns" [url]="listUrl()"></app-paginated-table>
     </nz-tab>
   </nz-tabset>
 </nz-card>

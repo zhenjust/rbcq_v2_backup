@@ -158,7 +158,6 @@ export class MqUploaderComponent implements OnInit {
   onTabChange(index: number): void {
     if (index) {
       this.paginatedTable.tableData = [];
-      this.paginatedTable.search();
       setTimeout(() => window.dispatchEvent(new Event('resize')), 10);
     }
   }
