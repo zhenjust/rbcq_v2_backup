@@ -59,7 +59,7 @@
       <nz-tag nzColor="red" class="me-0" [nzBordered]="false" nz-tooltip nzTooltipPlacement="left" nzTooltipColor="white" [nzTooltipTitle]="tooltipTpl">{{data}}</nz-tag>
       <ng-template #tooltipTpl>
         <p class="fw-bold mb-0 text-muted">{{ LABELS.UPLOAD_ERROR }}</p>
-        <p class="mb-0 text-muted">{{ allData?.errorMessage }}</p>
+        <p class="mb-0 text-muted">{{ allData?.errorMessage || allData?.errorDetails }}</p>
       </ng-template>
     }
 
