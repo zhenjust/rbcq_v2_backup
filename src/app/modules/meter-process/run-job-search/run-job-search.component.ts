@@ -52,7 +52,8 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
     this.mpa.getBillingPeriod().pipe(takeUntil(this.destroy$)).subscribe({
         next: (data) => {
         this.meterProcessBillingPeriod = Array.isArray(data) ? data : Object.values(data);
-          this.tryAutoSetBillingPeriod();
+          // this.tryAutoSetBillingPeriod();
+          // console.log(this.meterProcessBillingPeriod)
         },
       error: (err) => console.error(err)
       });
@@ -122,7 +123,6 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
   private tryAutoSetBillingPeriod(): void {
     if (this.meterProcessBillingPeriod.length > 0) {
       const selected = this.meterProcessBillingPeriod[0];
-
       this.filterForm.patchValue({
         billingPeriod: selected.name
       });
