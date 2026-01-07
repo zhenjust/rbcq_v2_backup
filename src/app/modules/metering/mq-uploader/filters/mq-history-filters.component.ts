@@ -37,7 +37,7 @@ export class MqHistoryFiltersComponent implements OnInit {
 
     this.form = this.fb.group({
       category: [MQ_UPLOAD_CATEGORY.DAILY],
-      tradingDay: [[subDays(new Date(), 5), new Date()], required, RxwebValidators.minLength({ value: 1 })],
+      tradingDay: [[subDays(new Date(), 5), new Date()], [required, RxwebValidators.minLength({ value: 1 })]],
       status: [null]
     });
 
