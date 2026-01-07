@@ -5,7 +5,7 @@ import { MQ_UPLOAD_CATEGORY, MQ_UPLOADER_STATUS } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { MqUploadFilters } from '@shared/interfaces';
 import { SystemUtilService } from '@shared/services/utils';
-import { format } from 'date-fns';
+import { format, subDays } from 'date-fns';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
 import { distinctUntilChanged } from 'rxjs';
 
@@ -37,7 +37,7 @@ export class MqHistoryFiltersComponent implements OnInit {
 
     this.form = this.fb.group({
       category: [MQ_UPLOAD_CATEGORY.DAILY],
-      tradingDay: [new Date(), required],
+      tradingDay: [[subDays(new Date(), 5), new Date()], required, RxwebValidators.minLength({ value: 1 })],
       status: [null]
     });
 
@@ -62,7 +62,8 @@ export class MqHistoryFiltersComponent implements OnInit {
 
     const payload = {
       ...formValue,
-      tradingDate: (formValue?.tradingDay && format(formValue?.tradingDay, 'yyyy-MM-dd')) || null,
+      tradingDate: (formValue?.tradingDay?.length && format(formValue?.tradingDay[1], 'yyyy-MM-dd')) || null,
+      tradingDateFrom: (formValue?.tradingDay?.length && format(formValue?.tradingDay[0], 'yyyy-MM-dd')) || null,
     }
 
     delete payload.tradingDay;
