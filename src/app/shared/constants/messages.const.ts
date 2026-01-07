@@ -12,6 +12,8 @@ export const MESSAGES = {
   // DYNAMIC MESSAGES
   ITEMS_REQUIRED: (item: string) => `${item} are required.`,
 
+  INVALID_MQ_TIME: (time: string) => `Gate Closure time for MQ Submission is only until: ${time}.`,
+
   SUCCESS_CONSOLIDATE_ITEM: (item: string) => `Successfully consolidated ${item}.`,
   SUCCESS_SWITCH: (type: 'Normal' | 'Super') => `Switched to ${type} user!`,
   SUCCESS_CANCEL_ITEM: (item: string) => `Successfully cancelled ${item}.`,

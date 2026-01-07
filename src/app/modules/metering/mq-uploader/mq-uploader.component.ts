@@ -2,7 +2,7 @@ import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { LABELS } from '@shared/constants/labels.const';
 import { MqList, MqUploadFilters, OngoingTableList, TableDataResult, TableParams, TPL_TABLE_COLUMN } from '@shared/interfaces';
-import { MqUploaderService } from '@shared/services/api';
+import { AdminService, MqUploaderService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { catchError, concatMap, from, Observable, of, tap } from 'rxjs';
 import { MqUploaderFilterComponent } from './import/mq-uploader-filter.component';
@@ -10,6 +10,7 @@ import { ToastrService } from 'ngx-toastr';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { MqHistoryFiltersComponent } from './filters/mq-history-filters.component';
 import { MQ_UPLOAD_CATEGORY, Status } from '@shared/constants';
+import { format, setHours, setMinutes } from 'date-fns';
 
 @Component({
   selector: 'app-mq-uploader',
@@ -29,6 +30,7 @@ export class MqUploaderComponent implements OnInit {
   private readonly mqs = inject(MqUploaderService);
   private readonly modal = inject(NzModalService);
   private readonly ts = inject(ToastrService);
+  private readonly admin = inject(AdminService);
 
   LABELS = LABELS;
   MESSAGES = MESSAGES;
@@ -41,9 +43,25 @@ export class MqUploaderComponent implements OnInit {
   MQ_UPLOAD_CATEGORY = MQ_UPLOAD_CATEGORY;
 
   showFilters = false;
+  isAllowedImport = true;
+  timeLimit: string;
 
   ngOnInit(): void {
     this.formatTableColumns();
+    this.getValidTime();
+  }
+
+  getValidTime(): void {
+    this.admin.getConfigurations('MQ_GATE_CLOSURE_TIME')
+      .subscribe(value => {
+        const timeSplit = value?.split(':');
+        if (timeSplit?.length) {
+          const newHour = setHours(new Date(), +timeSplit[0]);
+          const newMins = setMinutes(newHour, +timeSplit[1]);
+          this.timeLimit = format(newMins, 'p');
+          this.isAllowedImport = (new Date()) < newMins;
+        }
+      });
   }
 
   formatTableColumns(): void {
@@ -181,7 +199,7 @@ const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
 const ongoingTableColumns: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.TRANSACTION_ID]: { label: LABELS.TRANSACTION_ID, propName: 'transactionId', width: '250px', type: 'template' },
   [LABELS.MSP]: { label: LABELS.MSP, propName: 'mspShortName', width: '150px' },
-  [LABELS.FILE_NAME]: { label: LABELS.FILE_NAME, propName: 'file', secondPropName: 'name',  width: '300px' },
+  [LABELS.FILE_NAME]: { label: LABELS.FILE_NAME, propName: 'file', secondPropName: 'name', width: '300px' },
   [LABELS.CATEGORY]: { label: LABELS.CATEGORY, propName: 'category', width: '100px', align: 'center' },
   [LABELS.BILLING_DATE]: { label: LABELS.BILLING_DATE, propName: 'billingDate', width: '140px', align: 'center', type: 'template' },
   [LABELS.SIZE]: { label: LABELS.SIZE, propName: 'file', secondPropName: 'size', width: '100px', type: 'template' },
