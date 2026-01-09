@@ -41,6 +41,7 @@ export class MeteringMasterfileComponent implements OnInit {
     });
 
     modal.afterClose.subscribe(() => {
+      this.paginatedTable.search();
       // trigger search
     });
   }
@@ -56,8 +57,8 @@ export class MeteringMasterfileComponent implements OnInit {
 }
 
 const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
-  [LABELS.BILLING_PERIOD]: { label: LABELS.BILLING_PERIOD, propName: 'billingPeriod', width: '150px' },
-  [LABELS.BILLING_RUN_TYPE]: { label: LABELS.BILLING_RUN_TYPE, propName: 'msp', width: '150PX' },
+  [LABELS.BILLING_PERIOD]: { label: LABELS.BILLING_PERIOD, propName: 'parameters', secondPropName: 'startDate', width: '150px' },
+  [LABELS.BILLING_RUN_TYPE]: { label: LABELS.BILLING_RUN_TYPE, propName: 'parameters', secondPropName: 'processType',  width: '150PX' },
   [LABELS.FILE]: { label: LABELS.FILE, propName: 'fileName', width: '150px', type: 'template' },
   [LABELS.DATE_SAVED]: { label: LABELS.DATE_SAVED, propName: 'category', width: '100px', align: 'center', type: 'date' },
   [LABELS.SAVED_BY]: { label: LABELS.SAVED_BY, propName: 'billingDate', width: '140px', align: 'center' },

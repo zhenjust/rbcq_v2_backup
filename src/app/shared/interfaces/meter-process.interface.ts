@@ -170,7 +170,7 @@ export interface GenerateMeteringMasterfile {
     pipelineName: string;
     parameters: {
         processType: MeterProcessTypes;
-        startDatetime?: string;
-        endDateTime?: string;
+        startDate?: string;
+        endDate?: string;
     }
 }

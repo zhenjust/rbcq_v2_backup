@@ -60,8 +60,8 @@ export class GenerateMmfComponent implements OnInit {
       pipelineName: 'runMMFReport',
       parameters: {
         processType: formValue.processType,
-        startDatetime: format(new Date(selectedBp!.startDate), 'yyyy-MM-dd hh:mm'),
-        endDateTime: format(new Date(selectedBp!.endDate), 'yyyy-MM-dd hh:mm')
+        startDate: format(new Date(selectedBp!.startDate), 'yyyy-MM-dd'),
+        endDate: format(new Date(selectedBp!.endDate), 'yyyy-MM-dd')
       }
     };
 
