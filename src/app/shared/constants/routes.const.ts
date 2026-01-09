@@ -8,7 +8,8 @@ export const NEW_ROUTES = {
     RESERVE_MARKET_FEE_CALCULATION: 'reserve-market-fee-calculation-v2',
     ADDITIONAL_COMPENSATION_LIST: 'additional-compensation-v2',
     ADDITIONAL_COMPENSATION_INVOICE: 'addtl-comp-ams-update-v2',
-    MQ_UPLOADER: 'metering/mq-uploader'
+    MQ_UPLOADER: 'metering/mq-uploader',
+    METERING_MASTERFILE: 'metering/metering-masterfile'
 }
 
 export const HEADER_ROUTES = {

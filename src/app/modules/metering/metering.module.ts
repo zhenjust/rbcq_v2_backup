@@ -6,6 +6,9 @@ import { MqUploaderComponent } from './mq-uploader/mq-uploader.component';
 import { MqUploaderFilterComponent } from './mq-uploader/import/mq-uploader-filter.component';
 import { SharedModule } from '@shared/shared.module';
 import { MqHistoryFiltersComponent } from './mq-uploader/filters/mq-history-filters.component';
+import { MeteringMasterfileComponent } from './metering-masterfile/metering-masterfile.component';
+import { GenerateMmfComponent } from './metering-masterfile/generate-mmf/generate-mmf.component';
+import { NzModalFooterDirective } from "ng-zorro-antd/modal";
 
 
 @NgModule({
@@ -13,11 +16,14 @@ import { MqHistoryFiltersComponent } from './mq-uploader/filters/mq-history-filt
     MqUploaderComponent,
     MqUploaderFilterComponent,
     MqHistoryFiltersComponent,
+    MeteringMasterfileComponent,
+    GenerateMmfComponent,
   ],
   imports: [
     CommonModule,
     SharedModule,
-    MeteringRoutingModule
-  ]
+    MeteringRoutingModule,
+    NzModalFooterDirective
+]
 })
 export class MeteringModule { }

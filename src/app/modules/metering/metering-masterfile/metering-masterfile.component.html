@@ -1,0 +1,17 @@
+
+
+
+<nz-card [nzTitle]="LABELS.METERING_MASTERFILE">
+  <div class="d-flex justify-content-end mb-3">
+    <button nz-button nzType="primary" (click)="generate()">{{ LABELS.GENERATE }}</button>
+  </div>
+
+  <app-paginated-table #paginatedTable [tableColumns]="tableColumns" [url]="listUrl()"></app-paginated-table>
+
+</nz-card>
+
+
+<!-- Column Templates -->
+<ng-template #sizeTpl let-data="data">
+  {{ (data | fileSize) || '-' }}
+</ng-template>

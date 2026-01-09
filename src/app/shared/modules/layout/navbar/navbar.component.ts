@@ -1045,6 +1045,13 @@ export class NavbarComponent implements OnInit {
             permission: [PHASE_TWO_AUTHORITIES.RUN_MQ_UPLOADER]
           },
           {
+            show: this.hasPermission({ permission: [PHASE_TWO_AUTHORITIES.RUN_MQ_UPLOADER] } as navItems) && this.userData()?.principal.department !== 'MSP',
+            title: LABELS.METERING_MASTERFILE,
+            path: NEW_ROUTES.METERING_MASTERFILE,
+            permission: [PHASE_TWO_AUTHORITIES.RUN_MQ_UPLOADER]
+          },
+
+          {
             title: 'Meter Streaming Statistics',
             show: true,
             externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.METER_STREAMING_STATISTICS,

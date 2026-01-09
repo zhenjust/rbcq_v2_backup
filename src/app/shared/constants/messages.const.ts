@@ -7,6 +7,7 @@ export const MESSAGES = {
   ALL_FILES_ERROR: 'All files encountered an error while importing.',
   SINGLE_FILE_ERROR: 'An error occured during import.',
   SOME_FILES_ERROR: 'Some files encountered an error while importing.',
+  DUPLICATE_FILES: 'Please choose a different file.',
   UPLOAD_IN_PROGRESS: 'Uploads are in progress.',
 
   // DYNAMIC MESSAGES

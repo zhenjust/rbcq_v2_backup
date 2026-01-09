@@ -27,6 +27,7 @@ export const LABELS = {
   APPLY_FILTERS: 'Apply Filters',
   RUN: 'Run',
   RUN_JOB: 'Run Job',
+  GENERATE: 'Generate',
 
   // Field Labels
   CONSOLIDATE: 'Consolidate',
@@ -63,6 +64,7 @@ export const LABELS = {
   RUN_BY: 'Run By',
 
   MQ_UPLOADER: 'MQ Uploader',
+  METERING_MASTERFILE: 'Metering Masterfile',
   ONGOING: 'Ongoing',
   HISTORY: 'History',
 
@@ -95,5 +97,8 @@ export const LABELS = {
   START_DATE: 'Start Date',
   END_DATE: 'End Date',
   START_END_DATE: 'Start and End Date',
-
+  BILLING_RUN_TYPE: 'Billing Run Type',
+  FILE: 'File',
+  DATE_SAVED: 'Date Saved',
+  SAVED_BY: 'Saved By',
 }

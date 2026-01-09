@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import {
+  GenerateMeteringMasterfile,
   meterProcessBillingPeriod,
   meterProcessJobSearchGroupParams,
   meterProcessParams,
@@ -9,6 +10,8 @@ import {
   meterProcessTable,
   mtnListPage,
   ReportDownloadParams,
+  TableDataResult,
+  TableParams,
 } from '@shared/interfaces';
 import { Observable } from 'rxjs';
 import { ParamsUtilService } from '../utils';
@@ -24,6 +27,7 @@ export class MeterprocessService {
   private MTN_LIST: string = '/reg/mtn/list/region';
   private PIPELINE_NAME: string = 'runMeterData';
   private baseUrl: string = 'meter-process';
+  private MTR_PIPELINE_URL: string = '/mtr-data-pipeline';
 
   private paramUtil = inject(ParamsUtilService);
   private http = inject(HttpClient);
@@ -35,6 +39,16 @@ export class MeterprocessService {
     }
     const params = this.paramUtil.buildParams(withName);
     return this.http.get<meterProcessTable>(`${this.API_URL}/search-group`, { params });
+  }
+
+  public searchByName(data: Partial<meterProcessJobSearchGroupParams>, tableParams?: TableParams): Observable<TableDataResult<meterProcessTable[]>>{
+    const props = { ...data };
+    const params = this.paramUtil.buildParams(props, tableParams);
+    return this.http.get<TableDataResult<meterProcessTable[]>>(`${this.API_URL}/search-by-name`, { params });
+  }
+
+  public generateMasterfile(payload: GenerateMeteringMasterfile): Observable<any> {
+    return this.http.post<any>(`${this.MTR_PIPELINE_URL}/report-generation/mmf-generate`, payload);
   }
 
   public runJob(data: Partial<meterProcessParams>, pipelineName?: MeterDataPipelineName, refId?: number): Observable<meterProcessParams>{

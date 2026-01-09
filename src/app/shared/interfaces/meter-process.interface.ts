@@ -165,3 +165,12 @@ export interface ReportDownloadParams {
     processType: string;
     user: string;
 }
+
+export interface GenerateMeteringMasterfile {
+    pipelineName: string;
+    parameters: {
+        processType: MeterProcessTypes;
+        startDatetime?: string;
+        endDateTime?: string;
+    }
+}

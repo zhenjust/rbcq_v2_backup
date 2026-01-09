@@ -9,7 +9,7 @@
   [nzPageIndex]="tableParams.page"
   [nzPageSize]="tableParams.size"
   (nzQueryParams)="onQueryParamsChange($event)"
-  [nzScroll]="{ x: 'auto', y: '400px' }">
+  [nzScroll]="{ y: '400px' }">
   <thead>
     @if (enableCheckbox) {
       <th
