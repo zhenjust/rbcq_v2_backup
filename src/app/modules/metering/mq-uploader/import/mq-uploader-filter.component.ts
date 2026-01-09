@@ -146,6 +146,14 @@ export class MqUploaderFilterComponent implements OnInit {
       return false;
     }
 
+    const hasDuplicate = this.fileList
+      .filter(({ name, uid }) => name === file.name && uid !== file.uid);
+
+    if (hasDuplicate?.length) {
+      this.ts.error(MESSAGES.DUPLICATE_FILES);
+      return false;
+    }
+
     this.fileList.push(file);
     return false;
   }
