@@ -34,6 +34,7 @@ import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
 import { NzFloatButtonModule } from 'ng-zorro-antd/float-button';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzInputModule } from 'ng-zorro-antd/input';
 
 const ngZorroConfig: NzConfig = {
   notification: { nzDuration: 300, nzMaxStack: 3, nzTop: '150px' }
@@ -65,6 +66,7 @@ const NgZorroModules = [
   NzIconModule,
   NzBadgeModule,
   NzSpinModule,
+  NzInputModule,
 ];
 
 const Pipes = [

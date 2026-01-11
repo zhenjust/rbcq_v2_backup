@@ -14,8 +14,7 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-generate-mmf',
   standalone: false,
-  templateUrl: './generate-mmf.component.html',
-  styleUrl: './generate-mmf.component.scss'
+  templateUrl: './generate-mmf.component.html'
 })
 export class GenerateMmfComponent implements OnInit {
 
@@ -53,6 +52,10 @@ export class GenerateMmfComponent implements OnInit {
   }
 
   triggerOk(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     const formValue = this.form.getRawValue();
     const selectedBp = this.billingPeriods.find(bp => bp.billingPeriod === formValue.billingPeriod);
 

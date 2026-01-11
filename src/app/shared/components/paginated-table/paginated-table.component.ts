@@ -1,5 +1,6 @@
-import { Component, Input, ViewChild } from '@angular/core';
-import { TPL_TABLE_COLUMN } from '@shared/interfaces';
+import { Component, input, Input, ViewChild } from '@angular/core';
+import { LABELS } from '@shared/constants/labels.const';
+import { TableAction, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { SearchListBase } from '@shared/services/utils/list.util.service';
 import { NzTableComponent } from 'ng-zorro-antd/table';
 import { Observable, Subscription } from 'rxjs';
@@ -9,7 +10,7 @@ import { Observable, Subscription } from 'rxjs';
   standalone: false,
   templateUrl: './paginated-table.component.html',
 })
-export class PaginatedTableComponent extends SearchListBase {
+export class PaginatedTableComponent<T> extends SearchListBase {
 
   @ViewChild('table', { static: true }) table!: NzTableComponent<any>;
 
@@ -22,7 +23,12 @@ export class PaginatedTableComponent extends SearchListBase {
   @Input() checkboxCondition!: (rowData: any) => boolean;
   @Input() url: Observable<any>;
 
+  showActions = input<boolean>(false);
+
+  actionControls = input<TableAction<T>[]>();
+
   selectedItems = new Set<number>();
+  LABELS = LABELS;
 
   constructor() {
     super();
@@ -63,7 +69,8 @@ export class PaginatedTableComponent extends SearchListBase {
   get widthConfig(): string[] {
     return [
       ...(this.enableCheckbox ? ['30px'] : []),
-      ...this.tableColumns.map(col => col?.width ? col?.width : '150px')
+      ...this.tableColumns.map(col => col?.width ? col?.width : '150px'),
+      ...(this.showActions() ? ['100px'] : [])
     ];
   }
 

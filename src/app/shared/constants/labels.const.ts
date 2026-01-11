@@ -28,6 +28,9 @@ export const LABELS = {
   RUN: 'Run',
   RUN_JOB: 'Run Job',
   GENERATE: 'Generate',
+  DOWNLOAD: 'Download',
+  ACTIONS: 'Actions',
+  DELETE: 'Delete',
 
   // Field Labels
   CONSOLIDATE: 'Consolidate',

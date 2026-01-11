@@ -36,3 +36,10 @@ export interface TableDataResult<T> {
   draw: number;
   recordsTotal: number;
 }
+
+export interface TableAction<T> {
+  label: string;
+  value: string;
+  danger?: true;
+  click: (rowData: T) => void;
+}

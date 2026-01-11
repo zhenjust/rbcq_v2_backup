@@ -26,6 +26,13 @@
     @for (column of tableColumns; track column.label) {
       <th [nzAlign]="column?.align || 'left'" class="p-3">{{ column.label }}</th>
     }
+
+    @if (showActions()) {
+      <th nzAlign="center" class="p-3" nzWidth="100px">
+        {{ LABELS.ACTIONS }}
+      </th>
+    }
+
   </thead>
   <tbody>
     @for (row of tableData; track row.id) {
@@ -58,6 +65,21 @@
               <td [nzAlign]="align" class="px-3">{{ data || '-' }}</td>
             }
           }
+        }
+
+        @if (showActions()) {
+          <td nzAlign="center">
+            @if (actionControls()?.length) {
+              <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu">{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu nzSelectable>
+                    @for (action of actionControls(); track action.label) {
+                        <li nz-menu-item (click)="action.click(row)" [nzDanger]="action?.danger">{{ action.label }}</li>
+                    }
+                </ul>
+              </nz-dropdown-menu>
+            }
+          </td>
         }
       </tr>
     }

@@ -20,7 +20,7 @@ import { format, setHours, setMinutes } from 'date-fns';
 })
 export class MqUploaderComponent implements OnInit {
 
-  @ViewChild('paginatedTable', { static: false }) paginatedTable: PaginatedTableComponent;
+  @ViewChild('paginatedTable', { static: false }) paginatedTable: PaginatedTableComponent<MqList>;
   @ViewChild('filtersComp', { static: false }) filtersComp: MqHistoryFiltersComponent;
   @ViewChild('sizeTpl', { static: true }) sizeTpl: TemplateRef<HTMLElement>;
   @ViewChild('statusTpl', { static: true }) statusTpl: TemplateRef<HTMLElement>;
