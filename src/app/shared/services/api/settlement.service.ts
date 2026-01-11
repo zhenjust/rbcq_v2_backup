@@ -51,7 +51,7 @@ export class SettlementService {
     return this.http.post<BaseResponse>(this.API_URL, payload);
   }
 
-  public runJob(data: SettlementJobParams, pipelineName: string, isGroup = false): Observable<null>{
+  public runJob(data: SettlementJobParams, pipelineName: string, isGroup = false, appendGroupUrl = false): Observable<null>{
     const bodyParams: Partial<SettlementJob> = {
       pipelineName,
       isGroup
@@ -61,7 +61,9 @@ export class SettlementService {
       bodyParams.parameters = data;
     }
 
-    return this.http.post<null>(this.API_URL, bodyParams);
+    const groupUrl = appendGroupUrl ? '/group' : '';
+
+    return this.http.post<null>(`${this.API_URL}${groupUrl}`, bodyParams);
   }
 
 }

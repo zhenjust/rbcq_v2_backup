@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { RxwebValidators } from '@rxweb/reactive-form-validators';
 import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
-import { FULL_SETTLEMENT_OPTIONS, MARKET_FEE_SETTLEMENT_OPTIONS, RunProcessBtnLabel } from '@shared/constants';
+import { FULL_SETTLEMENT_OPTIONS, MARKET_FEE_SETTLEMENT_OPTIONS, MARKET_FEE_SETTLEMENT_OPTIONS_NO_ALL, RunProcessBtnLabel } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { settlementSearchNames } from '@shared/enums';
@@ -62,7 +62,7 @@ export class RunProcessFormComponent implements OnInit {
 
   getSettlementOptions(): void {
     const noDailyFilter = [ settlementSearchNames.RESERVE_TRADING_AMOUNTS ];
-    this.processTypeOpts = noDailyFilter.includes(this.module) ? MARKET_FEE_SETTLEMENT_OPTIONS : FULL_SETTLEMENT_OPTIONS;
+    this.processTypeOpts = noDailyFilter.includes(this.module) ? MARKET_FEE_SETTLEMENT_OPTIONS_NO_ALL : FULL_SETTLEMENT_OPTIONS;
   }
 
   getBillingPeriods(): void {
@@ -89,7 +89,7 @@ export class RunProcessFormComponent implements OnInit {
   }
 
   runProcess(): void {
-    const pipelineName = 'reserveTradingAmounts-generateInputWorkspace';
+    const pipelineName = 'reserveTradingAmounts';
     const formValue = this.form.getRawValue();
 
     const filteredBp = this.billingPeriods.filter(d => d.billingPeriod === this.billingPeriod?.value)[0];
@@ -101,7 +101,7 @@ export class RunProcessFormComponent implements OnInit {
       billingPeriodName: filteredBp.supplyMonth,
     };
 
-    const api$ = () => this.ss.runJob(data, pipelineName)
+    const api$ = () => this.ss.runJob(data, pipelineName, false, true)
       .subscribe(() => {
         this.ts.success(MESSAGES.SUCCESS_JOB_TRIGGER);
         this.emitJob.emit(true);

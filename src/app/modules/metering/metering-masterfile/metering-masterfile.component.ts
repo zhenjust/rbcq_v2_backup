@@ -92,11 +92,11 @@ export class MeteringMasterfileComponent implements OnInit {
   }
 
   download(_data: any): void {
-
+    console.debug(_data);
   }
 
   delete(_data: any): void {
-
+    console.debug(_data);
   }
 
   get actionControls(): TableAction<any>[] {

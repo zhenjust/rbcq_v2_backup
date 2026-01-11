@@ -479,7 +479,13 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     );
   }
 
-  get nzWidthConfig(): string[] { return ['25px', '120px', '160px', '150px', '200px', '200px', '200px', '100px', '150px']; }
+  get nzWidthConfig(): string[] {
+    return [
+      ...['25px', '120px', '160px', '150px', '200px', '200px'],
+      ...(this.isLineRentalStatus ? ['200px'] : []),
+      ...['100px', '150px']
+    ];
+  }
 }
 
 const expandedTableCols: Record<string, TPL_TABLE_COLUMN> = {
