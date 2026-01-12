@@ -52,6 +52,7 @@ export interface settlementPipelineParameters {
 }
 
 export interface settlementPipeline {
+    id: number;
     name: string
     adjNo: string
     processType: MeterProcessTypes
