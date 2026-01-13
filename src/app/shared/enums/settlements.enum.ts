@@ -34,5 +34,6 @@ export enum pricingConditions {
 export enum ETA_JOBS {
   GEN_INPUT_WORKSPACE = 'energyTradingAmounts-generateInputWorkspace',
   CAL_TRADING_AMOUNTS = 'energyTradingAmounts-calculateEnergyTradingAmount',
-  GEN_MONTHLY_SUMMARY = 'energyTradingAmounts-generateMonthlySummary'
+  GEN_MONTHLY_SUMMARY = 'energyTradingAmounts-generateMonthlySummary',
+  RUN_METER_DATA_STL_READY = 'runMeterData-settlementReady'
 }

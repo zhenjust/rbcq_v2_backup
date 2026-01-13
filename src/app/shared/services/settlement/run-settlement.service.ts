@@ -26,9 +26,9 @@ export class RunSettlementService {
     console.log('Full row data for download:', data);
   }
 
-  etaStlJobs(data: settlementPipeline, jobName: ETA_JOBS): Observable<BaseResponse> {
+  etaStlJobs(data: settlementPipeline, jobName: ETA_JOBS, isGroupUrl = false): Observable<BaseResponse> {
     const payload = this.buildPayload(data, jobName);
-    return this.stlApi.etaJobs(payload)
+    return this.stlApi.etaJobs(payload, isGroupUrl)
   }
 
   finalizeTradingAmounts(data: settlementPipeline): void {
@@ -64,7 +64,7 @@ export class RunSettlementService {
     const [start, end] = this.getDateRangeForProcessType(data);
     return {
       pipelineName,
-      refId: data.workspaceId,
+      refId: data.workspaceId || data?.id,
       isGroup: true,
       parameters: {
         billingStartDate: start ? this.dateFormatter.formatDateOnly(start) : null,

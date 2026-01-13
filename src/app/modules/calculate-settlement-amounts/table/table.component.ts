@@ -277,6 +277,8 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
   // for handling of actions; new implementation of modal
   handleAction(label: string, rowData: settlementPipeline, msg: string | TemplateRef<HTMLElement>, job?: ETA_JOBS | null, api$?: () => any): void {
+    const isGroupUrl = this.searchName === 'reserveTradingAmounts';
+
     this.modal.confirm({
       ...modalConfig,
       nzTitle: label,
@@ -284,7 +286,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       nzOnOk: () => {
         if (job) {
           this.toast.success(MESSAGES.SUCCESS_JOB_TRIGGER);
-          this.busy$ = this.runSettlements.etaStlJobs(rowData, job)
+          this.busy$ = this.runSettlements.etaStlJobs(rowData, job, isGroupUrl)
             .subscribe(res => {
               this.search();
               this.toast.success(res.message);
@@ -349,8 +351,9 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     const { processType, tradingDate, billingStartDate, billingEndDate } = rowData;
     const isDaily = processType === MeterProcessTypes.DAILY;
     const msg = MESSAGES.GENERATE_INPUT_WORKSPACE_TD(isDaily ? tradingDate : `${billingStartDate} to ${billingEndDate}`);
+    const jobName = this.searchName === 'reserveTradingAmounts' ? ETA_JOBS.RUN_METER_DATA_STL_READY : ETA_JOBS.GEN_INPUT_WORKSPACE;
 
-    this.handleAction(label, rowData, msg, ETA_JOBS.GEN_INPUT_WORKSPACE);
+    this.handleAction(label, rowData, msg, jobName);
   }
 
 

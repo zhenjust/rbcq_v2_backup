@@ -13,6 +13,7 @@ export class SettlementService {
   private BILLING_ID: string = '/settlement/addtl-comp/billing-id-list';
   private ADD_COMP: string = '/data-flow/task-executions/additional-compensation/multi';
   private REG = `/reg/stl-meter-file`;
+  private GRP_API_URL: string = '/stl-data-pipeline/job/group';
 
   private paramUtil = inject(ParamsUtilService);
   private http = inject(HttpClient);
@@ -47,8 +48,9 @@ export class SettlementService {
     return this.http.post<BaseResponse>(`${this.REG}/publish`, payload);
   }
 
-  public etaJobs(payload: EnergyTradingAmounts): Observable<BaseResponse>{
-    return this.http.post<BaseResponse>(this.API_URL, payload);
+  public etaJobs(payload: EnergyTradingAmounts, isGroupUrl = false): Observable<BaseResponse>{
+    const endpoint = isGroupUrl ? this.GRP_API_URL : this.API_URL;
+    return this.http.post<BaseResponse>(endpoint, payload);
   }
 
   public runJob(data: SettlementJobParams, pipelineName: string, isGroup = false, appendGroupUrl = false): Observable<null>{

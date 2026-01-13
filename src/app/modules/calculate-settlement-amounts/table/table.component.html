@@ -22,7 +22,7 @@
     <tbody>
         @for (data of nzTable.data; track data;) {
             <tr>
-                <td [nzExpand]="expandSet.has(+data.workspaceId)" (nzExpandChange)="onExpandChange(+data.workspaceId, $event)" [nzShowExpand]="!!data.pipelines.length"></td>
+                <td [nzExpand]="expandSet.has(data?.workspaceId ? +data?.workspaceId : +data?.id)" (nzExpandChange)="onExpandChange((data?.workspaceId ? +data?.workspaceId : +data?.id), $event)" [nzShowExpand]="!!data.pipelines.length"></td>
 
                 @for (column of tableItem; track column.key) {
                     <td>
@@ -43,7 +43,7 @@
                     </td>
                 }
             </tr>
-            <tr [nzExpand]="expandSet.has(+data.workspaceId)">
+            <tr [nzExpand]="expandSet.has(data?.workspaceId ? +data?.workspaceId : +data?.id)">
                 <div class="my-2">
                     <app-template-table
                         [tableColumns]="expandableTableCols"
