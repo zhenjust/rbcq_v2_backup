@@ -205,7 +205,7 @@ export class MqUploaderFilterComponent implements OnInit {
           formDataGrp.push(formData);
         });
 
-        this.modalRef.destroy({ payload, formDataGrp });
+        this.modalRef.destroy({ payload, formDataGrp, headerId });
       });
   }
 

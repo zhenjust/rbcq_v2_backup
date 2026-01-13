@@ -15,6 +15,8 @@ export class MqUploaderService {
   protected meteringEndpoint = environment.__API_URL__ + apiPath.__METERING_PATH__;
   protected meteringCloudEndpoint = environment.__CLOUD_API_URL__ + apiPath.__METERING_PATH__;
 
+  // metering/publishEmail?headerID=233953
+
   private readonly http = inject(HttpClient);
   private readonly psUtil = inject(ParamsUtilService);
 
@@ -36,6 +38,10 @@ export class MqUploaderService {
 
   public uploadMqHeader(payload: any): Observable<any> {
     return this.http.post<any>(`${this.meteringCloudEndpoint}/uploadHeader`, payload);
+  }
+
+  public sendMqNotification(headerId: number): Observable<any> {
+    return this.http.post<any>(`${this.meteringCloudEndpoint}/publishEmail?headerID=${headerId}`, {});
   }
 
 }

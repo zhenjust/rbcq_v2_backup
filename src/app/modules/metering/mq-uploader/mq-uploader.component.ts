@@ -95,7 +95,7 @@ export class MqUploaderComponent implements OnInit {
       nzFooter: null,
     });
 
-    modal.afterClose.subscribe(({ formDataGrp, payload }) => {
+    modal.afterClose.subscribe(({ formDataGrp, payload, headerId }) => {
       if (payload) {
         this.ongoingTableData = formDataGrp.map((td: FormData) => {
           return {
@@ -105,12 +105,12 @@ export class MqUploaderComponent implements OnInit {
           };
         });
 
-        this.handleUpload(formDataGrp);
+        this.handleUpload(formDataGrp, headerId);
       }
     });
   }
 
-  handleUpload(formDataGrp: FormData[]): void {
+  handleUpload(formDataGrp: FormData[], headerId: number): void {
     const hasError: OngoingTableList[] = [];
     const dataLength = formDataGrp.length;
 
@@ -147,17 +147,19 @@ export class MqUploaderComponent implements OnInit {
           )
       }))
       .subscribe({
-        complete: () => this.handleUploadComplete(hasError, dataLength)
+        complete: () => this.handleUploadComplete(hasError, dataLength, headerId)
       });
   }
 
-  handleUploadComplete(hasError: OngoingTableList[], dataLength: number): void {
+  handleUploadComplete(hasError: OngoingTableList[], dataLength: number, headerId: number): void {
     if (hasError.length && (dataLength === hasError?.length)) {
       this.ts.error(dataLength > 1 ? MESSAGES.ALL_FILES_ERROR : MESSAGES.SINGLE_FILE_ERROR);
     } else if (hasError.length && (dataLength !== hasError.length)) {
       this.ts.warning(MESSAGES.SOME_FILES_ERROR);
     } else {
-      this.ts.success(MESSAGES.SUCCESS_IMPORT_ITEM('file/s'));
+      this.mqs.sendMqNotification(headerId).subscribe(() => {
+        this.ts.success(MESSAGES.SUCCESS_IMPORT_ITEM('file/s'));
+      });
     }
   }
 
