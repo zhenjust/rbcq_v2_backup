@@ -157,10 +157,10 @@ export class MqUploaderComponent implements OnInit {
     } else if (hasError.length && (dataLength !== hasError.length)) {
       this.ts.warning(MESSAGES.SOME_FILES_ERROR);
     } else {
-      this.mqs.sendMqNotification(headerId).subscribe(() => {
-        this.ts.success(MESSAGES.SUCCESS_IMPORT_ITEM('file/s'));
-      });
+      this.ts.success(MESSAGES.SUCCESS_IMPORT_ITEM('file/s'));
     }
+
+    this.mqs.sendMqNotification(headerId).subscribe(() => {});
   }
 
   triggerSearch(filters: MqUploadFilters): void {
