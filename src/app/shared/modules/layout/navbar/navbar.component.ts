@@ -1190,7 +1190,7 @@ export class NavbarComponent implements OnInit {
         externalLink: externalRoutes.JOB_QUEUE
       },
       {
-        show: this.hasPermission({ permission: [PHASE_TWO_AUTHORITIES.RUN_MQ_UPLOADER] } as navItems) && this.userData()?.principal.department === 'MSP',
+        show: this.userData()?.principal.department === 'MSP',
         title: LABELS.MQ_UPLOADER,
         icon: faUpload,
         path: NEW_ROUTES.MQ_UPLOADER,
