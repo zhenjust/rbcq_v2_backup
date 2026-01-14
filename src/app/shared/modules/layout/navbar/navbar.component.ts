@@ -1193,10 +1193,7 @@ export class NavbarComponent implements OnInit {
         show: this.userData()?.principal.department === 'MSP',
         title: LABELS.MQ_UPLOADER,
         icon: faUpload,
-        path: NEW_ROUTES.MQ_UPLOADER,
-        permission: [
-          PHASE_TWO_AUTHORITIES.RUN_MQ_UPLOADER
-        ],
+        path: NEW_ROUTES.MSP_MQ_UPLOADER,
       },
     ];
 

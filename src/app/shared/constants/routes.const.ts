@@ -9,6 +9,7 @@ export const NEW_ROUTES = {
     ADDITIONAL_COMPENSATION_LIST: 'additional-compensation-v2',
     ADDITIONAL_COMPENSATION_INVOICE: 'addtl-comp-ams-update-v2',
     MQ_UPLOADER: 'metering/mq-uploader',
+    MSP_MQ_UPLOADER: 'msp-mq-uploader',
     METERING_MASTERFILE: 'metering/metering-masterfile'
 }
 

@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthorizeGuard } from '@core/guards/authorize.guard';
+import { MqUploaderComponent } from '@modules/metering/mq-uploader/mq-uploader.component';
 import { NEW_ROUTES } from '@shared/constants';
 import { BaseComponent } from '@shared/modules/layout/base/base.component';
 
@@ -29,7 +30,11 @@ const routes: Routes = [
         path: 'metering',
         loadChildren: () =>
           import('./modules/metering/metering.module').then(m => m.MeteringModule)
-      }
+      },
+      {
+        path: 'msp-mq-uploader',
+        component: MqUploaderComponent,
+      },
     ]
   }
 ];
