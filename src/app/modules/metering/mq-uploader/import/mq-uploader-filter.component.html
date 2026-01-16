@@ -39,13 +39,15 @@
       </nz-form-item>
     }
 
-    <nz-form-item>
-      <nz-form-label nzRequired>{{ LABELS.MSP }}</nz-form-label>
-      <nz-form-control>
-        <nz-select formControlName="mspShortName" [nzPlaceHolder]="LABELS.CHOOSE_HERE" [nzOptions]="mspOpts || []" [nzLoading]="!mspOpts"
-          [nzAllowClear]="true" nzShowSearch></nz-select>
-      </nz-form-control>
-    </nz-form-item>
+    @if (!isMspUser) {
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ LABELS.MSP }}</nz-form-label>
+        <nz-form-control>
+          <nz-select formControlName="mspShortName" [nzPlaceHolder]="LABELS.CHOOSE_HERE" [nzOptions]="mspOpts || []" [nzLoading]="!mspOpts"
+            [nzAllowClear]="true" nzShowSearch></nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    }
 
     <nz-form-item>
       <nz-form-label nzRequired>{{ LABELS.CONVERSION_TYPE }}</nz-form-label>

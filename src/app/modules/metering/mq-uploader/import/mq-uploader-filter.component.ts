@@ -124,13 +124,13 @@ export class MqUploaderFilterComponent implements OnInit {
         this.mspOpts = mspList.map(item => ({
           label: `${item.participantName} (${item.shortName})`, value: item.shortName})) as NzSelectOptionInterface[];
 
-        const currentMsp = this.currentUser?.principal?.dn;
-        if (currentMsp && this.isMspUser && this.mspOpts.length) {
-          const trimmedMspName = currentMsp.split('_');
-          const index = this.mspOpts?.findIndex(opt => opt.value.toLowerCase() === trimmedMspName[0]);
-          this.mspShortName?.setValue(this.mspOpts[index]?.value);
-          this.mspShortName?.disable();
-        }
+        // const currentMsp = this.currentUser?.principal?.dn;
+        // if (currentMsp && this.isMspUser && this.mspOpts.length) {
+        //   const trimmedMspName = currentMsp.split('_');
+        //   const index = this.mspOpts?.findIndex(opt => opt.value.toLowerCase() === trimmedMspName[0]);
+        //   this.mspShortName?.setValue(this.mspOpts[index]?.value);
+        //   this.mspShortName?.disable();
+        // }
 
     });
   }

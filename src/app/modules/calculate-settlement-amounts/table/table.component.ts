@@ -351,7 +351,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     const { processType, tradingDate, billingStartDate, billingEndDate } = rowData;
     const isDaily = processType === MeterProcessTypes.DAILY;
     const msg = MESSAGES.GENERATE_INPUT_WORKSPACE_TD(isDaily ? tradingDate : `${billingStartDate} to ${billingEndDate}`);
-    const jobName = this.searchName === 'reserveTradingAmounts' ? ETA_JOBS.RUN_METER_DATA_STL_READY : ETA_JOBS.GEN_INPUT_WORKSPACE;
+    const jobName = this.searchName === 'reserveTradingAmounts' ? ETA_JOBS.RTA_GENERATE_INPUT_WORKSPACE : ETA_JOBS.GEN_INPUT_WORKSPACE;
 
     this.handleAction(label, rowData, msg, jobName);
   }
