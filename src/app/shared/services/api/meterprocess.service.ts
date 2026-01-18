@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEvent } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import {
+  DownloadMmfParams,
   GenerateMeteringMasterfile,
   meterProcessBillingPeriod,
   meterProcessJobSearchGroupParams,
@@ -32,7 +33,7 @@ export class MeterprocessService {
   private paramUtil = inject(ParamsUtilService);
   private http = inject(HttpClient);
 
-  public search(data: Partial<meterProcessJobSearchGroupParams>): Observable<meterProcessTable>{
+  public search(data: Partial<meterProcessJobSearchGroupParams>): Observable<meterProcessTable> {
     const withName = {
       ...data,
       name: this.PIPELINE_NAME
@@ -41,7 +42,7 @@ export class MeterprocessService {
     return this.http.get<meterProcessTable>(`${this.API_URL}/search-group`, { params });
   }
 
-  public searchByName(data: Partial<meterProcessJobSearchGroupParams>, tableParams?: TableParams): Observable<TableDataResult<meterProcessTable[]>>{
+  public searchByName(data: Partial<meterProcessJobSearchGroupParams>, tableParams?: TableParams): Observable<TableDataResult<meterProcessTable[]>> {
     const props = { ...data };
     const params = this.paramUtil.buildParams(props, tableParams);
     return this.http.get<TableDataResult<meterProcessTable[]>>(`${this.API_URL}/search-by-name`, { params });
@@ -51,7 +52,7 @@ export class MeterprocessService {
     return this.http.post<any>(`${this.MTR_PIPELINE_URL}/report-generation/mmf-generate`, payload);
   }
 
-  public runJob(data: Partial<meterProcessParams>, pipelineName?: MeterDataPipelineName, refId?: number): Observable<meterProcessParams>{
+  public runJob(data: Partial<meterProcessParams>, pipelineName?: MeterDataPipelineName, refId?: number): Observable<meterProcessParams> {
     const isRerun = pipelineName === MeterDataPipelineName.CONSOLIDATE;
 
     const bodyParams: Partial<meterProcessRunJobPayload> = {
@@ -92,7 +93,7 @@ export class MeterprocessService {
     return this.http.post<null>(`${this.API_URL}/cancel/${workspaceId}`, {});
   }
 
-  downloadReport(params: ReportDownloadParams) {
+  public downloadReport(params: ReportDownloadParams) {
     const httpParams = this.paramUtil.buildParams(params);
     return this.http.get(`${window.location.origin}/${this.baseUrl}/reports/download/zip`, {
       params: httpParams,
@@ -101,4 +102,15 @@ export class MeterprocessService {
       reportProgress: true,
     });
   }
+
+  public downloadMmf(params: DownloadMmfParams): Observable<HttpEvent<Blob>> {
+    const httpParams = this.paramUtil.buildParams(params);
+    return this.http.get(`${this.baseUrl}/reports/download/mmf`, {
+      params: httpParams,
+      responseType: 'blob',
+      observe: 'events',
+      reportProgress: true,
+    })
+  }
+
 }

@@ -166,6 +166,12 @@ export interface ReportDownloadParams {
     user: string;
 }
 
+export interface DownloadMmfParams {
+  workspaceId: number;
+  processType: string;
+  endDate: string;
+}
+
 export interface GenerateMeteringMasterfile {
     pipelineName: string;
     parameters: {

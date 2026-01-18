@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { LABELS } from '@shared/constants/labels.const';
-import { meterProcessBillingPeriod, meterProcessOptions, TableAction, TableDataResult, TPL_TABLE_COLUMN } from '@shared/interfaces';
+import { DownloadMmfParams, meterProcessBillingPeriod, meterProcessOptions, TableAction, TableDataResult, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { Observable, of } from 'rxjs';
@@ -9,6 +9,7 @@ import { GenerateMmfComponent } from './generate-mmf/generate-mmf.component';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
 import { MeterProcessTypes } from '@shared/enums';
+import { DownloadUtilService } from '@shared/services/utils';
 
 @Component({
   selector: 'app-metering-masterfile',
@@ -20,16 +21,19 @@ export class MeteringMasterfileComponent implements OnInit {
 
   @ViewChild('paginatedTable', { static: false }) paginatedTable: PaginatedTableComponent<any>;
   @ViewChild('bpTpl', { static: true }) bpTpl: TemplateRef<HTMLElement>;
+  @ViewChild('fileTpl', { static: true }) fileTpl: TemplateRef<HTMLElement>;
 
   tableColumns: TPL_TABLE_COLUMN[];
   LABELS = LABELS;
 
   readonly meterService = inject(MeterprocessService);
   readonly modalService = inject(NzModalService);
+  readonly downloadService = inject(DownloadUtilService);
 
   formBuilder = inject(FormBuilder);
 
   form: FormGroup;
+  showForm = false;
   processTypeOpts: meterProcessOptions[];
   billingPeriodOpts: { label: string; value: number; }[];
 
@@ -57,14 +61,14 @@ export class MeteringMasterfileComponent implements OnInit {
       .subscribe({
         next: options => {
           this.billingPeriodOpts = (options as meterProcessBillingPeriod[])
-            .map(bp => ({ label: bp.supplyMonth, value: bp.billingPeriod }));
+            .map(bp => ({ label: bp.supplyMonth, value: bp.id }));
         }
-      })
+      });
   }
-
 
   formatTableColumns(): void {
     tableColumns[LABELS.BILLING_PERIOD].template = this.bpTpl;
+    tableColumns[LABELS.FILE].template = this.fileTpl;
 
     this.tableColumns = Object.values(tableColumns);
   }
@@ -88,11 +92,18 @@ export class MeteringMasterfileComponent implements OnInit {
       return of();
     }
 
-    return this.meterService.searchByName({ name: 'runMMFReport' }, this.paginatedTable?.tableParams);
+    return this.meterService.searchByName({ name: 'runMMFReport', ...this.form.getRawValue() }, this.paginatedTable?.tableParams);
   }
 
-  download(_data: any): void {
-    console.debug(_data);
+  download(data: any): void {
+    const { workspaceId } = data.pipelineRuns[0];
+    const { endDate, processType } = data.parameters;
+    const params: DownloadMmfParams = { workspaceId, endDate, processType };
+
+    this.meterService.downloadMmf(params)
+      .subscribe(res => {
+        this.downloadService.handleDownloadedFile(res);
+      });
   }
 
   delete(_data: any): void {
@@ -111,7 +122,7 @@ export class MeteringMasterfileComponent implements OnInit {
 const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.BILLING_PERIOD]: { label: LABELS.BILLING_PERIOD, propName: 'parameters', width: '150px', type: 'template' },
   [LABELS.BILLING_RUN_TYPE]: { label: LABELS.BILLING_RUN_TYPE, propName: 'parameters', secondPropName: 'processType',  width: '150PX' },
-  [LABELS.FILE]: { label: LABELS.FILE, propName: 'fileName', width: '150px', type: 'string' },
+  [LABELS.FILE]: { label: LABELS.FILE, propName: 'fileName', width: '250px', type: 'template' },
   [LABELS.DATE_SAVED]: { label: LABELS.DATE_SAVED, propName: 'lastModifiedDatetime', width: '100px', align: 'center', type: 'date' },
   [LABELS.SAVED_BY]: { label: LABELS.SAVED_BY, propName: 'lastModifiedBy', width: '140px', align: 'center' },
 }

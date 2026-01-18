@@ -1,4 +1,8 @@
 <nz-spin [nzSpinning]="busy$ && !busy$.closed">
+  @if (form.invalid && form.touched) {
+    <nz-alert nzBanner nzType="error" [nzMessage]="MESSAGE.REQUIRED_FIELDS" class="mb-3"></nz-alert>
+  }
+
   <form nz-form [formGroup]="form" nzLayout="vertical" nzNoColon>
     <nz-form-item>
       <nz-form-label nzRequired>{{ LABELS.BILLING_PERIOD }}</nz-form-label>

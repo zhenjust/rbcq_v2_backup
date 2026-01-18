@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { RxwebValidators } from '@rxweb/reactive-form-validators';
 import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
+import { MESSAGES } from '@shared/constants/messages.const';
 import { MeterProcessTypes } from '@shared/enums';
 import { GenerateMeteringMasterfile, meterProcessBillingPeriod } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
@@ -21,6 +22,7 @@ export class GenerateMmfComponent implements OnInit {
   busy$: Subscription;
   LABELS = LABELS;
   form: FormGroup;
+  MESSAGE = MESSAGES;
 
   readonly formBuilder = inject(FormBuilder);
   readonly mps = inject(MeterprocessService);

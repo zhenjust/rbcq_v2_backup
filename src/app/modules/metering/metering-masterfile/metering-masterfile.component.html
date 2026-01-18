@@ -1,65 +1,73 @@
 <nz-card [nzTitle]="LABELS.METERING_MASTERFILE">
   <!-- Filters -->
-  <form nz-form [formGroup]="form" nzLayout="horizontal" class="column">
-    <div class="row">
-      <div class="col-sm-12 col-md-4 col-lg-4">
-        <nz-form-item>
-          <nz-form-label nzSpan="8">{{ LABELS.BILLING_PERIOD }}</nz-form-label>
-          <nz-form-control nzSpan="16">
-            <nz-select formControlName="billingPeriod" [nzOptions]="billingPeriodOpts"
-              [nzPlaceHolder]="LABELS.CHOOSE_HERE" [nzAllowClear]="true" nzShowSearch></nz-select>
-          </nz-form-control>
-        </nz-form-item>
+   @if (showForm) {
+    <form nz-form [formGroup]="form" nzLayout="horizontal" class="column">
+      <div class="row">
+        <div class="col-sm-12 col-md-4 col-lg-4">
+          <nz-form-item class="mb-3">
+            <nz-form-label nzSpan="8">{{ LABELS.BILLING_PERIOD }}</nz-form-label>
+            <nz-form-control nzSpan="16">
+              <nz-select formControlName="billingPeriod" [nzOptions]="billingPeriodOpts"
+                [nzPlaceHolder]="LABELS.CHOOSE_HERE" [nzAllowClear]="true" nzShowSearch></nz-select>
+            </nz-form-control>
+          </nz-form-item>
 
-        <nz-form-item>
-          <nz-form-label nzSpan="8">{{ LABELS.BILLING_RUN_TYPE }}</nz-form-label>
-          <nz-form-control nzSpan="16">
-            <nz-select formControlName="processType" [nzOptions]="processTypeOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
-              [nzAllowClear]="true" nzShowSearch></nz-select>
-          </nz-form-control>
-        </nz-form-item>
+          <nz-form-item class="mb-3">
+            <nz-form-label nzSpan="8">{{ LABELS.BILLING_RUN_TYPE }}</nz-form-label>
+            <nz-form-control nzSpan="16">
+              <nz-select formControlName="processType" [nzOptions]="processTypeOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
+                [nzAllowClear]="true" nzShowSearch></nz-select>
+            </nz-form-control>
+          </nz-form-item>
 
-        <nz-form-item>
-          <nz-form-label nzSpan="8">{{ LABELS.FILE }}</nz-form-label>
-          <nz-form-control nzSpan="16">
-            <input nz-input trim="blur" formControlName="file" />
-          </nz-form-control>
-        </nz-form-item>
+          <nz-form-item class="mb-3">
+            <nz-form-label nzSpan="8">{{ LABELS.FILE }}</nz-form-label>
+            <nz-form-control nzSpan="16">
+              <input nz-input trim="blur" formControlName="file" />
+            </nz-form-control>
+          </nz-form-item>
 
-        <nz-form-item>
-          <nz-form-label nzSpan="8">{{ LABELS.SAVED_BY }}</nz-form-label>
-          <nz-form-control nzSpan="16">
-            <input nz-input trim="blur" formControlName="file">
-          </nz-form-control>
-        </nz-form-item>
+          <nz-form-item class="mb-3">
+            <nz-form-label nzSpan="8">{{ LABELS.SAVED_BY }}</nz-form-label>
+            <nz-form-control nzSpan="16">
+              <input nz-input trim="blur" formControlName="file">
+            </nz-form-control>
+          </nz-form-item>
 
-        <nz-form-item>
-          <nz-form-label nzSpan="8">{{ LABELS.DATE_SAVED }}</nz-form-label>
-          <nz-form-control nzSpan="16">
-            <nz-date-picker class="w-100" formControlName="lastModifiedDateTime"></nz-date-picker>
-          </nz-form-control>
-        </nz-form-item>
-
+          <nz-form-item class="mb-3"  >
+            <nz-form-label nzSpan="8">{{ LABELS.DATE_SAVED }}</nz-form-label>
+            <nz-form-control nzSpan="16">
+              <nz-date-picker class="w-100" formControlName="lastModifiedDateTime"></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
       </div>
-    </div>
+    </form>
+   }
 
-    <div class="d-flex justify-content-between">
-      <button nz-button nzType="primary" [disabled]="form.invalid">{{LABELS.APPLY_FILTERS }}</button>
-      <button nz-button nzType="primary" (click)="generate()">{{ LABELS.GENERATE }}</button>
-    </div>
-  </form>
+  <div class="d-flex justify-content-between mb-3">
+    <nz-space>
+      @if (showForm) {
+        <button nz-button *nzSpaceItem [disabled]="form.invalid" (click)="showForm = !showForm">
+          {{ LABELS.CLEAR_FILTERS }}
+        </button>
+      }
 
-  <div class="d-flex justify-content-end mb-3">
+      <button nz-button *nzSpaceItem nzType="primary" [disabled]="form.invalid" (click)="showForm ? paginatedTable?.search() : showForm =! showForm">
+        {{ showForm ? LABELS.APPLY_FILTERS : LABELS.SET_FILTERS }}
+      </button>
+    </nz-space>
+    <button nz-button nzType="primary" (click)="generate()">{{ LABELS.GENERATE }}</button>
   </div>
 
   <!-- Table -->
   <app-paginated-table #paginatedTable [tableColumns]="tableColumns" [url]="listUrl()" [showActions]="true"
-    [actionControls]="actionControls  "></app-paginated-table>
+    [actionControls]="actionControls"></app-paginated-table>
 </nz-card>
 
 <!-- Column Templates -->
-<ng-template #sizeTpl let-data="data">
-  {{ (data | fileSize) || '-' }}
+<ng-template #fileTpl let-d="allData">
+  {{ `Metering_Masterfile_${d.parameters.endDate | date: 'yyyy_MM_dd'}_${d.parameters.processType}_${d?.pipelineRuns[0]?.workspaceId}.xlsx` }}
 </ng-template>
 
 <ng-template #bpTpl let-allData="allData">

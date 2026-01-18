@@ -9,6 +9,7 @@ export const MESSAGES = {
   SOME_FILES_ERROR: 'Some files encountered an error while importing.',
   DUPLICATE_FILES: 'Please choose a different file.',
   UPLOAD_IN_PROGRESS: 'Uploads are in progress.',
+  REQUIRED_FIELDS: 'Please fill out the required fields.',
 
   // DYNAMIC MESSAGES
   ITEMS_REQUIRED: (item: string) => `${item} are required.`,
