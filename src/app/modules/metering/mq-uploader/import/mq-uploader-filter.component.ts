@@ -55,7 +55,7 @@ export class MqUploaderFilterComponent implements OnInit {
     const required = RxwebValidators.required();
     this.form = this.fb.group({
       category: [null, required],
-      mspShortName: [null, required],
+      mspShortName: [null, RxwebValidators.required({ conditionalExpression: () => !this.isMspUser })],
       convertToFiveMin: [false],
       tradingDay: [null, RxwebValidators.required({ conditionalExpression: () => this.isDaily })],
       tradingMonth: [null, RxwebValidators.required({ conditionalExpression: () => this.isMonthly })],
