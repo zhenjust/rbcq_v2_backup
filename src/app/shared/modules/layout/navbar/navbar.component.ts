@@ -8,6 +8,7 @@ import { isAuthorizedAny } from '@shared/validators';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { ToastrService } from 'ngx-toastr';
 import { LABELS } from '@shared/constants/labels.const';
+import { AdminService } from '@shared/services/api';
 
 @Component({
   selector: 'app-navbar',
@@ -33,6 +34,8 @@ export class NavbarComponent implements OnInit {
   private r = inject(Router);
   private authorizationService = inject(AuthorizationService);
   private toast = inject(ToastrService);
+  private as = inject(AdminService);
+  regCategory: string;
 
   constructor() {
     effect(() => {
@@ -53,6 +56,8 @@ export class NavbarComponent implements OnInit {
     } else {
       this.isLoading.set(false);
     }
+
+    this.getNavbarInfo();
   }
 
   private getMenuItems(): void {
@@ -1190,8 +1195,8 @@ export class NavbarComponent implements OnInit {
         externalLink: externalRoutes.JOB_QUEUE
       },
       {
-        show: this.userData()?.principal.department === 'MSP',
         title: LABELS.MQ_UPLOADER,
+        show: this.regCategory === 'MSP',
         icon: faUpload,
         path: NEW_ROUTES.MSP_MQ_UPLOADER,
       },
@@ -1202,6 +1207,17 @@ export class NavbarComponent implements OnInit {
 
   toggleCollapse(): void {
     this.navbarToggle.emit();
+  }
+
+  getNavbarInfo(): void {
+    this.as.getNavbarInfo()
+      .subscribe(res => {
+        if (res) {
+          this.regCategory = res?.registrationCategory;
+          const index = this.navItems.findIndex(nav => nav.title === LABELS.MQ_UPLOADER);
+          this.navItems[index].show = this.regCategory === 'MSP';
+        }
+      });
   }
 
   get shouldShowText(): boolean {

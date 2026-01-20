@@ -13,6 +13,10 @@ export class AdminService {
 
   constructor() { }
 
+  public getNavbarInfo(): Observable<any> {
+    return this.http.get<any>(`${environment.__API_URL__}/reg/participant/0/info/navbar`);
+  }
+
   public getConfigurations(key: string): Observable<string> {
     return this.http.get<string>(`${this.baseEndpoint}/admin/config/${key}/value`);
   }
