@@ -105,7 +105,7 @@ export class MeterprocessService {
 
   public downloadMmf(params: DownloadMmfParams): Observable<HttpEvent<Blob>> {
     const httpParams = this.paramUtil.buildParams(params);
-    return this.http.get(`${this.baseUrl}/reports/download/mmf`, {
+    return this.http.get(`/${this.baseUrl}/reports/download/mmf`, {
       params: httpParams,
       responseType: 'blob',
       observe: 'events',

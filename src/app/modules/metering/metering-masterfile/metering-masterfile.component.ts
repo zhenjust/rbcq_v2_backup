@@ -22,6 +22,7 @@ export class MeteringMasterfileComponent implements OnInit {
   @ViewChild('paginatedTable', { static: false }) paginatedTable: PaginatedTableComponent<any>;
   @ViewChild('bpTpl', { static: true }) bpTpl: TemplateRef<HTMLElement>;
   @ViewChild('fileTpl', { static: true }) fileTpl: TemplateRef<HTMLElement>;
+  @ViewChild('tagTpl', { static: true }) tagTpl: TemplateRef<HTMLElement>;
 
   tableColumns: TPL_TABLE_COLUMN[];
   LABELS = LABELS;
@@ -69,6 +70,7 @@ export class MeteringMasterfileComponent implements OnInit {
   formatTableColumns(): void {
     tableColumns[LABELS.BILLING_PERIOD].template = this.bpTpl;
     tableColumns[LABELS.FILE].template = this.fileTpl;
+    tableColumns[LABELS.STATUS].template = this.tagTpl;
 
     this.tableColumns = Object.values(tableColumns);
   }
@@ -125,5 +127,6 @@ const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.FILE]: { label: LABELS.FILE, propName: 'fileName', width: '250px', type: 'template' },
   [LABELS.DATE_SAVED]: { label: LABELS.DATE_SAVED, propName: 'lastModifiedDatetime', width: '100px', align: 'center', type: 'date' },
   [LABELS.SAVED_BY]: { label: LABELS.SAVED_BY, propName: 'lastModifiedBy', width: '140px', align: 'center' },
+  [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', width: '100px', align: 'center', type: 'template' },
 }
 
