@@ -1,6 +1,6 @@
 import { Component, OnInit, TemplateRef, ViewChild, computed, effect, inject } from '@angular/core';
 import { AuthorizationService } from '@core/services/authorization.service';
-import { MeterDataPipelineName, MeterProcessStatus, MeterDataPipelineProcess, PipelineStatus } from '@shared/constants';
+import { MeterDataPipelineName, MeterProcessStatus, MeterDataPipelineProcess, PipelineStatus, MeterDataPipelineNameLabel } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { MeterProcessTypes } from '@shared/enums';
 import { HttpResponseProgress, meterProcessPipeline, meterProcessPipelineGroup, meterProcessTable } from '@shared/interfaces';
@@ -196,7 +196,7 @@ export class TableComponent implements OnInit {
     };
 
     this.modal.create({
-      nzTitle: actionType,
+      nzTitle: MeterDataPipelineNameLabel[actionType],
       nzContent: this.runJobs,
       nzOkText: 'Run Job',
       nzCancelText: 'Cancel',

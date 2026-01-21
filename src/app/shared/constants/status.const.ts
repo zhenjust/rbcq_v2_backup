@@ -22,17 +22,24 @@ export enum MeterProcessStatus {
 }
 
 export enum MeterDataPipelineName {
-    SETTLEMENT_READY = 'settlementReady',
-    FINALIZE_READY = 'finalizeSettlementData',
-    INITIALIZE = 'initialize',
-    CONSOLIDATE = 'consolidateMeterData'
+  SETTLEMENT_READY = 'settlementReady',
+  FINALIZE_READY = 'finalizeSettlementData',
+  INITIALIZE = 'initialize',
+  CONSOLIDATE = 'consolidateMeterData'
+}
+
+export const MeterDataPipelineNameLabel:Record<MeterDataPipelineName, string> = {
+  [MeterDataPipelineName.CONSOLIDATE]: 'Consolidate',
+  [MeterDataPipelineName.SETTLEMENT_READY]: 'Run Settlement-Ready',
+  [MeterDataPipelineName.FINALIZE_READY]: 'Finalize Settlement - Ready',
+  [MeterDataPipelineName.INITIALIZE]: 'Initialize'
 }
 
 export enum SettlementStatus {
   NULLIFIED = 'Nullified',
 
   COMPLETED_SETTLEMENT_READY = 'Completed - Settlement Ready',
-  COMPLETED_GENERATE_INPUT_WORKSPACE =  'Completed - Generate Input Workspace',
+  COMPLETED_GENERATE_INPUT_WORKSPACE = 'Completed - Generate Input Workspace',
   COMPLETED_SETTLEMENT_COMPLETE = 'Completed - Settlement Complete',
   COMPLETED_SETTLEMENT_CALCULATION = 'Completed - Settlement Calculation',
 
