@@ -43,6 +43,7 @@ export class MqUploaderFilterComponent implements OnInit {
   currentUser: CurrentUser | null;
   busy$: Subscription;
   dateDeduction: number;
+  regCategory: string;
 
   ngOnInit(): void {
     this.currentUser = this.as.currentUser();
@@ -66,6 +67,16 @@ export class MqUploaderFilterComponent implements OnInit {
     this.handleTradingDayChange();
     this.handleTradingMonthChange();
   }
+
+  getNavbarInfo(): void {
+    this.admin.getNavbarInfo()
+      .subscribe(res => {
+        if (res) {
+          this.regCategory = res?.registrationCategory;
+        }
+      });
+  }
+
 
   handleCategoryChange(): void {
     this.category?.valueChanges
@@ -227,6 +238,6 @@ export class MqUploaderFilterComponent implements OnInit {
   get isCorrectedMonthly(): boolean { return this.category?.value === MQ_UPLOAD_CATEGORY.CORRECTED_METER_DATA_MONTHLY; }
 
   get acceptedFile(): string { return (this.isDaily || this.isMonthly) ? '.mdef, .mde, .mdf, .csv, .MDE, .MDF' : '.csv'; }
-  get isMspUser(): boolean { return this.currentUser?.principal?.department === 'MSP'; }
+  get isMspUser(): boolean { return this.currentUser?.principal?.department === 'MSP' || this.regCategory === 'MSP'; }
 
 }
