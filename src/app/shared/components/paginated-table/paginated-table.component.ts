@@ -24,8 +24,8 @@ export class PaginatedTableComponent<T> extends SearchListBase {
   @Input() url: Observable<any>;
 
   @Input() tableConfig: {
-    height?: string;
-    width?: string;
+    height?: string | null;
+    width?: string | null;
   };
 
   showActions = input<boolean>(false);
