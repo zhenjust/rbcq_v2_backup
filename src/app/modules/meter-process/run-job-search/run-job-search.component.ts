@@ -51,12 +51,10 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
 
     this.mpa.getBillingPeriod().pipe(takeUntil(this.destroy$)).subscribe({
         next: (data) => {
-        this.meterProcessBillingPeriod = Array.isArray(data) ? data : Object.values(data);
-          // this.tryAutoSetBillingPeriod();
-          // console.log(this.meterProcessBillingPeriod)
+          this.meterProcessBillingPeriod = Array.isArray(data) ? data : Object.values(data);
         },
       error: (err) => console.error(err)
-      });
+    });
   }
 
   ngOnDestroy(): void {

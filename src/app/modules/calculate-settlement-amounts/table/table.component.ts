@@ -277,27 +277,27 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
   // for handling of actions; new implementation of modal
   handleAction(label: string, rowData: settlementPipeline, msg: string | TemplateRef<HTMLElement>, job?: ETA_JOBS | null, api$?: () => any): void {
-    const isGroupUrl = this.searchName === 'reserveTradingAmounts';
+    const okAction$ = () => {
+      if (job) {
+        this.busy$ = this.runSettlements.etaStlJobs(rowData, job)
+          .subscribe(res => {
+            const message = res?.message || MESSAGES.SUCCESS_JOB_TRIGGER;
+            this.toast.success(message);
+
+            this.search();
+          });
+      }
+
+      if (api$) {
+        api$();
+      }
+    }
 
     this.modal.confirm({
       ...modalConfig,
       nzTitle: label,
       nzContent: msg as any,
-      nzOnOk: () => {
-        if (job) {
-          this.toast.success(MESSAGES.SUCCESS_JOB_TRIGGER);
-          this.busy$ = this.runSettlements.etaStlJobs(rowData, job, isGroupUrl)
-            .subscribe(res => {
-              this.search();
-              this.toast.success(res.message);
-            });
-        }
-
-        if (api$) {
-          api$();
-        }
-
-      }
+      nzOnOk: okAction$
     });
   }
 
@@ -346,16 +346,20 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     });
   }
 
+  jobNameRecord: Record<string, ETA_JOBS> = {
+    ['reserveTradingAmounts']: ETA_JOBS.RTA_GENERATE_INPUT_WORKSPACE,
+    ['energyTradingAmounts']: ETA_JOBS.GEN_INPUT_WORKSPACE
+  };
+
   // for 'generate' action
   handleGenerate(rowData: settlementPipeline, label: string): void {
     const { processType, tradingDate, billingStartDate, billingEndDate } = rowData;
     const isDaily = processType === MeterProcessTypes.DAILY;
     const msg = MESSAGES.GENERATE_INPUT_WORKSPACE_TD(isDaily ? tradingDate : `${billingStartDate} to ${billingEndDate}`);
-    const jobName = this.searchName === 'reserveTradingAmounts' ? ETA_JOBS.RTA_GENERATE_INPUT_WORKSPACE : ETA_JOBS.GEN_INPUT_WORKSPACE;
+    const jobName = this.jobNameRecord[this.searchName];
 
     this.handleAction(label, rowData, msg, jobName);
   }
-
 
   // helper functions
   setDisabledDateRange = (date: Date): boolean => {

@@ -19,7 +19,7 @@ export class SettlementTableFormatterPipe implements PipeTransform {
       case 'processType':
         return data.processType === MeterProcessTypes.ADJUSTED ? `${data.processType}` : data.processType;
       case 'tradingDate':
-        return (data.billingPeriod ? `${data.billingStartDate} - ${data.billingEndDate}` : data.tradingDate) || '';
+        return ((data.billingPeriod || data.billingStartDate) ? `${data.billingStartDate} - ${data.billingEndDate}` : data.tradingDate) || '';
       case 'status':
         return data.status;
       case 'lineRentalStatus':

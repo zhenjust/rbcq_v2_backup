@@ -64,13 +64,14 @@ export class RunSettlementService {
     const [start, end] = this.getDateRangeForProcessType(data);
     return {
       pipelineName,
-      refId: data.workspaceId || data?.id,
+      // refId: data.workspaceId || data?.id,
+      workspaceId: data.workspaceId || data?.id,
       isGroup: true,
       parameters: {
         billingStartDate: start ? this.dateFormatter.formatDateOnly(start) : null,
         billingEndDate: end ? this.dateFormatter.formatDateOnly(end) : null,
         processType: data.processType,
-        workspaceId: data.workspaceId
+        workspaceId: data.workspaceId || data?.id
       }
     };
   }
