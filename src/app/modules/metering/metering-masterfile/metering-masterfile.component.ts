@@ -10,6 +10,9 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
 import { MeterProcessTypes } from '@shared/enums';
 import { DownloadUtilService } from '@shared/services/utils';
+import { ToastrService } from 'ngx-toastr';
+import { MESSAGES } from '@shared/constants/messages.const';
+import { format } from 'date-fns';
 
 @Component({
   selector: 'app-metering-masterfile',
@@ -30,13 +33,14 @@ export class MeteringMasterfileComponent implements OnInit {
   readonly meterService = inject(MeterprocessService);
   readonly modalService = inject(NzModalService);
   readonly downloadService = inject(DownloadUtilService);
+  readonly toastrService = inject(ToastrService);
 
   formBuilder = inject(FormBuilder);
 
   form: FormGroup;
   showForm = false;
   processTypeOpts: meterProcessOptions[];
-  billingPeriodOpts: { label: string; value: number; }[];
+  billingPeriodOpts: { label: string; value: { startDate: string, endDate: string }; }[];
 
   ngOnInit(): void {
     this.formatTableColumns();
@@ -54,15 +58,26 @@ export class MeteringMasterfileComponent implements OnInit {
       file: [null],
       lastModifiedBy: [null],
       lastModifiedDateTime: [null],
-    })
+    });
+  }
+
+  resetFilters(): void {
+    this.showForm =! this.showForm;
+    this.form.reset();
+    this.paginatedTable.search();
   }
 
   getBillingPeriods(): void {
+    const formatDate = (date: string) => format(new Date(date), 'yyyy-MM-dd');
+
     this.meterService.getBillingPeriod()
       .subscribe({
         next: options => {
           this.billingPeriodOpts = (options as meterProcessBillingPeriod[])
-            .map(bp => ({ label: bp.supplyMonth, value: bp.id }));
+            .map(bp => ({
+              label: bp.supplyMonth,
+              value: { startDate: formatDate(bp.startDate), endDate: formatDate(bp.endDate) }
+            }));
         }
       });
   }
@@ -94,7 +109,16 @@ export class MeteringMasterfileComponent implements OnInit {
       return of();
     }
 
-    return this.meterService.searchByName({ name: 'runMMFReport', ...this.form.getRawValue() }, this.paginatedTable?.tableParams);
+    const formValues = this.form.getRawValue();
+    const filters = {
+      ...formValues,
+      ...formValues.billingPeriod,
+      name: 'runMMFReport'
+    };
+
+    delete filters?.billingPeriod;
+
+    return this.meterService.searchByNameParams(filters, this.paginatedTable?.tableParams);
   }
 
   download(data: any): void {
@@ -102,15 +126,29 @@ export class MeteringMasterfileComponent implements OnInit {
     const { endDate, processType } = data.parameters;
     const params: DownloadMmfParams = { workspaceId, endDate, processType };
 
-    this.meterService.downloadMmf(params)
+    this.paginatedTable.busy$ = this.meterService.downloadMmf(params)
       .subscribe(res => {
         this.downloadService.handleDownloadedFile(res);
       });
   }
 
-  delete(_data: any): void {
-    console.debug(_data);
+  delete(data: any): void {
+    this.modalService.confirm({
+      nzTitle: `${LABELS.DELETE} ${LABELS.METERING_MASTERFILE}`,
+      nzCentered: true,
+      nzContent: MESSAGES.CONFIRM_DELETE_ITEM(LABELS.METERING_MASTERFILE),
+      nzOnOk: () => {
+        const id = data.pipelineRuns[0].workspaceId;
+        this.paginatedTable.busy$ = this.meterService.deleteMmf(id)
+          .subscribe(() => {
+            const message = MESSAGES.SUCCESS_DELETE_ITEM(LABELS.METERING_MASTERFILE);
+            this.toastrService.success(message);
+            this.paginatedTable.search();
+          });
+      }
+    });
   }
+
 
   get actionControls(): TableAction<any>[] {
     return [

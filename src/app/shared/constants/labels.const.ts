@@ -68,6 +68,7 @@ export const LABELS = {
 
   MQ_UPLOADER: 'MQ Uploader',
   METERING_MASTERFILE: 'Metering Masterfile',
+  RECORD: 'Record',
   ONGOING: 'Ongoing',
   HISTORY: 'History',
 

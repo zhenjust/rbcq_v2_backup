@@ -23,6 +23,11 @@ export class PaginatedTableComponent<T> extends SearchListBase {
   @Input() checkboxCondition!: (rowData: any) => boolean;
   @Input() url: Observable<any>;
 
+  @Input() tableConfig: {
+    height?: string;
+    width?: string;
+  };
+
   showActions = input<boolean>(false);
 
   actionControls = input<TableAction<T>[]>();

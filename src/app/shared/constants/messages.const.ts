@@ -22,8 +22,10 @@ export const MESSAGES = {
   SUCCESS_UPLOAD_ITEM: (item: string) => `Successfully uploaded ${item}.`,
   SUCCESS_IMPORT_ITEM: (item: string) => `Successfully imported ${item}.`,
   SUCCESS_DOWNLOAD_ITEM: (item: string) => `Successfully downloaded ${item}.`,
+  SUCCESS_DELETE_ITEM: (item: string) => `Successfully deleted ${item}.`,
 
   CONFIRM_CONSOLIDATE_ITEMS: (item: string) => `Do you want to consolidate the selected ${item}?`,
+  CONFIRM_DELETE_ITEM: (item: string) => `Do you want to delete the selected ${item}?`,
   CONFIRM_PUBLISH_ITEM: (item: string) => `Do you want to publish this ${item}?`,
   GENERATE_INPUT_WORKSPACE_TD: (date: string) => `You are going to generate input workspace for the trading date: <strong>${date}</strong>. Do you want to proceed?`,
   CONFIRM_SETTLEMENT_MSG: (action: string) => `You are going to ${action}. Do you want to proceed?`,

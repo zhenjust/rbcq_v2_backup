@@ -48,7 +48,7 @@
   <div class="d-flex justify-content-between mb-3">
     <nz-space>
       @if (showForm) {
-        <button nz-button *nzSpaceItem [disabled]="form.invalid" (click)="showForm = !showForm">
+        <button nz-button *nzSpaceItem [disabled]="form.invalid" (click)="resetFilters()">
           {{ LABELS.CLEAR_FILTERS }}
         </button>
       }
@@ -57,12 +57,13 @@
         {{ showForm ? LABELS.APPLY_FILTERS : LABELS.SET_FILTERS }}
       </button>
     </nz-space>
+
     <button nz-button nzType="primary" (click)="generate()">{{ LABELS.GENERATE }}</button>
   </div>
 
   <!-- Table -->
   <app-paginated-table #paginatedTable [tableColumns]="tableColumns" [url]="listUrl()" [showActions]="true"
-    [actionControls]="actionControls"></app-paginated-table>
+    [actionControls]="actionControls" [tableConfig]="{ height: '60vh' }"></app-paginated-table>
 </nz-card>
 
 <!-- Column Templates -->

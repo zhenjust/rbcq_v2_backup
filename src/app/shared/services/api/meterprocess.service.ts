@@ -48,6 +48,12 @@ export class MeterprocessService {
     return this.http.get<TableDataResult<meterProcessTable[]>>(`${this.API_URL}/search-by-name`, { params });
   }
 
+  public searchByNameParams(data: Partial<meterProcessJobSearchGroupParams>, tableParams?: TableParams): Observable<TableDataResult<meterProcessTable[]>> {
+    const props = { ...data };
+    const params = this.paramUtil.buildParams(props, tableParams);
+    return this.http.get<TableDataResult<meterProcessTable[]>>(`${this.API_URL}/search-by-name-params`, { params });
+  }
+
   public generateMasterfile(payload: GenerateMeteringMasterfile): Observable<any> {
     return this.http.post<any>(`${this.MTR_PIPELINE_URL}/report-generation/mmf-generate`, payload);
   }
@@ -111,6 +117,10 @@ export class MeterprocessService {
       observe: 'events',
       reportProgress: true,
     })
+  }
+
+  public deleteMmf(workspaceId: number): Observable<null> {
+    return this.http.post<null>(`${this.MTR_PIPELINE_URL}/report-generation/mmf-delete`, { workspaceId });
   }
 
 }
