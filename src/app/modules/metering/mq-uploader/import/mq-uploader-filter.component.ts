@@ -50,7 +50,7 @@ export class MqUploaderFilterComponent implements OnInit {
     this.buildForm();
     this.getReferences();
     this.getMqList();
-    // this.getNavbarInfo();
+    this.getNavbarInfo();
   }
 
   buildForm(): void {

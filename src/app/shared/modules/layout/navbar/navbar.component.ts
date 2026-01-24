@@ -57,7 +57,7 @@ export class NavbarComponent implements OnInit {
       this.isLoading.set(false);
     }
 
-    // this.getNavbarInfo();
+    this.getNavbarInfo();
   }
 
   private getMenuItems(): void {
