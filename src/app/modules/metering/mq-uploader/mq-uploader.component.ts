@@ -45,10 +45,22 @@ export class MqUploaderComponent implements OnInit {
   showFilters = false;
   isAllowedImport = true;
   timeLimit: string;
+  regCategory: string;
 
   ngOnInit(): void {
-    this.formatTableColumns();
+    this.getNavbarInfo();
     this.getValidTime();
+  }
+
+  getNavbarInfo(): void {
+    this.admin.getNavbarInfo()
+      .subscribe(res => {
+        if (res) {
+          this.regCategory = res?.registrationCategory;
+        }
+
+        this.formatTableColumns();
+      });
   }
 
   getValidTime(): void {
@@ -74,6 +86,13 @@ export class MqUploaderComponent implements OnInit {
     ongoingTableColumns[LABELS.STATUS].template = this.statusTpl;
     ongoingTableColumns[LABELS.TRANSACTION_ID].template = this.transacIdTpl;
     ongoingTableColumns[LABELS.BILLING_DATE].template = this.billingDateTpl;
+
+    if (this.isMspUser) {
+      delete tableColumns[LABELS.MSP];
+      delete ongoingTableColumns[LABELS.MSP];
+    }
+
+    console.log({tableColumns})
 
     this.tableColumns = Object.values(tableColumns);
     this.ongoingTableColumns = Object.values(ongoingTableColumns);
@@ -185,6 +204,7 @@ export class MqUploaderComponent implements OnInit {
   get disableImport(): boolean { return !this.ongoingTableData.length || this.ongoingTableData.every(td => [Status.ACCEPTED, Status.REJECTED].includes(td.status as Status)); }
   get hasInProgress(): boolean { return this.ongoingTableData.some(td => td.status === Status.IN_PROGRESS); }
   get ongoingInProgress(): OngoingTableList[] { return this.ongoingTableData.filter(td => td.status !== LABELS.QUEUED_FOR_PROCESSING); }
+  get isMspUser(): boolean { return this.regCategory === 'MSP'; }
 
 }
 

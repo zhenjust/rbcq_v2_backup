@@ -74,7 +74,7 @@ export class PaginatedTableComponent<T> extends SearchListBase {
   get widthConfig(): string[] {
     return [
       ...(this.enableCheckbox ? ['30px'] : []),
-      ...this.tableColumns.map(col => col?.width ? col?.width : '150px'),
+      ...(this.tableColumns ? this.tableColumns.map(col => col?.width ? col?.width : '150px') : []),
       ...(this.showActions() ? ['100px'] : [])
     ];
   }

@@ -56,7 +56,7 @@ export class TemplateTableComponent {
   get widthConfig(): string[] {
     return [
       ...(this.enableCheckbox ? ['30px'] : []),
-      ...this.tableColumns.map(col => col?.width ? col?.width : '150px')
+      ...(this.tableColumns?.length ? this.tableColumns.map(col => col?.width ? col?.width : '150px') : [])
     ];
   }
 
