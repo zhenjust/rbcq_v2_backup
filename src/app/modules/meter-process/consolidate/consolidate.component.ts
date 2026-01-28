@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { LABELS } from '@shared/constants/labels.const';
-import { meterProcessPipeline, TPL_TABLE_COLUMN } from '@shared/enums/interfaces';
+import { meterProcessPipeline, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { NZ_MODAL_DATA, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Subscription } from 'rxjs';

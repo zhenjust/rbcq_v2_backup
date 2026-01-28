@@ -1,6 +1,6 @@
 import { inject, Pipe, PipeTransform } from '@angular/core';
 import { MeterProcessTypes } from '@shared/enums';
-import { settlementPipeline, TableColumn } from '@shared/enums/interfaces';
+import { settlementPipeline, TableColumn } from '@shared/interfaces';
 import { DateFormatterUtilService } from '@shared/services/utils';
 
 @Pipe({

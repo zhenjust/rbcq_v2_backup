@@ -1,5 +1,5 @@
 import { Component, Input, ViewChild } from '@angular/core';
-import { TPL_TABLE_COLUMN } from '@shared/enums/interfaces';
+import { TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { NzTableComponent } from 'ng-zorro-antd/table';
 import { Subscription } from 'rxjs';
 

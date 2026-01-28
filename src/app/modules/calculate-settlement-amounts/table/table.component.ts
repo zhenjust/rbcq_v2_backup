@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, effect, computed, inject, ViewChild, TemplateRef, signal } from '@angular/core';
 import { ActivatedRoute, Data } from '@angular/router';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { PublishSettlement, settlementParams, settlementPipeline, TableColumn, TPL_TABLE_COLUMN } from '@shared/enums/interfaces';
+import { PublishSettlement, settlementParams, settlementPipeline, TableColumn, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { RunSettlementService } from '@shared/services/settlement';
 import { ToastrService } from 'ngx-toastr';
 import { ETA_JOBS, MeterProcessTypes } from '@shared/enums';

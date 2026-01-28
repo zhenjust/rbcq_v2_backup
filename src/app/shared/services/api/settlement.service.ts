@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ParamsUtilService } from '../utils';
-import { BaseResponse, EnergyTradingAmounts, PublishSettlement, SettlementJob, SettlementJobParams, settlementParams, settlementTableDate, TableParams } from '@shared/enums/interfaces';
+import { BaseResponse, EnergyTradingAmounts, PublishSettlement, SettlementJob, SettlementJobParams, settlementParams, settlementTableDate, TableParams } from '@shared/interfaces';
 import { Observable } from 'rxjs';
 
 @Injectable({

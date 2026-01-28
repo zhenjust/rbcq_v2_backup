@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Data } from '@angular/router';
-import { settlementPipeline, settlementTableDate } from '@shared/enums/interfaces';
+import { settlementPipeline, settlementTableDate } from '@shared/interfaces';
 import { RunSettlementService, SearchFilterService } from '@shared/services/settlement';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';

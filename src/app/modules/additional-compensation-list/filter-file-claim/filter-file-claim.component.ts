@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Data } from '@angular/router';
 import { PRICING_CONDITIONS } from '@shared/constants';
 import { settlementSearchNames } from '@shared/enums';
-import { addtlCompensationRunDtos, meterProcessBillingPeriod, settlementJobInstanceOptions } from '@shared/enums/interfaces';
+import { addtlCompensationRunDtos, meterProcessBillingPeriod, settlementJobInstanceOptions } from '@shared/interfaces';
 import { MeterprocessService, SettlementService } from '@shared/services/api';
 import { DateFormatterUtilService } from '@shared/services/utils';
 import { NzModalService } from 'ng-zorro-antd/modal';

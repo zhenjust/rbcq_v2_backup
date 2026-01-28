@@ -5,7 +5,7 @@ import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { MeterProcessTypes } from '@shared/enums';
-import { GenerateMeteringMasterfile, meterProcessBillingPeriod } from '@shared/enums/interfaces';
+import { GenerateMeteringMasterfile, meterProcessBillingPeriod } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { format } from 'date-fns';
 import { NzModalRef } from 'ng-zorro-antd/modal';

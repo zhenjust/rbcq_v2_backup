@@ -3,7 +3,7 @@ import { AuthorizationService } from '@core/services/authorization.service';
 import { MeterDataPipelineName, MeterProcessStatus, MeterDataPipelineProcess, PipelineStatus, MeterDataPipelineNameLabel } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { MeterProcessTypes } from '@shared/enums';
-import { HttpResponseProgress, meterProcessPipeline, meterProcessPipelineGroup, meterProcessTable } from '@shared/enums/interfaces';
+import { HttpResponseProgress, meterProcessPipeline, meterProcessPipelineGroup, meterProcessTable } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { SearchFilterService } from '@shared/services/meterProcess';
 import { DateFormatterUtilService } from '@shared/services/utils';

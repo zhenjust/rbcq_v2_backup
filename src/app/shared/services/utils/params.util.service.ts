@@ -1,6 +1,6 @@
 import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { TableParams } from '@shared/enums/interfaces';
+import { TableParams } from '@shared/interfaces';
 
 @Injectable({
   providedIn: 'root'

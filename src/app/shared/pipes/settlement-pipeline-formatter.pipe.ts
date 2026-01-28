@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { SettlementPipelineWithRun } from '@shared/enums/interfaces';
+import { SettlementPipelineWithRun } from '@shared/interfaces';
 
 @Pipe({
   name: 'stlPipelineFormatterPipe',

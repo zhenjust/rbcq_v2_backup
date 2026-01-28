@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { SettlementStatus } from '@shared/constants';
-import { JobSelect, settlementPipeline } from '@shared/enums/interfaces';
+import { JobSelect, settlementPipeline } from '@shared/interfaces';
 
 @Pipe({
   name: 'stlActions',

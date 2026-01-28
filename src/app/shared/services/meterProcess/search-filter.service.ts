@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { meterProcessJobSearchGroupParams, meterProcessTable } from '@shared/enums/interfaces';
+import { meterProcessJobSearchGroupParams, meterProcessTable } from '@shared/interfaces';
 import { MeterprocessService } from '../api';
 
 @Injectable({

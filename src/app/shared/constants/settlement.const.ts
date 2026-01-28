@@ -1,5 +1,5 @@
 import { pricingConditions, settlementProcessTypes, settlementSearchNames } from "@shared/enums";
-import { JobSelect, settlementJobInstanceOptions, settlementTableDate, TableColumn } from "@shared/enums/interfaces";
+import { JobSelect, settlementJobInstanceOptions, settlementTableDate, TableColumn } from "@shared/interfaces";
 import { LABELS } from './labels.const';
 
 export const FULL_SETTLEMENT_OPTIONS: settlementJobInstanceOptions[] = [
@@ -31,36 +31,36 @@ export const PRICING_CONDITIONS: settlementJobInstanceOptions[] = [
   { id: pricingConditions.SEC, label: pricingConditions.SEC, value: pricingConditions.SEC }
 ]
 
-const ACTION_LIST = [
-  'Calculate Energy Transaction Allocation',
-  'Calculate GMR/VAT',
-  'Calculate Line Rental',
-  'Calculate Reserve GMR/VAT',
-  'Calculate Reserve Transaction Allocation',
-  'Calculate Settlement',
+// const ACTION_LIST = [
+//   'Calculate Energy Transaction Allocation',
+//   'Calculate GMR/VAT',
+//   'Calculate Line Rental',
+//   'Calculate Reserve GMR/VAT',
+//   'Calculate Reserve Transaction Allocation',
+//   'Calculate Settlement',
 
-  'Finalize Line Rental',
-  'Finalize Settlement',
+//   'Finalize Line Rental',
+//   'Finalize Settlement',
 
-  'Generate Energy Billing Statement',
-  'Generate Energy Files',
-  'Generate Files',
-  'Generate Input Workspace',
-  'Generate Line Rental Files',
-  'Generate Monthly Summary',
-  'Generate Reserve Billing Statement',
-  'Generate Reserve Files',
-  'Generate Reserve Monthly Summary',
-  'Generate Reserve Transaction Report',
-  'Generate Transaction Report',
+//   'Generate Energy Billing Statement',
+//   'Generate Energy Files',
+//   'Generate Files',
+//   'Generate Input Workspace',
+//   'Generate Line Rental Files',
+//   'Generate Monthly Summary',
+//   'Generate Reserve Billing Statement',
+//   'Generate Reserve Files',
+//   'Generate Reserve Monthly Summary',
+//   'Generate Reserve Transaction Report',
+//   'Generate Transaction Report',
 
-  'Publish Transaction Report',
+//   'Publish Transaction Report',
 
-  'Validate Input',
-  'View Calculations',
-  'View Daily Status',
-  'View Validations',
-];
+//   'Validate Input',
+//   'View Calculations',
+//   'View Daily Status',
+//   'View Validations',
+// ];
 
 export const SettlementJobActions: JobSelect[] = [
   { label: LABELS.GENERATE_INPUT_WORKSPACE, value: 'generate', show: false },

@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable, Signal, signal } from '@angular/core';
 import { apiPath } from '@shared/constants';
-import { AuthToken, CurrentUser } from '@shared/enums/interfaces';
+import { AuthToken, CurrentUser } from '@shared/interfaces';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { map, Observable, tap } from 'rxjs';
 

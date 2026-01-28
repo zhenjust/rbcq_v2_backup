@@ -3,7 +3,7 @@ import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { RxwebValidators } from '@rxweb/reactive-form-validators';
 import { MQ_UPLOAD_CATEGORY, MQ_UPLOADER_STATUS } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
-import { MqUploadFilters } from '@shared/enums/interfaces';
+import { MqUploadFilters } from '@shared/interfaces';
 import { SystemUtilService } from '@shared/services/utils';
 import { format, subDays } from 'date-fns';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';

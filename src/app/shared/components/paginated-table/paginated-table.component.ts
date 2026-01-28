@@ -1,6 +1,6 @@
 import { Component, input, Input, ViewChild } from '@angular/core';
 import { LABELS } from '@shared/constants/labels.const';
-import { TableAction, TPL_TABLE_COLUMN } from '@shared/enums/interfaces';
+import { TableAction, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { SearchListBase } from '@shared/services/utils/list.util.service';
 import { NzTableComponent } from 'ng-zorro-antd/table';
 import { Observable, Subscription } from 'rxjs';
