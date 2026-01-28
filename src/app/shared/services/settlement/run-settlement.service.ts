@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { BaseResponse, EnergyTradingAmounts, settlementPipeline } from '@shared/interfaces';
+import { BaseResponse, EnergyTradingAmounts, settlementPipeline } from '@shared/enums/interfaces';
 import { ETA_JOBS, MeterProcessTypes } from '@shared/enums';
 import { SettlementService } from '../api';
 import { ToastrService } from 'ngx-toastr';

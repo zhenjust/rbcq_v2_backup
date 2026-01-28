@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { faEllipsisVertical, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { apiPath, HEADER_ROUTES, PHASE_ONE_AUTHORITIES } from '@shared/constants';
-import { CurrentUser } from '@shared/interfaces';
+import { CurrentUser } from '@shared/enums/interfaces';
 import { ToastrService } from 'ngx-toastr';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { environment } from 'environments/environment';

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, effect, computed, inject, ViewChild, TemplateRef, signal } from '@angular/core';
 import { ActivatedRoute, Data } from '@angular/router';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { PublishSettlement, settlementParams, settlementPipeline, TableColumn, TPL_TABLE_COLUMN } from '@shared/interfaces';
+import { PublishSettlement, settlementParams, settlementPipeline, TableColumn, TPL_TABLE_COLUMN } from '@shared/enums/interfaces';
 import { RunSettlementService } from '@shared/services/settlement';
 import { ToastrService } from 'ngx-toastr';
 import { ETA_JOBS, MeterProcessTypes } from '@shared/enums';
@@ -26,26 +26,26 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   @ViewChild('runSettlementJobs', { static: true }) runSettlementJobs!: TemplateRef<void>;
   @ViewChild('statusTpl', { static: true }) statusTpl!: TemplateRef<HTMLElement>;
 
-  isLineRentalStatus: boolean = false;
+  private readonly destroy$ = new Subject<void>();
+  private readonly runSettlements = inject(RunSettlementService);
+  private readonly router = inject(ActivatedRoute);
+  private readonly toast = inject(ToastrService);
+  private readonly modal = inject(NzModalService);
+  private readonly ss = inject(SettlementService);
+  private readonly dp = inject(DatePipe);
+  private readonly mps = inject(MeterprocessService);
+
+  isLineRentalStatus = false;
   LABELS = LABELS;
   settlementJobActions = SettlementJobActions;
   baseTableItem = BaseTableItem;
   defaultTableData = DefaultTableData;
-  searchName: string = '';
+  searchName = '';
   expandSet = new Set<number>();
   expandableTableCols: TPL_TABLE_COLUMN[] = [];
 
   private selectedActionsSignal = signal<Map<string, string>>(new Map());
   selectedActions = computed(() => this.selectedActionsSignal());
-
-  private destroy$ = new Subject<void>();
-  private runSettlements = inject(RunSettlementService);
-  private router = inject(ActivatedRoute);
-  public toast = inject(ToastrService);
-  public modal = inject(NzModalService);
-  private ss = inject(SettlementService);
-  private dp = inject(DatePipe);
-  private mps = inject(MeterprocessService);
 
   public minDate = signal<Date | null>(null);
   public maxDate = signal<Date | null>(null);
@@ -58,6 +58,11 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   override busy$: Subscription;
   override resultsProp = 'pipelineGroup';
   filters: Partial<settlementParams>;
+
+  jobNameRecord: Record<string, ETA_JOBS> = {
+    ['reserveTradingAmounts']: ETA_JOBS.RTA_GENERATE_INPUT_WORKSPACE,
+    ['energyTradingAmounts']: ETA_JOBS.GEN_INPUT_WORKSPACE
+  };
 
   constructor() {
     super();
@@ -96,21 +101,11 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     this.expandableTableCols = Object.values(expandedTableCols);
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-    this.selectedActionsSignal.set(new Map());
-  }
-
-  trackByFn(index: number, item: settlementPipeline): any {
-    return item.workspaceId || item.name || index;
-  }
-
   getSelectedAction(rowData: settlementPipeline): string {
     return this.selectedActions().get(rowData.workspaceId) || '';
   }
 
-  private resetActionSelection(rowData: settlementPipeline): void {
+  resetActionSelection(rowData: settlementPipeline): void {
     this.selectedActionsSignal.update(actions => {
       const newActions = new Map(actions);
       newActions.set(rowData.workspaceId, '');
@@ -118,7 +113,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     });
   }
 
-  private setActionSelection(rowData: settlementPipeline, value: string): void {
+  setActionSelection(rowData: settlementPipeline, value: string): void {
     this.selectedActionsSignal.update(actions => {
       const newActions = new Map(actions);
       newActions.set(rowData.workspaceId, value);
@@ -281,7 +276,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       if (job) {
         this.busy$ = this.runSettlements.etaStlJobs(rowData, job)
           .subscribe(res => {
-            const message = res?.message || MESSAGES.SUCCESS_JOB_TRIGGER;
+            const message = res.message || MESSAGES.SUCCESS_JOB_TRIGGER;
             this.toast.success(message);
 
             this.search();
@@ -346,11 +341,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     });
   }
 
-  jobNameRecord: Record<string, ETA_JOBS> = {
-    ['reserveTradingAmounts']: ETA_JOBS.RTA_GENERATE_INPUT_WORKSPACE,
-    ['energyTradingAmounts']: ETA_JOBS.GEN_INPUT_WORKSPACE
-  };
-
   // for 'generate' action
   handleGenerate(rowData: settlementPipeline, label: string): void {
     const { processType, tradingDate, billingStartDate, billingEndDate } = rowData;
@@ -375,9 +365,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     return isBefore(dateOnly, minOnly) || isAfter(dateOnly, maxOnly);
   };
 
-  get disabledDateFn() {
-    return (date: Date) => this.setDisabledDateRange(date);
-  }
 
   onRangeChange(value: Date[] | null): void {
     if (!value || value.length !== 2) {
@@ -394,13 +381,13 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     this.selectedRange.set(value);
   }
 
-  private clearDateRange(): void {
+  clearDateRange(): void {
     this.minDate.set(null);
     this.maxDate.set(null);
     this.selectedRange.set(null);
   }
 
-  private handleModalAction(rowData: settlementPipeline, serviceCall: () => void, modalData: any): void {
+  handleModalAction(rowData: settlementPipeline, serviceCall: () => void, modalData: any): void {
     this.currentModalData = modalData;
 
     const modalRef = this.modal.create({
@@ -438,7 +425,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     });
   }
 
-  private handleDateRangeAction(rowData: settlementPipeline, jobName: ETA_JOBS, actionMessage: string, actionType: string ): void {
+  handleDateRangeAction(rowData: settlementPipeline, jobName: ETA_JOBS, actionMessage: string, actionType: string ): void {
     this.clearDateRange();
 
     if (rowData.processType !== MeterProcessTypes.DAILY) {
@@ -480,9 +467,18 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     setTimeout(() => window.dispatchEvent(new Event('resize')), 10);
   }
 
+  trackByFn(index: number, item: settlementPipeline): string | number {
+    return item.workspaceId || item.name || index;
+  }
+
+  get disabledDateFn() {
+    return (date: Date) => this.setDisabledDateRange(date);
+  }
+
+
   get tableItem(): TableColumn[] {
     return this.baseTableItem.filter(column =>
-      column.name !== 'Line Rental Status' || this.isLineRentalStatus
+      column.name !== LABELS.LINE_RENTAL_STATUS || this.isLineRentalStatus
     );
   }
 
@@ -493,6 +489,13 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       ...['100px', '150px']
     ];
   }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.selectedActionsSignal.set(new Map());
+  }
+
 }
 
 const expandedTableCols: Record<string, TPL_TABLE_COLUMN> = {

@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Data } from '@angular/router';
 import { PRICING_CONDITIONS } from '@shared/constants';
 import { settlementSearchNames } from '@shared/enums';
-import { addtlCompensationRunDtos, meterProcessBillingPeriod, settlementJobInstanceOptions } from '@shared/interfaces';
+import { addtlCompensationRunDtos, meterProcessBillingPeriod, settlementJobInstanceOptions } from '@shared/enums/interfaces';
 import { MeterprocessService, SettlementService } from '@shared/services/api';
 import { DateFormatterUtilService } from '@shared/services/utils';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -23,7 +23,7 @@ export class FilterFileClaimComponent implements OnInit, OnDestroy {
   billingIdList = signal<[]>([]);
   billingPeriodDateRange = signal<{ startDate: string; endDate: string }[]>([]);
   selectedBillingPeriod = signal<meterProcessBillingPeriod | null>(null);
-  
+
   @ViewChild('fileClaim', { static: true }) fileClaim!: TemplateRef<void>;
 
   protected fileClaimForm!: FormGroup;
@@ -43,7 +43,7 @@ export class FilterFileClaimComponent implements OnInit, OnDestroy {
 
   // Computed signals
   isFileClaimPage = computed(() => this.searchName === settlementSearchNames.MANAGE_ADD_COM_CLAIMS);
-  
+
   hasBillingPeriod = computed(() => {
     return this.selectedBillingPeriod() !== null &&
            this.fileClaimForm?.get('startDate')?.value !== null &&
@@ -139,7 +139,7 @@ export class FilterFileClaimComponent implements OnInit, OnDestroy {
   addDateRange(): void {
     const startDate = this.fileClaimForm.get('startDate')?.value;
     const endDate = this.fileClaimForm.get('endDate')?.value;
-    
+
     if (startDate && endDate) {
       const currentRanges = this.billingPeriodDateRange();
       this.billingPeriodDateRange.set([

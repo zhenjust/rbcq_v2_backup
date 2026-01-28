@@ -13,7 +13,7 @@ import {
   ReportDownloadParams,
   TableDataResult,
   TableParams,
-} from '@shared/interfaces';
+} from '@shared/enums/interfaces';
 import { Observable } from 'rxjs';
 import { ParamsUtilService } from '../utils';
 import { MeterDataPipelineName } from '@shared/constants';

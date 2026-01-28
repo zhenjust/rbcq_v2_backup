@@ -1,5 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { meterProcessParams } from '@shared/interfaces';
+import { meterProcessParams } from '@shared/enums/interfaces';
 
 @Injectable({
   providedIn: 'root',

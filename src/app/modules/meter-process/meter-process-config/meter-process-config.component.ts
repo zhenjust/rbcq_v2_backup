@@ -3,7 +3,7 @@ import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from
 import { MeterProcessTypes, Regions } from '@shared/enums';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged} from 'rxjs';
 import { RunJobService } from '@shared/services/meterProcess';
-import { meterProcessBillingPeriod, mtnList, mtnListPage, meterProcessParams, meterProcessOptions } from '@shared/interfaces';
+import { meterProcessBillingPeriod, mtnList, mtnListPage, meterProcessParams, meterProcessOptions } from '@shared/enums/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
 import { isAfter, isBefore, isSameDay, startOfDay } from 'date-fns';

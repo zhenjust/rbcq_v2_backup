@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { apiPath } from '@shared/constants';
-import { MqList, MspList, TableDataResult, TableParams } from '@shared/interfaces';
+import { MqList, MspList, TableDataResult, TableParams } from '@shared/enums/interfaces';
 import { environment } from 'environments/environment';
 import { Observable } from 'rxjs';
 import { ParamsUtilService } from '../utils';

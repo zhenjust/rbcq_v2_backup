@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { meterProcessJobSearchGroupParams, meterProcessTable } from '@shared/interfaces';
+import { meterProcessJobSearchGroupParams, meterProcessTable } from '@shared/enums/interfaces';
 import { MeterprocessService } from '../api';
 
 @Injectable({
@@ -7,7 +7,7 @@ import { MeterprocessService } from '../api';
 })
 export class SearchFilterService {
   private mpa = inject(MeterprocessService);
-  
+
   // signals
   isLoading = signal<boolean>(false);
   jobs = signal<meterProcessTable | null>(null);
@@ -16,7 +16,7 @@ export class SearchFilterService {
   refreshJobs(params: Partial<meterProcessJobSearchGroupParams>): void {
     this.isLoading.set(true);
     this.error.set(null); // Clear any previous errors
-    
+
     this.mpa.search(params).subscribe({
       next: (data) => {
         this.jobs.set(data);

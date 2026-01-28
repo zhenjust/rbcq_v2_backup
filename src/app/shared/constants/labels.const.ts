@@ -105,4 +105,33 @@ export const LABELS = {
   FILE: 'File',
   DATE_SAVED: 'Date Saved',
   SAVED_BY: 'Saved By',
+
+  LINE_RENTAL_STATUS: 'Line Rental Status',
+
+  CALCULATE_ENERGY_TRANSACTION_ALLOCATION: 'Calculate Energy Transaction Allocation',
+  CALCULATE_GMR_VAT: 'Calculate GMR/VAT',
+  CALCULATE_LINE_RENTAL: 'Calculate Line Rental',
+  CALCULATE_RESERVE_GMR_VAT: 'Calculate Reserve GMR/VAT',
+  CALCULATE_RESERVE_TRANSACTION_ALLOCATION: 'Calculate Reserve Transaction Allocation',
+  CALCULATE_SETTLEMENT: 'Calculate Settlement',
+
+  FINALIZE_LINE_RENTAL: 'Finalize Line Rental',
+  FINALIZE_SETTLEMENT: 'Finalize Settlement',
+
+  GENERATE_ENERGY_BILLING_STATEMENT: 'Generate Energy Billing Statement',
+  GENERATE_ENERGY_FILES: 'Generate Energy Files',
+  GENERATE_FILES: 'Generate Files',
+  GENERATE_LINE_RENTAL_FILES: 'Generate Line Rental Files',
+  GENERATE_RESERVE_BILLING_STATEMENT: 'Generate Reserve Billing Statement',
+  GENERATE_RESERVE_FILES: 'Generate Reserve Files',
+  GENERATE_RESERVE_MONTHLY_SUMMARY: 'Generate Reserve Monthly Summary',
+  GENERATE_RESERVE_TRANSACTION_REPORT: 'Generate Reserve Transaction Report',
+  GENERATE_TRANSACTION_REPORT: 'Generate Transaction Report',
+
+  PUBLISH_TRANSACTION_REPORT: 'Publish Transaction Report',
+
+  VALIDATE_INPUT: 'Validate Input',
+  VIEW_CALCULATIONS: 'View Calculations',
+  VIEW_DAILY_STATUS: 'View Daily Status',
+  VIEW_VALIDATIONS: 'View Validations',
 }

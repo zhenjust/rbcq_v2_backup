@@ -32,7 +32,7 @@
                                 <nz-dropdown-menu #menu="nzDropdownMenu">
                                     <ul nz-menu nzSelectable>
                                         @for (action of (settlementJobActions | stlActions: data); track action.value) {
-                                            <li nz-menu-item (click)="onActionSelect(action.value, data)">{{ action.label }}</li>
+                                            <li nz-menu-item (click)="action.action ? action.action() : onActionSelect(action.value, data)">{{ action.label }}</li>
                                         }
                                     </ul>
                                 </nz-dropdown-menu>

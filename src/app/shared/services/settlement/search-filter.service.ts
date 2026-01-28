@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { SettlementService } from '../api';
-import { settlementParams, settlementTableDate } from '@shared/interfaces';
+import { settlementParams, settlementTableDate } from '@shared/enums/interfaces';
 
 @Injectable({
   providedIn: 'root'

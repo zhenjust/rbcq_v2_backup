@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { TableParams } from '@shared/interfaces';
+import { TableParams } from '@shared/enums/interfaces';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { Observable, Subject, Subscription } from 'rxjs';
 

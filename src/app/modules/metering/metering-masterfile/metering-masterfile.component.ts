@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { LABELS } from '@shared/constants/labels.const';
-import { DownloadMmfParams, meterProcessBillingPeriod, meterProcessOptions, TableAction, TableDataResult, TPL_TABLE_COLUMN } from '@shared/interfaces';
+import { DownloadMmfParams, meterProcessBillingPeriod, meterProcessOptions, TableAction, TableDataResult, TPL_TABLE_COLUMN } from '@shared/enums/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { Observable, of } from 'rxjs';
@@ -54,10 +54,7 @@ export class MeteringMasterfileComponent implements OnInit {
   buildForm(): void {
     this.form = this.formBuilder.group({
       billingPeriod: [null],
-      processType: [null],
-      file: [null],
-      lastModifiedBy: [null],
-      lastModifiedDateTime: [null],
+      processType: [null]
     });
   }
 

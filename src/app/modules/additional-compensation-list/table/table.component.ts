@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Data } from '@angular/router';
-import { settlementPipeline, settlementTableDate } from '@shared/interfaces';
+import { settlementPipeline, settlementTableDate } from '@shared/enums/interfaces';
 import { RunSettlementService, SearchFilterService } from '@shared/services/settlement';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
@@ -51,7 +51,7 @@ export class TableComponent implements OnInit, OnDestroy {
   ]
 
   get tableItem(): tableColumn[] {
-    return this.baseTableItem.filter(column => 
+    return this.baseTableItem.filter(column =>
       column.name !== 'Line Rental Status' || this.isLineRentalStatus
     );
   }
@@ -70,11 +70,11 @@ export class TableComponent implements OnInit, OnDestroy {
       const jobs = this.sfs.jobs();
       const error = this.sfs.error();
       const loading = this.sfs.isLoading();
-      
+
       if (jobs && !loading) {
         this.toast.success('Jobs Loaded!');
       }
-      
+
       if (error && !loading) {
         this.toast.error('Failed to load jobs', error);
       }
@@ -100,11 +100,11 @@ export class TableComponent implements OnInit, OnDestroy {
       case 'name':
         return data.name || '';
       case 'tradingDate':
-        return data.billingPeriod 
+        return data.billingPeriod
           ? `${data.billingStartDate} - ${data.billingEndDate}`
           : data.tradingDate || '';
       case 'pricingCondition':
-        return ''; 
+        return '';
       case 'status':
         return data.status || '';
       case 'progress':
@@ -125,7 +125,7 @@ export class TableComponent implements OnInit, OnDestroy {
     if (!actionValue || actionValue === '') {
       return;
     }
-    
+
     switch (actionValue) {
       case 'run_summary':
         this.runSettlements.runSummary(rowData);

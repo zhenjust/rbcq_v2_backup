@@ -1,5 +1,5 @@
 import { MeterProcessTypes } from "@shared/enums";
-import { meterProcessOptions } from "@shared/interfaces";
+import { meterProcessOptions } from "@shared/enums/interfaces";
 
 export const METER_PROCESS_TYPE_OPTION: meterProcessOptions[] = [
     {id: MeterProcessTypes.DAILY, label: 'Daily', value: MeterProcessTypes.DAILY},

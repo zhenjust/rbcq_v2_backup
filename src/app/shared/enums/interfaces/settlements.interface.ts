@@ -133,7 +133,8 @@ export interface EnergyTradingAmounts {
 export interface JobSelect {
     label: string,
     value: string,
-    show?: boolean
+    show?: boolean,
+    action?: () => void;
 }
 
 export interface SettlementPipelineWithRun {

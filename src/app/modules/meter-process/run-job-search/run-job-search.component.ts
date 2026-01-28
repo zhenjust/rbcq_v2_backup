@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { METER_PROCESS_TYPE_OPTION, MeterDataPipelineName } from '@shared/constants';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { MeterProcessTypes } from '@shared/enums';
-import { meterProcessBillingPeriod, meterProcessJobSearchGroupParams, meterProcessOptions, meterProcessParams } from '@shared/interfaces';
+import { meterProcessBillingPeriod, meterProcessJobSearchGroupParams, meterProcessOptions, meterProcessParams } from '@shared/enums/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { RunJobService, SearchFilterService } from '@shared/services/meterProcess';
 import { DateFormatterUtilService, ProcessTypeUtilService } from '@shared/services/utils';

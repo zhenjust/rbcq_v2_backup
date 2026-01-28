@@ -5,7 +5,7 @@ import { RxwebValidators } from '@rxweb/reactive-form-validators';
 import { MQ_UPLOAD_CATEGORY } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
-import { CurrentUser } from '@shared/interfaces';
+import { CurrentUser } from '@shared/enums/interfaces';
 import { MqUploaderService } from '@shared/services/api';
 import { AdminService } from '@shared/services/api/admin.service';
 import { SystemUtilService } from '@shared/services/utils';

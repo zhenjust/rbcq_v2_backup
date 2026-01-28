@@ -7,7 +7,7 @@ import { FULL_SETTLEMENT_OPTIONS, MARKET_FEE_SETTLEMENT_OPTIONS_NO_ALL, RunProce
 import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { settlementSearchNames } from '@shared/enums';
-import { meterProcessBillingPeriod } from '@shared/interfaces';
+import { meterProcessBillingPeriod } from '@shared/enums/interfaces';
 import { MeterprocessService, SettlementService } from '@shared/services/api';
 import { format } from 'date-fns';
 import { NzModalService } from 'ng-zorro-antd/modal';

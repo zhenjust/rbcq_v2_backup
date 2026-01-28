@@ -1,6 +1,6 @@
 import { Component, effect, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
 import { externalRoutes, NEW_ROUTES } from '@shared/constants';
-import { CurrentUser, navItems } from '@shared/interfaces';
+import { CurrentUser, navItems } from '@shared/enums/interfaces';
 import { faBell, faHome, faChevronDown, faChevronRight, faAddressCard, faBuilding, faCopy, faUserLarge, faCircleUser, faCalendar, faFileArchive, faAddressBook, faBuildingUn, faTachometer, faTachometerAlt, faBinoculars, faContactCard, faHandHoldingHand, faTachometerAverage, faListCheck, faRoadCircleCheck, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { Router } from '@angular/router';
 import { PHASE_ONE_AUTHORITIES, PHASE_TWO_AUTHORITIES } from '@shared/constants';

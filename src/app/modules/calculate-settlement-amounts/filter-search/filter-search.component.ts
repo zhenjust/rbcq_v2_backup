@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Data } from '@angular/router';
 import { FULL_SETTLEMENT_OPTIONS, MARKET_FEE_SETTLEMENT_OPTIONS } from '@shared/constants';
 import { settlementSearchNames } from '@shared/enums';
-import { meterProcessBillingPeriod, settlementJobInstanceOptions, settlementParams } from '@shared/interfaces';
+import { meterProcessBillingPeriod, settlementJobInstanceOptions, settlementParams } from '@shared/enums/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { SearchFilterService } from '@shared/services/settlement';
 import { DateFormatterUtilService, ProcessTypeUtilService } from '@shared/services/utils';
