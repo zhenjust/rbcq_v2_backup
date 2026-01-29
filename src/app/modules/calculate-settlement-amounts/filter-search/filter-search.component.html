@@ -3,19 +3,19 @@
         nz-button
         [nzType]="hasFilter ? 'default' : 'primary'"
         (click)=" !hasFilter ? toggleFilter() : resetFilter()"
-        >{{ hasFilter ? 'Clear Filter' : 'Set Filter' }}</button>
+        >{{ hasFilter ? LABELS.CLEAR_FILTERS : LABELS.SET_FILTERS }}</button>
 
 
     @if (hasFilter) {
         <form [formGroup]="filterSettlementForm" class="form-container">
             <div class="form-item">
-                <label class="form-label">Meter Process Type:</label>
+                <label class="form-label">{{ LABELS.PROCESS_TYPE }}</label>
                 <nz-select
                 [nzShowSearch]="true"
                 [nzAllowClear]="true"
                 formControlName="processType"
                 class="select-size"
-                nzPlaceHolder="Enter Process Type"
+                nzPlaceHolder="Select {{ LABELS.PROCESS_TYPE }}"
                 [nzOptions]="settlementOptions">
                 </nz-select>
             </div>
@@ -23,19 +23,19 @@
             @if (filterSettlementForm.get('tradingStartDate')?.enabled && filterSettlementForm.get('tradingEndDate')?.enabled) {
                 <nz-space>
                     <div class="form-item" *nzSpaceItem>
-                    <label class="form-label">Trading Start Date:</label>
+                    <label class="form-label">{{ LABELS.TRADING_START_DATE }}</label>
                     <nz-date-picker
                         formControlName="tradingStartDate"
                         class="select-size"
-                        nzPlaceHolder="Select trading start date">
+                        nzPlaceHolder="Select {{ LABELS.TRADING_START_DATE }}">
                     </nz-date-picker>
                     </div>
                     <div class="form-item" *nzSpaceItem>
-                    <label class="form-label">Trading End Date:</label>
+                    <label class="form-label">{{ LABELS.TRADING_END_DATE }}</label>
                     <nz-date-picker
                         formControlName="tradingEndDate"
                         class="select-size"
-                        nzPlaceHolder="Select trading end date">
+                        nzPlaceHolder="Select {{ LABELS.TRADING_END_DATE }}">
                     </nz-date-picker>
                     </div>
                 </nz-space>
@@ -43,13 +43,13 @@
 
             @if (filterSettlementForm.get('billingPeriod')?.enabled) {
                 <div class="form-item">
-                    <label class="form-label">Billing Period:</label>
+                    <label class="form-label">{{ LABELS.BILLING_PERIOD }}</label>
                     <nz-select
                         [nzShowSearch]="true"
                         [nzAllowClear]="true"
                         formControlName="billingPeriod"
                         class="select-size"
-                        nzPlaceHolder="Enter Billing Period">
+                        nzPlaceHolder="Select {{ LABELS.BILLING_PERIOD }}">
                     <nz-option
                         *ngFor="let billing of meterProcessBillingPeriod"
                         [nzValue]="billing.billingPeriod"
@@ -62,19 +62,19 @@
             @if (filterSettlementForm.get('startDate')?.enabled && filterSettlementForm.get('endDate')?.enabled) {
                 <nz-space>
                     <div class="form-item" *nzSpaceItem>
-                    <label class="form-label">Start Date:</label>
+                    <label class="form-label">{{ LABELS.START_DATE }}</label>
                     <nz-date-picker
                         formControlName="startDate"
                         class="select-size"
-                        nzPlaceHolder="Select start date">
+                        nzPlaceHolder="Select {{ LABELS.START_DATE }}">
                     </nz-date-picker>
                     </div>
                     <div class="form-item" *nzSpaceItem>
-                    <label class="form-label">End Date:</label>
+                    <label class="form-label">{{ LABELS.END_DATE }}</label>
                     <nz-date-picker
                         formControlName="endDate"
                         class="select-size"
-                        nzPlaceHolder="Select end date">
+                        nzPlaceHolder="Select {{ LABELS.END_DATE }}">
                     </nz-date-picker>
                     </div>
                 </nz-space>
@@ -82,7 +82,7 @@
 
             @if (filterSettlementForm.dirty) {
                 <nz-flex nzGap="large" class="form-item">
-                    <button nz-button nzType="primary" (click)="applyFilter()">Apply Filter</button>
+                    <button nz-button nzType="primary" (click)="applyFilter()">{{ LABELS.APPLY_FILTERS }}</button>
                 </nz-flex>
             }
         </form>

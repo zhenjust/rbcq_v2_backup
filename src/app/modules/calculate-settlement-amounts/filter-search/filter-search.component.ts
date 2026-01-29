@@ -2,6 +2,7 @@ import { Component, EventEmitter, inject, OnDestroy, OnInit, Output } from '@ang
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Data } from '@angular/router';
 import { FULL_SETTLEMENT_OPTIONS, MARKET_FEE_SETTLEMENT_OPTIONS } from '@shared/constants';
+import { LABELS } from '@shared/constants/labels.const';
 import { settlementSearchNames } from '@shared/enums';
 import { meterProcessBillingPeriod, settlementJobInstanceOptions, settlementParams } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
@@ -32,6 +33,8 @@ export class FilterSearchComponent implements OnInit, OnDestroy {
   private mpa = inject(MeterprocessService);
   private searchFilterService = inject(SearchFilterService);
   private router = inject(ActivatedRoute);
+
+  LABELS = LABELS;
 
   private setSettlementOptions(): void {
     const noDailyFilter = [

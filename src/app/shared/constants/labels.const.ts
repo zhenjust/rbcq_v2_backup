@@ -134,4 +134,8 @@ export const LABELS = {
   VIEW_CALCULATIONS: 'View Calculations',
   VIEW_DAILY_STATUS: 'View Daily Status',
   VIEW_VALIDATIONS: 'View Validations',
+
+  TRADING_START_DATE: 'Trading Start Date',
+  TRADING_END_DATE: 'Trading End Date',
+
 }
