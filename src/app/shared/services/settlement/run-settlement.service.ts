@@ -64,8 +64,7 @@ export class RunSettlementService {
     const [start, end] = this.getDateRangeForProcessType(data);
     return {
       pipelineName,
-      // refId: data.workspaceId || data?.id,
-      workspaceId: data.workspaceId || data?.id,
+      refId: data?.id,
       isGroup: true,
       parameters: {
         billingStartDate: start ? this.dateFormatter.formatDateOnly(start) : null,

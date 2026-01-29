@@ -121,7 +121,6 @@ export interface EnergyTradingAmounts {
     pipelineName: ETA_JOBS,
     refId?: number | string,
     isGroup: boolean,
-    workspaceId: number | string
     parameters: {
         billingStartDate: string | null,
         billingEndDate: string | null,
