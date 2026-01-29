@@ -86,8 +86,6 @@ export const SettlementJobActions: JobSelect[] = [
   { label: LABELS.GENERATE_RESERVE_MONTHLY_SUMMARY, value: 'generate_reserve_monthly_summary', show: false },
   { label: LABELS.GENERATE_RESERVE_TRANSACTION_REPORT, value: 'generate_reserve_transaction_report', show: false },
   { label: LABELS.GENERATE_TRANSACTION_REPORT, value: 'generate_transac_reports', show: false },
-  { label: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`, value: 'publish', show: false },
-
   { label: LABELS.VALIDATE_INPUT, value: 'validate_input', show: false },
   { label: 'View Calculations', value: 'calculations', show: false },
   { label: LABELS.VIEW_DAILY_STATUS, value: 'view_daily_status', show: false },
