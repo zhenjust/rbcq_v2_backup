@@ -18,6 +18,7 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { SharedModule } from '@shared/shared.module';
 import { NzResultModule } from 'ng-zorro-antd/result';
 import { RunProcessFormComponent } from './run-process-form/run-process-form.component';
+import { NgxPermissionsAllowStubDirective } from "ngx-permissions";
 
 
 @NgModule({
@@ -43,8 +44,9 @@ import { RunProcessFormComponent } from './run-process-form/run-process-form.com
     NzInputNumberModule,
     NzDatePickerModule,
     SharedModule,
-    NzResultModule
-  ],
+    NzResultModule,
+    NgxPermissionsAllowStubDirective
+],
   exports:[
     FilterSearchComponent,
     TableComponent,

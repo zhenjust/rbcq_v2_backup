@@ -31,8 +31,10 @@
                                 <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu" nzBlock>{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
                                 <nz-dropdown-menu #menu="nzDropdownMenu">
                                     <ul nz-menu nzSelectable>
-                                        @for (action of (settlementJobActions | stlActions: data); track action.value) {
-                                            <li nz-menu-item (click)="action.action ? action.action() : onActionSelect(action.value, data)">{{ action.label }}</li>
+                                        @for (action of (settlementJobActions | stlActions: data : searchName); track action.value) {
+                                            <ng-container *ngxPermissionsOnly="action.permissions || []">
+                                                <li nz-menu-item (click)="action.action ? action.action() : onActionSelect(action.value, data)">{{ action.label }}</li>
+                                            </ng-container>
                                         }
                                     </ul>
                                 </nz-dropdown-menu>

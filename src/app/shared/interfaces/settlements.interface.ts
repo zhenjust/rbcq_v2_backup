@@ -134,6 +134,7 @@ export interface JobSelect {
     label: string,
     value: string,
     show?: boolean,
+    permissions?: string[] | undefined,
     action?: () => void;
 }
 

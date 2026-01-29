@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { SettlementStatus } from '@shared/constants';
+import { PHASE_TWO_AUTHORITIES, SettlementStatus } from '@shared/constants';
 import { JobSelect, settlementPipeline } from '@shared/interfaces';
 
 @Pipe({
@@ -8,8 +8,7 @@ import { JobSelect, settlementPipeline } from '@shared/interfaces';
 })
 export class SettlementActionsPipe implements PipeTransform {
 
-
-  transform(actions: JobSelect[], data: settlementPipeline): JobSelect[] {
+  transform(actions: JobSelect[], data: settlementPipeline, module: string): JobSelect[] {
     const stlStatus = SettlementStatus;
 
     const filteredActions = actions
@@ -22,15 +21,8 @@ export class SettlementActionsPipe implements PipeTransform {
         }
 
         if (value === 'generate') {
-          const generateStatuses = [
-            stlStatus.COMPLETED_SETTLEMENT_READY,
-            stlStatus.COMPLETED_GENERATE_INPUT_WORKSPACE,
-            stlStatus.CANCELLED_GENERATE_INPUT_WORKSPACE,
-            stlStatus.FAILED_GENERATE_INPUT_WORKSPACE,
-            stlStatus.COMPLETED_SETTLEMENT_CALCULATION
-          ];
-
-          action.show = generateStatuses.includes(status as SettlementStatus);
+          action = this.handleGenerateStatus(action, module);
+          console.log({action})
         }
 
         if (value === 'cancelRun') {
@@ -50,5 +42,23 @@ export class SettlementActionsPipe implements PipeTransform {
       .filter(action => action.show);
 
     return filteredActions;
+  }
+
+  handleGenerateStatus(action: JobSelect, module: string): JobSelect {
+    const stlStatus = SettlementStatus;
+
+    const generateStatuses = [
+      stlStatus.COMPLETED_SETTLEMENT_READY,
+      stlStatus.COMPLETED_GENERATE_INPUT_WORKSPACE,
+      stlStatus.CANCELLED_GENERATE_INPUT_WORKSPACE,
+      stlStatus.FAILED_GENERATE_INPUT_WORKSPACE,
+      stlStatus.COMPLETED_SETTLEMENT_CALCULATION
+    ];
+
+    const hasPermissions = ['reserveTradingAmounts', 'energyTradingAmounts'].includes(module);
+    action.permissions = hasPermissions ? [PHASE_TWO_AUTHORITIES.TA_GENERATE_IW] : [];
+    action.show = generateStatuses.includes(status as SettlementStatus);
+
+    return action;
   }
 }
