@@ -63,20 +63,20 @@ export const PRICING_CONDITIONS: settlementJobInstanceOptions[] = [
 // ];
 
 export const SettlementJobActions: JobSelect[] = [
-  { label: LABELS.GENERATE_INPUT_WORKSPACE, value: 'generate', show: false },
-  { label: LABELS.CALCULATE_ENERGY_TRADING_AMOUNT, value: 'calculateEnergyTradingAmount', show: false },
 
+  { label: LABELS.CALCULATE_ENERGY_TRADING_AMOUNT, value: 'calculateEnergyTradingAmount', show: false },
   { label: LABELS.CALCULATE_GMR_VAT, value: 'calculate_gmr_vat', show: false },
   { label: LABELS.CALCULATE_LINE_RENTAL, value: 'calculate_line_rental', show: false },
   { label: LABELS.CALCULATE_RESERVE_GMR_VAT, value: 'calculate_reserve_gmr_vat', show: false },
   { label: LABELS.CALCULATE_RESERVE_TRANSACTION_ALLOCATION, value: 'calculate_reserve_transaction_allocation', show: false },
   { label: LABELS.CALCULATE_SETTLEMENT, value: 'calculate_settlement', show: false },
+  { label: 'Calculate Energy Transaction Allocation', value: 'calculate_transactions', show: false },
 
   { label: LABELS.FINALIZE_LINE_RENTAL, value: 'finalize_line_rental', show: false },
   { label: LABELS.FINALIZE_SETTLEMENT, value: 'finalize_settlement', show: false },
 
+  { label: LABELS.GENERATE_INPUT_WORKSPACE, value: 'generate', show: false },
   { label: LABELS.GENERATE_ENERGY_BILLING_STATEMENT, value: 'generate_energy_billing_statement', show: false },
-  // { label: 'Generate Energy Files', value: 'generate_energy_files', show: false },
   { label: LABELS.GENERATE_FILES, value: 'generate_files', show: false },
   { label: LABELS.GENERATE_INPUT_WORKSPACE, value: 'generate_input_workspace', show: false },
   { label: LABELS.GENERATE_LINE_RENTAL_FILES, value: 'generate_line_rental_files', show: false },
@@ -86,15 +86,16 @@ export const SettlementJobActions: JobSelect[] = [
   { label: LABELS.GENERATE_RESERVE_MONTHLY_SUMMARY, value: 'generate_reserve_monthly_summary', show: false },
   { label: LABELS.GENERATE_RESERVE_TRANSACTION_REPORT, value: 'generate_reserve_transaction_report', show: false },
   { label: LABELS.GENERATE_TRANSACTION_REPORT, value: 'generate_transac_reports', show: false },
+  { label: 'Generate Energy Files', value: 'generate_energy_files', show: false },
+
   { label: LABELS.VALIDATE_INPUT, value: 'validate_input', show: false },
+
   { label: 'View Calculations', value: 'calculations', show: false },
   { label: LABELS.VIEW_DAILY_STATUS, value: 'view_daily_status', show: false },
   { label: 'View Validations', value: 'validations', show: false },
-  { label: 'Calculate Energy Transaction Allocation', value: 'calculate_transactions', show: false },
-  { label: 'Generate Transaction Report', value: 'generate_transac_reports', show: false },
-  { label: 'Generate Energy Files', value: 'generate_energy_files', show: false },
+  { label: `${LABELS.CANCEL_RUN}`, value: 'cancelRun', show: false },
+
   { label: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`, value: 'publish', show: false },
-  { label: `${LABELS.CANCEL_RUN}`, value: 'cancelRun', show: false }
 ];
 
 export const BaseTableItem: TableColumn[] = [
