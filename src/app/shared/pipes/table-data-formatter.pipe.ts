@@ -17,7 +17,7 @@ export class SettlementTableFormatterPipe implements PipeTransform {
       case 'runDatetime':
         return this.dfs.formatDateTime(data.runDatetime);
       case 'processType':
-        return data.processType === MeterProcessTypes.ADJUSTED ? `${data.processType + ' - ' + data.adjNo}` : data.processType;
+        return data.processType === MeterProcessTypes.ADJUSTED && data.adjNo ? `${data.processType + ' - ' + data.adjNo}` : data.processType;
       case 'tradingDate':
         return ((data.billingPeriod || data.billingStartDate) ? `${data.billingStartDate} - ${data.billingEndDate}` : data.tradingDate) || '';
       case 'status':
