@@ -9,8 +9,6 @@ import { JobSelect, settlementPipeline } from '@shared/interfaces';
 export class SettlementActionsPipe implements PipeTransform {
 
   transform(actions: JobSelect[], data: settlementPipeline, module: string): JobSelect[] {
-    const stlStatus = SettlementStatus;
-
     const filteredActions = actions
       .map(action => {
         const { value } = action;
