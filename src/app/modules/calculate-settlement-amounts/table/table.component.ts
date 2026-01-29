@@ -276,7 +276,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       if (job) {
         this.busy$ = this.runSettlements.etaStlJobs(rowData, job)
           .subscribe(res => {
-            const message = res.message || MESSAGES.SUCCESS_JOB_TRIGGER;
+            const message = res?.message || MESSAGES.SUCCESS_JOB_TRIGGER;
             this.toast.success(message);
 
             this.search();

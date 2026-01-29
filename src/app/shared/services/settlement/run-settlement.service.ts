@@ -65,12 +65,13 @@ export class RunSettlementService {
     return {
       pipelineName,
       refId: data?.id,
+      // workspaceId: data.workspaceId || data?.id,
       isGroup: true,
       parameters: {
         billingStartDate: start ? this.dateFormatter.formatDateOnly(start) : null,
         billingEndDate: end ? this.dateFormatter.formatDateOnly(end) : null,
         processType: data.processType,
-        workspaceId: data.workspaceId || data?.id
+        workspaceId: data?.workspaceId
       }
     };
   }
