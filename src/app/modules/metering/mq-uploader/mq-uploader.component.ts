@@ -92,8 +92,6 @@ export class MqUploaderComponent implements OnInit {
       delete ongoingTableColumns[LABELS.MSP];
     }
 
-    console.log({tableColumns})
-
     this.tableColumns = Object.values(tableColumns);
     this.ongoingTableColumns = Object.values(ongoingTableColumns);
   }

@@ -110,7 +110,7 @@ export class MqUploaderFilterComponent implements OnInit {
         }
 
         const startInterval = set(month, { date: 26, hours: 0, minutes: 5 });
-        const endInterval = set(addMonths(month, 1), { date: 26, hours: 0, minutes: 5 });
+        const endInterval = set(addMonths(month, 1), { date: 26, hours: 0, minutes: 0 });
         this.interval?.setValue([startInterval, endInterval]);
       });
 
