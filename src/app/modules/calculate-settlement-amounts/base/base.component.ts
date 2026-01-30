@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Data } from '@angular/router';
+import { PHASE_TWO_AUTHORITIES } from '@shared/constants';
 import { settlementPageTitles, settlementSearchNames } from '@shared/enums';
 
 @Component({
@@ -13,6 +14,7 @@ export class BaseComponent implements OnInit {
 
   private router = inject(ActivatedRoute);
   module: settlementSearchNames;
+  perm = PHASE_TWO_AUTHORITIES;
 
   ngOnInit(): void {
     this.router.data.subscribe((data: Data) => {
