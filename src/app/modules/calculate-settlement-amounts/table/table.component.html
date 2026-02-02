@@ -94,7 +94,7 @@
                         processType: currentModalData.processType
                     }"></ng-container>
                 }
-                @case ('calculateEnergyTradingAmount') {
+                @case ('calculateTradingAmount') {
                     <ng-container *ngTemplateOutlet="dateRangeSelection; context: {
                         actionMessage: currentModalData.actionMessage,
                         tradingDate: currentModalData.tradingDate,

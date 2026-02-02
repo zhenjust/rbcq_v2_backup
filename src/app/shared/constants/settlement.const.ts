@@ -64,7 +64,7 @@ export const PRICING_CONDITIONS: settlementJobInstanceOptions[] = [
 
 export const SettlementJobActions: JobSelect[] = [
 
-  { label: LABELS.CALCULATE_ENERGY_TRADING_AMOUNT, value: 'calculateEnergyTradingAmount', show: false },
+  { label: LABELS.CALCULATE_ENERGY_TRADING_AMOUNT, value: 'calculateTradingAmount', show: false },
   { label: LABELS.CALCULATE_GMR_VAT, value: 'calculate_gmr_vat', show: false },
   { label: LABELS.CALCULATE_LINE_RENTAL, value: 'calculate_line_rental', show: false },
   { label: LABELS.CALCULATE_RESERVE_GMR_VAT, value: 'calculate_reserve_gmr_vat', show: false },

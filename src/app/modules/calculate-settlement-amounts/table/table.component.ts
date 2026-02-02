@@ -165,12 +165,12 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       case 'generate':
         this.handleGenerate(rowData, label);
         break;
-      case 'calculateEnergyTradingAmount':
+      case 'calculateTradingAmount':
         this.handleDateRangeAction(
           rowData,
           ETA_JOBS.CAL_TRADING_AMOUNTS,
           'Calculate Energy Trading Amount for the following dates:',
-          'calculateEnergyTradingAmount'
+          'calculateTradingAmount'
         );
         break;
 
