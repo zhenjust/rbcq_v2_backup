@@ -19,8 +19,7 @@ export class SettlementActionsPipe implements PipeTransform {
         }
 
         if (value === 'generate') {
-          action = this.handleGenerateStatus(action, module);
-          console.log({action})
+          action = this.handleGenerateStatus(action, module, status as SettlementStatus);
         }
 
         if (value === 'cancelRun') {
@@ -42,7 +41,7 @@ export class SettlementActionsPipe implements PipeTransform {
     return filteredActions;
   }
 
-  handleGenerateStatus(action: JobSelect, module: string): JobSelect {
+  handleGenerateStatus(action: JobSelect, module: string, status: SettlementStatus): JobSelect {
     const stlStatus = SettlementStatus;
 
     const generateStatuses = [
@@ -55,7 +54,7 @@ export class SettlementActionsPipe implements PipeTransform {
 
     const hasPermissions = ['reserveTradingAmounts', 'energyTradingAmounts'].includes(module);
     action.permissions = hasPermissions ? [PHASE_TWO_AUTHORITIES.TA_GENERATE_IW] : [];
-    action.show = generateStatuses.includes(status as SettlementStatus);
+    action.show = generateStatuses.includes(status);
 
     return action;
   }
