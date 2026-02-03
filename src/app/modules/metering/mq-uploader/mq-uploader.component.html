@@ -54,8 +54,8 @@
 <ng-template #statusTpl let-data="data" let-allData="allData">
   @switch(data) {
     @case (Status.REJECTED) {
-      <nz-tag nzColor="red" class="me-0" [nzBordered]="false" nz-tooltip nzTooltipPlacement="left" nzTooltipColor="white" [nzTooltipTitle]="tooltipTpl">{{data}}</nz-tag>
-      <ng-template #tooltipTpl>
+      <nz-tag nzColor="red" class="me-0" [nzBordered]="false" nz-tooltip nzTooltipPlacement="left" nzTooltipColor="white" [nzTooltipTitle]="rejectedTooltipTpl">{{data}}</nz-tag>
+      <ng-template #rejectedTooltipTpl>
         <p class="fw-bold mb-0 text-muted">{{ LABELS.UPLOAD_ERROR }}</p>
         <p class="mb-0 text-muted">{{ allData?.errorMessage || allData?.errorDetails }}</p>
       </ng-template>
@@ -66,7 +66,11 @@
     }
 
     @case (Status.ACCEPTED) {
-      <nz-tag nzColor="green" class="me-0" [nzBordered]="false">{{data}}</nz-tag>
+      <nz-tag nzColor="green" class="me-0" [nzBordered]="false" nz-tooltip nzTooltipPlacement="left" nzTooltipColor="white" [nzTooltipTitle]="allData?.remarks && acceptedTooltipTpl">{{data}}</nz-tag>
+      <ng-template #acceptedTooltipTpl>
+        <p class="fw-bold mb-0 text-muted">{{ LABELS.REMARKS }}</p>
+        <p class="mb-0 text-muted">{{ 'This is an example of a remarks' }}</p>
+      </ng-template>
     }
 
     @default {

@@ -94,8 +94,8 @@ export const LABELS = {
 
   DAILY: 'Daily',
   MONTHLY: 'Monthly',
-  CORRECTED_METER_DATA_DAILY: 'Corrected Meter Data (Daily)',
-  CORRECTED_METER_DATA_MONTHLY: 'Corrected Meter Data (Monthly)',
+  CORRECTED_DAILY: 'Corrected Meter Data (Daily)',
+  CORRECTED_MONTHLY: 'Corrected Meter Data (Monthly)',
   QUEUED_FOR_PROCESSING: 'Queued for Processing',
 
   START_DATE: 'Start Date',
@@ -137,5 +137,7 @@ export const LABELS = {
 
   TRADING_START_DATE: 'Trading Start Date',
   TRADING_END_DATE: 'Trading End Date',
+
+  REMARKS: 'Remarks',
 
 }

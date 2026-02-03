@@ -62,6 +62,7 @@ export class MqUploaderFilterComponent implements OnInit {
       tradingDay: [null, RxwebValidators.required({ conditionalExpression: () => this.isDaily })],
       tradingMonth: [null, RxwebValidators.required({ conditionalExpression: () => this.isMonthly })],
       interval: [null, [required, RxwebValidators.minLength({ value: 1 })]],
+      correctedRemarks: [null, RxwebValidators.required({ conditionalExpression: () => this.isCorrectedDaily || this.isCorrectedMonthly })]
     });
 
     this.handleCategoryChange();
@@ -221,7 +222,7 @@ export class MqUploaderFilterComponent implements OnInit {
       });
   }
 
-  disabledPrevDay = (currentDate: Date) => this.isDaily ? (differenceInCalendarDays(currentDate, new Date()) <= -this.dateDeduction || isAfter(currentDate, new Date()) ||  isToday(currentDate)) : differenceInCalendarDays(currentDate, new Date()) > -1;
+  disabledPrevDay = (currentDate: Date) => (this.isDaily || this.isCorrectedDaily) ? (differenceInCalendarDays(currentDate, new Date()) <= -this.dateDeduction || isAfter(currentDate, new Date()) ||  isToday(currentDate)) : differenceInCalendarDays(currentDate, new Date()) > -1;
   disabledPrevMonth = (currentDate: Date) => differenceInCalendarMonths(currentDate, new Date()) > 0;
   disabledMonthlyInterval = (currentDate: Date) => this.interval?.value?.length && !isWithinInterval(currentDate, { start: this.interval?.value[0], end: this.interval?.value[1]});
   disabledDailyInterval = (currentDate: Date) => !isSameDay(this.tradingDay?.value, currentDate) && !isSameDay(addDays(this.tradingDay?.value, 1), currentDate);
@@ -234,9 +235,9 @@ export class MqUploaderFilterComponent implements OnInit {
   get mspShortName(): AbstractControl | null { return this.form.get('mspShortName'); }
 
   get isDaily(): boolean { return this.category?.value === MQ_UPLOAD_CATEGORY.DAILY; }
-  get isCorrectedDaily(): boolean { return this.category?.value === MQ_UPLOAD_CATEGORY.CORRECTED_METER_DATA_DAILY; }
+  get isCorrectedDaily(): boolean { return this.category?.value === MQ_UPLOAD_CATEGORY.CORRECTED_DAILY; }
   get isMonthly(): boolean { return this.category?.value === MQ_UPLOAD_CATEGORY.MONTHLY; }
-  get isCorrectedMonthly(): boolean { return this.category?.value === MQ_UPLOAD_CATEGORY.CORRECTED_METER_DATA_MONTHLY; }
+  get isCorrectedMonthly(): boolean { return this.category?.value === MQ_UPLOAD_CATEGORY.CORRECTED_MONTHLY; }
 
   get acceptedFile(): string { return (this.isDaily || this.isMonthly) ? '.mdef, .mde, .mdf, .csv, .MDE, .MDF' : '.csv'; }
   get isMspUser(): boolean { return this.currentUser?.principal?.department === 'MSP' || this.regCategory === 'MSP'; }
