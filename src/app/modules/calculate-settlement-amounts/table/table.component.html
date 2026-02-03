@@ -32,9 +32,7 @@
                                 <nz-dropdown-menu #menu="nzDropdownMenu">
                                     <ul nz-menu nzSelectable>
                                         @for (action of (settlementJobActions | stlActions: data : searchName); track action.value) {
-                                            <ng-container *ngxPermissionsOnly="action.permissions || []">
-                                                <li nz-menu-item (click)="action.action ? action.action() : onActionSelect(action.value, data)">{{ action.label }}</li>
-                                            </ng-container>
+                                            <li nz-menu-item (click)="action.action ? action.action() : onActionSelect(action.value, data)">{{ action.label }}</li>
                                         }
                                     </ul>
                                 </nz-dropdown-menu>

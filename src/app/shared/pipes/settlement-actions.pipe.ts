@@ -1,4 +1,5 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { inject, Pipe, PipeTransform } from '@angular/core';
+import { AuthorizationService } from '@core/services/authorization.service';
 import { PHASE_TWO_AUTHORITIES, SettlementStatus } from '@shared/constants';
 import { JobSelect, settlementPipeline } from '@shared/interfaces';
 
@@ -8,11 +9,14 @@ import { JobSelect, settlementPipeline } from '@shared/interfaces';
 })
 export class SettlementActionsPipe implements PipeTransform {
 
+  private readonly ps = inject(AuthorizationService);
+
   transform(actions: JobSelect[], data: settlementPipeline, module: string): JobSelect[] {
     const filteredActions = actions
       .map(action => {
         const { value } = action;
         const { status } = data;
+        const isSettlementModules = ['reserveTradingAmounts', 'energyTradingAmounts'].includes(module);
 
         if (value === 'publish') {
           action.show = !data.published;
@@ -26,7 +30,8 @@ export class SettlementActionsPipe implements PipeTransform {
           action.show = status.startsWith('In-Progress');
         }
 
-        if (value === 'calculateTradingAmount') {
+        if (value === 'calculateEnergyTradingAmount') {
+          action.permissions = isSettlementModules ? [PHASE_TWO_AUTHORITIES.TA_CALCULATE_TA] : [];
           action.show = status === SettlementStatus.COMPLETED_GENERATE_INPUT_WORKSPACE;
         }
 
@@ -53,9 +58,15 @@ export class SettlementActionsPipe implements PipeTransform {
     ];
 
     const hasPermissions = ['reserveTradingAmounts', 'energyTradingAmounts'].includes(module);
+
     action.permissions = hasPermissions ? [PHASE_TWO_AUTHORITIES.TA_GENERATE_IW] : [];
-    action.show = generateStatuses.includes(status);
+    action.show = generateStatuses.includes(status) && this.checkPermissions(action.permissions);
 
     return action;
+  }
+
+  checkPermissions(permissions: string[]): boolean {
+    const auths = this.ps.currentUser()?.principal?.privileges || [];
+    return auths?.some(auth => permissions.includes(auth));
   }
 }

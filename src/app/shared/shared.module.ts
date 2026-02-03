@@ -98,6 +98,7 @@ const Pipes = [
     ConfirmWithDescComponent,
     PaginatedTableComponent,
     ReactiveFormsModule,
+    NgxPermissionsModule,
   ],
   providers: [
     { provide: NZ_CONFIG, useValue: ngZorroConfig }
