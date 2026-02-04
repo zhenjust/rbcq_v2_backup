@@ -61,6 +61,11 @@
               <td [nzAlign]="align" class="px-3">{{ (data | date: 'yyyy-MM-dd HH:mm') || '-'}}</td>
             }
 
+
+            @case ('enumLabel') {
+              <td [nzAlign]="align" class="px-3">{{ (data | enumToLabel) || '-'}}</td>
+            }
+
             @default {
               <td [nzAlign]="align" class="px-3">{{ data || '-' }}</td>
             }

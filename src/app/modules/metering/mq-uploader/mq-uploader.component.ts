@@ -210,9 +210,9 @@ const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.TRANSACTION_ID]: { label: LABELS.TRANSACTION_ID, propName: 'transactionId', width: '330px', type: 'template' },
   [LABELS.MSP]: { label: LABELS.MSP, propName: 'msp', width: '150PX' },
   [LABELS.FILE_NAME]: { label: LABELS.FILE_NAME, propName: 'fileName', width: '250px' },
-  [LABELS.CATEGORY]: { label: LABELS.CATEGORY, propName: 'category', width: '100px', align: 'center' },
+  [LABELS.CATEGORY]: { label: LABELS.CATEGORY, propName: 'category', width: '200px', align: 'center', type: 'enumLabel' },
   [LABELS.BILLING_DATE]: { label: LABELS.BILLING_DATE, propName: 'billingDate', width: '140px', align: 'center' },
-  [LABELS.SIZE]: { label: LABELS.SIZE, propName: 'fileSize', width: '100px', type: 'template' },
+  [LABELS.SIZE]: { label: LABELS.SIZE, propName: 'fileSize', width: '80px', type: 'template' },
   [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', width: '160px', type: 'template', align: 'center' },
 }
 
@@ -220,9 +220,9 @@ const ongoingTableColumns: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.TRANSACTION_ID]: { label: LABELS.TRANSACTION_ID, propName: 'transactionId', width: '250px', type: 'template' },
   [LABELS.MSP]: { label: LABELS.MSP, propName: 'mspShortName', width: '150px' },
   [LABELS.FILE_NAME]: { label: LABELS.FILE_NAME, propName: 'file', secondPropName: 'name', width: '300px' },
-  [LABELS.CATEGORY]: { label: LABELS.CATEGORY, propName: 'category', width: '100px', align: 'center' },
+  [LABELS.CATEGORY]: { label: LABELS.CATEGORY, propName: 'category', width: '200px', align: 'center', type: 'enumLabel' },
   [LABELS.BILLING_DATE]: { label: LABELS.BILLING_DATE, propName: 'billingDate', width: '140px', align: 'center', type: 'template' },
-  [LABELS.SIZE]: { label: LABELS.SIZE, propName: 'file', secondPropName: 'size', width: '100px', type: 'template' },
+  [LABELS.SIZE]: { label: LABELS.SIZE, propName: 'file', secondPropName: 'size', width: '80px', type: 'template' },
   [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', width: '160px', type: 'template', align: 'center' },
 }
 

@@ -120,6 +120,7 @@ export class MqUploaderFilterComponent implements OnInit {
   getReferences(): void {
     this.getMqDays();
     this.categoryOpts = this.sysUtil.nzOptionsFormatter(MQ_UPLOAD_CATEGORY, true);
+
     this.conversionOpts = [
       { label: LABELS.UPLOAD_DATA_AS_IS, value: false },
       { label: LABELS.CONVERT_TO_5_MIN, value: true }
@@ -136,15 +137,6 @@ export class MqUploaderFilterComponent implements OnInit {
       .subscribe(mspList => {
         this.mspOpts = mspList.map(item => ({
           label: `${item.participantName} (${item.shortName})`, value: item.shortName})) as NzSelectOptionInterface[];
-
-        // const currentMsp = this.currentUser?.principal?.dn;
-        // if (currentMsp && this.isMspUser && this.mspOpts.length) {
-        //   const trimmedMspName = currentMsp.split('_');
-        //   const index = this.mspOpts?.findIndex(opt => opt.value.toLowerCase() === trimmedMspName[0]);
-        //   this.mspShortName?.setValue(this.mspOpts[index]?.value);
-        //   this.mspShortName?.disable();
-        // }
-
     });
   }
 
@@ -193,6 +185,7 @@ export class MqUploaderFilterComponent implements OnInit {
       tradingMonth: isMonthly ? (formValue?.tradingMonth && format(formValue.tradingMonth, 'MM yyyy')) : '',
       startInterval: format(formValue.interval[0], 'yyyy-MM-dd HH:mm'),
       endInterval: format(formValue.interval[1], 'yyyy-MM-dd HH:mm'),
+      correctedRemarks: formValue.correctedRemarks ?? ''
     }
 
     delete payload.interval;

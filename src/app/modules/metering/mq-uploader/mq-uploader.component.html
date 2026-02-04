@@ -56,6 +56,13 @@
     @case (Status.REJECTED) {
       <nz-tag nzColor="red" class="me-0" [nzBordered]="false" nz-tooltip nzTooltipPlacement="left" nzTooltipColor="white" [nzTooltipTitle]="rejectedTooltipTpl">{{data}}</nz-tag>
       <ng-template #rejectedTooltipTpl>
+        @if (allData?.correctedRemarks) {
+          <p class="fw-bold mb-0 text-muted">{{ LABELS.REMARKS }}</p>
+          <p class="mb-0 text-muted">{{ allData?.correctedRemarks }}</p>
+
+          <nz-divider class="my-1"></nz-divider>
+        }
+
         <p class="fw-bold mb-0 text-muted">{{ LABELS.UPLOAD_ERROR }}</p>
         <p class="mb-0 text-muted">{{ allData?.errorMessage || allData?.errorDetails }}</p>
       </ng-template>
@@ -66,10 +73,12 @@
     }
 
     @case (Status.ACCEPTED) {
-      <nz-tag nzColor="green" class="me-0" [nzBordered]="false" nz-tooltip nzTooltipPlacement="left" nzTooltipColor="white" [nzTooltipTitle]="allData?.remarks && acceptedTooltipTpl">{{data}}</nz-tag>
+      <nz-tag nzColor="green" class="me-0" [nzBordered]="false" nz-tooltip nzTooltipPlacement="left" nzTooltipColor="white" [nzTooltipTitle]="allData?.correctedRemarks ? acceptedTooltipTpl : null">{{data}}</nz-tag>
       <ng-template #acceptedTooltipTpl>
+        @if(allData?.correctedRemarks) {
         <p class="fw-bold mb-0 text-muted">{{ LABELS.REMARKS }}</p>
-        <p class="mb-0 text-muted">{{ 'This is an example of a remarks' }}</p>
+        <p class="mb-0 text-muted">{{ allData?.correctedRemarks }}</p>
+        }
       </ng-template>
     }
 
