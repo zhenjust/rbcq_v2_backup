@@ -68,4 +68,8 @@ export class SettlementService {
     return this.http.post<null>(`${this.API_URL}${groupUrl}`, bodyParams);
   }
 
+  public cancelRun(workspaceId: number): Observable<null> {
+    return this.http.post<null>(`${this.API_URL}/cancel/${workspaceId}`, {});
+  }
+
 }

@@ -68,6 +68,7 @@ export const LABELS = {
 
   MQ_UPLOADER: 'MQ Uploader',
   METERING_MASTERFILE: 'Metering Masterfile',
+  METER_DATA_VALIDATION: 'Meter Data Validation',
   RECORD: 'Record',
   ONGOING: 'Ongoing',
   HISTORY: 'History',
@@ -139,5 +140,7 @@ export const LABELS = {
   TRADING_END_DATE: 'Trading End Date',
 
   REMARKS: 'Remarks',
+
+  BILLING_PERIOD_TRADING_DATE: 'Billing Period/Trading Date',
 
 }

@@ -9,6 +9,8 @@ import { MqHistoryFiltersComponent } from './mq-uploader/filters/mq-history-filt
 import { MeteringMasterfileComponent } from './metering-masterfile/metering-masterfile.component';
 import { GenerateMmfComponent } from './metering-masterfile/generate-mmf/generate-mmf.component';
 import { NzModalFooterDirective } from "ng-zorro-antd/modal";
+import { MeterDataValidationComponent } from './meter-data-validation/meter-data-validation.component';
+import { GenerateMdvComponent } from './meter-data-validation/generate-mdv/generate-mdv.component';
 
 
 @NgModule({
@@ -18,6 +20,8 @@ import { NzModalFooterDirective } from "ng-zorro-antd/modal";
     MqHistoryFiltersComponent,
     MeteringMasterfileComponent,
     GenerateMmfComponent,
+    MeterDataValidationComponent,
+    GenerateMdvComponent,
   ],
   imports: [
     CommonModule,

@@ -1,4 +1,5 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, input, Input, TemplateRef, ViewChild } from '@angular/core';
+import { LABELS } from '@shared/constants/labels.const';
 import { TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { NzTableComponent } from 'ng-zorro-antd/table';
 import { Subscription } from 'rxjs';
@@ -15,6 +16,8 @@ export class TemplateTableComponent {
   @Input({ required: true }) tableColumns!: TPL_TABLE_COLUMN[];
   @Input({ required: true }) tableData!: any[];
 
+  actionsTpl = input<TemplateRef<any>>();
+
   @Input() loading$!: Subscription;
 
   // Checkbox configurations
@@ -23,6 +26,7 @@ export class TemplateTableComponent {
   @Input() disableSelectAll = false;
   @Input() checkboxCondition!: (rowData: any) => boolean;
 
+  LABELS = LABELS;
   selectedItems = new Set<number>();
 
   // Handling of Checkboxes
@@ -56,7 +60,8 @@ export class TemplateTableComponent {
   get widthConfig(): string[] {
     return [
       ...(this.enableCheckbox ? ['30px'] : []),
-      ...(this.tableColumns?.length ? this.tableColumns.map(col => col?.width ? col?.width : '150px') : [])
+      ...(this.tableColumns?.length ? this.tableColumns.map(col => col?.width ? col?.width : '150px') : []),
+      ...(this.actionsTpl() ? ['100px'] : [])
     ];
   }
 

@@ -17,6 +17,11 @@
     @for (column of tableColumns; track column.label) {
       <th [nzAlign]="column?.align || 'left'" class="p-3">{{ column.label }}</th>
     }
+
+    @if (actionsTpl()) {
+      <th nzAlign="center">{{ LABELS.ACTIONS }}</th>
+    }
+
   </thead>
   <tbody>
     @for (row of tableData; track row.id) {
@@ -54,6 +59,12 @@
               <td [nzAlign]="align" class="px-3">{{ data || '-' }}</td>
             }
           }
+        }
+
+        @if (actionsTpl()) {
+          <td>
+            <ng-container *ngTemplateOutlet="actionsTpl()!; context: { row }"></ng-container>
+          </td>
         }
       </tr>
     }

@@ -46,6 +46,8 @@ export enum SettlementStatus {
   FAILED_GENERATE_INPUT_WORKSPACE = `Failed - Generate Input Workspace`,
 
   CANCELLED_GENERATE_INPUT_WORKSPACE = 'Cancelled - Generate Input Workspace',
+  FAILED_GENERATE_INPUT_RESERVE_WORKSPACE = `Failed - Generate Reserve Input Workspace`,
+  CANCELLED_GENERATE_INPUT_RESERVE_WORKSPACE = 'Cancelled - Generate Reserve Input Workspace',
 }
 
 export enum Status {

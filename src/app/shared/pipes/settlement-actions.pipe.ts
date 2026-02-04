@@ -54,7 +54,9 @@ export class SettlementActionsPipe implements PipeTransform {
       stlStatus.COMPLETED_GENERATE_INPUT_WORKSPACE,
       stlStatus.CANCELLED_GENERATE_INPUT_WORKSPACE,
       stlStatus.FAILED_GENERATE_INPUT_WORKSPACE,
-      stlStatus.COMPLETED_SETTLEMENT_CALCULATION
+      stlStatus.COMPLETED_SETTLEMENT_CALCULATION,
+      stlStatus.FAILED_GENERATE_INPUT_RESERVE_WORKSPACE,
+      stlStatus.CANCELLED_GENERATE_INPUT_RESERVE_WORKSPACE
     ];
 
     const hasPermissions = ['reserveTradingAmounts', 'energyTradingAmounts'].includes(module);

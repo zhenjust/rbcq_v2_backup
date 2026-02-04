@@ -46,9 +46,24 @@
             <tr [nzExpand]="expandSet.has(data?.workspaceId ? +data?.workspaceId : +data?.id)">
                 <div class="my-2">
                     <app-template-table
+                        [actionsTpl]="actionsTpl"
                         [tableColumns]="expandableTableCols"
                         [tableData]="data.pipelines | stlPipelineFormatterPipe">
                     </app-template-table>
+
+                    <ng-template #actionsTpl let-row="row">
+                        @let actions = (SettlementJobSubActions | stlActions: row : searchName);
+                        @if (row.status && actions?.length) {
+                            <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu" nzBlock>{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
+                            <nz-dropdown-menu #menu="nzDropdownMenu">
+                                <ul nz-menu nzSelectable>
+                                    @for (action of actions; track action.value) {
+                                        <li nz-menu-item (click)="triggerAction(action.value, row)">{{ action.label }}</li>
+                                    }
+                                </ul>
+                            </nz-dropdown-menu>
+                        }
+                    </ng-template>
                 </div>
             </tr>
         }

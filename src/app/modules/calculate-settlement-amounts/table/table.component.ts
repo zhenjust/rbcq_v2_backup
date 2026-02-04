@@ -5,23 +5,23 @@ import { PublishSettlement, settlementParams, settlementPipeline, TableColumn, T
 import { RunSettlementService } from '@shared/services/settlement';
 import { ToastrService } from 'ngx-toastr';
 import { ETA_JOBS, MeterProcessTypes } from '@shared/enums';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { isAfter, isBefore, startOfDay } from 'date-fns';
 import { MeterprocessService, SettlementService } from '@shared/services/api';
 import { LABELS } from '@shared/constants/labels.const';
 import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { DatePipe } from '@angular/common';
-import { BaseTableItem, DefaultTableData, modalConfig, SettlementJobActions, SettlementStatus } from '@shared/constants';
+import { BaseTableItem, DefaultTableData, modalConfig, SettlementJobActions, SettlementJobSubActions, SettlementStatus } from '@shared/constants';
 import { SearchListBase } from '@shared/services/utils/list.util.service';
 
 @Component({
   selector: 'app-table',
   standalone: false,
   templateUrl: './table.component.html',
-  providers: [ DatePipe ]
+  providers: [DatePipe]
 })
-export class TableComponent extends SearchListBase implements OnInit, OnDestroy  {
+export class TableComponent extends SearchListBase implements OnInit, OnDestroy {
 
   @ViewChild('runSettlementJobs', { static: true }) runSettlementJobs!: TemplateRef<void>;
   @ViewChild('statusTpl', { static: true }) statusTpl!: TemplateRef<HTMLElement>;
@@ -38,6 +38,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   isLineRentalStatus = false;
   LABELS = LABELS;
   settlementJobActions = SettlementJobActions;
+  SettlementJobSubActions = SettlementJobSubActions;
   baseTableItem = BaseTableItem;
   defaultTableData = DefaultTableData;
   searchName = '';
@@ -125,18 +126,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     this.selectedActionsSignal.set(new Map());
   }
 
-  cancelRun(rowData: settlementPipeline): void {
-    const filteredInProg = rowData.pipelines.filter(pipeline => pipeline.pipelineRuns[0].status.startsWith('In-Progress'));
-
-    if (filteredInProg?.length) {
-      this.mps.cancelRun(filteredInProg[0].id)
-        .subscribe(() => {
-          this.search();
-          this.toast.success(MESSAGES.SUCCESS_CANCEL_ITEM('run'));
-        });
-    }
-  }
-
   onActionSelect(selectedValue: string | any, rowData: settlementPipeline): void {
     const actionValue = typeof selectedValue === 'string' ? selectedValue : selectedValue?.toString();
     const label = this.settlementJobActions.find(act => act.value === actionValue)?.label.toString() as string;
@@ -159,9 +148,9 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     };
 
     switch (actionValue) {
-      case 'cancelRun':
-        this.handleAction(label, rowData, MESSAGES.CANCEL_RUN, null, () => this.cancelRun(rowData))
-        break;
+      // case 'cancelRun':
+      //   this.handleAction(label, rowData, MESSAGES.CANCEL_RUN, null, () => this.cancelRun(rowData))
+      //   break;
       case 'generate':
         this.handleGenerate(rowData, label);
         break;
@@ -309,7 +298,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
           this.toast.success(res.message);
           this.search();
         }
-      ));
+        ));
     };
 
     // test data
@@ -325,7 +314,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
         },
         {
           label: `${LABELS.TRADING_DATE}/${LABELS.BILLING_PERIOD}`,
-          value:`${value} to ${value}`
+          value: `${value} to ${value}`
         },
       ]
     };
@@ -425,7 +414,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     });
   }
 
-  handleDateRangeAction(rowData: settlementPipeline, jobName: ETA_JOBS, actionMessage: string, actionType: string ): void {
+  handleDateRangeAction(rowData: settlementPipeline, jobName: ETA_JOBS, actionMessage: string, actionType: string): void {
     this.clearDateRange();
 
     if (rowData.processType !== MeterProcessTypes.DAILY) {
@@ -471,10 +460,54 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     return item.workspaceId || item.name || index;
   }
 
+  /**
+   * NEW IMPLEMENTATION FOR ACTIONS
+   */
+
+  triggerAction(action: string, payload: any): void {
+    const actions: Record<string, () => unknown> = {
+      ['cancelRun']: () => this.cancelRun(action, payload.id),
+    };
+
+    actions[action]();
+  }
+
+  confirmAction(action: string): NzModalRef {
+    const stlActions = [...SettlementJobActions, ...SettlementJobSubActions];
+    const index = stlActions.findIndex(act => act.value === action);
+
+    return this.modal.confirm({
+      ...modalConfig,
+      nzTitle: stlActions[index].label,
+      nzContent: MESSAGES.CONFIRM_ACTION,
+    });
+
+  }
+
+  cancelRun(action: string, id: number): void {
+    const modal = this.confirmAction(action);
+
+    modal.updateConfig({
+      nzOnOk: () => {
+        this.ss.cancelRun(id)
+          .subscribe(() => {
+            this.search();
+            this.toast.success(MESSAGES.SUCCESS_CANCEL_ITEM('run'));
+          });
+      }
+    });
+  }
+
+  /**
+   *
+   * End of New Implementation for Actions
+   *
+   * */
+
+
   get disabledDateFn() {
     return (date: Date) => this.setDisabledDateRange(date);
   }
-
 
   get tableItem(): TableColumn[] {
     return this.baseTableItem.filter(column =>
@@ -504,6 +537,6 @@ const expandedTableCols: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.RUN_START]: { label: LABELS.RUN_START, propName: 'runStart', type: 'date', width: '100px' },
   [LABELS.RUN_END]: { label: LABELS.RUN_END, propName: 'runEnd', type: 'date', width: '100px' },
   [LABELS.DURATION]: { label: LABELS.DURATION, propName: 'duration', type: 'string', width: '60px' },
-  [LABELS.RUN_BY]: { label: LABELS.RUN_BY, propName: 'runBy', type: 'string', width: '100px'},
+  [LABELS.RUN_BY]: { label: LABELS.RUN_BY, propName: 'runBy', type: 'string', width: '100px' },
   [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', type: 'template', width: '100px' }
 }

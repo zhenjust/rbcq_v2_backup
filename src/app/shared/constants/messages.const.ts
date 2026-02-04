@@ -10,6 +10,7 @@ export const MESSAGES = {
   DUPLICATE_FILES: 'Please choose a different file.',
   UPLOAD_IN_PROGRESS: 'Uploads are in progress.',
   REQUIRED_FIELDS: 'Please fill out the required fields.',
+  CONFIRM_ACTION: 'Do you want to proceed with the action?',
 
   // DYNAMIC MESSAGES
   ITEMS_REQUIRED: (item: string) => `${item} are required.`,
@@ -30,6 +31,7 @@ export const MESSAGES = {
   GENERATE_INPUT_WORKSPACE_TD: (date: string) => `You are going to generate input workspace for the trading date: <strong>${date}</strong>. Do you want to proceed?`,
   CONFIRM_SETTLEMENT_MSG: (action: string) => `You are going to ${action}. Do you want to proceed?`,
   CONFIRM_RUN_JOB: (jobType: string) => `You are going to run a ${jobType}.`,
+
 
 
 

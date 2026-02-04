@@ -1,0 +1,31 @@
+<nz-spin [nzSpinning]="busy$ && !busy$.closed">
+  @if (form.invalid && form.touched) {
+  <nz-alert nzBanner nzType="error" [nzMessage]="MESSAGE.REQUIRED_FIELDS" class="mb-3"></nz-alert>
+  }
+
+  <form nz-form [formGroup]="form" nzLayout="vertical" nzNoColon>
+    <nz-form-item>
+      <nz-form-label nzRequired>{{ LABELS.BILLING_RUN_TYPE }}</nz-form-label>
+      <nz-form-control>
+        <nz-select formControlName="processType" [nzOptions]="processTypeOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
+          [nzAllowClear]="true" nzShowSearch></nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label nzRequired>{{ LABELS.BILLING_PERIOD }}</nz-form-label>
+      <nz-form-control>
+        <nz-select formControlName="billingPeriod" [nzOptions]="billingPeriodOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
+          [nzAllowClear]="true" nzShowSearch></nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+  </form>
+
+  <div class="d-flex justify-content-end" *nzModalFooter>
+    <nz-space>
+      <button *nzSpaceItem nz-button (click)="triggerClose()">{{ LABELS.CLOSE }}</button>
+      <button *nzSpaceItem nz-button nzType="primary" (click)="triggerOk()">{{ LABELS.GENERATE }}</button>
+    </nz-space>
+  </div>
+</nz-spin>

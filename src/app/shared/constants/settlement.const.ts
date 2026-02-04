@@ -74,10 +74,14 @@ export const SettlementJobActions: JobSelect[] = [
   { label: LABELS.VIEW_DAILY_STATUS, value: 'view_daily_status', show: false }, // not daily, vm.resource === 'trading-amounts', TA_VIEW_DAILY_STATUS
   { label: LABELS.VIEW_VALIDATIONS, value: 'validations', show: false }, // perm: VALIDATE_INPUT, vm.resource === 'trading-amounts'
 
-  { label: LABELS.CANCEL_RUN, value: 'cancelRun', show: false }, // implemented w/ issue
 
   { label: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`, value: 'publish', show: false }, // implemented
 ];
+
+export const SettlementJobSubActions:  JobSelect[] = [
+  { label: LABELS.CANCEL_RUN, value: 'cancelRun', show: false }, // implemented w/ issue
+
+]
 
 export const BaseTableItem: TableColumn[] = [
   { name: 'Workspace ID', key: 'workspaceId' },

@@ -4,6 +4,7 @@ import { MqUploaderComponent } from './mq-uploader/mq-uploader.component';
 import { ngxPermissionsGuard } from 'ngx-permissions';
 import { externalRoutes, PHASE_TWO_AUTHORITIES } from '@shared/constants';
 import { MeteringMasterfileComponent } from './metering-masterfile/metering-masterfile.component';
+import { MeterDataValidationComponent } from './meter-data-validation/meter-data-validation.component';
 
 
 const routes: Routes = [
@@ -28,7 +29,19 @@ const routes: Routes = [
         redirectTo: externalRoutes.HOME
       }
     },
+  },
+  {
+    path: 'meter-data-validation',
+    component: MeterDataValidationComponent,
+    canActivate: [ngxPermissionsGuard],
+    data: {
+      permissions: {
+        only: [PHASE_TWO_AUTHORITIES.RUN_MQ_UPLOADER],
+        redirectTo: externalRoutes.HOME
+      }
+    },
   }
+
 
 ];
 
