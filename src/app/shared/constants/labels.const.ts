@@ -51,6 +51,7 @@ export const LABELS = {
   CALCULATE_ENERGY_TRADING_AMOUNT: 'Calculate Energy Trading Amount',
   GENERATE_MONTHLY_SUMMARY: 'Generate Monthly Summary',
   GENERATE_INPUT_WORKSPACE: 'Generate Input Workspace',
+  METERING_WORKSPACE_ID: 'Metering Workspace ID',
 
   PROFILE: 'Profile',
   CHANGE_PASSWORD: 'Change Password',

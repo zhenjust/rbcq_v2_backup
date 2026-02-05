@@ -36,7 +36,18 @@
                             </ul>
                           </nz-dropdown-menu>
                         } @else {
-                            {{ data | settlementTblFormatter: column}}
+                          <div class="cell-lines">
+                            <div class="cell-main">
+                              {{ data | settlementTblFormatter: column }}
+                            </div>
+
+                            @if (column.key === 'workspaceId' && data.parameters?.meteringWorkspaceId) {
+                              <div class="cell-sub">
+                                <span class="cell-sub-label">{{ LABELS.METERING_WORKSPACE_ID }}:</span>
+                                <span class="cell-sub-value">{{ data.parameters.meteringWorkspaceId }}</span>
+                              </div>
+                            }
+                          </div>
                         }
                     </td>
                 }
