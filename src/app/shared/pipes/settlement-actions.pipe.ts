@@ -1,7 +1,7 @@
-import { inject, Pipe, PipeTransform } from '@angular/core';
-import { AuthorizationService } from '@core/services/authorization.service';
-import { PHASE_TWO_AUTHORITIES, SettlementStatus } from '@shared/constants';
-import { JobSelect, settlementPipeline } from '@shared/interfaces';
+import {inject, Pipe, PipeTransform} from '@angular/core';
+import {AuthorizationService} from '@core/services/authorization.service';
+import {PHASE_TWO_AUTHORITIES, SettlementStatus} from '@shared/constants';
+import {JobSelect, settlementPipeline} from '@shared/interfaces';
 
 @Pipe({
   name: 'stlActions',
@@ -12,17 +12,17 @@ export class SettlementActionsPipe implements PipeTransform {
   private readonly ps = inject(AuthorizationService);
 
   transform(actions: JobSelect[], data: settlementPipeline, module: string): JobSelect[] {
-    const filteredActions = actions
+    return actions
       .map(action => {
-        const { value } = action;
-        const { status } = data;
+        const {value} = action;
+        const {status} = data;
         const isSettlementModules = ['reserveTradingAmounts', 'energyTradingAmounts'].includes(module);
 
         if (value === 'publish') {
           action.show = !data.published;
         }
 
-        if (value === 'generate') {
+        if (value === 'generateInputWorkspace') {
           action = this.handleGenerateStatus(action, module, status as SettlementStatus);
         }
 
@@ -42,8 +42,6 @@ export class SettlementActionsPipe implements PipeTransform {
         return action;
       })
       .filter(action => action.show);
-
-    return filteredActions;
   }
 
   handleGenerateStatus(action: JobSelect, module: string, status: SettlementStatus): JobSelect {
