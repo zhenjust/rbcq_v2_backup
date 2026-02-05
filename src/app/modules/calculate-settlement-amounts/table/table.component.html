@@ -27,16 +27,14 @@
                 @for (column of tableItem; track column.key) {
                     <td>
                         @if (column.key === 'actions') {
-                            @if (data.status !== SettlementStatus.NULLIFIED) {
-                                <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu" nzBlock>{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
-                                <nz-dropdown-menu #menu="nzDropdownMenu">
-                                    <ul nz-menu nzSelectable>
-                                        @for (action of (settlementJobActions | stlActions: data : searchName); track action.value) {
-                                            <li nz-menu-item (click)="action.action ? action.action() : onActionSelect(action.value, data)">{{ action.label }}</li>
-                                        }
-                                    </ul>
-                                </nz-dropdown-menu>
-                            }
+                          <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu" nzBlock>{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
+                          <nz-dropdown-menu #menu="nzDropdownMenu">
+                            <ul nz-menu nzSelectable>
+                              @for (action of (settlementJobActions | stlActions: data : searchName); track action.value) {
+                                <li nz-menu-item (click)="action.action ? action.action() : onActionSelect(action.value, data)">{{ action.label }}</li>
+                              }
+                            </ul>
+                          </nz-dropdown-menu>
                         } @else {
                             {{ data | settlementTblFormatter: column}}
                         }
