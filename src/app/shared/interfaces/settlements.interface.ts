@@ -126,7 +126,7 @@ export interface EnergyTradingAmounts {
         billingStartDate: string | null,
         billingEndDate: string | null,
         processType: string,
-        workspaceId: number | string
+        meteringWorkspaceId: string | null
     }
 }
 

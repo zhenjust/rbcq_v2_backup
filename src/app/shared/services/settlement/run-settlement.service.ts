@@ -1,10 +1,10 @@
-import { inject, Injectable } from '@angular/core';
-import { BaseResponse, EnergyTradingAmounts, settlementPipeline } from '@shared/interfaces';
-import { ETA_JOBS, MeterProcessTypes } from '@shared/enums';
-import { SettlementService } from '../api';
-import { ToastrService } from 'ngx-toastr';
-import { DateFormatterUtilService } from '../utils';
-import { Observable } from 'rxjs';
+import {inject, Injectable} from '@angular/core';
+import {BaseResponse, EnergyTradingAmounts, settlementPipeline} from '@shared/interfaces';
+import {ETA_JOBS, MeterProcessTypes} from '@shared/enums';
+import {SettlementService} from '../api';
+import {ToastrService} from 'ngx-toastr';
+import {DateFormatterUtilService} from '../utils';
+import {Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -65,13 +65,12 @@ export class RunSettlementService {
     return {
       pipelineName,
       refId: data?.id,
-      // workspaceId: data.workspaceId || data?.id,
       isGroup: true,
       parameters: {
         billingStartDate: start ? this.dateFormatter.formatDateOnly(start) : null,
         billingEndDate: end ? this.dateFormatter.formatDateOnly(end) : null,
         processType: data.processType,
-        workspaceId: data?.workspaceId
+        meteringWorkspaceId: [ETA_JOBS.GEN_INPUT_WORKSPACE, ETA_JOBS.RTA_GENERATE_INPUT_WORKSPACE].includes(pipelineName) ? data?.workspaceId : null
       }
     };
   }
