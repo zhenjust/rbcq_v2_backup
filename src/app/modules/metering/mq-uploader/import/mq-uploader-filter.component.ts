@@ -59,8 +59,8 @@ export class MqUploaderFilterComponent implements OnInit {
       category: [null, required],
       mspShortName: [null, RxwebValidators.required({ conditionalExpression: () => !this.isMspUser })],
       convertToFiveMin: [false],
-      tradingDay: [null, RxwebValidators.required({ conditionalExpression: () => this.isDaily })],
-      tradingMonth: [null, RxwebValidators.required({ conditionalExpression: () => this.isMonthly })],
+      tradingDay: [null, RxwebValidators.required({ conditionalExpression: () => this.isDaily || this.isCorrectedDaily })],
+      tradingMonth: [null, RxwebValidators.required({ conditionalExpression: () => this.isMonthly || this.isCorrectedMonthly })],
       interval: [null, [required, RxwebValidators.minLength({ value: 1 })]],
       correctedRemarks: [null, RxwebValidators.required({ conditionalExpression: () => this.isCorrectedDaily || this.isCorrectedMonthly })]
     });
@@ -75,6 +75,7 @@ export class MqUploaderFilterComponent implements OnInit {
       .subscribe(res => {
         if (res) {
           this.regCategory = res?.registrationCategory;
+          this.mspShortName?.updateValueAndValidity();
         }
       });
   }
