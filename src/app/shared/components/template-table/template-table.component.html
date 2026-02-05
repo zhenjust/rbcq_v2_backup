@@ -51,7 +51,7 @@
             }
 
             @case ('enumLabel') {
-              <td [nzAlign]="align" class="px-3">data {{ (data | enumToLabel) || '-'}}</td>
+              <td [nzAlign]="align" class="px-3">{{ (data | enumToLabel) || '-'}}</td>
             }
 
 

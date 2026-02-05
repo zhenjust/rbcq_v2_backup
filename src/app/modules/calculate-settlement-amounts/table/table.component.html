@@ -54,14 +54,9 @@
                     <ng-template #actionsTpl let-row="row">
                         @let actions = (SettlementJobSubActions | stlActions: row : searchName);
                         @if (row.status && actions?.length) {
-                            <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu" nzBlock>{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
-                            <nz-dropdown-menu #menu="nzDropdownMenu">
-                                <ul nz-menu nzSelectable>
-                                    @for (action of actions; track action.value) {
-                                        <li nz-menu-item (click)="triggerAction(action.value, row)">{{ action.label }}</li>
-                                    }
-                                </ul>
-                            </nz-dropdown-menu>
+                            @for (action of actions; track action.value) {
+                            <a nz-button nzType="link" (click)="triggerAction(action.value, row)" nzSize="small" nzBlock>{{ action.label }}</a>
+                            }
                         }
                     </ng-template>
                 </div>

@@ -8,7 +8,6 @@ import { LABELS } from '@shared/constants/labels.const';
 export class EnumsToLabelsPipe implements PipeTransform {
 
   transform(prop: string): string {
-    console.log({prop})
     return LABELS[prop as keyof typeof LABELS];
   }
 
