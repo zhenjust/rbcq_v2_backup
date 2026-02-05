@@ -36,18 +36,7 @@
                             </ul>
                           </nz-dropdown-menu>
                         } @else {
-                          <div class="cell-lines">
-                            <div class="cell-main">
-                              {{ data | settlementTblFormatter: column }}
-                            </div>
-
-                            @if (column.key === 'workspaceId' && data.parameters?.meteringWorkspaceId) {
-                              <div class="cell-sub">
-                                <span class="cell-sub-label">{{ LABELS.METERING_WORKSPACE_ID }}:</span>
-                                <span class="cell-sub-value">{{ data.parameters.meteringWorkspaceId }}</span>
-                              </div>
-                            }
-                          </div>
+                            {{ data | settlementTblFormatter: column}}
                         }
                     </td>
                 }
@@ -169,4 +158,19 @@
 
 <ng-template #statusTpl let-data="data">
     <nz-tag class="break-word-tag">{{ data }}</nz-tag>
+</ng-template>
+
+<ng-template #nameTpl let-data="data" let-allData="allData">
+  <div class="cell-lines">
+    <div class="cell-main">
+      {{ data }}
+    </div>
+
+    @if (allData.parameters?.meteringWorkspaceId) {
+      <div class="cell-sub">
+        <span class="cell-sub-label">{{ LABELS.METERING_WORKSPACE_ID }}:</span>
+        <span class="cell-sub-value">{{ allData.parameters.meteringWorkspaceId }}</span>
+      </div>
+    }
+  </div>
 </ng-template>

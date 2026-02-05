@@ -12,7 +12,7 @@ import { LABELS } from '@shared/constants/labels.const';
 import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { DatePipe } from '@angular/common';
-import { BaseTableItem, modalConfig, SettlementJobActions, SettlementJobSubActions, SettlementStatus } from '@shared/constants';
+import { BaseTableItem, modalConfig, SettlementJobActions, SettlementJobSubActions } from '@shared/constants';
 import { SearchListBase } from '@shared/services/utils/list.util.service';
 
 @Component({
@@ -25,6 +25,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
   @ViewChild('runSettlementJobs', { static: true }) runSettlementJobs!: TemplateRef<void>;
   @ViewChild('statusTpl', { static: true }) statusTpl!: TemplateRef<HTMLElement>;
+  @ViewChild('nameTpl', { static: true }) nameTpl!: TemplateRef<HTMLElement>;
 
   private readonly destroy$ = new Subject<void>();
   private readonly runSettlements = inject(RunSettlementService);
@@ -52,7 +53,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
   currentModalData: any | null = null;
   processTypes = MeterProcessTypes;
-  SettlementStatus = SettlementStatus;
 
   override busy$: Subscription;
   override resultsProp = 'pipelineGroup';
@@ -96,6 +96,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       this.searchName = data['searchName'] as string;
     });
 
+    expandedTableCols[LABELS.NAME].template = this.nameTpl;
     expandedTableCols[LABELS.STATUS].template = this.statusTpl;
     this.expandableTableCols = Object.values(expandedTableCols);
   }
@@ -516,7 +517,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 }
 
 const expandedTableCols: Record<string, TPL_TABLE_COLUMN> = {
-  [LABELS.NAME]: { label: LABELS.NAME, propName: 'description', width: '240px' },
+  [LABELS.NAME]: { label: LABELS.NAME, propName: 'description', type: 'template', width: '240px' },
   [LABELS.RUN_ID]: { label: LABELS.RUN_ID, propName: 'runId', type: 'string', width: '180px' },
   [LABELS.RUN_START]: { label: LABELS.RUN_START, propName: 'runStart', type: 'date', width: '100px' },
   [LABELS.RUN_END]: { label: LABELS.RUN_END, propName: 'runEnd', type: 'date', width: '100px' },
