@@ -12,7 +12,7 @@ export class SettlementTableFormatterPipe implements PipeTransform {
 
   transform(data: settlementPipeline, column: TableColumn): string {
     switch (column.key) {
-      case 'groupId':
+      case 'workspaceId':
         return data.id.toString();
       case 'runDatetime':
         return this.dfs.formatDateTime(data.runDatetime);
