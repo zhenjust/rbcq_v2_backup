@@ -84,7 +84,7 @@ export const SettlementJobSubActions:  JobSelect[] = [
 ]
 
 export const BaseTableItem: TableColumn[] = [
-  { name: 'Workspace ID', key: 'workspaceId' },
+  { name: 'Group ID', key: 'groupId' },
   { name: 'Run Date and Time', key: 'runDatetime' },
   { name: 'Process Type', key: 'processType' },
   { name: 'Trading Date', key: 'tradingDate' },

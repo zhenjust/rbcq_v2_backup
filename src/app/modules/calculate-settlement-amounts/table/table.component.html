@@ -22,7 +22,7 @@
     <tbody>
         @for (data of nzTable.data; track data;) {
             <tr>
-                <td [nzExpand]="expandSet.has(data?.workspaceId ? +data?.workspaceId : +data?.id)" (nzExpandChange)="onExpandChange((data?.workspaceId ? +data?.workspaceId : +data?.id), $event)" [nzShowExpand]="!!data.pipelines.length"></td>
+                <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)" [nzShowExpand]="!!data.pipelines.length"></td>
 
                 @for (column of tableItem; track column.key) {
                     <td>
@@ -43,7 +43,7 @@
                     </td>
                 }
             </tr>
-            <tr [nzExpand]="expandSet.has(data?.workspaceId ? +data?.workspaceId : +data?.id)">
+            <tr [nzExpand]="expandSet.has(data.id)">
                 <div class="my-2">
                     <app-template-table
                         [actionsTpl]="actionsTpl"
@@ -95,7 +95,7 @@
     <nz-flex nzVertical="true">
         @if (currentModalData) {
             @switch (currentModalData.actionType) {
-                @case ('generate') {
+                @case ('generateInputWorkspace') {
                     <ng-container *ngTemplateOutlet="dateRangeSelection; context: {
                         actionMessage: currentModalData.actionMessage,
                         tradingDate: currentModalData.tradingDate,

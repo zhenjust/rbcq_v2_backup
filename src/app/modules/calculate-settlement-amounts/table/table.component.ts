@@ -7,12 +7,12 @@ import { ToastrService } from 'ngx-toastr';
 import { ETA_JOBS, MeterProcessTypes } from '@shared/enums';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { isAfter, isBefore, startOfDay } from 'date-fns';
-import { MeterprocessService, SettlementService } from '@shared/services/api';
+import { SettlementService } from '@shared/services/api';
 import { LABELS } from '@shared/constants/labels.const';
 import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { DatePipe } from '@angular/common';
-import { BaseTableItem, DefaultTableData, modalConfig, SettlementJobActions, SettlementJobSubActions, SettlementStatus } from '@shared/constants';
+import { BaseTableItem, modalConfig, SettlementJobActions, SettlementJobSubActions, SettlementStatus } from '@shared/constants';
 import { SearchListBase } from '@shared/services/utils/list.util.service';
 
 @Component({
@@ -33,19 +33,17 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   private readonly modal = inject(NzModalService);
   private readonly ss = inject(SettlementService);
   private readonly dp = inject(DatePipe);
-  private readonly mps = inject(MeterprocessService);
 
   isLineRentalStatus = false;
   LABELS = LABELS;
   settlementJobActions = SettlementJobActions;
   SettlementJobSubActions = SettlementJobSubActions;
   baseTableItem = BaseTableItem;
-  defaultTableData = DefaultTableData;
   searchName = '';
   expandSet = new Set<number>();
   expandableTableCols: TPL_TABLE_COLUMN[] = [];
 
-  private selectedActionsSignal = signal<Map<string, string>>(new Map());
+  private selectedActionsSignal = signal<Map<number, string>>(new Map());
   selectedActions = computed(() => this.selectedActionsSignal());
 
   public minDate = signal<Date | null>(null);
@@ -73,14 +71,14 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       const currentSelectedActions = this.selectedActions();
 
       if (currentJobs?.length > 0) {
-        const existingWorkspaceIds = new Set(currentJobs?.map(job => job.workspaceId));
+        const existingIds = new Set(currentJobs?.map(job => job.id));
         const outdatedSelections = Array.from(currentSelectedActions.keys())
-          .filter(workspaceId => !existingWorkspaceIds.has(workspaceId));
+          .filter(id => !existingIds.has(id));
 
         if (outdatedSelections.length > 0) {
           this.selectedActionsSignal.update(actions => {
             const newActions = new Map(actions);
-            outdatedSelections.forEach(workspaceId => newActions.delete(workspaceId));
+            outdatedSelections.forEach(id => newActions.delete(id));
             return newActions;
           });
         }
@@ -102,14 +100,10 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     this.expandableTableCols = Object.values(expandedTableCols);
   }
 
-  getSelectedAction(rowData: settlementPipeline): string {
-    return this.selectedActions().get(rowData.workspaceId) || '';
-  }
-
   resetActionSelection(rowData: settlementPipeline): void {
     this.selectedActionsSignal.update(actions => {
       const newActions = new Map(actions);
-      newActions.set(rowData.workspaceId, '');
+      newActions.set(rowData.id, '');
       return newActions;
     });
   }
@@ -117,13 +111,9 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   setActionSelection(rowData: settlementPipeline, value: string): void {
     this.selectedActionsSignal.update(actions => {
       const newActions = new Map(actions);
-      newActions.set(rowData.workspaceId, value);
+      newActions.set(rowData.id, value);
       return newActions;
     });
-  }
-
-  clearAllActionSelections(): void {
-    this.selectedActionsSignal.set(new Map());
   }
 
   onActionSelect(selectedValue: string | any, rowData: settlementPipeline): void {
@@ -148,12 +138,10 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     };
 
     switch (actionValue) {
-      // case 'cancelRun':
-      //   this.handleAction(label, rowData, MESSAGES.CANCEL_RUN, null, () => this.cancelRun(rowData))
-      //   break;
-      case 'generate':
-        this.handleGenerate(rowData, label);
+      case 'generateInputWorkspace':
+        this.handleGenerateInputWorkspace(rowData, label);
         break;
+
       case 'calculateTradingAmount':
         this.handleDateRangeAction(
           rowData,
@@ -295,9 +283,9 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     const api$ = () => {
       this.ss.publish(payload)
         .subscribe((res => {
-          this.toast.success(res.message);
-          this.search();
-        }
+            this.toast.success(res.message);
+            this.search();
+          }
         ));
     };
 
@@ -330,8 +318,8 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     });
   }
 
-  // for 'generate' action
-  handleGenerate(rowData: settlementPipeline, label: string): void {
+  // for 'generateInputWorkspace' action
+  handleGenerateInputWorkspace(rowData: settlementPipeline, label: string): void {
     const { processType, tradingDate, billingStartDate, billingEndDate } = rowData;
     const isDaily = processType === MeterProcessTypes.DAILY;
     const msg = MESSAGES.GENERATE_INPUT_WORKSPACE_TD(isDaily ? tradingDate : `${billingStartDate} to ${billingEndDate}`);
@@ -454,10 +442,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     }
 
     setTimeout(() => window.dispatchEvent(new Event('resize')), 10);
-  }
-
-  trackByFn(index: number, item: settlementPipeline): string | number {
-    return item.workspaceId || item.name || index;
   }
 
   /**
