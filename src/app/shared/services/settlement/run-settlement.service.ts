@@ -70,7 +70,7 @@ export class RunSettlementService {
         billingStartDate: start ? this.dateFormatter.formatDateOnly(start) : null,
         billingEndDate: end ? this.dateFormatter.formatDateOnly(end) : null,
         processType: data.processType,
-        meteringWorkspaceId: [ETA_JOBS.GEN_INPUT_WORKSPACE, ETA_JOBS.RTA_GENERATE_INPUT_WORKSPACE].includes(pipelineName) ? data?.workspaceId : null
+        meteringWorkspaceId: ETA_JOBS.GEN_INPUT_WORKSPACE == pipelineName ? data?.workspaceId : null
       }
     };
   }
