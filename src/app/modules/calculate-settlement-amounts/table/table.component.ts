@@ -19,7 +19,8 @@ import { SearchListBase } from '@shared/services/utils/list.util.service';
   selector: 'app-table',
   standalone: false,
   templateUrl: './table.component.html',
-  providers: [DatePipe]
+  providers: [DatePipe],
+  styleUrl: './table.component.scss',
 })
 export class TableComponent extends SearchListBase implements OnInit, OnDestroy {
 
