@@ -2,7 +2,7 @@ export enum settlementPageTitles {
     ENERGY_MARKET_FEE_CALCULATION = 'Energy Market Fee Calculation',
     RESERVE_MARKET_FEE_CALCULATION = 'Reserve Market Fee Calculation',
     RESERVE_TRADING_AMOUNTS_CALCULATION = 'Reserve Trading Amounts Calculation',
-    TRADING_AMOUNTS_CALCULATION = 'Trading Amounts Calculation'
+    TRADING_AMOUNTS_CALCULATION = 'Energy Trading Amounts Calculation'
 }
 
 export enum settlementProcessTypes {

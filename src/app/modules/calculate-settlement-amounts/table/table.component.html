@@ -27,14 +27,17 @@
                 @for (column of tableItem; track column.key) {
                     <td>
                         @if (column.key === 'actions') {
-                          <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu" nzBlock>{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
-                          <nz-dropdown-menu #menu="nzDropdownMenu">
-                            <ul nz-menu nzSelectable>
-                              @for (action of (settlementJobActions | stlActions: data : searchName); track action.value) {
-                                <li nz-menu-item (click)="action.action ? action.action() : onActionSelect(action.value, data)">{{ action.label }}</li>
-                              }
-                            </ul>
-                          </nz-dropdown-menu>
+                            @let actions = settlementJobActions | stlActions: data : searchName;
+                            @if (data.status !== SettlementStatus.NULLIFIED && actions?.length) {
+                                <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu" nzBlock>{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
+                                <nz-dropdown-menu #menu="nzDropdownMenu">
+                                    <ul nz-menu nzSelectable>
+                                        @for (action of actions; track action.value) {
+                                            <li nz-menu-item (click)="triggerActionNames.includes(action.value) ? triggerAction(action.value, data) : onActionSelect(action.value, data)">{{ action.label }}</li>
+                                        }
+                                    </ul>
+                                </nz-dropdown-menu>
+                            }
                         } @else {
                             {{ data | settlementTblFormatter: column}}
                         }
@@ -44,7 +47,7 @@
             <tr [nzExpand]="expandSet.has(data.id)">
                 <div class="my-2">
                     <app-template-table
-                        [actionsTpl]="actionsTpl"
+                        [actionsTpl]="(data.pipelines | stlPipelineFormatterPipe | hasInprogress) ? actionsTpl : undefined"
                         [tableColumns]="expandableTableCols"
                         [tableData]="data.pipelines | stlPipelineFormatterPipe">
                     </app-template-table>

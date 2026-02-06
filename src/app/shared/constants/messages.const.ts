@@ -29,6 +29,7 @@ export const MESSAGES = {
   CONFIRM_DELETE_ITEM: (item: string) => `Do you want to delete the selected ${item}?`,
   CONFIRM_PUBLISH_ITEM: (item: string) => `Do you want to publish this ${item}?`,
   GENERATE_INPUT_WORKSPACE_TD: (date: string) => `You are going to generate input workspace for the trading date: <strong>${date}</strong>. Do you want to proceed?`,
+  CALCULATE_STL: (date: string) => `You are going to calculate energy trading amount for the following dates: <strong>${date}</strong>. Do you want to proceed?`,
   CONFIRM_SETTLEMENT_MSG: (action: string) => `You are going to ${action}. Do you want to proceed?`,
   CONFIRM_RUN_JOB: (jobType: string) => `You are going to run a ${jobType}.`,
 

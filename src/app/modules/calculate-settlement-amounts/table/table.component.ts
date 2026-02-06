@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, effect, computed, inject, ViewChild, TemplateRef, signal } from '@angular/core';
 import { ActivatedRoute, Data } from '@angular/router';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { PublishSettlement, settlementParams, settlementPipeline, TableColumn, TPL_TABLE_COLUMN } from '@shared/interfaces';
+import { JobSelect, PublishSettlement, settlementParams, settlementPipeline, TableColumn, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { RunSettlementService } from '@shared/services/settlement';
 import { ToastrService } from 'ngx-toastr';
 import { ETA_JOBS, MeterProcessTypes } from '@shared/enums';
@@ -12,7 +12,7 @@ import { LABELS } from '@shared/constants/labels.const';
 import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { DatePipe } from '@angular/common';
-import { BaseTableItem, modalConfig, SettlementJobActions, SettlementJobSubActions } from '@shared/constants';
+import { BaseTableItem, modalConfig, SettlementJobActions, SettlementJobSubActions, SettlementStatus } from '@shared/constants';
 import { SearchListBase } from '@shared/services/utils/list.util.service';
 
 @Component({
@@ -37,6 +37,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   private readonly dp = inject(DatePipe);
 
   isLineRentalStatus = false;
+  SettlementStatus = SettlementStatus;
   LABELS = LABELS;
   settlementJobActions = SettlementJobActions;
   SettlementJobSubActions = SettlementJobSubActions;
@@ -61,7 +62,8 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
   jobNameRecord: Record<string, ETA_JOBS> = {
     ['reserveTradingAmounts']: ETA_JOBS.RTA_GENERATE_INPUT_WORKSPACE,
-    ['energyTradingAmounts']: ETA_JOBS.GEN_INPUT_WORKSPACE
+    ['energyTradingAmounts']: ETA_JOBS.GEN_INPUT_WORKSPACE,
+    ['calculateEnergyTradingAmount']: ETA_JOBS.CAL_TRADING_AMOUNTS,
   };
 
   constructor() {
@@ -144,14 +146,14 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
         this.handleGenerateInputWorkspace(rowData, label);
         break;
 
-      case 'calculateTradingAmount':
-        this.handleDateRangeAction(
-          rowData,
-          ETA_JOBS.CAL_TRADING_AMOUNTS,
-          'Calculate Energy Trading Amount for the following dates:',
-          'calculateTradingAmount'
-        );
-        break;
+      // case 'calculateTradingAmount':
+      //   this.handleDateRangeAction(
+      //     rowData,
+      //     ETA_JOBS.CAL_TRADING_AMOUNTS,
+      //     'Calculate Energy Trading Amount for the following dates:',
+      //     'calculateTradingAmount'
+      //   );
+      //   break;
 
       case 'generateMonthlySummary':
         this.handleDateRangeAction(
@@ -285,9 +287,9 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     const api$ = () => {
       this.ss.publish(payload)
         .subscribe((res => {
-            this.toast.success(res.message);
-            this.search();
-          }
+          this.toast.success(res.message);
+          this.search();
+        }
         ));
     };
 
@@ -450,24 +452,47 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
    * NEW IMPLEMENTATION FOR ACTIONS
    */
 
-  triggerAction(action: string, payload: any): void {
+  triggerActionNames = [
+    'cancelRun',
+    'calculateEnergyTradingAmount',
+  ];
+
+  triggerAction(action: string, row: any): void {
     const actions: Record<string, () => unknown> = {
-      ['cancelRun']: () => this.cancelRun(action, payload.id),
+      ['cancelRun']: () => this.cancelRun(action, row.id),
+      ['calculateEnergyTradingAmount']: () => this.calculate(action, row)
     };
 
     actions[action]();
   }
 
-  confirmAction(action: string): NzModalRef {
-    const stlActions = [...SettlementJobActions, ...SettlementJobSubActions];
-    const index = stlActions.findIndex(act => act.value === action);
-
+  confirmAction(action: string, message = MESSAGES.CONFIRM_ACTION): NzModalRef {
     return this.modal.confirm({
       ...modalConfig,
-      nzTitle: stlActions[index].label,
-      nzContent: MESSAGES.CONFIRM_ACTION,
+      nzTitle: this.getActionDetails(action).label,
+      nzContent: message,
     });
+  }
 
+  calculate(action: string, row: any): void {
+    const { processType, tradingDate, billingStartDate, billingEndDate } = row;
+
+    const isDaily = processType === MeterProcessTypes.DAILY;
+    const msg = MESSAGES.CALCULATE_STL(isDaily ? tradingDate : `${billingStartDate} to ${billingEndDate}`);
+    const modal = this.confirmAction(action, msg);
+    const job = this.jobNameRecord[action];
+
+    modal.updateConfig({
+      nzOnOk: () => {
+        this.busy$ = this.runSettlements.etaStlJobs(row, job)
+          .subscribe(res => {
+            const message = res?.message || MESSAGES.SUCCESS_JOB_TRIGGER;
+            this.toast.success(message);
+
+            this.search();
+          });
+      }
+    });
   }
 
   cancelRun(action: string, id: number): void {
@@ -475,7 +500,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
     modal.updateConfig({
       nzOnOk: () => {
-        this.ss.cancelRun(id)
+        this.busy$ = this.ss.cancelRun(id)
           .subscribe(() => {
             this.search();
             this.toast.success(MESSAGES.SUCCESS_CANCEL_ITEM('run'));
@@ -483,6 +508,14 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       }
     });
   }
+
+  getActionDetails(action: string): JobSelect {
+    const stlActions = [...SettlementJobActions, ...SettlementJobSubActions];
+    const index = stlActions.findIndex(act => act.value === action);
+
+    return stlActions[index];
+  }
+
 
   /**
    *
@@ -503,9 +536,9 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
   get nzWidthConfig(): string[] {
     return [
-      ...['25px', '120px', '160px', '150px', '200px', '200px'],
+      ...['25px', '100px', '140px', '100px', '180px', '200px'],
       ...(this.isLineRentalStatus ? ['200px'] : []),
-      ...['100px', '150px']
+      ...['100px', '100px']
     ];
   }
 
@@ -518,11 +551,11 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 }
 
 const expandedTableCols: Record<string, TPL_TABLE_COLUMN> = {
-  [LABELS.NAME]: { label: LABELS.NAME, propName: 'description', type: 'template', width: '240px' },
-  [LABELS.RUN_ID]: { label: LABELS.RUN_ID, propName: 'runId', type: 'string', width: '180px' },
-  [LABELS.RUN_START]: { label: LABELS.RUN_START, propName: 'runStart', type: 'date', width: '100px' },
-  [LABELS.RUN_END]: { label: LABELS.RUN_END, propName: 'runEnd', type: 'date', width: '100px' },
+  [LABELS.NAME]: { label: LABELS.NAME, propName: 'description', width: '180px' },
+  [LABELS.RUN_ID]: { label: LABELS.RUN_ID, propName: 'runId', type: 'string', width: '110px' },
+  [LABELS.RUN_START]: { label: LABELS.RUN_START, propName: 'runStart', type: 'date', width: '140px', align: 'center' },
+  [LABELS.RUN_END]: { label: LABELS.RUN_END, propName: 'runEnd', type: 'date', width: '140px', align: 'center' },
   [LABELS.DURATION]: { label: LABELS.DURATION, propName: 'duration', type: 'string', width: '60px' },
   [LABELS.RUN_BY]: { label: LABELS.RUN_BY, propName: 'runBy', type: 'string', width: '100px' },
-  [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', type: 'template', width: '100px' }
+  [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', type: 'template', width: '100px', align: 'center' }
 }

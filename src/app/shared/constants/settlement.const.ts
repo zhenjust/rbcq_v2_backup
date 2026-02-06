@@ -42,6 +42,9 @@ export const SettlementJobActions: JobSelect[] = [
 
   { label: LABELS.GENERATE_INPUT_WORKSPACE, value: 'generateInputWorkspace' }, // implemented
   { label: LABELS.CALCULATE_ENERGY_TRADING_AMOUNT, value: 'calculateEnergyTradingAmount' }, // implemented
+  { label: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`, value: 'publish' }, // implemented
+
+
   { label: LABELS.CALCULATE_GMR_VAT, value: 'calculate_gmr_vat' }, // TA_CALCULATE_GMRVAT, !vm.hideCalcButtons(item.parentStlJobGroupDto.groupId), vm.resource === 'trading-amounts', not daily, ((item.parentStlJobGroupDto.genMonthlySummaryIsLatestJob && item.parentStlJobGroupDto.genMonthlySummaryStatus === 'COMPLETED') || item.parentStlJobGroupDto.calculateGmrIsLatestJob), !item.parentStlJobGroupDto.locked
   { label: LABELS.CALCULATE_LINE_RENTAL, value: 'calculate_line_rental' }, // TA_CALCULATE_LR, !vm.hideCalcLrButtons(item.parentStlJobGroupDto.groupId), vm.resource === 'trading-amounts', item.parentStlJobGroupDto.hasCompletedGenInputWs, !item.parentStlJobGroupDto.lockedLr
   { label: LABELS.CALCULATE_RESERVE_GMR_VAT, value: 'calculate_reserve_gmr_vat' }, // vm.resource === 'reserve-trading-amounts', processType is not daily, TA_CALCULATE_GMRVAT, !parentStlJobGroupDto.locked, ((item.parentStlJobGroupDto.genMonthlyRsvSummaryIsLatestJob && item.parentStlJobGroupDto.genRsvMonthlySummaryStatus === 'COMPLETED') || item.parentStlJobGroupDto.calculateRgmrIsLatestJob)
@@ -49,9 +52,6 @@ export const SettlementJobActions: JobSelect[] = [
   { label: LABELS.CALCULATE_SETTLEMENT, value: 'calculate_settlement' },
   { label: LABELS.CALCULATE_ENERGY_TRANSACTION_ALLOCATION, value: 'calculate_transactions' },
 
-  /**
-   * DONE: FINALIZE
-   */
   { label: LABELS.FINALIZE_LINE_RENTAL, value: 'finalize_line_rental' }, // TA_FINALIZE_LR, vm.showTaggingLrButton(item), vm.hideCalcLrButtons(item.parentStlJobGroupDto.groupId)
   { label: LABELS.FINALIZE_SETTLEMENT, value: 'finalize_settlement' }, // TA_FINALIZE, vm.showParentTaggingButton(item), !vm.hideCalcButtons(item.parentStlJobGroupDto.groupId), vm.finalizeAction
 
@@ -74,14 +74,10 @@ export const SettlementJobActions: JobSelect[] = [
   { label: LABELS.VIEW_CALCULATIONS, value: 'calculations' }, // always show
   { label: LABELS.VIEW_DAILY_STATUS, value: 'view_daily_status' }, // not daily, vm.resource === 'trading-amounts', TA_VIEW_DAILY_STATUS
   { label: LABELS.VIEW_VALIDATIONS, value: 'validations' }, // perm: VALIDATE_INPUT, vm.resource === 'trading-amounts'
-
-
-  { label: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`, value: 'publish' }, // implemented
 ];
 
 export const SettlementJobSubActions:  JobSelect[] = [
-  { label: LABELS.CANCEL_RUN, value: 'cancelRun' }, // implemented w/ issue
-
+  { label: LABELS.CANCEL_RUN, value: 'cancelRun' }, // implemented
 ]
 
 export const BaseTableItem: TableColumn[] = [

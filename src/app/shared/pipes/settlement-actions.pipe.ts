@@ -11,12 +11,16 @@ export class SettlementActionsPipe implements PipeTransform {
 
   private readonly ps = inject(AuthorizationService);
 
+  stlStatus = SettlementStatus;
+  settlementModules = ['reserveTradingAmounts', 'energyTradingAmounts'];
+
+
   transform(actions: JobSelect[], data: settlementPipeline, module: string): JobSelect[] {
     return actions
       .map(action => {
-        const {value} = action;
-        const {status} = data;
-        const isSettlementModules = ['reserveTradingAmounts', 'energyTradingAmounts'].includes(module);
+        const { value } = action;
+        const { status } = data;
+        const isSettlementModules = this.settlementModules.includes(module);
 
         if (value === 'publish') {
           action.show = !data.published;
@@ -31,8 +35,7 @@ export class SettlementActionsPipe implements PipeTransform {
         }
 
         if (value === 'calculateEnergyTradingAmount') {
-          action.permissions = isSettlementModules ? [PHASE_TWO_AUTHORITIES.TA_CALCULATE_TA] : [];
-          action.show = status === SettlementStatus.COMPLETED_GENERATE_INPUT_WORKSPACE;
+          action = this.handleCalculateTA(action, isSettlementModules, status as SettlementStatus);
         }
 
         if (value === 'generateMonthlySummary') {
@@ -44,17 +47,28 @@ export class SettlementActionsPipe implements PipeTransform {
       .filter(action => action.show);
   }
 
-  handleGenerateStatus(action: JobSelect, module: string, status: SettlementStatus): JobSelect {
-    const stlStatus = SettlementStatus;
+  handleCalculateTA(action: JobSelect, isSettlementModule = true, status: SettlementStatus): JobSelect {
+    const statuses = [
+      SettlementStatus.COMPLETED_GENERATE_INPUT_WORKSPACE,
+      SettlementStatus.FAILED_SETTLEMENT_CALCULATION,
+      SettlementStatus.CANCELLED_SETTLEMENT_CALCULATION
+    ];
 
+    action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_CALCULATE_TA] : [];
+    action.show = statuses.includes(status as SettlementStatus) && this.checkPermissions(action.permissions);
+
+    return action;
+  }
+
+  handleGenerateStatus(action: JobSelect, module: string, status: SettlementStatus): JobSelect {
     const generateStatuses = [
-      stlStatus.COMPLETED_SETTLEMENT_READY,
-      stlStatus.COMPLETED_GENERATE_INPUT_WORKSPACE,
-      stlStatus.CANCELLED_GENERATE_INPUT_WORKSPACE,
-      stlStatus.FAILED_GENERATE_INPUT_WORKSPACE,
-      stlStatus.COMPLETED_SETTLEMENT_CALCULATION,
-      stlStatus.FAILED_GENERATE_INPUT_RESERVE_WORKSPACE,
-      stlStatus.CANCELLED_GENERATE_INPUT_RESERVE_WORKSPACE
+      SettlementStatus.COMPLETED_SETTLEMENT_READY,
+      SettlementStatus.COMPLETED_GENERATE_INPUT_WORKSPACE,
+      SettlementStatus.CANCELLED_GENERATE_INPUT_WORKSPACE,
+      SettlementStatus.FAILED_GENERATE_INPUT_WORKSPACE,
+      SettlementStatus.COMPLETED_SETTLEMENT_CALCULATION,
+      SettlementStatus.FAILED_GENERATE_INPUT_RESERVE_WORKSPACE,
+      SettlementStatus.CANCELLED_GENERATE_INPUT_RESERVE_WORKSPACE
     ];
 
     const hasPermissions = ['reserveTradingAmounts', 'energyTradingAmounts'].includes(module);
