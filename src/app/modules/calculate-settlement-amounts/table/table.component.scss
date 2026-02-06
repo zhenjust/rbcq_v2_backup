@@ -16,3 +16,12 @@
     }
   }
 }
+
+.highlight-row {
+  background-color: lightyellow !important;
+
+  &:hover,
+  &:hover td {
+    background-color: lightyellow !important;
+  }
+}

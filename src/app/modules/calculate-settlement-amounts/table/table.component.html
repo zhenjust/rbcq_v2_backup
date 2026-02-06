@@ -21,7 +21,10 @@
     </thead>
     <tbody>
         @for (data of nzTable.data; track data;) {
-            <tr>
+            <tr [class.highlight-row]="data.outdated"
+                  nz-tooltip
+                  [nzTooltipTitle]="data.outdated ? ('Metering rerun completed with new workspace id: ' + data.workspaceId) : null"
+                  nzTooltipPlacement="top">
                 <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)" [nzShowExpand]="!!data.pipelines.length"></td>
 
                 @for (column of tableItem; track column.key) {
