@@ -25,3 +25,10 @@
     background-color: lightyellow !important;
   }
 }
+
+.break-word-tag {
+  display: inline-block;
+  white-space: normal;
+  word-break: break-word;
+  max-width: 100%;
+}

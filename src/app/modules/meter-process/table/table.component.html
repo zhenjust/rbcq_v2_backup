@@ -142,9 +142,19 @@
                                                             <td>{{runs.duration}}</td>
                                                             <td>{{runs.runBy}}</td>
                                                             <td>
-                                                              <nz-tag class="break-word-tag" nz-tooltip [nzTooltipTitle]="runs.status === 'Failed' ? runs.message : ''">
+                                                              <nz-tag
+                                                                nz-popover
+                                                                [nzPopoverContent]="runs.status === 'Failed' ? errorTpl : undefined"
+                                                                [nzPopoverTitle]="runs.status === 'Failed' ? 'Error' : undefined"
+                                                                nzPopoverTrigger="hover"
+                                                                class="break-word-tag">
                                                                 {{ runs.status }}
                                                               </nz-tag>
+                                                              <ng-template #errorTpl>
+                                                                <div style="max-width: 800px; max-height: 300px; overflow: auto;">
+                                                                  <pre>{{ runs.message }}</pre>
+                                                                </div>
+                                                              </ng-template>
                                                             </td>
                                                         </tr>
                                                     }
