@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, effect, computed, inject, ViewChild, TemplateRef, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, effect, computed, inject, ViewChild, TemplateRef, signal, DestroyRef } from '@angular/core';
 import { ActivatedRoute, Data } from '@angular/router';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { JobSelect, PublishSettlement, settlementParams, settlementPipeline, TableColumn, TPL_TABLE_COLUMN } from '@shared/interfaces';
@@ -14,6 +14,7 @@ import { MESSAGES } from '@shared/constants/messages.const';
 import { DatePipe } from '@angular/common';
 import { BaseTableItem, modalConfig, SettlementJobActions, SettlementJobSubActions, SettlementStatus } from '@shared/constants';
 import { SearchListBase } from '@shared/services/utils/list.util.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-table',
@@ -35,6 +36,8 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   private readonly modal = inject(NzModalService);
   private readonly ss = inject(SettlementService);
   private readonly dp = inject(DatePipe);
+
+  destroyRef$ = inject(DestroyRef);
 
   isLineRentalStatus = false;
   SettlementStatus = SettlementStatus;
@@ -64,6 +67,9 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     ['reserveTradingAmounts']: ETA_JOBS.RTA_GENERATE_INPUT_WORKSPACE,
     ['energyTradingAmounts']: ETA_JOBS.GEN_INPUT_WORKSPACE,
     ['calculateEnergyTradingAmount']: ETA_JOBS.CAL_TRADING_AMOUNTS,
+    ['calculateReserveTradingAmount']: ETA_JOBS.CALC_RESERVE_TRADING_AMOUNTS,
+    ['generate_reserve_files']: ETA_JOBS.RTA_GENERATE_FILES,
+    ['generate_energy_files']: ETA_JOBS.ETA_GENERATE_FILES,
   };
 
   constructor() {
@@ -440,6 +446,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
   onExpandChange(id: number, value: boolean): void {
     if (value) {
+      this.expandSet.clear();
       this.expandSet.add(id);
     } else {
       this.expandSet.delete(id);
@@ -455,12 +462,18 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   triggerActionNames = [
     'cancelRun',
     'calculateEnergyTradingAmount',
+    'calculateReserveTradingAmount',
+    'generate_energy_files',
+    'generate_reserve_files'
   ];
 
   triggerAction(action: string, row: any): void {
     const actions: Record<string, () => unknown> = {
       ['cancelRun']: () => this.cancelRun(action, row.id),
-      ['calculateEnergyTradingAmount']: () => this.calculate(action, row)
+      ['calculateEnergyTradingAmount']: () => this.calculate(action, row),
+      ['calculateReserveTradingAmount']: () => this.calculate(action, row),
+      ['generate_energy_files']: () => this.generateFiles(action, row),
+      ['generate_reserve_files']: () => this.generateFiles(action, row),
     };
 
     actions[action]();
@@ -483,16 +496,27 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     const job = this.jobNameRecord[action];
 
     modal.updateConfig({
-      nzOnOk: () => {
-        this.busy$ = this.runSettlements.etaStlJobs(row, job)
-          .subscribe(res => {
-            const message = res?.message || MESSAGES.SUCCESS_JOB_TRIGGER;
-            this.toast.success(message);
-
-            this.search();
-          });
-      }
+      nzOnOk: () => this.runEtaStlJobs(row, job)
     });
+  }
+
+  generateFiles(action: string, row: any): void {
+    const modal = this.confirmAction(action);
+    const job = this.jobNameRecord[action];
+
+    modal.updateConfig({
+      nzOnOk: () => this.runEtaStlJobs(row, job)
+    });
+  }
+
+  runEtaStlJobs(row: any, job: ETA_JOBS): void {
+    this.busy$ = this.runSettlements.etaStlJobs(row, job)
+      .pipe(takeUntilDestroyed(this.destroyRef$))
+      .subscribe(res => {
+        const message = res?.message || MESSAGES.SUCCESS_JOB_TRIGGER;
+        this.toast.success(message);
+        this.search();
+      });
   }
 
   cancelRun(action: string, id: number): void {
@@ -515,7 +539,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
     return stlActions[index];
   }
-
 
   /**
    *

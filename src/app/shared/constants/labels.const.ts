@@ -49,6 +49,7 @@ export const LABELS = {
   TRANSACTION_REPORT: 'Transaction Report',
   DUE_DATE: 'Due Date',
   CALCULATE_ENERGY_TRADING_AMOUNT: 'Calculate Energy Trading Amount',
+  CALCULATE_RESERVE_TRADING_AMOUNT: 'Calculate Reserve Trading Amount',
   GENERATE_MONTHLY_SUMMARY: 'Generate Monthly Summary',
   GENERATE_INPUT_WORKSPACE: 'Generate Input Workspace',
   METERING_WORKSPACE_ID: 'Metering Workspace ID',
