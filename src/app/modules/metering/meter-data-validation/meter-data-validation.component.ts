@@ -18,6 +18,7 @@ import { GenerateMmfComponent } from '../metering-masterfile/generate-mmf/genera
   selector: 'app-meter-data-validation',
   standalone: false,
   templateUrl: './meter-data-validation.component.html',
+  styleUrl: './meter-data-validation.component.scss'
 })
 export class MeterDataValidationComponent implements OnInit {
 
@@ -40,6 +41,7 @@ export class MeterDataValidationComponent implements OnInit {
   showForm = false;
   processTypeOpts: meterProcessOptions[];
   billingPeriodOpts: { label: string; value: { startDate: string, endDate: string }; }[];
+  expandedTableCols: TPL_TABLE_COLUMN[];
 
   ngOnInit(): void {
     this.formatTableColumns();
@@ -84,6 +86,7 @@ export class MeterDataValidationComponent implements OnInit {
     tableColumns[LABELS.STATUS].template = this.tagTpl;
 
     this.tableColumns = Object.values(tableColumns);
+    this.expandedTableCols = Object.values(expandedTableCols);
   }
 
   generate(): void {
@@ -109,7 +112,7 @@ export class MeterDataValidationComponent implements OnInit {
     const filters = {
       ...formValues,
       ...formValues.billingPeriod,
-      name: 'runMMFReport'
+      name: 'runMDVReport'
     };
 
     delete filters?.billingPeriod;
@@ -164,3 +167,12 @@ const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', width: '100px', align: 'center', type: 'template' },
 }
 
+const expandedTableCols: Record<string, TPL_TABLE_COLUMN> = {
+  [LABELS.NAME]: { label: LABELS.NAME, propName: 'description', width: '180px' },
+  [LABELS.RUN_ID]: { label: LABELS.RUN_ID, propName: 'runId', type: 'string', width: '110px' },
+  [LABELS.RUN_START]: { label: LABELS.RUN_START, propName: 'runStart', type: 'date', width: '140px', align: 'center' },
+  [LABELS.RUN_END]: { label: LABELS.RUN_END, propName: 'runEnd', type: 'date', width: '140px', align: 'center' },
+  [LABELS.DURATION]: { label: LABELS.DURATION, propName: 'duration', type: 'string', width: '60px' },
+  [LABELS.RUN_BY]: { label: LABELS.RUN_BY, propName: 'runBy', type: 'string', width: '100px' },
+  [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', type: 'template', width: '100px', align: 'center' }
+}

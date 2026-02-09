@@ -1,4 +1,4 @@
-import { Component, input, Input, ViewChild } from '@angular/core';
+import { Component, input, Input, TemplateRef, ViewChild } from '@angular/core';
 import { LABELS } from '@shared/constants/labels.const';
 import { TableAction, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { SearchListBase } from '@shared/services/utils/list.util.service';
@@ -22,6 +22,10 @@ export class PaginatedTableComponent<T> extends SearchListBase {
   @Input() disableSelectAll = false;
   @Input() checkboxCondition!: (rowData: any) => boolean;
   @Input() url: Observable<any>;
+
+  enableExpand = input<boolean>();
+  expandTpl = input<TemplateRef<any>>();
+  expandSet = new Set<number>();
 
   @Input() tableConfig: {
     height?: string;
@@ -70,11 +74,26 @@ export class PaginatedTableComponent<T> extends SearchListBase {
 
   // End of Checkbox Handling
 
+  /**
+   * Handling of Expand
+   */
+
+  onExpandChange(id: number, status = false): void {
+    if (status) {
+      this.expandSet.clear();
+      this.expandSet.add(id);
+    } else {
+      this.expandSet.delete(id);
+    }
+  }
+
+
   get isIndeterminate(): boolean { return (this.selectedItems?.size !== this.tableData?.length) && !!this.selectedItems.size; }
   get isAllChecked(): boolean { return !!this.tableData?.length && (this.selectedItems?.size === this.tableData?.length); }
   get widthTotal(): number { return this.widthConfig.reduce((a, b) => a + parseInt(b), 0); }
   get widthConfig(): string[] {
     return [
+      ...(this.enableExpand() ? ['20px'] : []),
       ...(this.enableCheckbox ? ['30px'] : []),
       ...(this.tableColumns ? this.tableColumns.map(col => col?.width ? col?.width : '150px') : []),
       ...(this.showActions() ? ['100px'] : [])

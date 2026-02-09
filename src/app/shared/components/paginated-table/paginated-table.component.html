@@ -11,6 +11,10 @@
   (nzQueryParams)="onQueryParamsChange($event)"
   [nzScroll]="{ y: tableConfig.height }">
   <thead>
+    @if (enableExpand()) {
+      <th nzAlign="center"></th>
+    }
+
     @if (enableCheckbox) {
       <th
         [nzShowCheckbox]="enableCheckbox && !disableSelectAll"
@@ -37,6 +41,10 @@
   <tbody>
     @for (row of tableData; track row.id) {
       <tr>
+        @if (enableExpand()) {
+          <td nzAlign="center" class="text-center" [nzExpand]="expandSet.has(row.id)" (nzExpandChange)="onExpandChange(row.id, $event)"></td>
+        }
+
         @if (enableCheckbox) {
           <td
             [nzChecked]="selectedItems.has(row[checkboxProperty])"
@@ -87,6 +95,10 @@
           </td>
         }
       </tr>
+
+        <tr [nzExpand]="expandSet.has(row.id)">
+          <ng-container *ngTemplateOutlet="expandTpl()!; context:  { row }"></ng-container>
+        </tr>
     }
   </tbody>
 </nz-table>

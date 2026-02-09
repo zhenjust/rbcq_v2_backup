@@ -42,12 +42,16 @@
 
   <!-- Table -->
   <app-paginated-table #paginatedTable [tableColumns]="tableColumns" [url]="listUrl()" [showActions]="true"
-    [actionControls]="actionControls" [tableConfig]="{ height: '60vh' }"></app-paginated-table>
+    [actionControls]="actionControls" [tableConfig]="{ height: '60vh' }" [enableExpand]="true" [expandTpl]="expandTpl"></app-paginated-table>
+
+  <ng-template #expandTpl let-row="row">
+    <app-template-table [tableColumns]="expandedTableCols" [tableData]="row?.pipelineRuns"></app-template-table>
+  </ng-template>
 </nz-card>
 
 <!-- Column Templates -->
 <ng-template #fileTpl let-d="allData">
-  {{ `Metering_Masterfile_${d.parameters.endDate | date: 'yyyy_MM_dd'}_${d.parameters.processType}_${d?.pipelineRuns[0]?.workspaceId}.xlsx` }}
+  <!-- {{ `Metering_Masterfile_${d.parameters.endDate | date: 'yyyy_MM_dd'}_${d.parameters.processType}_${d?.pipelineRuns[0]?.workspaceId}.xlsx` }} -->
 </ng-template>
 
 <ng-template #bpTpl let-allData="allData">

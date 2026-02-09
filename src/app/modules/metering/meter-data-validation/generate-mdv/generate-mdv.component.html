@@ -20,6 +20,27 @@
       </nz-form-control>
     </nz-form-item>
 
+    <nz-form-item>
+      <nz-form-label nzRequired>{{ LABELS.BILLING_PERIOD }}</nz-form-label>
+      <nz-form-control>
+        <nz-select formControlName="billingPeriod" [nzOptions]="billingPeriodOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
+          [nzAllowClear]="true" nzShowSearch></nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <!-- <nz-form-label nzRequired>{{ LABELS.BILLING_PERIOD }}</nz-form-label> -->
+      <nz-form-control>
+        <!-- <nz-checkbox-group [nzOptions]="options1" [(ngModel)]="value" (ngModelChange)="log($event)" />
+        <br />
+        <br />
+        <nz-checkbox-group [nzOptions]="options2" [(ngModel)]="value" (ngModelChange)="log($event)" /> -->
+
+      </nz-form-control>
+    </nz-form-item>
+
+
+
   </form>
 
   <div class="d-flex justify-content-end" *nzModalFooter>

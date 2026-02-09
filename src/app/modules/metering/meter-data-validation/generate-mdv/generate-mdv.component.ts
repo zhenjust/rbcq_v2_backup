@@ -15,8 +15,7 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-generate-mdv',
   standalone: false,
-  templateUrl: './generate-mdv.component.html',
-  styleUrl: './generate-mdv.component.scss'
+  templateUrl: './generate-mdv.component.html'
 })
 export class GenerateMdvComponent implements OnInit {
 

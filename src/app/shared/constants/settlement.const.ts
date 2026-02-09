@@ -31,11 +31,6 @@ export const PRICING_CONDITIONS: settlementJobInstanceOptions[] = [
   { id: pricingConditions.SEC, label: pricingConditions.SEC, value: pricingConditions.SEC }
 ]
 
-
-// ask when to hide calc buttons
-
-// genIw: APP_PERMISSION.TA_GENERATE_IW
-// calc: APP_PERMISSION.TA_CALCULATE_TA
 // finalize: APP_PERMISSION.TA_FINALIZE
 
 export const SettlementJobActions: JobSelect[] = [
@@ -50,6 +45,7 @@ export const SettlementJobActions: JobSelect[] = [
   /**
    * IN_PROGRESS
    */
+
 
   /**
    * NOT YET STARTED
