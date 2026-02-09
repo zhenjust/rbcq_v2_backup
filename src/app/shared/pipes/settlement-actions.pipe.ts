@@ -77,10 +77,14 @@ export class SettlementActionsPipe implements PipeTransform {
   handleGenerateStatus(action: JobSelect, module: string, status: SettlementStatus): JobSelect {
     const generateStatuses = [
       SettlementStatus.COMPLETED_SETTLEMENT_READY,
+
       SettlementStatus.COMPLETED_GENERATE_INPUT_WORKSPACE,
       SettlementStatus.CANCELLED_GENERATE_INPUT_WORKSPACE,
       SettlementStatus.FAILED_GENERATE_INPUT_WORKSPACE,
+
       SettlementStatus.COMPLETED_SETTLEMENT_CALCULATION,
+
+      SettlementStatus.COMPLETED_GENERATE_RESERVE_INPUT_WORKSPACE,
       SettlementStatus.FAILED_GENERATE_INPUT_RESERVE_WORKSPACE,
       SettlementStatus.CANCELLED_GENERATE_INPUT_RESERVE_WORKSPACE
     ];
