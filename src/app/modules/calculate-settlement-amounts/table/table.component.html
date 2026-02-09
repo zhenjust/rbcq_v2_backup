@@ -165,8 +165,8 @@
 <ng-template #statusTpl let-data="data" let-allData="allData">
   <nz-tag
     nz-popover
-    [nzPopoverContent]="allData.status === 'Failed' ? errorTpl : undefined"
-    [nzPopoverTitle]="allData.status === 'Failed' ? 'Error' : undefined"
+    [nzPopoverContent]="(allData.status === 'Failed' || allData.status === 'Partially Succeeded') ? errorTpl : undefined"
+    [nzPopoverTitle]="(allData.status === 'Failed' || allData.status === 'Partially Succeeded') ? 'Error' : undefined"
     nzPopoverTrigger="hover"
     class="break-word-tag">
     {{ data }}

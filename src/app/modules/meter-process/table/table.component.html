@@ -144,8 +144,8 @@
                                                             <td>
                                                               <nz-tag
                                                                 nz-popover
-                                                                [nzPopoverContent]="runs.status === 'Failed' ? errorTpl : undefined"
-                                                                [nzPopoverTitle]="runs.status === 'Failed' ? 'Error' : undefined"
+                                                                [nzPopoverContent]="(runs.status === 'Failed' || runs.status === 'Partially Succeeded') ? errorTpl : undefined"
+                                                                [nzPopoverTitle]="(runs.status === 'Failed' || runs.status === 'Partially Succeeded') ? 'Error' : undefined"
                                                                 nzPopoverTrigger="hover"
                                                                 class="break-word-tag">
                                                                 {{ runs.status }}
