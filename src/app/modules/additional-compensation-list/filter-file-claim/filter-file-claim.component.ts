@@ -167,7 +167,6 @@ export class FilterFileClaimComponent implements OnInit, OnDestroy {
     this.sta.getBillingId(acPc, this.dfs.formatDateOnly(startDate), this.dfs.formatDateOnly(endDate)).subscribe({
       next: (data: []) => {
         this.billingIdList.set(data);
-        console.log(this.billingIdList());
       },
       error: (error) => {
         console.error(error.message)

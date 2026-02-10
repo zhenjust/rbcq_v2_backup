@@ -35,7 +35,8 @@ export const PRICING_CONDITIONS: settlementJobInstanceOptions[] = [
 
 export const SettlementJobActions: JobSelect[] = [
   /** DONE WITH IMPLEMENTATION */
-  { label: LABELS.GENERATE_INPUT_WORKSPACE, value: 'generateInputWorkspace' },
+  { label: LABELS.GENERATE_ENERGY_INPUT_WORKSPACE, value: 'generateInputWorkspace' },
+  { label: LABELS.GENERATE_RESERVE_INPUT_WORKSPACE, value: 'generateReserveInputWorkspace' },
   { label: LABELS.CALCULATE_ENERGY_TRADING_AMOUNT, value: 'calculateEnergyTradingAmount' },
   { label: LABELS.CALCULATE_RESERVE_TRADING_AMOUNT, value: 'calculateReserveTradingAmount' },
   { label: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`, value: 'publish' },

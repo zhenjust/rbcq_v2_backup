@@ -21,7 +21,7 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { PaginatedTableComponent } from './components/paginated-table/paginated-table.component';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
@@ -35,6 +35,8 @@ import { NzFloatButtonModule } from 'ng-zorro-antd/float-button';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { ConfirmWithContentComponent } from './components/confirm-with-content/confirm-with-content.component';
+import { DateRangePickerComponent } from './components/date-range-picker/date-range-picker.component';
 
 const ngZorroConfig: NzConfig = {
   notification: { nzDuration: 300, nzMaxStack: 3, nzTop: '150px' }
@@ -83,7 +85,9 @@ const Pipes = [
     ...Pipes,
     TemplateTableComponent,
     ConfirmWithDescComponent,
-    PaginatedTableComponent
+    PaginatedTableComponent,
+    ConfirmWithContentComponent,
+    DateRangePickerComponent
   ],
   imports: [
     CommonModule,
@@ -92,6 +96,7 @@ const Pipes = [
     NgxPermissionsModule,
     ReactiveFormsModule,
     RxReactiveFormsModule,
+    FormsModule,
 ],
   exports: [
     ...Pipes,
@@ -101,6 +106,8 @@ const Pipes = [
     PaginatedTableComponent,
     ReactiveFormsModule,
     NgxPermissionsModule,
+    FormsModule,
+    DateRangePickerComponent,
   ],
   providers: [
     { provide: NZ_CONFIG, useValue: ngZorroConfig }

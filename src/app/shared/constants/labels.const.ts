@@ -52,6 +52,8 @@ export const LABELS = {
   CALCULATE_RESERVE_TRADING_AMOUNT: 'Calculate Reserve Trading Amount',
   GENERATE_MONTHLY_SUMMARY: 'Generate Monthly Summary',
   GENERATE_INPUT_WORKSPACE: 'Generate Input Workspace',
+  GENERATE_ENERGY_INPUT_WORKSPACE: 'Generate Energy Input Workspace',
+  GENERATE_RESERVE_INPUT_WORKSPACE: 'Generate Reserve Input Workspace',
   METERING_WORKSPACE_ID: 'Metering Workspace ID',
 
   PROFILE: 'Profile',

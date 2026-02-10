@@ -1230,7 +1230,6 @@ export class NavbarComponent implements OnInit {
   }
 
   navigateTo(item: navItems): void {
-    console.log(JSON.stringify(item))
     if (item.externalLink && item.externalLink.trim() !== '') {
       window.location.href = item.externalLink;
     } else if (item.path && item.path.trim() !== '') {

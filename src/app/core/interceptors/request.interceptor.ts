@@ -58,7 +58,6 @@ export class RequestInterceptor implements HttpInterceptor {
           }
           case 400:
           case 500:
-            console.log({request})
             this.toast.error(error?.error?.message || '', error?.error?.error || LABELS.ERROR);
             break;
         }

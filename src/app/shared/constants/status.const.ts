@@ -54,7 +54,9 @@ export enum SettlementStatus {
   CANCELLED_GENERATE_INPUT_RESERVE_WORKSPACE = 'Cancelled - Generate Reserve Input Workspace',
   CANCELLED_SETTLEMENT_CALCULATION = 'Cancelled - Settlement Calculation',
   CANCELLED_RESERVE_SETTLEMENT_CALCULATION = 'Cancelled - Reserve Settlement Calculation',
-
+  COMPLETED_TAGGING = 'Completed - Tagging',
+  IN_PROGRESS_GENERATE_INPUT_RESERVE_WORKSPACE = 'In-Progress - Generate Reserve Input Workspace',
+  IN_PROGRESS_GENERATE_INPUT_ENERGY_WORKSPACE = 'In-Progress - Generate Energy Input Workspace',
 }
 
 export enum Status {

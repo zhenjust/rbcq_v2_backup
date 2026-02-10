@@ -6,7 +6,7 @@ import { RunSettlementService } from '@shared/services/settlement';
 import { ToastrService } from 'ngx-toastr';
 import { ETA_JOBS, MeterProcessTypes } from '@shared/enums';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { isAfter, isBefore, startOfDay } from 'date-fns';
+import { isAfter, isBefore, startOfDay, subDays } from 'date-fns';
 import { SettlementService } from '@shared/services/api';
 import { LABELS } from '@shared/constants/labels.const';
 import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
@@ -15,6 +15,7 @@ import { DatePipe } from '@angular/common';
 import { BaseTableItem, modalConfig, SettlementJobActions, SettlementJobSubActions, SettlementStatus } from '@shared/constants';
 import { SearchListBase } from '@shared/services/utils/list.util.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ConfirmWithContentComponent } from '@shared/components/confirm-with-content/confirm-with-content.component';
 
 @Component({
   selector: 'app-table',
@@ -28,6 +29,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   @ViewChild('runSettlementJobs', { static: true }) runSettlementJobs!: TemplateRef<void>;
   @ViewChild('statusTpl', { static: true }) statusTpl!: TemplateRef<HTMLElement>;
   @ViewChild('nameTpl', { static: true }) nameTpl!: TemplateRef<HTMLElement>;
+  @ViewChild('dateTpl') dateTpl!: TemplateRef<HTMLElement>;
 
   private readonly destroy$ = new Subject<void>();
   private readonly runSettlements = inject(RunSettlementService);
@@ -42,6 +44,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   isLineRentalStatus = false;
   SettlementStatus = SettlementStatus;
   LABELS = LABELS;
+  MESSAGES = MESSAGES;
   settlementJobActions = SettlementJobActions;
   SettlementJobSubActions = SettlementJobSubActions;
   baseTableItem = BaseTableItem;
@@ -64,8 +67,8 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   filters: Partial<settlementParams>;
 
   jobNameRecord: Record<string, ETA_JOBS> = {
-    ['reserveTradingAmounts']: ETA_JOBS.RTA_GENERATE_INPUT_WORKSPACE,
-    ['energyTradingAmounts']: ETA_JOBS.GEN_INPUT_WORKSPACE,
+    ['generateReserveInputWorkspace']: ETA_JOBS.RTA_GENERATE_INPUT_WORKSPACE,
+    ['generateInputWorkspace']: ETA_JOBS.GEN_INPUT_WORKSPACE,
     ['calculateEnergyTradingAmount']: ETA_JOBS.CAL_TRADING_AMOUNTS,
     ['calculateReserveTradingAmount']: ETA_JOBS.CALC_RESERVE_TRADING_AMOUNTS,
     ['generate_reserve_files']: ETA_JOBS.RTA_GENERATE_FILES,
@@ -148,9 +151,9 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     };
 
     switch (actionValue) {
-      case 'generateInputWorkspace':
-        this.handleGenerateInputWorkspace(rowData, label);
-        break;
+      // case 'generateInputWorkspace':
+      //   this.handleGenerateInputWorkspace(rowData, label);
+      //   break;
 
       // case 'calculateTradingAmount':
       //   this.handleDateRangeAction(
@@ -329,11 +332,11 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   }
 
   // for 'generateInputWorkspace' action
-  handleGenerateInputWorkspace(rowData: settlementPipeline, label: string): void {
+  handleGenerateInputWorkspace(rowData: settlementPipeline, label: string, action: string): void {
     const { processType, tradingDate, billingStartDate, billingEndDate } = rowData;
     const isDaily = processType === MeterProcessTypes.DAILY;
     const msg = MESSAGES.GENERATE_INPUT_WORKSPACE_TD(isDaily ? tradingDate : `${billingStartDate} to ${billingEndDate}`);
-    const jobName = this.jobNameRecord[this.searchName];
+    const jobName = this.jobNameRecord[action];
 
     this.handleAction(label, rowData, msg, jobName);
   }
@@ -464,14 +467,20 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     'calculateEnergyTradingAmount',
     'calculateReserveTradingAmount',
     'generate_energy_files',
-    'generate_reserve_files'
+    'generate_reserve_files',
+    'generateInputWorkspace',
+    'generateReserveInputWorkspace'
   ];
 
   triggerAction(action: string, row: any): void {
     const actions: Record<string, () => unknown> = {
       ['cancelRun']: () => this.cancelRun(action, row.id),
-      ['calculateEnergyTradingAmount']: () => this.calculate(action, row),
-      ['calculateReserveTradingAmount']: () => this.calculate(action, row),
+
+      ['calculateEnergyTradingAmount']: () => this.generateInputWorkspace(action, row),
+      ['calculateReserveTradingAmount']: () => this.generateInputWorkspace(action, row),
+      ['generateInputWorkspace']: () => this.generateInputWorkspace(action, row),
+      ['generateReserveInputWorkspace']: () => this.generateInputWorkspace(action, row),
+
       ['generate_energy_files']: () => this.generateFiles(action, row),
       ['generate_reserve_files']: () => this.generateFiles(action, row),
     };
@@ -479,11 +488,46 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     actions[action]();
   }
 
-  confirmAction(action: string, message = MESSAGES.CONFIRM_ACTION): NzModalRef {
+  confirmAction(action: string, message?: string): NzModalRef {
     return this.modal.confirm({
       ...modalConfig,
       nzTitle: this.getActionDetails(action).label,
-      nzContent: message,
+      nzContent: message || MESSAGES.CONFIRM_ACTION,
+    });
+  }
+
+  generateInputWorkspace(action: string, row: any): void {
+    const isDaily = row.processType === MeterProcessTypes.DAILY;
+    const isCalc = ['calculateEnergyTradingAmount', 'calculateReserveTradingAmount'].includes(action);
+
+    if (isDaily) {
+      if (isCalc) {
+        this.calculate(action, row);
+        return;
+      }
+
+      this.handleGenerateInputWorkspace(row, LABELS.GENERATE_INPUT_WORKSPACE, action);
+      return;
+    }
+
+    const dates: Date[] = [new Date(row.billingStartDate), new Date(row.billingEndDate)];
+
+    this.modal.create({
+      ...modalConfig,
+      nzTitle: this.getActionDetails(action).label,
+      nzContent: ConfirmWithContentComponent,
+      nzData: { template: this.dateTpl, rowData: row, otherData: {dates} },
+      nzOnOk: (comp: ConfirmWithContentComponent) => {
+        const dates = comp.nzDataRef?.otherData?.dates;
+        if (dates?.length) {
+          const [billingStartDate, billingEndDate] = dates;
+          row.billingStartDate = billingStartDate;
+          row.billingEndDate = billingEndDate;
+          const job = this.jobNameRecord[action];
+
+          this.runEtaStlJobs(row, job);
+        }
+      }
     });
   }
 
@@ -569,6 +613,12 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     this.destroy$.next();
     this.destroy$.complete();
     this.selectedActionsSignal.set(new Map());
+  }
+
+  createDisabledDate = (rowData: any) => {
+    return (current: Date) => {
+      return !(isBefore(current, rowData.billingEndDate) && isAfter(current, subDays(rowData.billingStartDate, 1)))
+    };
   }
 
 }

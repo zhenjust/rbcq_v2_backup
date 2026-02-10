@@ -1,0 +1,8 @@
+<form nz-form nzLayout="vertical" class="w-100">
+  <nz-form-item>
+    <nz-form-label>Select {{ label() }}</nz-form-label>
+    <nz-form-control>
+      <nz-range-picker class="w-100" [formControl]="dates()" [nzDisabledDate]="disabledDate()"></nz-range-picker>
+    </nz-form-control>
+  </nz-form-item>
+</form>

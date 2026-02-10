@@ -26,7 +26,7 @@ export class SettlementActionsPipe implements PipeTransform {
           action.show = !data.published;
         }
 
-        if (value === 'generateInputWorkspace') {
+        if (value === 'generateInputWorkspace' || value === 'generateReserveInputWorkspace') {
           action = this.handleGenerateStatus(action, module, status as SettlementStatus);
         }
 
@@ -75,24 +75,17 @@ export class SettlementActionsPipe implements PipeTransform {
   }
 
   handleGenerateStatus(action: JobSelect, module: string, status: SettlementStatus): JobSelect {
-    const generateStatuses = [
-      SettlementStatus.COMPLETED_SETTLEMENT_READY,
+    const isRta = module === 'reserveTradingAmounts' && action.value === 'generateReserveInputWorkspace';
+    const isEta = module === 'energyTradingAmounts' && action.value === 'generateInputWorkspace';
 
-      SettlementStatus.COMPLETED_GENERATE_INPUT_WORKSPACE,
-      SettlementStatus.CANCELLED_GENERATE_INPUT_WORKSPACE,
-      SettlementStatus.FAILED_GENERATE_INPUT_WORKSPACE,
-
-      SettlementStatus.COMPLETED_SETTLEMENT_CALCULATION,
-
-      SettlementStatus.COMPLETED_GENERATE_RESERVE_INPUT_WORKSPACE,
-      SettlementStatus.FAILED_GENERATE_INPUT_RESERVE_WORKSPACE,
-      SettlementStatus.CANCELLED_GENERATE_INPUT_RESERVE_WORKSPACE
+    const statuses =  [
+      SettlementStatus.IN_PROGRESS_GENERATE_INPUT_RESERVE_WORKSPACE,
+      SettlementStatus.IN_PROGRESS_GENERATE_INPUT_ENERGY_WORKSPACE,
+      SettlementStatus.COMPLETED_TAGGING
     ];
 
-    const hasPermissions = ['reserveTradingAmounts', 'energyTradingAmounts'].includes(module);
-
-    action.permissions = hasPermissions ? [PHASE_TWO_AUTHORITIES.TA_GENERATE_IW] : [];
-    action.show = generateStatuses.includes(status) && this.checkPermissions(action.permissions);
+    action.permissions = [PHASE_TWO_AUTHORITIES.TA_GENERATE_IW];
+    action.show = !statuses.includes(status) && (isRta || isEta) && this.checkPermissions(action.permissions);
 
     return action;
   }
@@ -115,7 +108,6 @@ export class SettlementActionsPipe implements PipeTransform {
       ...(isEta ? [PHASE_TWO_AUTHORITIES.TA_GENERATE_ENERGY_FILE] : []),
     ];
 
-    // statuses.includes(status as SettlementStatus) -> status condition temporarily removed
     action.permissions = isSettlementModule ? permissions : [];
     action.show = this.checkPermissions(action.permissions);
 
