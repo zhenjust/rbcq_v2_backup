@@ -37,6 +37,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { ConfirmWithContentComponent } from './components/confirm-with-content/confirm-with-content.component';
 import { DateRangePickerComponent } from './components/date-range-picker/date-range-picker.component';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 
 const ngZorroConfig: NzConfig = {
   notification: { nzDuration: 300, nzMaxStack: 3, nzTop: '150px' }
@@ -69,6 +70,7 @@ const NgZorroModules = [
   NzBadgeModule,
   NzSpinModule,
   NzInputModule,
+  NzCheckboxModule
 ];
 
 const Pipes = [

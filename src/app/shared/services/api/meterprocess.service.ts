@@ -2,7 +2,7 @@ import { HttpClient, HttpEvent } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import {
   DownloadMmfParams,
-  GenerateMeteringMasterfile,
+  GenerateMetering,
   meterProcessBillingPeriod,
   meterProcessJobSearchGroupParams,
   meterProcessParams,
@@ -54,8 +54,12 @@ export class MeterprocessService {
     return this.http.get<TableDataResult<meterProcessTable[]>>(`${this.API_URL}/search-by-name-params`, { params });
   }
 
-  public generateMasterfile(payload: GenerateMeteringMasterfile): Observable<any> {
-    return this.http.post<any>(`${this.MTR_PIPELINE_URL}/report-generation/mmf-generate`, payload);
+  // public generateMasterfile(payload: GenerateMeteringMasterfile): Observable<any> {
+  //   return this.http.post<any>(`${this.MTR_PIPELINE_URL}/report-generation/mmf-generate`, payload);
+  // }
+
+  public generateMetering(payload: GenerateMetering, pipeline: string): Observable<any> {
+    return this.http.post<any>(`${this.MTR_PIPELINE_URL}/report-generation/${pipeline}`, payload);
   }
 
   public runJob(data: Partial<meterProcessParams>, pipelineName?: MeterDataPipelineName, refId?: number): Observable<meterProcessParams> {

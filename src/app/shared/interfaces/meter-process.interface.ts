@@ -172,11 +172,12 @@ export interface DownloadMmfParams {
   endDate: string;
 }
 
-export interface GenerateMeteringMasterfile {
+export interface GenerateMetering {
     pipelineName: string;
     parameters: {
         processType: MeterProcessTypes;
         startDate?: string;
         endDate?: string;
-    }
+    },
+    reportCodes?: string[];
 }

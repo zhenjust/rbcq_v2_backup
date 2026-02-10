@@ -1,4 +1,4 @@
-import { pricingConditions, settlementProcessTypes, settlementSearchNames } from "@shared/enums";
+import { MDV, pricingConditions, settlementProcessTypes, settlementSearchNames } from "@shared/enums";
 import { JobSelect, settlementJobInstanceOptions, TableColumn } from "@shared/interfaces";
 import { LABELS } from './labels.const';
 
@@ -94,3 +94,15 @@ export const BaseTableItem: TableColumn[] = [
 export const RunProcessBtnLabel: Record<string, string> = {
   [settlementSearchNames.RESERVE_TRADING_AMOUNTS]: 'Run Reserve Settlement Ready',
 }
+
+export const MDV_LABELS: Record<MDV, string> = {
+  [MDV.MDV1]: 'Active Mtn and Trading Participant',
+  [MDV.MDV2]: 'Uploaded MQ vs Processed MQ',
+  [MDV.MDV3]: 'Captive MQ vs Adjustment MQ vs GOT MQ',
+  [MDV.MDV4]: 'GESQ vs RTU',
+  [MDV.MDV5]: 'Adjusted MQ vs GESQ',
+  [MDV.MDV6]: 'Settlement SEIN vs Billing ID',
+  [MDV.MDV7]: 'MQ per interval (WESM & RCOA)',
+  [MDV.MDV8]: 'Billing Run Comparison',
+  [MDV.MDV9]: 'Metering and RCOA Summary',
+};

@@ -5,7 +5,7 @@ import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { MeterProcessTypes } from '@shared/enums';
-import { GenerateMeteringMasterfile, meterProcessBillingPeriod } from '@shared/interfaces';
+import { GenerateMetering, meterProcessBillingPeriod } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { format } from 'date-fns';
 import { NzModalRef } from 'ng-zorro-antd/modal';
@@ -61,7 +61,7 @@ export class GenerateMmfComponent implements OnInit {
     const formValue = this.form.getRawValue();
     const selectedBp = this.billingPeriods.find(bp => bp.billingPeriod === formValue.billingPeriod);
 
-    const payload: GenerateMeteringMasterfile = {
+    const payload: GenerateMetering = {
       pipelineName: 'runMMFReport',
       parameters: {
         processType: formValue.processType,
@@ -70,10 +70,8 @@ export class GenerateMmfComponent implements OnInit {
       }
     };
 
-    this.mps.generateMasterfile(payload)
-      .subscribe(() => {
-        this.modalRef.destroy(true);
-      });
+    this.busy$ = this.mps.generateMetering(payload, 'mmf-generate')
+      .subscribe(() => this.modalRef.destroy(true));
   }
 
   getBillingPeriods(): void {

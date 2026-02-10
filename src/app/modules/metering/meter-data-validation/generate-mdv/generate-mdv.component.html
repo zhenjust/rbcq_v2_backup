@@ -20,25 +20,21 @@
       </nz-form-control>
     </nz-form-item>
 
-    <nz-form-item>
-      <nz-form-label nzRequired>{{ LABELS.BILLING_PERIOD }}</nz-form-label>
-      <nz-form-control>
-        <nz-select formControlName="billingPeriod" [nzOptions]="billingPeriodOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
-          [nzAllowClear]="true" nzShowSearch></nz-select>
-      </nz-form-control>
-    </nz-form-item>
+    <nz-card nzSize="small" [nzTitle]="title">
+      <ng-template #title>
+        <label nz-checkbox
+        [(ngModel)]="checked"
+        (ngModelChange)="onCheckedChange()"
+        [nzIndeterminate]="!!reportCodes?.value?.length && (options.length !== reportCodes?.value?.length)"
+        [ngModelOptions]="{ standalone: true }">{{ isAllSelected ? LABELS.DESELECT_ALL : LABELS.SELECT_ALL }} {{ LABELS.REPORT_CODE }}s</label>
+      </ng-template>
 
-    <nz-form-item>
-      <!-- <nz-form-label nzRequired>{{ LABELS.BILLING_PERIOD }}</nz-form-label> -->
-      <nz-form-control>
-        <!-- <nz-checkbox-group [nzOptions]="options1" [(ngModel)]="value" (ngModelChange)="log($event)" />
-        <br />
-        <br />
-        <nz-checkbox-group [nzOptions]="options2" [(ngModel)]="value" (ngModelChange)="log($event)" /> -->
-
-      </nz-form-control>
-    </nz-form-item>
-
+      <nz-form-item class="mb-0">
+        <nz-form-control>
+          <nz-checkbox-group class="d-flex flex-column row-gap-2" [nzOptions]="options" formControlName="reportCodes"/>
+        </nz-form-control>
+      </nz-form-item>
+    </nz-card>
 
 
   </form>

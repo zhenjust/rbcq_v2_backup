@@ -1,13 +1,14 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { FormGroup, FormBuilder, AbstractControl } from '@angular/forms';
 import { RxwebValidators } from '@rxweb/reactive-form-validators';
-import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
+import { MDV_LABELS, METER_PROCESS_TYPE_OPTION } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { MeterProcessTypes } from '@shared/enums';
-import { meterProcessBillingPeriod, GenerateMeteringMasterfile } from '@shared/interfaces';
+import { GenerateMetering, meterProcessBillingPeriod } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { format } from 'date-fns';
+import { NzCheckboxOption } from 'ng-zorro-antd/checkbox';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
 import { Subscription } from 'rxjs';
@@ -23,6 +24,7 @@ export class GenerateMdvComponent implements OnInit {
   LABELS = LABELS;
   form: FormGroup;
   MESSAGE = MESSAGES;
+  checked = signal<boolean>(false);
 
   readonly formBuilder = inject(FormBuilder);
   readonly mps = inject(MeterprocessService);
@@ -31,8 +33,10 @@ export class GenerateMdvComponent implements OnInit {
   billingPeriods: meterProcessBillingPeriod[];
   billingPeriodOpts: NzSelectOptionInterface[] = [];
   processTypeOpts: NzSelectOptionInterface[] = [];
+  options: NzCheckboxOption[] = [];
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit(): void {
     this.buildForm();
@@ -42,11 +46,25 @@ export class GenerateMdvComponent implements OnInit {
       .filter(opt => opt.id !== MeterProcessTypes.DAILY);
   }
 
+  onCheckedChange(): void {
+    if (this.checked()) {
+      const codes = this.options.map(d => d.value);
+      this.reportCodes?.setValue(codes);
+    } else {
+      this.reportCodes?.setValue([]);
+    }
+  }
+
   buildForm(): void {
     this.form = this.formBuilder.group({
       processType: [null, RxwebValidators.required()],
-      billingPeriod: [null, RxwebValidators.required()]
+      billingPeriod: [null, RxwebValidators.required()],
+      reportCodes: [null, [RxwebValidators.required(), RxwebValidators.minLength({ value: 1 })]]
     });
+
+    this.options = Object.keys(MDV_LABELS).map(key => (
+      { label: MDV_LABELS[key as keyof typeof MDV_LABELS], value: key}
+    )) as NzCheckboxOption[];
   }
 
   triggerClose(): void {
@@ -58,22 +76,22 @@ export class GenerateMdvComponent implements OnInit {
       this.form.markAllAsTouched();
       return;
     }
+
     const formValue = this.form.getRawValue();
     const selectedBp = this.billingPeriods.find(bp => bp.billingPeriod === formValue.billingPeriod);
 
-    const payload: GenerateMeteringMasterfile = {
-      pipelineName: 'runMMFReport',
+    const payload: GenerateMetering = {
+      pipelineName: 'runMDVReport',
       parameters: {
         processType: formValue.processType,
         startDate: format(new Date(selectedBp!.startDate), 'yyyy-MM-dd'),
         endDate: format(new Date(selectedBp!.endDate), 'yyyy-MM-dd')
-      }
+      },
+      reportCodes: this.reportCodes?.value
     };
 
-    this.mps.generateMasterfile(payload)
-      .subscribe(() => {
-        this.modalRef.destroy(true);
-      });
+    this.busy$ = this.mps.generateMetering(payload, 'mdv-generate')
+      .subscribe(() => this.modalRef.destroy(true));
   }
 
   getBillingPeriods(): void {
@@ -86,4 +104,8 @@ export class GenerateMdvComponent implements OnInit {
         }
       })
   }
+
+  get isAllSelected(): boolean { return !!this.reportCodes?.value?.length && this.options?.length === this.reportCodes?.value?.length; }
+
+  get reportCodes(): AbstractControl | null { return this.form?.get('reportCodes') as AbstractControl; }
 }

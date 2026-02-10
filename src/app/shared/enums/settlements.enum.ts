@@ -32,11 +32,23 @@ export enum pricingConditions {
 }
 
 export enum ETA_JOBS {
-  GEN_INPUT_WORKSPACE = 'energyTradingAmounts-generateInputWorkspace',
-  CAL_TRADING_AMOUNTS = 'energyTradingAmounts-calculateTradingAmount',
-  GEN_MONTHLY_SUMMARY = 'energyTradingAmounts-generateMonthlySummary',
-  RTA_GENERATE_INPUT_WORKSPACE = 'reserveTradingAmounts-generateInputWorkspace',
-  CALC_RESERVE_TRADING_AMOUNTS = 'reserveTradingAmounts-calculateTradingAmount',
-  RTA_GENERATE_FILES = 'reserveTradingAmounts-generateFiles',
-  ETA_GENERATE_FILES = 'energyTradingAmounts-generateFiles',
+    GEN_INPUT_WORKSPACE = 'energyTradingAmounts-generateInputWorkspace',
+    CAL_TRADING_AMOUNTS = 'energyTradingAmounts-calculateTradingAmount',
+    GEN_MONTHLY_SUMMARY = 'energyTradingAmounts-generateMonthlySummary',
+    RTA_GENERATE_INPUT_WORKSPACE = 'reserveTradingAmounts-generateInputWorkspace',
+    CALC_RESERVE_TRADING_AMOUNTS = 'reserveTradingAmounts-calculateTradingAmount',
+    RTA_GENERATE_FILES = 'reserveTradingAmounts-generateFiles',
+    ETA_GENERATE_FILES = 'energyTradingAmounts-generateFiles',
+}
+
+export enum MDV {
+    MDV1 = 'MDV1',
+    MDV2 = 'MDV2',
+    MDV3 = 'MDV3',
+    MDV4 = 'MDV4',
+    MDV5 = 'MDV5',
+    MDV6 = 'MDV6',
+    MDV7 = 'MDV7',
+    MDV8 = 'MDV8',
+    MDV9 = 'MDV9',
 }

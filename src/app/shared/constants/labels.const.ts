@@ -31,6 +31,8 @@ export const LABELS = {
   DOWNLOAD: 'Download',
   ACTIONS: 'Actions',
   DELETE: 'Delete',
+  SELECT_ALL: 'Select All',
+  DESELECT_ALL: 'Deselect All',
 
   // Field Labels
   CONSOLIDATE: 'Consolidate',
@@ -146,5 +148,6 @@ export const LABELS = {
   REMARKS: 'Remarks',
 
   BILLING_PERIOD_TRADING_DATE: 'Billing Period/Trading Date',
+  REPORT_CODE: 'Report Code'
 
 }

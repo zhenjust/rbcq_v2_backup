@@ -12,7 +12,7 @@ import { format } from 'date-fns';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of } from 'rxjs';
-import { GenerateMmfComponent } from '../metering-masterfile/generate-mmf/generate-mmf.component';
+import { GenerateMdvComponent } from './generate-mdv/generate-mdv.component';
 
 @Component({
   selector: 'app-meter-data-validation',
@@ -93,7 +93,7 @@ export class MeterDataValidationComponent implements OnInit {
     const modal = this.modalService.create({
       nzTitle: LABELS.GENERATE,
       nzCentered: true,
-      nzContent: GenerateMmfComponent,
+      nzContent: GenerateMdvComponent,
     });
 
     modal.afterClose.subscribe(val => {
