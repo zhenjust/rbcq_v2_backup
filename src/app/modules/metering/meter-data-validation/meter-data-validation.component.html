@@ -57,7 +57,8 @@
 </ng-template>
 
 <ng-template #bpTpl let-allData="allData">
-  {{ `${allData?.parameters?.startDate} - ${allData?.parameters?.endDate}` }}
+  @let params = allData?.parameters;
+  {{ params?.processType === 'DAILY' ? params?.startDate : `${params?.startDate} - ${params?.endDate}` }}
 </ng-template>
 
 <ng-template #tagTpl let-data="data">

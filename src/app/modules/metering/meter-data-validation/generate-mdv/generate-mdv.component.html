@@ -12,13 +12,24 @@
       </nz-form-control>
     </nz-form-item>
 
-    <nz-form-item>
-      <nz-form-label nzRequired>{{ LABELS.BILLING_PERIOD }}</nz-form-label>
-      <nz-form-control>
-        <nz-select formControlName="billingPeriod" [nzOptions]="billingPeriodOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
-          [nzAllowClear]="true" nzShowSearch></nz-select>
-      </nz-form-control>
-    </nz-form-item>
+    @if (isDaily) {
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ LABELS.TRADING_DATE }}</nz-form-label>
+        <nz-form-control>
+          <nz-date-picker formControlName="tradingDate" class="w-100" [nzDisabledDate]="nzDisabledDate"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    }
+
+    @if (!isDaily && this.processType?.value) {
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ LABELS.BILLING_PERIOD }}</nz-form-label>
+        <nz-form-control>
+          <nz-select formControlName="billingPeriod" [nzOptions]="billingPeriodOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
+            [nzAllowClear]="true" nzShowSearch></nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    }
 
     <nz-card nzSize="small" [nzTitle]="title">
       <ng-template #title>

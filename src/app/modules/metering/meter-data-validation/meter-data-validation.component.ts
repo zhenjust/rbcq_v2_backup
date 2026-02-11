@@ -1,18 +1,17 @@
   import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-  import { FormBuilder, FormGroup } from '@angular/forms';
-  import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
-  import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
-  import { LABELS } from '@shared/constants/labels.const';
-  import { MESSAGES } from '@shared/constants/messages.const';
-  import { MeterProcessTypes } from '@shared/enums';
-  import { TPL_TABLE_COLUMN, meterProcessOptions, meterProcessBillingPeriod, TableDataResult, DownloadMmfParams, TableAction } from '@shared/interfaces';
-  import { MeterprocessService } from '@shared/services/api';
-  import { DownloadUtilService } from '@shared/services/utils';
-  import { format } from 'date-fns';
-  import { NzModalService } from 'ng-zorro-antd/modal';
-  import { ToastrService } from 'ngx-toastr';
-  import { Observable, of } from 'rxjs';
-  import { GenerateMdvComponent } from './generate-mdv/generate-mdv.component';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
+import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
+import { LABELS } from '@shared/constants/labels.const';
+import { MESSAGES } from '@shared/constants/messages.const';
+import { TPL_TABLE_COLUMN, meterProcessOptions, meterProcessBillingPeriod, TableDataResult, DownloadMmfParams, TableAction } from '@shared/interfaces';
+import { MeterprocessService } from '@shared/services/api';
+import { DownloadUtilService } from '@shared/services/utils';
+import { format } from 'date-fns';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { ToastrService } from 'ngx-toastr';
+import { Observable, of } from 'rxjs';
+import { GenerateMdvComponent } from './generate-mdv/generate-mdv.component';
 
   @Component({
     selector: 'app-meter-data-validation',
@@ -48,8 +47,7 @@
       this.buildForm();
       this.getBillingPeriods();
 
-      this.processTypeOpts = METER_PROCESS_TYPE_OPTION
-        .filter(opt => opt.id !== MeterProcessTypes.DAILY);
+      this.processTypeOpts = METER_PROCESS_TYPE_OPTION;
     }
 
     buildForm(): void {
