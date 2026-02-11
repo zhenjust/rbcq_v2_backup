@@ -57,25 +57,25 @@ export class SettlementActionsPipe implements PipeTransform {
 
     const statuses = [
       ...(isRta ? [
-        SettlementStatus.COMPLETED_GENERATE_RESERVE_INPUT_WORKSPACE,
-        SettlementStatus.CANCELLED_RESERVE_SETTLEMENT_CALCULATION,
-        SettlementStatus.FAILED_RESERVE_SETTLEMENT_CALCULATION
+        SettlementStatus.FAILED_GENERATE_INPUT_RESERVE_WORKSPACE,
+        SettlementStatus.CANCELLED_GENERATE_INPUT_RESERVE_WORKSPACE
       ] : []),
       ...(isEta ? [
-        SettlementStatus.COMPLETED_GENERATE_INPUT_WORKSPACE,
-        SettlementStatus.FAILED_SETTLEMENT_CALCULATION,
-        SettlementStatus.CANCELLED_SETTLEMENT_CALCULATION
+        SettlementStatus.FAILED_GENERATE_INPUT_WORKSPACE,
+        SettlementStatus.CANCELLED_GENERATE_INPUT_WORKSPACE,
       ] : []),
+      SettlementStatus.COMPLETED_SETTLEMENT_READY,
+      SettlementStatus.COMPLETED_TAGGING,
     ];
 
     action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_CALCULATE_TA] : [];
-    action.show = statuses.includes(status as SettlementStatus) && this.checkPermissions(action.permissions);
+    action.show = !statuses.includes(status as SettlementStatus) && this.checkPermissions(action.permissions);
 
     return action;
   }
 
   handleGenerateStatus(action: JobSelect, module: string, status: SettlementStatus): JobSelect {
-    const isRta = module === 'reserveTradingAmounts' && action.value === 'generateReserveInputWorkspace';
+    const isRta = module === '  ' && action.value === 'generateReserveInputWorkspace';
     const isEta = module === 'energyTradingAmounts' && action.value === 'generateInputWorkspace';
 
     const statuses =  [
