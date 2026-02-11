@@ -96,9 +96,11 @@
         }
       </tr>
 
-        <tr [nzExpand]="expandSet.has(row.id)">
+      <tr [nzExpand]="expandSet.has(row.id)">
+        <!-- <td [attr.colspan]="widthConfig.length" class="ms-3"> -->
           <ng-container *ngTemplateOutlet="expandTpl()!; context:  { row }"></ng-container>
-        </tr>
+        <!-- </td> -->
+      </tr>
     }
   </tbody>
 </nz-table>

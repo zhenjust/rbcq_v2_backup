@@ -1,6 +1,6 @@
 <!-- Reusable Table Component for Fixed Data, implementing NgZorro nzTemplateMode -->
 
-<nz-table #table nzTemplateMode [nzWidthConfig]="widthConfig" nzSize="small" [nzLoading]="isLoading" [nzOuterBordered]="true" [nzScroll]="{ x: 'auto'}" class="m-0">
+<nz-table #table nzTemplateMode [nzWidthConfig]="widthConfig" [nzBordered]="true" nzSize="small" [nzLoading]="isLoading" [nzOuterBordered]="true" [nzScroll]="{ x: `${widthTotal}px`}" class="m-0">
   <thead>
     @if (enableCheckbox) {
       <th

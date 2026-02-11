@@ -45,7 +45,9 @@
     [actionControls]="actionControls" [tableConfig]="{ height: '60vh' }" [enableExpand]="true" [expandTpl]="expandTpl"></app-paginated-table>
 
   <ng-template #expandTpl let-row="row">
-    <app-template-table [tableColumns]="expandedTableCols" [tableData]="row?.pipelineRuns"></app-template-table>
+    <div class="d-flex w-100 my-2 pe-2">
+      <app-template-table class="w-100" [tableColumns]="expandedTableCols" [tableData]="row?.pipelineRuns"></app-template-table>
+    </div>
   </ng-template>
 </nz-card>
 
