@@ -1,6 +1,6 @@
 import { inject, Pipe, PipeTransform } from '@angular/core';
 import { AuthorizationService } from '@core/services/authorization.service';
-import { PHASE_TWO_AUTHORITIES, SettlementStatus } from '@shared/constants';
+import { EtaSettlementStatus, PHASE_TWO_AUTHORITIES, RtaSettlementStatus, SettlementStatus } from '@shared/constants';
 import { JobSelect, settlementPipeline } from '@shared/interfaces';
 
 @Pipe({
@@ -27,7 +27,7 @@ export class SettlementActionsPipe implements PipeTransform {
         }
 
         if (value === 'generateInputWorkspace' || value === 'generateReserveInputWorkspace') {
-          action = this.handleGenerateStatus(action, module, status as SettlementStatus);
+          action = this.handleGenerateStatus(action, module, status as keyof typeof SettlementStatus);
         }
 
         if (value === 'cancelRun') {
@@ -35,7 +35,7 @@ export class SettlementActionsPipe implements PipeTransform {
         }
 
         if (value === 'calculateEnergyTradingAmount' || value === 'calculateReserveTradingAmount') {
-          action = this.handleCalculateTA(action, isSettlementModules, status as SettlementStatus, module);
+          action = this.handleCalculateTA(action, isSettlementModules, status as keyof typeof SettlementStatus, module);
         }
 
         if (value === 'generateMonthlySummary') {
@@ -43,7 +43,7 @@ export class SettlementActionsPipe implements PipeTransform {
         }
 
         if (value === 'generate_energy_files' || value === 'generate_reserve_files') {
-          action = this.handleGenerateFiles(action, isSettlementModules, status as SettlementStatus, module);
+          action = this.handleGenerateFiles(action, isSettlementModules, status as keyof typeof SettlementStatus, module);
         }
 
         return action;
@@ -51,31 +51,25 @@ export class SettlementActionsPipe implements PipeTransform {
       .filter(action => action.show);
   }
 
-  handleCalculateTA(action: JobSelect, isSettlementModule = true, status: SettlementStatus, module: string): JobSelect {
+  handleCalculateTA(action: JobSelect, isSettlementModule = true, status: keyof typeof SettlementStatus, module: string): JobSelect {
     const isRta = module === 'reserveTradingAmounts' && action.value === 'calculateReserveTradingAmount';
     const isEta = module === 'energyTradingAmounts' && action.value === 'calculateEnergyTradingAmount';
 
     const statuses = [
-      ...(isRta ? [
-        SettlementStatus.FAILED_GENERATE_INPUT_RESERVE_WORKSPACE,
-        SettlementStatus.CANCELLED_GENERATE_INPUT_RESERVE_WORKSPACE
-      ] : []),
-      ...(isEta ? [
-        SettlementStatus.FAILED_GENERATE_INPUT_WORKSPACE,
-        SettlementStatus.CANCELLED_GENERATE_INPUT_WORKSPACE,
-      ] : []),
+      ...(isRta ? Object.values(EtaSettlementStatus) : []),
+      ...(isEta ? Object.values(RtaSettlementStatus) : []),
       SettlementStatus.COMPLETED_SETTLEMENT_READY,
       SettlementStatus.COMPLETED_TAGGING,
     ];
 
     action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_CALCULATE_TA] : [];
-    action.show = !statuses.includes(status as SettlementStatus) && this.checkPermissions(action.permissions);
+    action.show = !statuses.includes(status as keyof typeof SettlementStatus) && (isRta || isEta) && this.checkPermissions(action.permissions);
 
     return action;
   }
 
-  handleGenerateStatus(action: JobSelect, module: string, status: SettlementStatus): JobSelect {
-    const isRta = module === '  ' && action.value === 'generateReserveInputWorkspace';
+  handleGenerateStatus(action: JobSelect, module: string, status: keyof typeof SettlementStatus): JobSelect {
+    const isRta = module === 'reserveTradingAmounts' && action.value === 'generateReserveInputWorkspace';
     const isEta = module === 'energyTradingAmounts' && action.value === 'generateInputWorkspace';
 
     const statuses =  [
@@ -90,7 +84,7 @@ export class SettlementActionsPipe implements PipeTransform {
     return action;
   }
 
-  handleGenerateFiles(action: JobSelect, isSettlementModule = true, status: SettlementStatus, module: string): JobSelect {
+  handleGenerateFiles(action: JobSelect, isSettlementModule = true, status: keyof typeof SettlementStatus, module: string): JobSelect {
     const isRta = module === 'reserveTradingAmounts' && action.value === 'generate_reserve_files';
     const isEta = module === 'energyTradingAmounts' && action.value === 'generate_energy_files';
 

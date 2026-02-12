@@ -35,28 +35,35 @@ export const MeterDataPipelineNameLabel:Record<MeterDataPipelineName, string> = 
   [MeterDataPipelineName.INITIALIZE]: 'Initialize'
 }
 
-export enum SettlementStatus {
-  NULLIFIED = 'Nullified',
 
-  COMPLETED_SETTLEMENT_READY = 'Completed - Settlement Ready',
-  COMPLETED_GENERATE_INPUT_WORKSPACE = 'Completed - Generate Input Workspace',
-  COMPLETED_GENERATE_RESERVE_INPUT_WORKSPACE = 'Completed - Generate Reserve Input Workspace',
-  COMPLETED_SETTLEMENT_COMPLETE = 'Completed - Settlement Complete',
-  COMPLETED_SETTLEMENT_CALCULATION = 'Completed - Settlement Calculation',
-  COMPLETED_RESERVE_SETTLEMENT_CALCULATION = 'Completed - Reserve Settlement Calculation',
+export const RtaSettlementStatus = {
+  IN_PROGRESS_GENERATE_INPUT_RESERVE_WORKSPACE: 'In-Progress - Generate Reserve Input Workspace', // RTA
+  CANCELLED_RESERVE_SETTLEMENT_CALCULATION: 'Cancelled - Reserve Settlement Calculation', // RTA
+  CANCELLED_GENERATE_INPUT_RESERVE_WORKSPACE: 'Cancelled - Generate Reserve Input Workspace', // RTA
+  FAILED_RESERVE_SETTLEMENT_CALCULATION: 'Failed - Reserve Settlement Calculation', // RTA
+  FAILED_GENERATE_INPUT_RESERVE_WORKSPACE: `Failed - Generate Reserve Input Workspace`, // RTA
+  COMPLETED_RESERVE_SETTLEMENT_CALCULATION: 'Completed - Reserve Settlement Calculation', // RTA
+  COMPLETED_RESERVE_SETTLEMENT_COMPLETE: 'Completed - Reserve Settlement Complete', // RTA
+  COMPLETED_GENERATE_RESERVE_INPUT_WORKSPACE: 'Completed - Generate Reserve Input Workspace', // RTA
+}
 
-  FAILED_GENERATE_INPUT_WORKSPACE = `Failed - Generate Input Workspace`,
-  FAILED_GENERATE_INPUT_RESERVE_WORKSPACE = `Failed - Generate Reserve Input Workspace`,
-  FAILED_SETTLEMENT_CALCULATION = 'Failed - Settlement Calculation',
-  FAILED_RESERVE_SETTLEMENT_CALCULATION = 'Failed - Reserve Settlement Calculation',
+export const EtaSettlementStatus = {
+  COMPLETED_GENERATE_INPUT_WORKSPACE: 'Completed - Generate Input Workspace', // ETA
+  COMPLETED_SETTLEMENT_COMPLETE: 'Completed - Settlement Complete', // ETA
+  COMPLETED_SETTLEMENT_CALCULATION: 'Completed - Settlement Calculation', // ETA
+  FAILED_GENERATE_INPUT_WORKSPACE: `Failed - Generate Input Workspace`, // ETA
+  FAILED_SETTLEMENT_CALCULATION: 'Failed - Settlement Calculation', // ETA
+  IN_PROGRESS_GENERATE_INPUT_ENERGY_WORKSPACE: 'In-Progress - Generate Energy Input Workspace', // ETA
+  CANCELLED_GENERATE_INPUT_WORKSPACE: 'Cancelled - Generate Input Workspace', // ETA
+  CANCELLED_SETTLEMENT_CALCULATION: 'Cancelled - Settlement Calculation', // ETA
+}
 
-  CANCELLED_GENERATE_INPUT_WORKSPACE = 'Cancelled - Generate Input Workspace',
-  CANCELLED_GENERATE_INPUT_RESERVE_WORKSPACE = 'Cancelled - Generate Reserve Input Workspace',
-  CANCELLED_SETTLEMENT_CALCULATION = 'Cancelled - Settlement Calculation',
-  CANCELLED_RESERVE_SETTLEMENT_CALCULATION = 'Cancelled - Reserve Settlement Calculation',
-  COMPLETED_TAGGING = 'Completed - Tagging',
-  IN_PROGRESS_GENERATE_INPUT_RESERVE_WORKSPACE = 'In-Progress - Generate Reserve Input Workspace',
-  IN_PROGRESS_GENERATE_INPUT_ENERGY_WORKSPACE = 'In-Progress - Generate Energy Input Workspace',
+export const SettlementStatus = {
+  NULLIFIED: 'Nullified',
+  COMPLETED_SETTLEMENT_READY: 'Completed - Settlement Ready',
+  COMPLETED_TAGGING: 'Completed - Tagging',
+  ...RtaSettlementStatus,
+  ...EtaSettlementStatus,
 }
 
 export enum Status {
