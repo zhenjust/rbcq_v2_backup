@@ -58,6 +58,8 @@ export class SettlementActionsPipe implements PipeTransform {
     const statuses = [
       ...(isRta ? Object.values(EtaSettlementStatus) : []),
       ...(isEta ? Object.values(RtaSettlementStatus) : []),
+      SettlementStatus.FAILED_GENERATE_INPUT_RESERVE_WORKSPACE,
+      SettlementStatus.FAILED_GENERATE_INPUT_WORKSPACE,
       SettlementStatus.COMPLETED_SETTLEMENT_READY,
       SettlementStatus.COMPLETED_TAGGING,
     ];
