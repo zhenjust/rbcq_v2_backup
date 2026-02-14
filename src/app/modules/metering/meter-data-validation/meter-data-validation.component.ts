@@ -4,7 +4,7 @@ import { PaginatedTableComponent } from '@shared/components/paginated-table/pagi
 import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
-import { TPL_TABLE_COLUMN, meterProcessOptions, meterProcessBillingPeriod, TableDataResult, DownloadMmfParams, TableAction } from '@shared/interfaces';
+import { TPL_TABLE_COLUMN, meterProcessOptions, meterProcessBillingPeriod, TableDataResult, DownloadMmfParams, TableAction, DownloadMdvParams } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { DownloadUtilService } from '@shared/services/utils';
 import { format } from 'date-fns';
@@ -80,7 +80,8 @@ import { GenerateMdvComponent } from './generate-mdv/generate-mdv.component';
 
     formatTableColumns(): void {
       tableColumns[LABELS.BILLING_PERIOD_TRADING_DATE].template = this.bpTpl;
-      tableColumns[LABELS.FILE].template = this.fileTpl;
+      expandedTableCols[LABELS.FILE].template = this.fileTpl;
+      expandedTableCols[LABELS.STATUS].template = this.tagTpl;
       tableColumns[LABELS.STATUS].template = this.tagTpl;
 
       this.tableColumns = Object.values(tableColumns);
@@ -119,26 +120,25 @@ import { GenerateMdvComponent } from './generate-mdv/generate-mdv.component';
     }
 
     download(data: any): void {
-      const { workspaceId } = data.pipelineRuns[0];
-      const { endDate, processType } = data.parameters;
-      const params: DownloadMmfParams = { workspaceId, endDate, processType };
+      const { workspaceId, fileName } = data;
+      const params: DownloadMdvParams = { workspaceId, fileName };
 
-      this.paginatedTable.busy$ = this.meterService.downloadMmf(params)
+      this.paginatedTable.busy$ = this.meterService.downloadMeteringReport(params, 'mdv')
         .subscribe(res => {
-          this.downloadService.handleDownloadedFile(res);
+          this.downloadService.handleDownloadedFile(res, fileName);
         });
     }
 
     delete(data: any): void {
       this.modalService.confirm({
-        nzTitle: `${LABELS.DELETE} ${LABELS.METERING_MASTERFILE}`,
+        nzTitle: `${LABELS.DELETE} ${LABELS.METER_DATA_VALIDATION}`,
         nzCentered: true,
-        nzContent: MESSAGES.CONFIRM_DELETE_ITEM(LABELS.METERING_MASTERFILE),
+        nzContent: MESSAGES.CONFIRM_DELETE_ITEM(LABELS.METER_DATA_VALIDATION),
         nzOnOk: () => {
           const id = data.pipelineRuns[0].workspaceId;
-          this.paginatedTable.busy$ = this.meterService.deleteMmf(id)
+          this.paginatedTable.busy$ = this.meterService.deleteMeteringReport(id, 'mdv-delete')
             .subscribe(() => {
-              const message = MESSAGES.SUCCESS_DELETE_ITEM(LABELS.METERING_MASTERFILE);
+              const message = MESSAGES.SUCCESS_DELETE_ITEM(LABELS.METER_DATA_VALIDATION);
               this.toastrService.success(message);
               this.paginatedTable.search();
             });
@@ -149,7 +149,6 @@ import { GenerateMdvComponent } from './generate-mdv/generate-mdv.component';
 
     get actionControls(): TableAction<any>[] {
       return [
-        { label: LABELS.DOWNLOAD, value: 'download', click: (rowData: any) => this.download(rowData)},
         { label: LABELS.DELETE, value: 'generate', click: (rowData: any) => this.delete(rowData), danger: true},
       ];
     }
@@ -159,7 +158,6 @@ import { GenerateMdvComponent } from './generate-mdv/generate-mdv.component';
   const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
     [LABELS.BILLING_PERIOD_TRADING_DATE]: { label: LABELS.BILLING_PERIOD_TRADING_DATE, propName: 'parameters', width: '150px', type: 'template' },
     [LABELS.BILLING_RUN_TYPE]: { label: LABELS.BILLING_RUN_TYPE, propName: 'parameters', secondPropName: 'processType',  width: '150PX' },
-    [LABELS.FILE]: { label: LABELS.FILE, propName: 'fileName', width: '250px', type: 'template' },
     [LABELS.DATE_SAVED]: { label: LABELS.DATE_SAVED, propName: 'lastModifiedDatetime', width: '100px', align: 'center', type: 'date' },
     [LABELS.SAVED_BY]: { label: LABELS.SAVED_BY, propName: 'lastModifiedBy', width: '140px', align: 'center' },
     [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', width: '100px', align: 'center', type: 'template' },
@@ -167,9 +165,9 @@ import { GenerateMdvComponent } from './generate-mdv/generate-mdv.component';
 
   const expandedTableCols: Record<string, TPL_TABLE_COLUMN> = {
     [LABELS.NAME]: { label: LABELS.NAME, propName: 'description', width: '180px' },
-    [LABELS.RUN_ID]: { label: LABELS.RUN_ID, propName: 'runId', type: 'string', width: '110px' },
     [LABELS.RUN_START]: { label: LABELS.RUN_START, propName: 'runStart', type: 'date', width: '140px', align: 'center' },
     [LABELS.RUN_END]: { label: LABELS.RUN_END, propName: 'runEnd', type: 'date', width: '140px', align: 'center' },
+    [LABELS.FILE]: { label: LABELS.FILE, propName: 'fileName', width: '250px', type: 'template' },
     [LABELS.DURATION]: { label: LABELS.DURATION, propName: 'duration', type: 'string', width: '60px' },
     [LABELS.RUN_BY]: { label: LABELS.RUN_BY, propName: 'runBy', type: 'string', width: '100px' },
     [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', type: 'template', width: '100px', align: 'center' }

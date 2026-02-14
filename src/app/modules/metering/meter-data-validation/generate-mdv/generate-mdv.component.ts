@@ -107,7 +107,7 @@ export class GenerateMdvComponent implements OnInit {
       reportCodes: this.reportCodes?.value
     };
 
-    this.busy$ = this.mps.generateMetering(payload, 'mdv-generate')
+    this.busy$ = this.mps.generateMeteringList(payload, 'mdv-generate')
       .subscribe(() => this.modalRef.destroy(true));
   }
 

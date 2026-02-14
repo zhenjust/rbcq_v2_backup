@@ -70,7 +70,7 @@ export class GenerateMmfComponent implements OnInit {
       }
     };
 
-    this.busy$ = this.mps.generateMetering(payload, 'mmf-generate')
+    this.busy$ = this.mps.generateMeteringList(payload, 'mmf-generate')
       .subscribe(() => this.modalRef.destroy(true));
   }
 

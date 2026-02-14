@@ -1,6 +1,7 @@
 import { HttpClient, HttpEvent } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import {
+  DownloadMdvParams,
   DownloadMmfParams,
   GenerateMetering,
   meterProcessBillingPeriod,
@@ -54,14 +55,6 @@ export class MeterprocessService {
     return this.http.get<TableDataResult<meterProcessTable[]>>(`${this.API_URL}/search-by-name-params`, { params });
   }
 
-  // public generateMasterfile(payload: GenerateMeteringMasterfile): Observable<any> {
-  //   return this.http.post<any>(`${this.MTR_PIPELINE_URL}/report-generation/mmf-generate`, payload);
-  // }
-
-  public generateMetering(payload: GenerateMetering, pipeline: string): Observable<any> {
-    return this.http.post<any>(`${this.MTR_PIPELINE_URL}/report-generation/${pipeline}`, payload);
-  }
-
   public runJob(data: Partial<meterProcessParams>, pipelineName?: MeterDataPipelineName, refId?: number): Observable<meterProcessParams> {
     const isRerun = pipelineName === MeterDataPipelineName.CONSOLIDATE;
 
@@ -113,18 +106,28 @@ export class MeterprocessService {
     });
   }
 
-  public downloadMmf(params: DownloadMmfParams): Observable<HttpEvent<Blob>> {
+  /**
+   * Used for Meter Data Validation and Metering Masterfile
+   * @param workspaceId
+   * @param pipeline
+   */
+  public deleteMeteringReport(workspaceId: number, pipeline: string): Observable<null> {
+    return this.http.post<null>(`${this.MTR_PIPELINE_URL}/report-generation/${pipeline}`, { workspaceId });
+  }
+
+  public generateMeteringList(payload: GenerateMetering, pipeline: string): Observable<any> {
+    return this.http.post<any>(`${this.MTR_PIPELINE_URL}/report-generation/${pipeline}`, payload);
+  }
+
+  public downloadMeteringReport(params: DownloadMdvParams | DownloadMmfParams, pipeline: 'mdv' | 'mmf'): Observable<HttpEvent<Blob>> {
     const httpParams = this.paramUtil.buildParams(params);
-    return this.http.get(`/${this.baseUrl}/reports/download/mmf`, {
+
+    return this.http.get(`/${this.baseUrl}/reports/download/${pipeline}`, {
       params: httpParams,
       responseType: 'blob',
       observe: 'events',
       reportProgress: true,
-    })
-  }
-
-  public deleteMmf(workspaceId: number): Observable<null> {
-    return this.http.post<null>(`${this.MTR_PIPELINE_URL}/report-generation/mmf-delete`, { workspaceId });
+    });
   }
 
 }

@@ -98,3 +98,9 @@ th {
 td {
   border-right: none !important;
 }
+
+// .template-table {
+  .ant-table.ant-table-small .ant-table-tbody .ant-table-wrapper:only-child .ant-table {
+    margin: 0px !important;
+  }
+// }

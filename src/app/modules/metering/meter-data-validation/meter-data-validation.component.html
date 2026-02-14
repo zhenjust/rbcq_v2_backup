@@ -46,14 +46,22 @@
 
   <ng-template #expandTpl let-row="row">
     <div class="d-flex w-100 my-2 pe-2">
-      <app-template-table class="w-100" [tableColumns]="expandedTableCols" [tableData]="row?.pipelineRuns"></app-template-table>
+      <app-template-table class="w-100" [tableColumns]="expandedTableCols" [tableData]="row?.pipelineRuns" [actionsTpl]="expandTplActions"></app-template-table>
+
+      <ng-template #expandTplActions let-subRowData="row">
+        @if (subRowData.fileName) {
+          <a nz-button nzType="link" nzSize="small" (click)="download(subRowData)" nzBlock>{{ LABELS.DOWNLOAD }}</a>
+        }
+      </ng-template>
     </div>
   </ng-template>
 </nz-card>
 
 <!-- Column Templates -->
 <ng-template #fileTpl let-d="allData">
-  <!-- {{ `Metering_Masterfile_${d.parameters.endDate | date: 'yyyy_MM_dd'}_${d.parameters.processType}_${d?.pipelineRuns[0]?.workspaceId}.xlsx` }} -->
+  <div class="text-break" style="max-width: auto;">
+    {{ d.fileName }}
+  </div>
 </ng-template>
 
 <ng-template #bpTpl let-allData="allData">

@@ -172,6 +172,12 @@ export interface DownloadMmfParams {
   endDate: string;
 }
 
+export interface DownloadMdvParams {
+    workspaceId: number;
+    fileName: string;
+}
+
+
 export interface GenerateMetering {
     pipelineName: string;
     parameters: {

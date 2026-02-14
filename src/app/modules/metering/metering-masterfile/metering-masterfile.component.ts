@@ -123,7 +123,7 @@ export class MeteringMasterfileComponent implements OnInit {
     const { endDate, processType } = data.parameters;
     const params: DownloadMmfParams = { workspaceId, endDate, processType };
 
-    this.paginatedTable.busy$ = this.meterService.downloadMmf(params)
+    this.paginatedTable.busy$ = this.meterService.downloadMeteringReport(params, 'mmf')
       .subscribe(res => {
         this.downloadService.handleDownloadedFile(res);
       });
@@ -136,7 +136,7 @@ export class MeteringMasterfileComponent implements OnInit {
       nzContent: MESSAGES.CONFIRM_DELETE_ITEM(LABELS.METERING_MASTERFILE),
       nzOnOk: () => {
         const id = data.pipelineRuns[0].workspaceId;
-        this.paginatedTable.busy$ = this.meterService.deleteMmf(id)
+        this.paginatedTable.busy$ = this.meterService.deleteMeteringReport(id, 'mmf-delete')
           .subscribe(() => {
             const message = MESSAGES.SUCCESS_DELETE_ITEM(LABELS.METERING_MASTERFILE);
             this.toastrService.success(message);

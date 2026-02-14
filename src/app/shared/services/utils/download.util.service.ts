@@ -8,11 +8,11 @@ import { saveAs } from 'file-saver';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export class DownloadUtilService {
 
-  handleDownloadedFile(response: any): void {
+  handleDownloadedFile(response: any, name = ''): void {
     const blob = response.body as Blob;
-    let filename: string;
+    let filename: string = name;
 
-    const contentDisposition = response.headers.get('Content-Disposition');
+    const contentDisposition = response?.headers?.get('Content-Disposition');
     if (contentDisposition) {
       const match = /filename="?([^"]+)"?/.exec(contentDisposition);
       if (match?.[1]) {
