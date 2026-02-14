@@ -4,7 +4,7 @@ import { PaginatedTableComponent } from '@shared/components/paginated-table/pagi
 import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
-import { TPL_TABLE_COLUMN, meterProcessOptions, meterProcessBillingPeriod, TableDataResult, DownloadMmfParams, TableAction, DownloadMdvParams } from '@shared/interfaces';
+import { TPL_TABLE_COLUMN, meterProcessOptions, meterProcessBillingPeriod, TableDataResult, TableAction, DownloadMdvParams } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { DownloadUtilService } from '@shared/services/utils';
 import { format } from 'date-fns';
