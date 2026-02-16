@@ -147,6 +147,11 @@ export class MqUploaderFilterComponent implements OnInit {
       .split(',')
       .map(fileType => fileType.trim())
 
+    if (file.name?.length > 100) {
+      this.ts.error(MESSAGES.LONG_FILE_NAME);
+      return false;
+    }
+
     if (!acceptedTypesArr.includes(`.${fileType}`)) {
       this.ts.error(MESSAGES.INVALID_FILE_TYPE);
       return false;
