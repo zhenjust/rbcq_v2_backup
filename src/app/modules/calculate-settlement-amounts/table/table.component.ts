@@ -469,7 +469,10 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     'generate_energy_files',
     'generate_reserve_files',
     'generateInputWorkspace',
-    'generateReserveInputWorkspace'
+    'generateReserveInputWorkspace',
+    'energyTradingAmounts-generateMonthlySummary',
+    'reserveTradingAmounts-generateMonthlySummary',
+    'reserveTradingAmounts-calculateGMRVAT'
   ];
 
   triggerAction(action: string, row: any): void {
@@ -483,6 +486,11 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
       ['generate_energy_files']: () => this.generateFiles(action, row),
       ['generate_reserve_files']: () => this.generateFiles(action, row),
+
+      ['energyTradingAmounts-generateMonthlySummary']: () => this.runJobWithConfirmation(action, row),
+      ['reserveTradingAmounts-generateMonthlySummary']: () => this.runJobWithConfirmation(action, row),
+
+      ['reserveTradingAmounts-calculateGMRVAT']: () => this.runJobWithConfirmation(action, row),
     };
 
     actions[action]();
@@ -550,6 +558,14 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
     modal.updateConfig({
       nzOnOk: () => this.runEtaStlJobs(row, job)
+    });
+  }
+
+  runJobWithConfirmation(action: string, row: any): void {
+    const modal = this.confirmAction(action);
+
+    modal.updateConfig({
+      nzOnOk: () => this.runEtaStlJobs(row, action as ETA_JOBS)
     });
   }
 

@@ -45,6 +45,11 @@ export const RtaSettlementStatus = {
   COMPLETED_RESERVE_SETTLEMENT_CALCULATION: 'Completed - Reserve Settlement Calculation', // RTA
   COMPLETED_RESERVE_SETTLEMENT_COMPLETE: 'Completed - Reserve Settlement Complete', // RTA
   COMPLETED_GENERATE_RESERVE_INPUT_WORKSPACE: 'Completed - Generate Reserve Input Workspace', // RTA
+
+  COMPLETED_GENERATE_RESERVE_FILES: 'Completed - Generate Reserve Files',
+  IN_PROGRESS_GENERATE_RESERVE_FILES: 'In-Progress - Generate Reserve Files',
+  CANCELLED_GENERATE_RESERVE_FILES: 'Cancelled - Generate Reserve Files',
+  FAILED_GENERATE_RESERVE_FILES: 'Failed - Generate Reserve Files',
 }
 
 export const EtaSettlementStatus = {
@@ -53,15 +58,23 @@ export const EtaSettlementStatus = {
   COMPLETED_SETTLEMENT_CALCULATION: 'Completed - Settlement Calculation', // ETA
   FAILED_GENERATE_INPUT_WORKSPACE: `Failed - Generate Input Workspace`, // ETA
   FAILED_SETTLEMENT_CALCULATION: 'Failed - Settlement Calculation', // ETA
-  IN_PROGRESS_GENERATE_INPUT_ENERGY_WORKSPACE: 'In-Progress - Generate Energy Input Workspace', // ETA
   CANCELLED_GENERATE_INPUT_WORKSPACE: 'Cancelled - Generate Input Workspace', // ETA
   CANCELLED_SETTLEMENT_CALCULATION: 'Cancelled - Settlement Calculation', // ETA
+
+  IN_PROGRESS_GENERATE_INPUT_ENERGY_WORKSPACE: 'In-Progress - Generate Energy Input Workspace', // ETA
 }
 
 export const SettlementStatus = {
   NULLIFIED: 'Nullified',
   COMPLETED_SETTLEMENT_READY: 'Completed - Settlement Ready',
   COMPLETED_TAGGING: 'Completed - Tagging',
+
+  /** Generate Monthly Summary */
+  IN_PROGRESS_GENERATE_MONTHLY_SUMMARY: 'In-Progress - Generate Monthly Summary',
+  CANCELLED_GENERATE_MONTHLY_SUMMARY: 'Cancelled - Generate Monthly Summary',
+  COMPLETED_GENERATE_MONTHLY_SUMMARY: 'Completed - Generate Monthly Summary',
+  FAILED_GENERATE_MONTHLY_SUMMARY: 'Failed - Generate Monthly Summary',
+
   ...RtaSettlementStatus,
   ...EtaSettlementStatus,
 }

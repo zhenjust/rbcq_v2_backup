@@ -1,4 +1,4 @@
-import { ETA_JOBS, MeterProcessTypes, pricingConditions, settlementPageTitles, settlementProcessTypes } from "@shared/enums";
+import { ETA_JOBS, MeterProcessTypes, pricingConditions, settlementPageTitles, settlementProcessTypes, settlementSearchNames } from "@shared/enums";
 
 export interface settlementPageData {
     pageTitle: settlementPageTitles | string,
@@ -134,7 +134,9 @@ export interface JobSelect {
     label: string,
     value: string,
     show?: boolean,
-    permissions?: string[] | undefined
+    permissions?: string[] | undefined,
+    type?: settlementSearchNames
+
 }
 
 export interface SettlementPipelineWithRun {
