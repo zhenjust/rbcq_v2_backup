@@ -472,7 +472,9 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     'generateReserveInputWorkspace',
     'energyTradingAmounts-generateMonthlySummary',
     'reserveTradingAmounts-generateMonthlySummary',
-    'reserveTradingAmounts-calculateGMRVAT'
+    'reserveTradingAmounts-calculateGMRVAT',
+    'reserveTradingAmounts-finalize',
+    'energyTradingAmounts-finalize',
   ];
 
   triggerAction(action: string, row: any): void {
@@ -491,6 +493,10 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       ['reserveTradingAmounts-generateMonthlySummary']: () => this.runJobWithConfirmation(action, row),
 
       ['reserveTradingAmounts-calculateGMRVAT']: () => this.runJobWithConfirmation(action, row),
+
+      ['reserveTradingAmounts-finalize']: () => this.runJobWithConfirmation(action, row),
+      ['energyTradingAmounts-finalize']: () => this.runJobWithConfirmation(action, row),
+
     };
 
     actions[action]();

@@ -49,12 +49,14 @@ export const SettlementJobActions: JobSelect[] = [
   { label: LABELS.GENERATE_MONTHLY_SUMMARY, value: 'energyTradingAmounts-generateMonthlySummary', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
   { label: LABELS.GENERATE_RESERVE_MONTHLY_SUMMARY, value: 'reserveTradingAmounts-generateMonthlySummary', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
   { label: LABELS.CALCULATE_RESERVE_GMR_VAT, value: 'reserveTradingAmounts-calculateGMRVAT', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
+  { label: LABELS.CALCULATE_GMR_VAT, value: 'calculate_gmr_vat' },
 
   /**
    * IN_PROGRESS
    */
 
-  { label: LABELS.CALCULATE_GMR_VAT, value: 'calculate_gmr_vat' }, // TA_CALCULATE_GMRVAT, !vm.hideCalcButtons(item.parentStlJobGroupDto.groupId), vm.resource === 'trading-amounts', not daily, ((item.parentStlJobGroupDto.genMonthlySummaryIsLatestJob && item.parentStlJobGroupDto.genMonthlySummaryStatus === 'COMPLETED') || item.parentStlJobGroupDto.calculateGmrIsLatestJob), !item.parentStlJobGroupDto.locked
+  { label: LABELS.FINALIZE_SETTLEMENT, value: 'energyTradingAmounts-finalize', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
+  { label: LABELS.FINALIZE_SETTLEMENT, value: 'reserveTradingAmounts-finalize', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
 
 
   /**

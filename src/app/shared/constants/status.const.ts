@@ -50,6 +50,11 @@ export const RtaSettlementStatus = {
   IN_PROGRESS_GENERATE_RESERVE_FILES: 'In-Progress - Generate Reserve Files',
   CANCELLED_GENERATE_RESERVE_FILES: 'Cancelled - Generate Reserve Files',
   FAILED_GENERATE_RESERVE_FILES: 'Failed - Generate Reserve Files',
+
+  IN_PROGRESS_CALCULATE_GMRVAT: 'In-Progress - Calculate GMR/VAT',
+  FAILED_CALCULATE_GMRVAT: 'Failed - Calculate GMR/VAT',
+  COMPLETED_CALCULATE_GMRVAT: 'Completed - Calculate GMR/VAT',
+  CANCELLED_CALCULATE_GMRVAT: 'Cancelled - Calculate GMR/VAT',
 }
 
 export const EtaSettlementStatus = {
