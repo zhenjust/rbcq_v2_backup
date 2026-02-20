@@ -164,12 +164,12 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       //   );
       //   break;
 
-      case 'generateMonthlySummary':
+      case 'calculateMSummary':
         this.handleDateRangeAction(
           rowData,
           ETA_JOBS.GEN_MONTHLY_SUMMARY,
           'Generate Monthly Summary for the following dates:',
-          'generateMonthlySummary'
+          'calculateMSummary'
         );
         break;
 
@@ -470,10 +470,10 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     'generate_reserve_files',
     'generateInputWorkspace',
     'generateReserveInputWorkspace',
-    'energyTradingAmounts-generateMonthlySummary',
-    'reserveTradingAmounts-generateMonthlySummary',
-    'reserveTradingAmounts-calculateGMRVAT',
-    'energyTradingAmounts-calculateGMRVAT',
+    'energyTradingAmounts-calculateMSummary',
+    'reserveTradingAmounts-calculateMSummary',
+    'reserveTradingAmounts-calculateGmrVat',
+    'energyTradingAmounts-calculateGmrVat',
     'reserveTradingAmounts-finalize',
     'energyTradingAmounts-finalize',
   ];
@@ -490,11 +490,11 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       ['generate_energy_files']: () => this.generateFiles(action, row),
       ['generate_reserve_files']: () => this.generateFiles(action, row),
 
-      ['energyTradingAmounts-generateMonthlySummary']: () => this.runJobWithConfirmation(action, row),
-      ['reserveTradingAmounts-generateMonthlySummary']: () => this.runJobWithConfirmation(action, row),
+      ['energyTradingAmounts-calculateMSummary']: () => this.runJobWithConfirmation(action, row),
+      ['reserveTradingAmounts-calculateMSummary']: () => this.runJobWithConfirmation(action, row),
 
-      ['reserveTradingAmounts-calculateGMRVAT']: () => this.runJobWithConfirmation(action, row),
-      ['energyTradingAmounts-calculateGMRVAT']: () => this.runJobWithConfirmation(action, row),
+      ['reserveTradingAmounts-calculateGmrVat']: () => this.runJobWithConfirmation(action, row),
+      ['energyTradingAmounts-calculateGmrVat']: () => this.runJobWithConfirmation(action, row),
 
       ['reserveTradingAmounts-finalize']: () => this.runJobWithConfirmation(action, row),
       ['energyTradingAmounts-finalize']: () => this.runJobWithConfirmation(action, row),

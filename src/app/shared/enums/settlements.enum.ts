@@ -34,7 +34,7 @@ export enum pricingConditions {
 export enum ETA_JOBS {
     GEN_INPUT_WORKSPACE = 'energyTradingAmounts-generateInputWorkspace',
     CAL_TRADING_AMOUNTS = 'energyTradingAmounts-calculateTradingAmount',
-    GEN_MONTHLY_SUMMARY = 'energyTradingAmounts-generateMonthlySummary',
+    GEN_MONTHLY_SUMMARY = 'energyTradingAmounts-calculateMSummary',
     RTA_GENERATE_INPUT_WORKSPACE = 'reserveTradingAmounts-generateInputWorkspace',
     CALC_RESERVE_TRADING_AMOUNTS = 'reserveTradingAmounts-calculateTradingAmount',
     RTA_GENERATE_FILES = 'reserveTradingAmounts-generateFiles',

@@ -45,10 +45,10 @@ export const SettlementJobActions: JobSelect[] = [
   { label: LABELS.GENERATE_RESERVE_FILES, value: 'generate_reserve_files', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
   { label: LABELS.GENERATE_ENERGY_FILES, value: 'generate_energy_files', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
 
-  { label: LABELS.GENERATE_MONTHLY_SUMMARY, value: 'energyTradingAmounts-generateMonthlySummary', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
-  { label: LABELS.GENERATE_RESERVE_MONTHLY_SUMMARY, value: 'reserveTradingAmounts-generateMonthlySummary', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
-  { label: LABELS.CALCULATE_RESERVE_GMR_VAT, value: 'reserveTradingAmounts-calculateGMRVAT', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
-  { label: LABELS.CALCULATE_GMR_VAT, value: 'energyTradingAmounts-calculateGMRVAT', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
+  { label: LABELS.GENERATE_MONTHLY_SUMMARY, value: 'energyTradingAmounts-calculateMSummary', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
+  { label: LABELS.GENERATE_RESERVE_MONTHLY_SUMMARY, value: 'reserveTradingAmounts-calculateMSummary', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
+  { label: LABELS.CALCULATE_RESERVE_GMR_VAT, value: 'reserveTradingAmounts-calculateGmrVat', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
+  { label: LABELS.CALCULATE_GMR_VAT, value: 'energyTradingAmounts-calculateGmrVat', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
 
   { label: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`, value: 'publish' },
 

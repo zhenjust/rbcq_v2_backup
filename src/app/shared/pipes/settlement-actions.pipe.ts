@@ -40,7 +40,7 @@ export class SettlementActionsPipe implements PipeTransform {
           action = this.handleCalculateTA(action, isSettlementModules, status as keyof typeof SettlementStatus);
         }
 
-        if (value === 'generateMonthlySummary') {
+        if (value === 'calculateMSummary') {
           action.show = status === SettlementStatus.COMPLETED_SETTLEMENT_COMPLETE;
         }
 
@@ -48,12 +48,12 @@ export class SettlementActionsPipe implements PipeTransform {
           action = this.handleGenerateFiles(action, isSettlementModules, status as keyof typeof SettlementStatus, module);
         }
 
-        if (value === 'energyTradingAmounts-generateMonthlySummary' || value === 'reserveTradingAmounts-generateMonthlySummary') {
+        if (value === 'energyTradingAmounts-calculateMSummary' || value === 'reserveTradingAmounts-calculateMSummary') {
           action = this.handleGenerateMonthlySummary(action, isSettlementModules, status as keyof typeof SettlementStatus);
           action.show = action.show && processType !== MeterProcessTypes.DAILY;
         }
 
-        if (value === 'reserveTradingAmounts-calculateGMRVAT' || value === 'energyTradingAmounts-calculateGMRVAT') {
+        if (value === 'reserveTradingAmounts-calculateGmrVat' || value === 'energyTradingAmounts-calculateGmrVat') {
           action = this.handleCalcGmrVat(action, isSettlementModules, status as keyof typeof SettlementStatus);
           action.show = action.show && processType !== MeterProcessTypes.DAILY;
         }
@@ -143,8 +143,8 @@ export class SettlementActionsPipe implements PipeTransform {
   }
 
   handleGenerateMonthlySummary(action: JobSelect, isSettlementModule = true, status: keyof typeof SettlementStatus): JobSelect {
-    const isRtaPipeline = action.type === settlementSearchNames.RESERVE_TRADING_AMOUNTS && action.value === 'reserveTradingAmounts-generateMonthlySummary';
-    const isEtaPipeline = action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS && action.value === 'energyTradingAmounts-generateMonthlySummary';
+    const isRtaPipeline = action.type === settlementSearchNames.RESERVE_TRADING_AMOUNTS && action.value === 'reserveTradingAmounts-calculateMSummary';
+    const isEtaPipeline = action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS && action.value === 'energyTradingAmounts-calculateMSummary';
 
     const statuses = [
       SettlementStatus.IN_PROGRESS_GENERATE_MONTHLY_SUMMARY,
@@ -183,8 +183,8 @@ export class SettlementActionsPipe implements PipeTransform {
   }
 
   handleCalcGmrVat(action: JobSelect, isSettlementModule = true, status: keyof typeof SettlementStatus): JobSelect {
-    const isRtaPipeline = action.type === settlementSearchNames.RESERVE_TRADING_AMOUNTS && action.value === 'reserveTradingAmounts-calculateGMRVAT';
-    const isEtaPipeline = action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS && action.value === 'energyTradingAmounts-calculateGMRVAT';
+    const isRtaPipeline = action.type === settlementSearchNames.RESERVE_TRADING_AMOUNTS && action.value === 'reserveTradingAmounts-calculateGmrVat';
+    const isEtaPipeline = action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS && action.value === 'energyTradingAmounts-calculateGmrVat';
 
     // TODO: Add ETA Equivalents
 

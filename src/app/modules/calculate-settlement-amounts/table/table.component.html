@@ -113,7 +113,7 @@
                         processType: currentModalData.processType
                     }"></ng-container>
                 }
-                @case ('generateMonthlySummary') {
+                @case ('calculateMSummary') {
                     <ng-container *ngTemplateOutlet="dateRangeSelection; context: {
                         actionMessage: currentModalData.actionMessage,
                         tradingDate: currentModalData.tradingDate,
