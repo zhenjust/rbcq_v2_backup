@@ -473,6 +473,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     'energyTradingAmounts-generateMonthlySummary',
     'reserveTradingAmounts-generateMonthlySummary',
     'reserveTradingAmounts-calculateGMRVAT',
+    'energyTradingAmounts-calculateGMRVAT',
     'reserveTradingAmounts-finalize',
     'energyTradingAmounts-finalize',
   ];
@@ -493,6 +494,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       ['reserveTradingAmounts-generateMonthlySummary']: () => this.runJobWithConfirmation(action, row),
 
       ['reserveTradingAmounts-calculateGMRVAT']: () => this.runJobWithConfirmation(action, row),
+      ['energyTradingAmounts-calculateGMRVAT']: () => this.runJobWithConfirmation(action, row),
 
       ['reserveTradingAmounts-finalize']: () => this.runJobWithConfirmation(action, row),
       ['energyTradingAmounts-finalize']: () => this.runJobWithConfirmation(action, row),

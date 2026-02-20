@@ -40,6 +40,7 @@ export const RtaSettlementStatus = {
   IN_PROGRESS_GENERATE_INPUT_RESERVE_WORKSPACE: 'In-Progress - Generate Reserve Input Workspace', // RTA
   CANCELLED_RESERVE_SETTLEMENT_CALCULATION: 'Cancelled - Reserve Settlement Calculation', // RTA
   CANCELLED_GENERATE_INPUT_RESERVE_WORKSPACE: 'Cancelled - Generate Reserve Input Workspace', // RTA
+  IN_PROGRESS_RESERVE_SETTLEMENT_CALCULATION: 'In-Progress - Reserve Settlement Calculation', // RTA
   FAILED_RESERVE_SETTLEMENT_CALCULATION: 'Failed - Reserve Settlement Calculation', // RTA
   FAILED_GENERATE_INPUT_RESERVE_WORKSPACE: `Failed - Generate Reserve Input Workspace`, // RTA
   COMPLETED_RESERVE_SETTLEMENT_CALCULATION: 'Completed - Reserve Settlement Calculation', // RTA
@@ -50,11 +51,6 @@ export const RtaSettlementStatus = {
   IN_PROGRESS_GENERATE_RESERVE_FILES: 'In-Progress - Generate Reserve Files',
   CANCELLED_GENERATE_RESERVE_FILES: 'Cancelled - Generate Reserve Files',
   FAILED_GENERATE_RESERVE_FILES: 'Failed - Generate Reserve Files',
-
-  IN_PROGRESS_CALCULATE_GMRVAT: 'In-Progress - Calculate GMR/VAT',
-  FAILED_CALCULATE_GMRVAT: 'Failed - Calculate GMR/VAT',
-  COMPLETED_CALCULATE_GMRVAT: 'Completed - Calculate GMR/VAT',
-  CANCELLED_CALCULATE_GMRVAT: 'Cancelled - Calculate GMR/VAT',
 }
 
 export const EtaSettlementStatus = {
@@ -65,14 +61,31 @@ export const EtaSettlementStatus = {
   FAILED_SETTLEMENT_CALCULATION: 'Failed - Settlement Calculation', // ETA
   CANCELLED_GENERATE_INPUT_WORKSPACE: 'Cancelled - Generate Input Workspace', // ETA
   CANCELLED_SETTLEMENT_CALCULATION: 'Cancelled - Settlement Calculation', // ETA
+  IN_PROGRESS_SETTLEMENT_CALCULATION: 'In-Progress - Settlement Calculation', // RTA
 
-  IN_PROGRESS_GENERATE_INPUT_ENERGY_WORKSPACE: 'In-Progress - Generate Energy Input Workspace', // ETA
+  IN_PROGRESS_GENERATE_INPUT_ENERGY_WORKSPACE: 'In-Progress - Generate Input Workspace', // ETA
+  COMPLETED_GENERATE_ENERGY_FILES: 'Completed - Generate Energy Files',
+  IN_PROGRESS_GENERATE_ENERGY_FILES: 'In-Progress - Generate Energy Files',
+  CANCELLED_GENERATE_ENERGY_FILES: 'Cancelled - Generate Energy Files',
+  FAILED_GENERATE_ENERGY_FILES: 'Failed - Generate Energy Files',
 }
 
 export const SettlementStatus = {
   NULLIFIED: 'Nullified',
   COMPLETED_SETTLEMENT_READY: 'Completed - Settlement Ready',
   COMPLETED_TAGGING: 'Completed - Tagging',
+
+  /** Finalize */
+  IN_PROGRESS_FINALIZE: 'In-Progress - Finalize',
+  FAILED_FINALIZE: 'Failed - Finalize',
+  COMPLETED_FINALIZE: 'Completed - Finalize',
+  CANCELLED_FINALIZE: 'Cancelled - Finalize',
+
+  /** Calc GMR/VAT */
+  IN_PROGRESS_CALCULATE_GMRVAT: 'In-Progress - Calculate GMR/VAT',
+  FAILED_CALCULATE_GMRVAT: 'Failed - Calculate GMR/VAT',
+  COMPLETED_CALCULATE_GMRVAT: 'Completed - Calculate GMR/VAT',
+  CANCELLED_CALCULATE_GMRVAT: 'Cancelled - Calculate GMR/VAT',
 
   /** Generate Monthly Summary */
   IN_PROGRESS_GENERATE_MONTHLY_SUMMARY: 'In-Progress - Generate Monthly Summary',

@@ -1,6 +1,6 @@
 import { inject, Pipe, PipeTransform } from '@angular/core';
 import { AuthorizationService } from '@core/services/authorization.service';
-import { EtaSettlementStatus, PHASE_TWO_AUTHORITIES, RtaSettlementStatus, SettlementStatus } from '@shared/constants';
+import { PHASE_TWO_AUTHORITIES, SettlementStatus } from '@shared/constants';
 import { MeterProcessTypes, settlementSearchNames } from '@shared/enums';
 import { JobSelect, settlementPipeline } from '@shared/interfaces';
 
@@ -37,7 +37,7 @@ export class SettlementActionsPipe implements PipeTransform {
         }
 
         if (value === 'calculateEnergyTradingAmount' || value === 'calculateReserveTradingAmount') {
-          action = this.handleCalculateTA(action, isSettlementModules, status as keyof typeof SettlementStatus, module);
+          action = this.handleCalculateTA(action, isSettlementModules, status as keyof typeof SettlementStatus);
         }
 
         if (value === 'generateMonthlySummary') {
@@ -53,7 +53,7 @@ export class SettlementActionsPipe implements PipeTransform {
           action.show = action.show && processType !== MeterProcessTypes.DAILY;
         }
 
-        if (value === 'reserveTradingAmounts-calculateGMRVAT') {
+        if (value === 'reserveTradingAmounts-calculateGMRVAT' || value === 'energyTradingAmounts-calculateGMRVAT') {
           action = this.handleCalcGmrVat(action, isSettlementModules, status as keyof typeof SettlementStatus);
           action.show = action.show && processType !== MeterProcessTypes.DAILY;
         }
@@ -68,47 +68,38 @@ export class SettlementActionsPipe implements PipeTransform {
       .filter(action => action.show);
   }
 
-  handleCalculateTA(action: JobSelect, isSettlementModule = true, status: keyof typeof SettlementStatus, module: string): JobSelect {
-    const isRta = module === 'reserveTradingAmounts' && action.value === 'calculateReserveTradingAmount';
-    const isEta = module === 'energyTradingAmounts' && action.value === 'calculateEnergyTradingAmount';
+  /** FLOW:
+   *  Settlement Ready
+   *  Generate Input Workspace
+   *  Calc Trading Amount
+   *  Generate Monthly Summary
+   *  Generate Files
+   */
 
-    const statuses = [
-      ...(isRta ? Object.values(EtaSettlementStatus) : []),
-      ...(isEta ? Object.values(RtaSettlementStatus) : []),
-      SettlementStatus.FAILED_GENERATE_INPUT_RESERVE_WORKSPACE,
-      SettlementStatus.FAILED_GENERATE_INPUT_WORKSPACE,
-      SettlementStatus.COMPLETED_SETTLEMENT_READY,
-      SettlementStatus.COMPLETED_TAGGING,
-    ];
+  GEN_IWS_STATUSES = [
+    SettlementStatus.COMPLETED_GENERATE_INPUT_WORKSPACE,
+    SettlementStatus.COMPLETED_GENERATE_RESERVE_INPUT_WORKSPACE,
+    SettlementStatus.IN_PROGRESS_GENERATE_INPUT_ENERGY_WORKSPACE,
+    SettlementStatus.IN_PROGRESS_GENERATE_INPUT_RESERVE_WORKSPACE,
+    SettlementStatus.FAILED_GENERATE_INPUT_RESERVE_WORKSPACE,
+    SettlementStatus.FAILED_GENERATE_INPUT_WORKSPACE,
+    SettlementStatus.CANCELLED_GENERATE_INPUT_RESERVE_WORKSPACE,
+    SettlementStatus.CANCELLED_GENERATE_INPUT_WORKSPACE,
 
-    action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_CALCULATE_TA] : [];
-    action.show = !statuses.includes(status as keyof typeof SettlementStatus) && (isRta || isEta) && this.checkPermissions(action.permissions);
+    SettlementStatus.COMPLETED_SETTLEMENT_READY,
+    SettlementStatus.COMPLETED_TAGGING,
+  ];
 
-    return action;
-  }
-
-  handleGenerateMonthlySummary(action: JobSelect, isSettlementModule = true, status: keyof typeof SettlementStatus): JobSelect {
-    const isRtaPipeline = action.type === settlementSearchNames.RESERVE_TRADING_AMOUNTS && action.value === 'reserveTradingAmounts-generateMonthlySummary';
-    const isEtaPipeline = action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS && action.value === 'energyTradingAmounts-generateMonthlySummary';
-
-    const statuses = [
-      SettlementStatus.IN_PROGRESS_GENERATE_MONTHLY_SUMMARY,
-      SettlementStatus.FAILED_SETTLEMENT_CALCULATION,
-      SettlementStatus.FAILED_RESERVE_SETTLEMENT_CALCULATION,
-      SettlementStatus.FAILED_GENERATE_INPUT_RESERVE_WORKSPACE,
-      SettlementStatus.FAILED_GENERATE_INPUT_WORKSPACE,
-      SettlementStatus.COMPLETED_GENERATE_INPUT_WORKSPACE,
-      SettlementStatus.COMPLETED_GENERATE_RESERVE_INPUT_WORKSPACE,
-      SettlementStatus.COMPLETED_SETTLEMENT_READY,
-      SettlementStatus.COMPLETED_TAGGING,
-    ];
-
-    action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_GEN_MONTHLY_SUMMARY] : [];
-    action.show = !statuses.includes(status as keyof typeof SettlementStatus) && (isRtaPipeline || isEtaPipeline);
-
-    return action;
-
-  }
+  CALC_TA_STATUSES = [
+    SettlementStatus.COMPLETED_SETTLEMENT_CALCULATION,
+    SettlementStatus.COMPLETED_RESERVE_SETTLEMENT_CALCULATION,
+    SettlementStatus.IN_PROGRESS_RESERVE_SETTLEMENT_CALCULATION,
+    SettlementStatus.IN_PROGRESS_SETTLEMENT_CALCULATION,
+    SettlementStatus.FAILED_SETTLEMENT_CALCULATION,
+    SettlementStatus.FAILED_RESERVE_SETTLEMENT_CALCULATION,
+    SettlementStatus.CANCELLED_RESERVE_SETTLEMENT_CALCULATION,
+    SettlementStatus.CANCELLED_SETTLEMENT_CALCULATION,
+  ]
 
   handleGenerateStatus(action: JobSelect, module: string, status: keyof typeof SettlementStatus): JobSelect {
     const isRta = module === 'reserveTradingAmounts' && action.value === 'generateReserveInputWorkspace';
@@ -124,6 +115,55 @@ export class SettlementActionsPipe implements PipeTransform {
     action.show = !statuses.includes(status) && (isRta || isEta) && this.checkPermissions(action.permissions);
 
     return action;
+  }
+
+  handleCalculateTA(action: JobSelect, isSettlementModule = true, status: keyof typeof SettlementStatus): JobSelect {
+    const isRtaPipeline = action.type === settlementSearchNames.RESERVE_TRADING_AMOUNTS && action.value === 'calculateReserveTradingAmount';
+    const isEtaPipeline = action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS && action.value === 'calculateEnergyTradingAmount';
+
+    const statuses = [
+      SettlementStatus.IN_PROGRESS_RESERVE_SETTLEMENT_CALCULATION,
+      SettlementStatus.IN_PROGRESS_SETTLEMENT_CALCULATION,
+
+      SettlementStatus.IN_PROGRESS_GENERATE_INPUT_RESERVE_WORKSPACE,
+      SettlementStatus.IN_PROGRESS_GENERATE_INPUT_ENERGY_WORKSPACE,
+      SettlementStatus.FAILED_GENERATE_INPUT_RESERVE_WORKSPACE,
+      SettlementStatus.FAILED_GENERATE_INPUT_WORKSPACE,
+      SettlementStatus.CANCELLED_GENERATE_INPUT_RESERVE_WORKSPACE,
+      SettlementStatus.CANCELLED_GENERATE_INPUT_WORKSPACE,
+
+      SettlementStatus.COMPLETED_SETTLEMENT_READY,
+      SettlementStatus.COMPLETED_TAGGING,
+    ];
+
+    action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_CALCULATE_TA] : [];
+    action.show = !statuses.includes(status as keyof typeof SettlementStatus) && (isRtaPipeline || isEtaPipeline) && this.checkPermissions(action.permissions);
+
+    return action;
+  }
+
+  handleGenerateMonthlySummary(action: JobSelect, isSettlementModule = true, status: keyof typeof SettlementStatus): JobSelect {
+    const isRtaPipeline = action.type === settlementSearchNames.RESERVE_TRADING_AMOUNTS && action.value === 'reserveTradingAmounts-generateMonthlySummary';
+    const isEtaPipeline = action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS && action.value === 'energyTradingAmounts-generateMonthlySummary';
+
+    const statuses = [
+      SettlementStatus.IN_PROGRESS_GENERATE_MONTHLY_SUMMARY,
+
+      SettlementStatus.IN_PROGRESS_RESERVE_SETTLEMENT_CALCULATION,
+      SettlementStatus.IN_PROGRESS_SETTLEMENT_CALCULATION,
+      SettlementStatus.FAILED_SETTLEMENT_CALCULATION,
+      SettlementStatus.FAILED_RESERVE_SETTLEMENT_CALCULATION,
+      SettlementStatus.CANCELLED_RESERVE_SETTLEMENT_CALCULATION,
+      SettlementStatus.CANCELLED_SETTLEMENT_CALCULATION,
+
+      ...this.GEN_IWS_STATUSES,
+    ];
+
+    action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_GEN_MONTHLY_SUMMARY] : [];
+    action.show = !statuses.includes(status as keyof typeof SettlementStatus) && (isRtaPipeline || isEtaPipeline);
+
+    return action;
+
   }
 
   handleGenerateFiles(action: JobSelect, isSettlementModule = true, status: keyof typeof SettlementStatus, module: string): JobSelect {
@@ -144,86 +184,59 @@ export class SettlementActionsPipe implements PipeTransform {
 
   handleCalcGmrVat(action: JobSelect, isSettlementModule = true, status: keyof typeof SettlementStatus): JobSelect {
     const isRtaPipeline = action.type === settlementSearchNames.RESERVE_TRADING_AMOUNTS && action.value === 'reserveTradingAmounts-calculateGMRVAT';
+    const isEtaPipeline = action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS && action.value === 'energyTradingAmounts-calculateGMRVAT';
+
+    // TODO: Add ETA Equivalents
 
     const statuses = [
       SettlementStatus.IN_PROGRESS_CALCULATE_GMRVAT,
 
-      SettlementStatus.IN_PROGRESS_GENERATE_MONTHLY_SUMMARY,
-      SettlementStatus.CANCELLED_GENERATE_MONTHLY_SUMMARY,
-      SettlementStatus.FAILED_GENERATE_MONTHLY_SUMMARY,
-
-      SettlementStatus.FAILED_SETTLEMENT_CALCULATION,
-      SettlementStatus.FAILED_RESERVE_SETTLEMENT_CALCULATION,
-      SettlementStatus.FAILED_GENERATE_INPUT_RESERVE_WORKSPACE,
-      SettlementStatus.FAILED_GENERATE_INPUT_WORKSPACE,
-
-      // TODO: Add ETA Equivalents
-
-      SettlementStatus.COMPLETED_GENERATE_RESERVE_FILES,
       SettlementStatus.IN_PROGRESS_GENERATE_RESERVE_FILES,
       SettlementStatus.CANCELLED_GENERATE_RESERVE_FILES,
       SettlementStatus.FAILED_GENERATE_RESERVE_FILES,
 
-      SettlementStatus.COMPLETED_RESERVE_SETTLEMENT_CALCULATION,
-      SettlementStatus.COMPLETED_SETTLEMENT_CALCULATION,
-      SettlementStatus.COMPLETED_GENERATE_INPUT_WORKSPACE,
-      SettlementStatus.COMPLETED_GENERATE_RESERVE_INPUT_WORKSPACE,
+      SettlementStatus.IN_PROGRESS_GENERATE_MONTHLY_SUMMARY,
+      SettlementStatus.FAILED_GENERATE_MONTHLY_SUMMARY,
+      SettlementStatus.CANCELLED_GENERATE_MONTHLY_SUMMARY,
 
-      SettlementStatus.COMPLETED_SETTLEMENT_READY,
-      SettlementStatus.COMPLETED_TAGGING,
+      ...this.CALC_TA_STATUSES,
+      ...this.GEN_IWS_STATUSES,
     ];
 
     action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_CALCULATE_GMRVAT] : [];
-    action.show = !statuses.includes(status as keyof typeof SettlementStatus) && isRtaPipeline;
+    action.show = !statuses.includes(status as keyof typeof SettlementStatus) && (isRtaPipeline || isEtaPipeline) && this.checkPermissions(action.permissions);
 
     return action;
 
   }
 
   handleFinalizeSettlement(action: JobSelect, isSettlementModule = true, status: keyof typeof SettlementStatus): JobSelect {
-    const isRtaPipeline = action.type === settlementSearchNames.RESERVE_TRADING_AMOUNTS && action.value === 'reserveTradingAmounts-generateMonthlySummary';
-    const isEtaPipeline = action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS && action.value === 'energyTradingAmounts-generateMonthlySummary';
+    const isRtaPipeline = action.type === settlementSearchNames.RESERVE_TRADING_AMOUNTS && action.value === 'reserveTradingAmounts-finalize';
+    const isEtaPipeline = action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS && action.value === 'energyTradingAmounts-finalize';
 
     const statuses = [
       SettlementStatus.IN_PROGRESS_CALCULATE_GMRVAT,
+      SettlementStatus.IN_PROGRESS_FINALIZE,
 
       SettlementStatus.IN_PROGRESS_GENERATE_MONTHLY_SUMMARY,
       SettlementStatus.CANCELLED_GENERATE_MONTHLY_SUMMARY,
       SettlementStatus.FAILED_GENERATE_MONTHLY_SUMMARY,
-      SettlementStatus.COMPLETED_GENERATE_MONTHLY_SUMMARY,
-
-      SettlementStatus.FAILED_SETTLEMENT_CALCULATION,
-      SettlementStatus.FAILED_RESERVE_SETTLEMENT_CALCULATION,
-      SettlementStatus.FAILED_GENERATE_INPUT_RESERVE_WORKSPACE,
-      SettlementStatus.FAILED_GENERATE_INPUT_WORKSPACE,
-
-      // TODO: Add ETA Equivalents
 
       SettlementStatus.COMPLETED_GENERATE_RESERVE_FILES,
       SettlementStatus.IN_PROGRESS_GENERATE_RESERVE_FILES,
       SettlementStatus.CANCELLED_GENERATE_RESERVE_FILES,
       SettlementStatus.FAILED_GENERATE_RESERVE_FILES,
 
-      SettlementStatus.COMPLETED_RESERVE_SETTLEMENT_CALCULATION,
-      SettlementStatus.COMPLETED_SETTLEMENT_CALCULATION,
-      SettlementStatus.COMPLETED_GENERATE_INPUT_WORKSPACE,
-      SettlementStatus.COMPLETED_GENERATE_RESERVE_INPUT_WORKSPACE,
-
-      SettlementStatus.COMPLETED_SETTLEMENT_READY,
-      SettlementStatus.COMPLETED_TAGGING,
+      ...this.GEN_IWS_STATUSES,
+      ...this.CALC_TA_STATUSES,
     ];
 
     action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_FINALIZE_LR] : [];
-    action.show = !statuses.includes(status as keyof typeof SettlementStatus) && (isRtaPipeline || isEtaPipeline);
+    action.show = !statuses.includes(status as keyof typeof SettlementStatus) && (isRtaPipeline || isEtaPipeline) && this.checkPermissions(action.permissions);
 
+    console.log(this.checkPermissions(action.permissions))
     return action;
   }
-
-  /** FLOW:
-   *  Settlement Ready
-   *  Generate Input Workspace
-   *
-   */
 
   checkPermissions(permissions: string[]): boolean {
     const auths = this.ps.currentUser()?.principal?.privileges || [];
