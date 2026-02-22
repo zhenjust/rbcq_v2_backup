@@ -14,6 +14,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
 import { CoreModule } from '@core/core.module';
 import { NgxPermissionsModule } from 'ngx-permissions';
+import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
 
 registerLocaleData(en);
 
@@ -30,7 +31,8 @@ registerLocaleData(en);
     ToastrModule.forRoot({
       toastClass: 'ngx-toastr w-toastr'
     }),
-    NgxPermissionsModule.forRoot()
+    NgxPermissionsModule.forRoot(),
+    RxReactiveFormsModule,
   ],
   providers: [
     provideNzI18n(en_US),

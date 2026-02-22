@@ -38,6 +38,8 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { ConfirmWithContentComponent } from './components/confirm-with-content/confirm-with-content.component';
 import { DateRangePickerComponent } from './components/date-range-picker/date-range-picker.component';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { ReloginComponent } from './components/relogin/relogin.component';
+import { NzResultModule } from 'ng-zorro-antd/result';
 
 const ngZorroConfig: NzConfig = {
   notification: { nzDuration: 300, nzMaxStack: 3, nzTop: '150px' }
@@ -70,7 +72,8 @@ const NgZorroModules = [
   NzBadgeModule,
   NzSpinModule,
   NzInputModule,
-  NzCheckboxModule
+  NzCheckboxModule,
+  NzResultModule
 ];
 
 const Pipes = [
@@ -89,7 +92,8 @@ const Pipes = [
     ConfirmWithDescComponent,
     PaginatedTableComponent,
     ConfirmWithContentComponent,
-    DateRangePickerComponent
+    DateRangePickerComponent,
+    ReloginComponent
   ],
   imports: [
     CommonModule,
@@ -107,6 +111,7 @@ const Pipes = [
     ConfirmWithDescComponent,
     PaginatedTableComponent,
     ReactiveFormsModule,
+    RxReactiveFormsModule,
     NgxPermissionsModule,
     FormsModule,
     DateRangePickerComponent,

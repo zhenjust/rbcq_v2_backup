@@ -649,6 +649,14 @@ export class NavbarComponent implements OnInit {
       },
       //BCQ Menu Routes
       //TODO Finalize permission to this list
+      //     const bcqUploadAndViewPrivs = [USER_AUTHORITIES.UPLOAD_BCQ, USER_AUTHORITIES.VIEW_BCQ, USER_AUTHORITIES.CANCEL_BCQ, USER_AUTHORITIES.ASSESS_BCQ];
+      // nonPemcUser
+      // regCategory == REG_TYPE.NSP
+
+      //      <NgIf show={nonPemcUser && isAuthorizedParticipant && !isNsp}>
+      // ? participant.status === 'APPROVED' && participant.registrationCategory != REG_TYPE.RAG
+
+
       {
         title: 'Manage BCQs',
         show: true,

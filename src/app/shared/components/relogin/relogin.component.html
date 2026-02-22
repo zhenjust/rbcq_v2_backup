@@ -1,0 +1,46 @@
+<!-- <nz-result nzStatus="warning" nzTitle="Your session has expired. Please login again.">
+  <div nz-result-extra> -->
+    @if (form) {
+      <form [formGroup]="form" autocomplete="off" novalidate nz-form nzLayout="vertical">
+        <nz-form-item>
+          <nz-form-label>Username</nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="username" placeholder="Username" />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label>Password</nz-form-label>
+          <nz-form-control>
+            <!-- <nz-input-group [nzAddOnAfter]="tpl">
+              <input type="password" nz-input formControlName="password" placeholder="Password" />
+              <ng-template #tpl>
+                <nz-icon class="ant-input-password-icon" nzType="eye-invisible" />
+              </ng-template>
+            </nz-input-group> -->
+
+
+            <nz-input-group [nzSuffix]="suffixTemplate">
+              <input
+                [type]="passwordVisible ? 'text' : 'password'"
+                nz-input
+                placeholder="Password"
+                formControlName="password"
+              />
+            </nz-input-group>
+
+            <ng-template #suffixTemplate>
+              <nz-icon
+                class="ant-input-password-icon"
+                [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                (click)="passwordVisible = !passwordVisible"
+              />
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+
+    }
+<!--
+  </div>
+</nz-result> -->

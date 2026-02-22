@@ -24,6 +24,16 @@ export class SettlementActionsPipe implements PipeTransform {
         const { status, processType } = data;
         const isSettlementModules = this.settlementModules.includes(module);
 
+        if (value === 'cancelRun') {
+          action.show = status.startsWith('In-Progress');
+          return action;
+        }
+
+        if (status.startsWith('In-Progress')) {
+          action.show = false;
+          return action;
+        }
+
         if (value === 'publish') {
           action.show = !data.published;
         }
@@ -32,9 +42,6 @@ export class SettlementActionsPipe implements PipeTransform {
           action = this.handleGenerateStatus(action, module, status as keyof typeof SettlementStatus);
         }
 
-        if (value === 'cancelRun') {
-          action.show = status.startsWith('In-Progress');
-        }
 
         if (value === 'calculateEnergyTradingAmount' || value === 'calculateReserveTradingAmount') {
           action = this.handleCalculateTA(action, isSettlementModules, status as keyof typeof SettlementStatus);
@@ -79,8 +86,6 @@ export class SettlementActionsPipe implements PipeTransform {
   GEN_IWS_STATUSES = [
     SettlementStatus.COMPLETED_GENERATE_INPUT_WORKSPACE,
     SettlementStatus.COMPLETED_GENERATE_RESERVE_INPUT_WORKSPACE,
-    SettlementStatus.IN_PROGRESS_GENERATE_INPUT_ENERGY_WORKSPACE,
-    SettlementStatus.IN_PROGRESS_GENERATE_INPUT_RESERVE_WORKSPACE,
     SettlementStatus.FAILED_GENERATE_INPUT_RESERVE_WORKSPACE,
     SettlementStatus.FAILED_GENERATE_INPUT_WORKSPACE,
     SettlementStatus.CANCELLED_GENERATE_INPUT_RESERVE_WORKSPACE,
@@ -93,8 +98,6 @@ export class SettlementActionsPipe implements PipeTransform {
   CALC_TA_STATUSES = [
     SettlementStatus.COMPLETED_SETTLEMENT_CALCULATION,
     SettlementStatus.COMPLETED_RESERVE_SETTLEMENT_CALCULATION,
-    SettlementStatus.IN_PROGRESS_RESERVE_SETTLEMENT_CALCULATION,
-    SettlementStatus.IN_PROGRESS_SETTLEMENT_CALCULATION,
     SettlementStatus.FAILED_SETTLEMENT_CALCULATION,
     SettlementStatus.FAILED_RESERVE_SETTLEMENT_CALCULATION,
     SettlementStatus.CANCELLED_RESERVE_SETTLEMENT_CALCULATION,
@@ -147,10 +150,6 @@ export class SettlementActionsPipe implements PipeTransform {
     const isEtaPipeline = action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS && action.value === 'energyTradingAmounts-calculateMSummary';
 
     const statuses = [
-      SettlementStatus.IN_PROGRESS_GENERATE_MONTHLY_SUMMARY,
-
-      SettlementStatus.IN_PROGRESS_RESERVE_SETTLEMENT_CALCULATION,
-      SettlementStatus.IN_PROGRESS_SETTLEMENT_CALCULATION,
       SettlementStatus.FAILED_SETTLEMENT_CALCULATION,
       SettlementStatus.FAILED_RESERVE_SETTLEMENT_CALCULATION,
       SettlementStatus.CANCELLED_RESERVE_SETTLEMENT_CALCULATION,
@@ -189,13 +188,9 @@ export class SettlementActionsPipe implements PipeTransform {
     // TODO: Add ETA Equivalents
 
     const statuses = [
-      SettlementStatus.IN_PROGRESS_CALCULATE_GMRVAT,
-
-      SettlementStatus.IN_PROGRESS_GENERATE_RESERVE_FILES,
       SettlementStatus.CANCELLED_GENERATE_RESERVE_FILES,
       SettlementStatus.FAILED_GENERATE_RESERVE_FILES,
 
-      SettlementStatus.IN_PROGRESS_GENERATE_MONTHLY_SUMMARY,
       SettlementStatus.FAILED_GENERATE_MONTHLY_SUMMARY,
       SettlementStatus.CANCELLED_GENERATE_MONTHLY_SUMMARY,
 
@@ -215,15 +210,10 @@ export class SettlementActionsPipe implements PipeTransform {
     const isEtaPipeline = action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS && action.value === 'energyTradingAmounts-finalize';
 
     const statuses = [
-      SettlementStatus.IN_PROGRESS_CALCULATE_GMRVAT,
-      SettlementStatus.IN_PROGRESS_FINALIZE,
-
-      SettlementStatus.IN_PROGRESS_GENERATE_MONTHLY_SUMMARY,
       SettlementStatus.CANCELLED_GENERATE_MONTHLY_SUMMARY,
       SettlementStatus.FAILED_GENERATE_MONTHLY_SUMMARY,
 
       SettlementStatus.COMPLETED_GENERATE_RESERVE_FILES,
-      SettlementStatus.IN_PROGRESS_GENERATE_RESERVE_FILES,
       SettlementStatus.CANCELLED_GENERATE_RESERVE_FILES,
       SettlementStatus.FAILED_GENERATE_RESERVE_FILES,
 
@@ -234,7 +224,6 @@ export class SettlementActionsPipe implements PipeTransform {
     action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_FINALIZE_LR] : [];
     action.show = !statuses.includes(status as keyof typeof SettlementStatus) && (isRtaPipeline || isEtaPipeline) && this.checkPermissions(action.permissions);
 
-    console.log(this.checkPermissions(action.permissions))
     return action;
   }
 

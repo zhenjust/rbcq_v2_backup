@@ -11,12 +11,16 @@ import { catchError } from 'rxjs/operators';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { ToastrService } from 'ngx-toastr';
 import { LABELS } from '@shared/constants/labels.const';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { ReloginComponent } from '@shared/components/relogin/relogin.component';
 
 @Injectable()
 export class RequestInterceptor implements HttpInterceptor {
 
   private readonly authService = inject(AuthorizationService);
   private readonly toast = inject(ToastrService);
+  private readonly modalService = inject(NzModalService);
+  authModal: NzModalRef<ReloginComponent, any>;
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     if (request.url.includes('/oauth/token')) {
@@ -45,8 +49,6 @@ export class RequestInterceptor implements HttpInterceptor {
           return throwError(() => error);
         }
 
-        // if(request.url.includes('metering/uploadData"'))
-
         switch (error.status) {
           case 401: {
             const refreshToken = localStorage.getItem('refresh_token');
@@ -54,6 +56,25 @@ export class RequestInterceptor implements HttpInterceptor {
             if (refreshToken) {
               this.authService.logout();
             }
+
+            if (this.authModal?.state !== 0 && this.authService.currentUser()) {
+              this.authModal = this.modalService.create({
+                nzTitle: 'Session Expired',
+                nzContent: ReloginComponent,
+                nzCentered: true,
+                nzOkText: 'Login',
+                nzOnOk: (comp) => {
+                  const payload = comp.form.getRawValue();
+                  this.authService.login(payload).subscribe(() => {
+                    this.authService.authorize('', '').subscribe(() => {
+                      this.authModal.close();
+                      this.authModal.destroy();
+                    })
+                  })
+                }
+              });
+            }
+
             break;
           }
           case 400:

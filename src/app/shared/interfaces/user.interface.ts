@@ -8,4 +8,7 @@ export interface CurrentUser {
         roles: string[],
         department?: string;
     }
+    user?: {
+        name: string;
+    }
 }

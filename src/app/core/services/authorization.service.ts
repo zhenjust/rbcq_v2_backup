@@ -42,6 +42,20 @@ export class AuthorizationService {
     return this.http.get<string>(`${apiPath.__AUTH_PATH__}/oauth/invalidate-token`);
   }
 
+  login(payload: any) {
+    let body = new HttpParams();
+
+    Object.keys(payload).forEach(key => {
+      body = body.set(key, payload[key]);
+    });
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/x-www-form-urlencoded'
+    });
+
+    return this.http.post<any>(`${apiPath.__AUTH_PATH__}/login`, body, { headers, withCredentials: true });
+  }
+
   authorize(code: string, redirectUri: string): Observable<boolean> {
     const body = new HttpParams()
       .set('grant_type', 'authorization_code')
