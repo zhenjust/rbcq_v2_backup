@@ -73,9 +73,31 @@ export class AuthorizationService {
       tap(response => {
         localStorage.setItem('id_token', response.access_token);
         localStorage.setItem('refresh_token', response.refresh_token);
+        localStorage.setItem('expiry', response.expires_in.toString());
       }),
       map(() => true)
     );
+  }
+
+  public refreshToken(refreshToken: string): Observable<any> {
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
+    headers = headers.append('Authorization', 'Basic ' + btoa('crss:crsssecret'));
+    headers = headers.append('exclude', 'true');
+
+    let params = new HttpParams();
+    params = params.append('grant_type', 'refresh_token');
+    params = params.append('refresh_token', refreshToken);
+
+    return this.http.post<any>(`${apiPath.__AUTH_PATH__}/oauth/token`, params, { headers })
+      .pipe(
+        tap((response) => {
+          localStorage.setItem('id_token', response.access_token);
+          localStorage.setItem('refresh_token', response.refresh_token);
+          localStorage.setItem('expiry', response.expires_in.toString());
+          return response;
+        })
+      );
   }
 
   userInit(): Observable<CurrentUser> {

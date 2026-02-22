@@ -1,4 +1,4 @@
-import { Component, effect, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
 import { externalRoutes, NEW_ROUTES } from '@shared/constants';
 import { CurrentUser, navItems } from '@shared/interfaces';
 import { faBell, faHome, faChevronDown, faChevronRight, faAddressCard, faBuilding, faCopy, faUserLarge, faCircleUser, faCalendar, faFileArchive, faAddressBook, faBuildingUn, faTachometer, faTachometerAlt, faBinoculars, faContactCard, faHandHoldingHand, faTachometerAverage, faListCheck, faRoadCircleCheck, faUpload } from '@fortawesome/free-solid-svg-icons';
@@ -37,27 +37,23 @@ export class NavbarComponent implements OnInit {
   private as = inject(AdminService);
   regCategory: string;
 
-  constructor() {
-    effect(() => {
-      const user = this.authorizationService.currentUser();
-      this.userData.set(user);
-      if (user) {
-        this.getMenuItems();
-      }
-    });
-  }
+  constructor() { }
 
   ngOnInit(): void {
     if (!this.authorizationService.currentUser()) {
       this.authorizationService.loadUser().subscribe({
         error: (err) => this.toast.error(err.message),
-        complete: () => this.isLoading.set(false)
+        complete: () => {
+          this.isLoading.set(false)
+          this.userData.set(this.authorizationService.currentUser())
+          this.getMenuItems();
+        }
       });
     } else {
+      this.userData.set(this.authorizationService.currentUser())
+      this.getMenuItems();
       this.isLoading.set(false);
     }
-
-    this.getNavbarInfo();
   }
 
   private getMenuItems(): void {
@@ -649,14 +645,6 @@ export class NavbarComponent implements OnInit {
       },
       //BCQ Menu Routes
       //TODO Finalize permission to this list
-      //     const bcqUploadAndViewPrivs = [USER_AUTHORITIES.UPLOAD_BCQ, USER_AUTHORITIES.VIEW_BCQ, USER_AUTHORITIES.CANCEL_BCQ, USER_AUTHORITIES.ASSESS_BCQ];
-      // nonPemcUser
-      // regCategory == REG_TYPE.NSP
-
-      //      <NgIf show={nonPemcUser && isAuthorizedParticipant && !isNsp}>
-      // ? participant.status === 'APPROVED' && participant.registrationCategory != REG_TYPE.RAG
-
-
       {
         title: 'Manage BCQs',
         show: true,
@@ -1216,6 +1204,7 @@ export class NavbarComponent implements OnInit {
     ];
 
     this.navItems = this.navItems.filter(item => this.hasPermission(item)); //for checking
+    this.getNavbarInfo();
   }
 
   toggleCollapse(): void {
@@ -1227,8 +1216,14 @@ export class NavbarComponent implements OnInit {
       .subscribe(res => {
         if (res) {
           this.regCategory = res?.registrationCategory;
-          const index = this.navItems.findIndex(nav => nav.title === LABELS.MQ_UPLOADER);
-          this.navItems[index].show = this.regCategory === 'MSP';
+          if (this.navItems?.length) {
+            const index = this.navItems?.findIndex(nav => nav.title === LABELS.MQ_UPLOADER);
+            this.navItems[index].show = this.regCategory === 'MSP';
+          } else {
+            this.getMenuItems();
+            const index = this.navItems?.findIndex(nav => nav.title === LABELS.MQ_UPLOADER);
+            this.navItems[index].show = this.regCategory === 'MSP';
+          }
         }
       });
   }

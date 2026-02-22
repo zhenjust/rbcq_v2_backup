@@ -6,8 +6,8 @@ import {
   HttpRequest,
   HttpErrorResponse
 } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { catchError, filter, finalize, switchMap, take } from 'rxjs/operators';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { ToastrService } from 'ngx-toastr';
 import { LABELS } from '@shared/constants/labels.const';
@@ -17,24 +17,33 @@ import { ReloginComponent } from '@shared/components/relogin/relogin.component';
 @Injectable()
 export class RequestInterceptor implements HttpInterceptor {
 
+  private refreshTokenSubject: BehaviorSubject<string> = new BehaviorSubject<string>('');
+
   private readonly authService = inject(AuthorizationService);
   private readonly toast = inject(ToastrService);
   private readonly modalService = inject(NzModalService);
   authModal: NzModalRef<ReloginComponent, any>;
 
-  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    if (request.url.includes('/oauth/token')) {
-      return next.handle(request);
-    }
+  private applyCredentials = (request: HttpRequest<any>) => {
+    const token = this.authService.getToken();
+    const excludeUrl = /assets/gi;
 
-    // Get token from localStorage
-    const token = localStorage.getItem('id_token');
-    if (token) {
+    if (token && request.url.search(excludeUrl) === -1) {
       request = request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`
         }
       });
+    }
+    return request;
+  }
+  refreshTokenInProgress: boolean;
+
+  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    if (request.url.includes('/oauth/token')) {
+      return next.handle(request);
+    } else {
+      this.applyCredentials(request);
     }
 
     return next.handle(request).pipe(
@@ -54,27 +63,49 @@ export class RequestInterceptor implements HttpInterceptor {
             const refreshToken = localStorage.getItem('refresh_token');
 
             if (refreshToken) {
-              this.authService.logout();
-            }
+              if (this.refreshTokenInProgress) {
 
-            if (this.authModal?.state !== 0 && this.authService.currentUser()) {
-              this.authModal = this.modalService.create({
-                nzTitle: 'Session Expired',
-                nzContent: ReloginComponent,
-                nzCentered: true,
-                nzOkText: 'Login',
-                nzOnOk: (comp) => {
-                  const payload = comp.form.getRawValue();
-                  this.authService.login(payload).subscribe(() => {
-                    this.authService.authorize('', '').subscribe(() => {
-                      this.authModal.close();
-                      this.authModal.destroy();
+                return this.refreshTokenSubject.pipe(
+                  filter((token) => token !== null),
+                  take(1),
+                  switchMap((token) => {
+                    if (token) {
+                      return next.handle(this.applyCredentials(request));
+                    }
+
+                    return of()
+                  }));
+
+              } else {
+                this.refreshTokenInProgress = true;
+                this.refreshTokenSubject.next('');
+
+                return this.authService.refreshToken(refreshToken)
+                  .pipe(
+                    switchMap((oauth: any) => {
+                      const newToken = oauth.access_token;
+                      if (newToken) {
+                        this.refreshTokenSubject.next(newToken);
+                        return next.handle(this.applyCredentials(request));
+                      }
+
+                      this.authService.logout()
+                      return of();
+                    }),
+                    catchError((e) => {
+                      this.authService.logout()
+
+                      return throwError(e);
+                    }),
+                    finalize(() => {
+                      this.refreshTokenInProgress = false;
                     })
-                  })
-                }
-              });
+                  );
+              }
             }
 
+            this.authService.logout();
+            window.location.href = `https://crss-dev.exist.com.ph/uaa/login?logout`
             break;
           }
           case 400:

@@ -9,30 +9,34 @@ const routes: Routes = [
   {
     path: '',
     component: BaseComponent,
-    canActivateChild: [AuthorizeGuard],
     children: [
       {
         path: '',
+        canActivateChild: [AuthorizeGuard],
         loadChildren: () =>
             import('./modules/calculate-settlement-amounts/calculate-settlement-amounts.module').then(m => m.CalculateSettlementAmountsModule)
       },
       {
         path: NEW_ROUTES.METER_PROCESS,
+        canActivateChild: [AuthorizeGuard],
         loadChildren: () =>
           import('./modules/meter-process/meter-process.module').then(m => m.MeterProcessModule)
       },
       {
         path: '',
+        canActivateChild: [AuthorizeGuard],
         loadChildren: () =>
           import('./modules/additional-compensation-list/additional-compensation-list.module').then(m => m.AdditionalCompensationListModule)
       },
       {
         path: 'metering',
+        canActivateChild: [AuthorizeGuard],
         loadChildren: () =>
           import('./modules/metering/metering.module').then(m => m.MeteringModule)
       },
       {
         path: 'msp-mq-uploader',
+        canActivateChild: [AuthorizeGuard],
         component: MqUploaderComponent,
       },
     ]
