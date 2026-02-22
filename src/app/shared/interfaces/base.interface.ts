@@ -6,6 +6,7 @@ export interface TPL_TABLE_COLUMN {
   type?: 'string' | 'number' | 'date' | 'template' | 'enumLabel';
   width?: string,
   template?: any,
+  hasRowSpan?: boolean,
 }
 
 export interface BaseResponse {

@@ -8,10 +8,22 @@ import { SettlementPipelineWithRun } from '@shared/interfaces';
 export class SettlementPipelineFormatterPipe implements PipeTransform {
 
   transform(tableData: SettlementPipelineWithRun[]): SettlementPipelineWithRun[] {
-    const formattedTable = tableData.map(td => {
-      return {...td, ...td.pipelineRuns[0]}
-    });
+    return tableData.flatMap(td => {
+      const rowSpan = td.pipelineRuns.length;
 
-    return formattedTable;
+      return td.pipelineRuns.map((run, idx) => {
+        const row: any = {
+          ...td,
+          ...run,
+          description: idx === 0 ? (run.description ?? '') : ''
+        };
+
+        if (idx === 0) {
+          row.rowSpan = rowSpan;
+        }
+
+        return row;
+      });
+    });
   }
 }
