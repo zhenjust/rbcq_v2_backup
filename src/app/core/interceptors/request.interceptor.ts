@@ -19,6 +19,7 @@ export class RequestInterceptor implements HttpInterceptor {
   private readonly toast = inject(ToastrService);
 
   private refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
+  refreshTokenInProgress = false;
 
   private applyCredentials = (request: HttpRequest<any>) => {
     const token = this.authService.getToken();
@@ -33,13 +34,12 @@ export class RequestInterceptor implements HttpInterceptor {
     }
     return request;
   }
-  refreshTokenInProgress: boolean;
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     if (request.url.includes('/oauth/token')) {
       return next.handle(request);
     } else {
-      this.applyCredentials(request);
+      request = this.applyCredentials(request);
     }
 
     return next.handle(request).pipe(
