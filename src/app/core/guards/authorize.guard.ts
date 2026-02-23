@@ -4,7 +4,7 @@ import { AuthorizationService } from '@core/services/authorization.service';
 import { apiPath } from '@shared/constants';
 import { environment } from 'environments/environment';
 import { NgxPermissionsService } from 'ngx-permissions';
-import { map, Observable } from 'rxjs';
+import { catchError, map, Observable, of, switchMap, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -57,10 +57,26 @@ export class AuthorizeGuard implements CanActivate {
       } else {
         return this.validateRole(route.data);
       }
+    } else {
+      const code = this.searchCode() || '';
+      const baseRedirectUri = `${location.protocol}//${location.host}`;
+      const authorizeUrl = `${this.auth_url}/oauth/authorize?response_type=code&client_id=crss&redirect_uri=${baseRedirectUri}`;
+
+      return this.authService.authorize(code, baseRedirectUri).pipe(
+        switchMap(() => this.authService.userInit()),
+        tap(() => {
+          this.authService.loadUser().subscribe(user => {
+            this.ngp.loadPermissions(user?.principal?.privileges);
+            window.location.href = baseRedirectUri + location.pathname !== '/' ? location.pathname : '';
+          });
+        }),
+        map(() => true),
+        catchError(() => {
+          window.location.href = authorizeUrl;
+          return of(false);
+        })
+      );
     }
-
-
-    return false;
   }
 
   validateRole(data: any): boolean {

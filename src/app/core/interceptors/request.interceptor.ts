@@ -11,18 +11,14 @@ import { catchError, filter, finalize, switchMap, take } from 'rxjs/operators';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { ToastrService } from 'ngx-toastr';
 import { LABELS } from '@shared/constants/labels.const';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { ReloginComponent } from '@shared/components/relogin/relogin.component';
 
 @Injectable()
 export class RequestInterceptor implements HttpInterceptor {
 
-  private refreshTokenSubject: BehaviorSubject<string> = new BehaviorSubject<string>('');
-
   private readonly authService = inject(AuthorizationService);
   private readonly toast = inject(ToastrService);
-  private readonly modalService = inject(NzModalService);
-  authModal: NzModalRef<ReloginComponent, any>;
+
+  private refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
 
   private applyCredentials = (request: HttpRequest<any>) => {
     const token = this.authService.getToken();
@@ -75,10 +71,10 @@ export class RequestInterceptor implements HttpInterceptor {
 
                     return of()
                   }));
-
               } else {
                 this.refreshTokenInProgress = true;
-                this.refreshTokenSubject.next('');
+                this.refreshTokenSubject.next(null);
+                localStorage.removeItem('id_token');
 
                 return this.authService.refreshToken(refreshToken)
                   .pipe(
@@ -104,8 +100,6 @@ export class RequestInterceptor implements HttpInterceptor {
               }
             }
 
-            this.authService.logout();
-            window.location.href = `https://crss-dev.exist.com.ph/uaa/login?logout`
             break;
           }
           case 400:

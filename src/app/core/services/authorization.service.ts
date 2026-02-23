@@ -71,6 +71,7 @@ export class AuthorizationService {
 
     return this.http.post<AuthToken>(`${apiPath.__AUTH_PATH__}/oauth/token`, body.toString(), { headers }).pipe(
       tap(response => {
+        console.log({response})
         localStorage.setItem('id_token', response.access_token);
         localStorage.setItem('refresh_token', response.refresh_token);
         localStorage.setItem('expiry', response.expires_in.toString());

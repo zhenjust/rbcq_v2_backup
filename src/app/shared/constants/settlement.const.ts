@@ -34,22 +34,24 @@ export const PRICING_CONDITIONS: settlementJobInstanceOptions[] = [
 // finalize: APP_PERMISSION.TA_FINALIZE
 
 export const SettlementJobActions: JobSelect[] = [
-  /** DONE WITH IMPLEMENTATION */
+  /**
+   *
+   * DONE WITH IMPLEMENTATION
+   * Always arrange by order of process
+   *
+   * */
   { label: LABELS.GENERATE_ENERGY_INPUT_WORKSPACE, value: 'generateInputWorkspace', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
   { label: LABELS.GENERATE_RESERVE_INPUT_WORKSPACE, value: 'generateReserveInputWorkspace', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
-
   { label: LABELS.CALCULATE_ENERGY_TRADING_AMOUNT, value: 'calculateEnergyTradingAmount', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
   { label: LABELS.CALCULATE_RESERVE_TRADING_AMOUNT, value: 'calculateReserveTradingAmount', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
-
-
-  { label: LABELS.GENERATE_RESERVE_FILES, value: 'generate_reserve_files', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
-  { label: LABELS.GENERATE_ENERGY_FILES, value: 'generate_energy_files', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
-
   { label: LABELS.GENERATE_MONTHLY_SUMMARY, value: 'energyTradingAmounts-calculateMSummary', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
   { label: LABELS.GENERATE_RESERVE_MONTHLY_SUMMARY, value: 'reserveTradingAmounts-calculateMSummary', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
   { label: LABELS.CALCULATE_RESERVE_GMR_VAT, value: 'reserveTradingAmounts-calculateGmrVat', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
   { label: LABELS.CALCULATE_GMR_VAT, value: 'energyTradingAmounts-calculateGmrVat', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
-
+  { label: LABELS.FINALIZE_SETTLEMENT, value: 'energyTradingAmounts-finalize', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
+  { label: LABELS.FINALIZE_SETTLEMENT, value: 'reserveTradingAmounts-finalize', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
+  { label: LABELS.GENERATE_RESERVE_FILES, value: 'generate_reserve_files', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
+  { label: LABELS.GENERATE_ENERGY_FILES, value: 'generate_energy_files', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
   { label: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`, value: 'publish' },
 
 
@@ -57,8 +59,6 @@ export const SettlementJobActions: JobSelect[] = [
    * IN_PROGRESS
    */
 
-  { label: LABELS.FINALIZE_SETTLEMENT, value: 'energyTradingAmounts-finalize', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
-  { label: LABELS.FINALIZE_SETTLEMENT, value: 'reserveTradingAmounts-finalize', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
 
 
   /**
