@@ -7,7 +7,7 @@ import { MESSAGES } from '@shared/constants/messages.const';
 import { MeterProcessTypes } from '@shared/enums';
 import { GenerateMetering, meterProcessBillingPeriod } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
-import { format, isAfter } from 'date-fns';
+import { addDays, format, isAfter } from 'date-fns';
 import { NzCheckboxOption } from 'ng-zorro-antd/checkbox';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
@@ -123,7 +123,7 @@ export class GenerateMdvComponent implements OnInit {
   }
 
   nzDisabledDate = (current: Date) => {
-    return isAfter(current, new Date());
+    return isAfter(current, addDays(new Date(), 1));
   };
 
   get isAllSelected(): boolean { return !!this.reportCodes?.value?.length && this.options?.length === this.reportCodes?.value?.length; }
