@@ -119,7 +119,7 @@ export class HeaderComponent implements OnInit {
         // this.as.logout().subscribe(() => {
           this.ngx.flushPermissions();
           localStorage.clear();
-          window.location.href = `${apiPath.__AUTH_PATH__}/logout?redirect_uri`;
+          window.location.href = `${apiPath.__AUTH_PATH__}/logout`;
         // })
       });
   }

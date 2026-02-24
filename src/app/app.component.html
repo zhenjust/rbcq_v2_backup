@@ -1,1 +1,5 @@
 <router-outlet></router-outlet>
+
+<ng-template #idleMsg>
+  <p>{{ MESSAGE.SESSION_TIMEOUT_MSG_1 }} {{this.countdown()}} {{this.countdown()! > 1 ? 'seconds' : 'second'}}. {{ MESSAGE.SESSION_TIMEOUT_MSG_2 }}.</p>
+</ng-template>

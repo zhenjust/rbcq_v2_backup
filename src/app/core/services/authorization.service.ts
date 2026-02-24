@@ -39,6 +39,8 @@ export class AuthorizationService {
   }
 
   logout(): Observable<string> {
+    this.ps.flushPermissions();
+    localStorage.clear();
     return this.http.get<string>(`${apiPath.__AUTH_PATH__}/oauth/invalidate-token`);
   }
 

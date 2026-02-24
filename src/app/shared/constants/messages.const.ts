@@ -12,6 +12,9 @@ export const MESSAGES = {
   UPLOAD_IN_PROGRESS: 'Uploads are in progress.',
   REQUIRED_FIELDS: 'Please fill out the required fields.',
   CONFIRM_ACTION: 'Do you want to proceed with the action?',
+  SESSION_TIMEOUT_TITLE: 'Session Expiring Soon',
+  SESSION_TIMEOUT_MSG_1: 'You have been inactive for a while. For your security, you will be logged out in',
+  SESSION_TIMEOUT_MSG_2: 'Move your cursor to continue with your session',
 
   // DYNAMIC MESSAGES
   ITEMS_REQUIRED: (item: string) => `${item} are required.`,

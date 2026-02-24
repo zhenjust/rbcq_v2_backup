@@ -15,6 +15,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { CoreModule } from '@core/core.module';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
+import { NgIdleKeepaliveModule, provideNgIdleKeepalive } from '@ng-idle/keepalive';
 
 registerLocaleData(en);
 
@@ -32,12 +33,14 @@ registerLocaleData(en);
       toastClass: 'ngx-toastr w-toastr'
     }),
     NgxPermissionsModule.forRoot(),
+    NgIdleKeepaliveModule.forRoot(),
     RxReactiveFormsModule,
   ],
   providers: [
     provideNzI18n(en_US),
     provideAnimationsAsync(),
-    provideHttpClient()
+    provideHttpClient(),
+    provideNgIdleKeepalive(),
   ],
   bootstrap: [AppComponent]
 })

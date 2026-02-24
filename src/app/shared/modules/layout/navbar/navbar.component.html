@@ -19,11 +19,11 @@
             <ul>
               @for (child of item.children; track child) {
                 @if (child.show) {
-                  @if ((!child.children || child.children.length === 0) && hasPermission(child)) {
+                  @if (!child.children?.length && hasPermission(child)) {
                     <li nz-menu-item (click)="navigateTo(child)" class="subChildColor">
-                      <span>{{ child.title }}</span>
+                      <span>{{ child.title }}</span> {{ child.children }}
                     </li>
-                  } @else {
+                  } @else if (child.children?.length && hasPermission(child)) {
                     <li nz-submenu nzTriggerSubMenuAction="click" [nzTitle]="childMenuTitle" [nzOpen]="isDropdownOpen(child)" (nzOpenChange)="toggleDropdown(child, $event)" class="subChildColor py-0">
 
                       <ng-template #childMenuTitle>
