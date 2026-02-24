@@ -191,7 +191,9 @@ export class MqUploaderFilterComponent implements OnInit {
       tradingMonth: isMonthly ? (formValue?.tradingMonth && format(formValue.tradingMonth, 'MM yyyy')) : '',
       startInterval: format(formValue.interval[0], 'yyyy-MM-dd HH:mm'),
       endInterval: format(formValue.interval[1], 'yyyy-MM-dd HH:mm'),
-      correctedRemarks: formValue.correctedRemarks ?? ''
+      correctedRemarks: formValue.correctedRemarks ?? '',
+      tradingDateFrom: format(formValue.interval[0], 'yyyy-MM-dd'),
+      tradingDateTo: format(formValue.interval[1], 'yyyy-MM-dd'),
     }
 
     delete payload.interval;
