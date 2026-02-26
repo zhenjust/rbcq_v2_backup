@@ -5,17 +5,17 @@
 
   <form nz-form [formGroup]="form" nzLayout="vertical" nzNoColon>
     <nz-form-item>
-      <nz-form-label nzRequired>{{ LABELS.BILLING_PERIOD }}</nz-form-label>
+      <nz-form-label nzRequired>{{ LABELS.BILLING_RUN_TYPE }}</nz-form-label>
       <nz-form-control>
-        <nz-select formControlName="billingPeriod" [nzOptions]="billingPeriodOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
+        <nz-select formControlName="processType" [nzOptions]="processTypeOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
           [nzAllowClear]="true" nzShowSearch></nz-select>
       </nz-form-control>
     </nz-form-item>
 
     <nz-form-item>
-      <nz-form-label nzRequired>{{ LABELS.BILLING_RUN_TYPE }}</nz-form-label>
+      <nz-form-label nzRequired>{{ LABELS.BILLING_PERIOD }}</nz-form-label>
       <nz-form-control>
-        <nz-select formControlName="processType" [nzOptions]="processTypeOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
+        <nz-select formControlName="billingPeriod" [nzOptions]="billingPeriodOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
           [nzAllowClear]="true" nzShowSearch></nz-select>
       </nz-form-control>
     </nz-form-item>

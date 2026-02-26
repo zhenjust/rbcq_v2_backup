@@ -5,18 +5,18 @@
       <div class="row">
         <div class="col-sm-12 col-md-4 col-lg-4">
           <nz-form-item class="mb-3">
-            <nz-form-label nzSpan="8">{{ LABELS.BILLING_PERIOD }}</nz-form-label>
-            <nz-form-control nzSpan="16">
-              <nz-select formControlName="billingPeriod" [nzOptions]="billingPeriodOpts"
-                [nzPlaceHolder]="LABELS.CHOOSE_HERE" [nzAllowClear]="true" nzShowSearch></nz-select>
-            </nz-form-control>
-          </nz-form-item>
-
-          <nz-form-item class="mb-3">
             <nz-form-label nzSpan="8">{{ LABELS.BILLING_RUN_TYPE }}</nz-form-label>
             <nz-form-control nzSpan="16">
               <nz-select formControlName="processType" [nzOptions]="processTypeOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
                 [nzAllowClear]="true" nzShowSearch></nz-select>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item class="mb-3">
+            <nz-form-label nzSpan="8">{{ LABELS.BILLING_PERIOD }}</nz-form-label>
+            <nz-form-control nzSpan="16">
+              <nz-select formControlName="billingPeriod" [nzOptions]="billingPeriodOpts"
+                [nzPlaceHolder]="LABELS.CHOOSE_HERE" [nzAllowClear]="true" nzShowSearch></nz-select>
             </nz-form-control>
           </nz-form-item>
         </div>
