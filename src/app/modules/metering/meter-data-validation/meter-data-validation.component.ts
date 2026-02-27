@@ -10,8 +10,9 @@ import { DownloadUtilService } from '@shared/services/utils';
 import { format } from 'date-fns';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, of } from 'rxjs';
+import { distinctUntilChanged, Observable, of } from 'rxjs';
 import { GenerateMdvComponent } from './generate-mdv/generate-mdv.component';
+import { MeterProcessTypes } from '@shared/enums';
 
   @Component({
     selector: 'app-meter-data-validation',
@@ -53,8 +54,16 @@ import { GenerateMdvComponent } from './generate-mdv/generate-mdv.component';
     buildForm(): void {
       this.form = this.formBuilder.group({
         billingPeriod: [null],
-        processType: [null]
+        processType: [null],
+        tradingDate: [null]
       });
+
+      this.form.get('processType')?.valueChanges
+        .pipe(distinctUntilChanged())
+        .subscribe(() => {
+          this.form.get('billingPeriod')?.reset();
+          this.form.get('tradingDate')?.reset();
+        });
     }
 
     resetFilters(): void {
@@ -106,15 +115,23 @@ import { GenerateMdvComponent } from './generate-mdv/generate-mdv.component';
       if (!this.paginatedTable) {
         return of();
       }
-
       const formValues = this.form.getRawValue();
+      let tdFormatted;
+      if (formValues?.tradingDate) {
+        tdFormatted = {
+          startDate: format(formValues?.tradingDate, 'yyyy-MM-dd'),
+          endDate: format(formValues?.tradingDate, 'yyyy-MM-dd')
+        }
+      }
+
       const filters = {
         ...formValues,
-        ...formValues.billingPeriod,
+        ...(this.isDaily ? tdFormatted : formValues.billingPeriod),
         name: 'runMDVReport'
       };
 
       delete filters?.billingPeriod;
+      delete filters?.tradingDate;
 
       return this.meterService.searchByNameParams(filters, this.paginatedTable?.tableParams);
     }
@@ -146,6 +163,8 @@ import { GenerateMdvComponent } from './generate-mdv/generate-mdv.component';
       });
     }
 
+
+    get isDaily(): boolean { return this.form.get('processType')?.value === MeterProcessTypes.DAILY; }
 
     get actionControls(): TableAction<any>[] {
       return [
