@@ -36,6 +36,12 @@ const routes: Routes = [
           import('./modules/metering/metering.module').then(m => m.MeteringModule)
       },
       {
+        path: 'admin',
+        canActivateChild: [AuthorizeGuard],
+        loadChildren: () =>
+          import('./modules/admin/admin.module').then(m => m.AdminModule)
+      },
+      {
         path: 'msp-mq-uploader',
         canActivateChild: [AuthorizeGuard],
         component: MqUploaderComponent,

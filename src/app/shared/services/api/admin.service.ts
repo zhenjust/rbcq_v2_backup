@@ -3,13 +3,18 @@ import { inject, Injectable } from '@angular/core';
 import { apiPath } from '@shared/constants';
 import { environment } from 'environments/environment';
 import { Observable } from 'rxjs';
+import { ParamsUtilService } from '../utils';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminService {
+
   protected baseEndpoint = environment.__API_URL__ + apiPath.__ADMIN_PATH__;
+  protected settlementEndpoint = environment.__API_URL__ + apiPath.__SETTLEMENT_PATH__;
+
   private readonly http = inject(HttpClient);
+  private readonly psUtil = inject(ParamsUtilService);
 
   constructor() { }
 
@@ -20,4 +25,5 @@ export class AdminService {
   public getConfigurations(key: string): Observable<string> {
     return this.http.get<string>(`${this.baseEndpoint}/admin/config/${key}/value`);
   }
+
 }

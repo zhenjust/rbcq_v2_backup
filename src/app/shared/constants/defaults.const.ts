@@ -6,3 +6,8 @@ export const modalConfig = {
   nzMaskClosable: false,
   nzKeyboard: true,
 }
+
+export const STATUS_OPTIONS = [
+  { label: LABELS.INACTIVE, value: false },
+  { label: LABELS.ACTIVE, value: true }
+]

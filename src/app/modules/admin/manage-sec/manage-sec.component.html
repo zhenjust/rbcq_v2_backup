@@ -1,0 +1,36 @@
+<nz-card [nzTitle]="LABELS.MANAGE_SEC_PARAMETERS">
+  <div class="d-flex justify-content-end">
+    <nz-space>
+      <button *nzSpaceItem nz-button nzType="primary" (click)="add()">{{ LABELS.ADD }} {{ LABELS.SEC_PARAMETER }}</button>
+      <form *nzSpaceItem nz-form [formGroup]="form" nzLayout="horizontal" class="column flex-grow-1">
+        <nz-form-item class="mb-3">
+          <nz-form-control>
+            <input nz-input formControlName="fuelType" placeholder="{{LABELS.SEARCH}} {{LABELS.FUEL_TYPE}}" trim="blur">
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </nz-space>
+  </div>
+
+  <!-- Table -->
+  <app-paginated-table #paginatedTable [tableColumns]="tableColumns" [url]="listUrl()" [showActions]="true"
+    [actionControls]="actionControls" [tableConfig]="{ height: '60vh' }"></app-paginated-table>
+</nz-card>
+
+<!-- Column Templates -->
+<ng-template #fileTpl let-d="allData">
+  <div class="text-break" style="max-width: auto;">
+    {{ d.fileName }}
+  </div>
+</ng-template>
+
+<ng-template #bpTpl let-allData="allData">
+  @let params = allData?.parameters;
+  {{ params?.processType === 'DAILY' ? params?.startDate : `${params?.startDate} - ${params?.endDate}` }}
+</ng-template>
+
+<ng-template #tagTpl let-data="data">
+  <nz-tag class="break-word-tag">
+    {{ data }}
+  </nz-tag>
+</ng-template>

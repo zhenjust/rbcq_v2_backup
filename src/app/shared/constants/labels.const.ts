@@ -33,6 +33,9 @@ export const LABELS = {
   DELETE: 'Delete',
   SELECT_ALL: 'Select All',
   DESELECT_ALL: 'Deselect All',
+  ADD: 'Add',
+  SAVE: 'Save',
+  SEARCH: 'Search',
 
   // Field Labels
   CONSOLIDATE: 'Consolidate',
@@ -149,6 +152,17 @@ export const LABELS = {
   REMARKS: 'Remarks',
 
   BILLING_PERIOD_TRADING_DATE: 'Billing Period/Trading Date',
-  REPORT_CODE: 'Report Code'
+  REPORT_CODE: 'Report Code',
+
+  FUEL_TYPE: 'Fuel Type',
+  EFFECTIVE_START_DATE: 'Effective Start Date',
+  EFFECTIVE_END_DATE: 'Effective End Date',
+
+  MANAGE_SEC_PARAMETERS: 'Manage SEC Parameters',
+  SEC_PARAMETER: 'SEC Parameter',
+  EFFECTIVE_DATE: 'Effective Date',
+
+  ACTIVE: 'Active',
+  INACTIVE: 'Inactive',
 
 }

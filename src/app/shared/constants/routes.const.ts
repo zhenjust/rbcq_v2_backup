@@ -12,6 +12,7 @@ export const NEW_ROUTES = {
     MSP_MQ_UPLOADER: 'msp-mq-uploader',
     METERING_MASTERFILE: 'metering/metering-masterfile',
     METER_DATA_VALIDATION: 'metering/meter-data-validation',
+    SEC: 'admin/sec',
 }
 
 export const HEADER_ROUTES = {
