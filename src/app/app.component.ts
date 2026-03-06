@@ -40,7 +40,7 @@ export class AppComponent {
      * timeout: in seconds, how long can they be idle before timing out (logged out)
      */
 
-    this.idle.setIdle(1800);
+    this.idle.setIdle(60); // 1800
     this.idle.setTimeout(30);
     this.idle.setInterrupts(DEFAULT_INTERRUPTSOURCES);
 
