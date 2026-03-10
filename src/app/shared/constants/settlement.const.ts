@@ -111,8 +111,7 @@ export const MDV_LABELS: Record<MDV, string> = {
   [MDV.MDV3]: 'Captive MQ vs Adjustment MQ vs GOT MQ',
   [MDV.MDV4]: 'GESQ vs RTU',
   [MDV.MDV5]: 'Adjusted MQ vs GESQ',
-  [MDV.MDV6]: 'Settlement SEIN vs Billing ID',
   [MDV.MDV7]: 'MQ per interval (WESM & RCOA)',
   [MDV.MDV8]: 'Billing Run Comparison',
-  [MDV.MDV9]: 'Metering and RCOA Summary',
+  [MDV.MDV9]: 'Metering Summary in Meter Data Validation',
 };

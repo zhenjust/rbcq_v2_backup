@@ -47,7 +47,6 @@ export enum MDV {
     MDV3 = 'MDV3',
     MDV4 = 'MDV4',
     MDV5 = 'MDV5',
-    MDV6 = 'MDV6',
     MDV7 = 'MDV7',
     MDV8 = 'MDV8',
     MDV9 = 'MDV9',
