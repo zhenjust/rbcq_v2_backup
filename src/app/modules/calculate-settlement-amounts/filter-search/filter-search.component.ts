@@ -91,8 +91,8 @@ export class FilterSearchComponent implements OnInit, OnDestroy {
       const formattedValues: Partial<settlementParams> = {
         processType,
         billingPeriod: this.notDaily ? billingPeriod : undefined,
-        tradingStartDate: this.isDaily ? this.fdp.transformDate(date[0]) : undefined,
-        tradingEndDate: this.isDaily ? this.fdp.transformDate(date[1]) : undefined,
+        tradingStartDate: this.isDaily && date?.length ? this.fdp.transformDate(date[0]) : undefined,
+        tradingEndDate: this.isDaily && date?.length ? this.fdp.transformDate(date[1]) : undefined,
       };
 
       this.filtersEvent.emit(formattedValues);
