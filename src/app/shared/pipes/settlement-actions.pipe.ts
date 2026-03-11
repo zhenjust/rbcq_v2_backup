@@ -150,12 +150,21 @@ export class SettlementActionsPipe implements PipeTransform {
     const isEtaPipeline = action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS && action.value === 'energyTradingAmounts-calculateMSummary';
 
     const statuses = [
+      ...this.GEN_IWS_STATUSES,
+      SettlementStatus.COMPLETED_SETTLEMENT_READY,
+      SettlementStatus.COMPLETED_TAGGING,
       SettlementStatus.FAILED_SETTLEMENT_CALCULATION,
       SettlementStatus.FAILED_RESERVE_SETTLEMENT_CALCULATION,
       SettlementStatus.CANCELLED_RESERVE_SETTLEMENT_CALCULATION,
       SettlementStatus.CANCELLED_SETTLEMENT_CALCULATION,
-
-      ...this.GEN_IWS_STATUSES,
+      SettlementStatus.COMPLETED_GENERATE_ENERGY_FILES,
+      SettlementStatus.IN_PROGRESS_GENERATE_ENERGY_FILES,
+      SettlementStatus.CANCELLED_GENERATE_ENERGY_FILES,
+      SettlementStatus.FAILED_GENERATE_ENERGY_FILES,
+      SettlementStatus.COMPLETED_GENERATE_RESERVE_FILES,
+      SettlementStatus.IN_PROGRESS_GENERATE_RESERVE_FILES,
+      SettlementStatus.CANCELLED_GENERATE_RESERVE_FILES,
+      SettlementStatus.FAILED_GENERATE_RESERVE_FILES
     ];
 
     action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_GEN_MONTHLY_SUMMARY] : [];
