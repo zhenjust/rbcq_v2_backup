@@ -54,7 +54,7 @@ export class SwitchUserComponent implements OnInit {
         next: () => {
           this.modalRef.destroy();
           this.toast.success(MESSAGES.SUCCESS_SWITCH('Super'));
-          window.location.href = environment.__PHASE_ONE_URL__;
+          window.location.href = `${environment.__PHASE_ONE_URL__}/#/`;
         },
     });
   }
