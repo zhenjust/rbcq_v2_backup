@@ -5,9 +5,9 @@ import { LABELS } from '@shared/constants/labels.const';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription, switchMap } from 'rxjs';
-import { environment } from 'environments/environment';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { NzModalRef } from 'ng-zorro-antd/modal';
+import { externalRoutes } from '@shared/constants';
 
 @Component({
   selector: 'app-switch-user',
@@ -54,7 +54,7 @@ export class SwitchUserComponent implements OnInit {
         next: () => {
           this.modalRef.destroy();
           this.toast.success(MESSAGES.SUCCESS_SWITCH('Super'));
-          window.location.href = `${environment.__PHASE_ONE_URL__}/#/`;
+          window.location.href = externalRoutes.HOME;
         },
     });
   }
