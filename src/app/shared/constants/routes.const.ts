@@ -13,6 +13,10 @@ export const NEW_ROUTES = {
     METERING_MASTERFILE: 'metering/metering-masterfile',
     METER_DATA_VALIDATION: 'metering/meter-data-validation',
     SEC: 'admin/sec',
+    RBCQ: 'rbcq-v2',
+        RBCQ_SUBMIT: 'rbcq-v2/submit',
+        RBCQ_VIEW: 'rbcq-v2/view',
+        RBCQ_PROCESS: 'rbcq-v2/process'
 }
 
 export const HEADER_ROUTES = {

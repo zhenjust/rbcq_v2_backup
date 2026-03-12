@@ -1,0 +1,22 @@
+<nz-card [nzTitle]="LABELS.TRANSACTION_REPORT">
+  <div class="d-flex justify-content-end mb-2">
+    <!-- future filters / actions -->
+  </div>
+
+  <app-paginated-table #paginatedTable [tableColumns]="tableColumns" [url]="listUrl()"></app-paginated-table>
+
+</nz-card>
+
+
+<!-- Column templates -->
+<ng-template #transacIdTpl let-data="data">
+  <span class="text-primary">{{ data || '-' }}</span>
+</ng-template>
+
+<ng-template #dateTpl let-allData="allData">
+  {{ allData?.dateSaved | date:'yyyy-MM-dd HH:mm' }}
+</ng-template>
+
+<ng-template #statusTpl let-data="data">
+  <nz-tag nzColor="cyan" [nzBordered]="false">{{ data }}</nz-tag>
+</ng-template>

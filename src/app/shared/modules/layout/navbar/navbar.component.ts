@@ -1,7 +1,7 @@
 import { Component, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
 import { externalRoutes, NEW_ROUTES } from '@shared/constants';
 import { CurrentUser, navItems } from '@shared/interfaces';
-import { faBell, faHome, faChevronDown, faChevronRight, faAddressCard, faBuilding, faCopy, faUserLarge, faCircleUser, faCalendar, faFileArchive, faAddressBook, faBuildingUn, faTachometer, faTachometerAlt, faBinoculars, faContactCard, faHandHoldingHand, faTachometerAverage, faListCheck, faRoadCircleCheck, faUpload } from '@fortawesome/free-solid-svg-icons';
+import { faBell, faHome, faChevronDown, faChevronRight, faAddressCard, faBuilding, faCopy, faUserLarge, faCircleUser, faCalendar, faFileArchive, faAddressBook, faBuildingUn, faTachometer, faTachometerAlt, faBinoculars, faContactCard, faHandHoldingHand, faTachometerAverage, faListCheck, faRoadCircleCheck ,faFileContract} from '@fortawesome/free-solid-svg-icons';
 import { Router } from '@angular/router';
 import { PHASE_ONE_AUTHORITIES, PHASE_TWO_AUTHORITIES } from '@shared/constants';
 import { isAuthorizedAny } from '@shared/validators';
@@ -1195,11 +1195,40 @@ export class NavbarComponent implements OnInit {
         permission: [PHASE_TWO_AUTHORITIES.VIEW_QUEUE],
         externalLink: externalRoutes.JOB_QUEUE
       },
+
+       //Job Queue route
       {
-        title: LABELS.MQ_UPLOADER,
-        show: this.regCategory === 'MSP',
-        icon: faUpload,
-        path: NEW_ROUTES.MSP_MQ_UPLOADER,
+        title: 'RBCQ',
+        show: true,
+        icon: faFileContract,
+        permission: [
+
+        ],
+        children: [
+          {
+            title: 'Submit RBCQ',
+            path: NEW_ROUTES.RBCQ_SUBMIT,
+            show: true,
+            permission: []
+          },
+          {
+            title: 'View RBCQ',
+            path: NEW_ROUTES.RBCQ_VIEW,
+            show: true,
+            permission: []
+          },
+          {
+            title: 'Process RBCQ',
+            path: NEW_ROUTES.RBCQ_PROCESS,
+            show: true,
+            permission: []
+          }
+          // {
+          //   title: 'BCQ Download Template',
+          //   externalLink: externalRoutes.BCQ_MENU_FOR_TP.BCQ_DOWNLOAD_TEMPLATE,
+          //   permission: []
+          // }
+        ]
       },
     ];
 
