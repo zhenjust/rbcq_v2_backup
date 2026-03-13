@@ -2,7 +2,7 @@ import { inject, Pipe, PipeTransform } from '@angular/core';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { PHASE_TWO_AUTHORITIES, SettlementStatus } from '@shared/constants';
 import { MeterProcessTypes, settlementSearchNames } from '@shared/enums';
-import { JobSelect, settlementPipeline } from '@shared/interfaces';
+import {JobSelect, pipeline, settlementPipeline} from '@shared/interfaces';
 
 @Pipe({
   name: 'stlActions',
@@ -21,7 +21,7 @@ export class SettlementActionsPipe implements PipeTransform {
       .filter(action => action.type === module || !action.type)
       .map(action => {
         const { value } = action;
-        const { status, processType } = data;
+        const { status, processType, pipelines } = data;
         const isSettlementModules = this.settlementModules.includes(module);
 
         if (value === 'cancelRun') {
@@ -52,7 +52,7 @@ export class SettlementActionsPipe implements PipeTransform {
         }
 
         if (value === 'generate_energy_files' || value === 'generate_reserve_files') {
-          action = this.handleGenerateFiles(action, isSettlementModules, status as keyof typeof SettlementStatus, module);
+          action = this.handleGenerateFiles(action, isSettlementModules, pipelines, module);
         }
 
         if (value === 'energyTradingAmounts-calculateMSummary' || value === 'reserveTradingAmounts-calculateMSummary') {
@@ -174,7 +174,7 @@ export class SettlementActionsPipe implements PipeTransform {
 
   }
 
-  handleGenerateFiles(action: JobSelect, isSettlementModule = true, status: keyof typeof SettlementStatus, module: string): JobSelect {
+  handleGenerateFiles(action: JobSelect, isSettlementModule = true, pipelines: pipeline[], module: string): JobSelect {
     const isRta = module === 'reserveTradingAmounts' && action.value === 'generate_reserve_files';
     const isEta = module === 'energyTradingAmounts' && action.value === 'generate_energy_files';
 
@@ -184,10 +184,11 @@ export class SettlementActionsPipe implements PipeTransform {
     ];
 
     action.permissions = isSettlementModule ? permissions : [];
-    action.show = this.checkPermissions(action.permissions);
+    action.show = this.checkPermissions(action.permissions) && pipelines.some(
+      p => (p.name === 'energyTradingAmounts-finalize' || p.name === 'reserveTradingAmounts-finalize') && p.status === 'Completed'
+    );
 
     return action;
-
   }
 
   handleCalcGmrVat(action: JobSelect, isSettlementModule = true, status: keyof typeof SettlementStatus): JobSelect {
