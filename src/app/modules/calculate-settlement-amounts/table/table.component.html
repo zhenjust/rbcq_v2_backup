@@ -198,6 +198,13 @@
         <span class="cell-sub-value">{{ allData.parameters.billingStartDate?.dateValue + " - " + allData.parameters.billingEndDate?.dateValue }}</span>
       </div>
     }
+
+    @if (allData.parameters?.adjustmentWorkspaceId) {
+      <div class="cell-sub">
+        <span class="cell-sub-label">{{ LABELS.ADJUSTMENT_WORKSPACE_ID }}: </span>
+        <span class="cell-sub-value">{{ allData.parameters.adjustmentWorkspaceId.numericValue }}</span>
+      </div>
+    }
   </div>
 </ng-template>
 
