@@ -7,7 +7,8 @@ export enum MeterDataPipelineProcess {
 export enum PipelineStatus {
   COMPLETED = 'completed - ',
   FAILED = 'failed - ',
-  NULLIFIED = 'nullified - '
+  NULLIFIED = 'nullified - ',
+  PENDING_NULLIFIED = 'nullified (pending) - '
 }
 
 export enum MeterProcessStatus {
