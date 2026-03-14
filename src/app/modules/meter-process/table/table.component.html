@@ -102,7 +102,7 @@
                                                 Finalize Settlement - Ready
                                             </a>
                                         }
-                                        @if (!pipeline.status.toLowerCase().startsWith(pipelineStatus.NULLIFIED) && !pipeline.status.toLowerCase().startsWith(pipelineStatus.PENDING_NULLIFIED) && hasSuccessfulReportGeneration(pipeline)) {
+                                        @if (!pipeline.status.toLowerCase().startsWith(pipelineStatus.NULLIFIED) && !pipeline.status.toLowerCase().startsWith(pipelineStatus.NULLIFIED_PENDING) && hasSuccessfulReportGeneration(pipeline)) {
                                             <button nz-button nzType="link" nzBlock class="break-word-button"
                                                 [disabled]="isDownloadingReport(pipeline.id)"
                                                 (click)="downloadReport(pipeline)">

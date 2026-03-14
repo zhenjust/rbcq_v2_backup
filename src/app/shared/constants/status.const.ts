@@ -8,7 +8,7 @@ export enum PipelineStatus {
   COMPLETED = 'completed - ',
   FAILED = 'failed - ',
   NULLIFIED = 'nullified - ',
-  PENDING_NULLIFIED = 'nullified (pending) - '
+  NULLIFIED_PENDING = 'nullified (pending) - '
 }
 
 export enum MeterProcessStatus {
