@@ -125,7 +125,7 @@ export class SettlementActionsPipe implements PipeTransform {
 
     action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_CALCULATE_TA] : [];
     action.show = this.checkPermissions(action.permissions) && (isRtaPipeline || isEtaPipeline) && pipelines.some(
-      p => (p.name === 'energyTradingAmounts-generateInputWorkspace' || p.name === 'reserveTradingAmounts-generateInputWorkspace') && p.status === 'Completed'
+      p => (p.name === 'energyTradingAmounts-generateInputWorkspace' || p.name === 'reserveTradingAmounts-generateInputWorkspace') && p.status === 'Succeeded'
     );
 
     return action;
@@ -137,7 +137,7 @@ export class SettlementActionsPipe implements PipeTransform {
 
     action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_GEN_MONTHLY_SUMMARY] : [];
     action.show = this.checkPermissions(action.permissions) && (isRtaPipeline || isEtaPipeline) && pipelines.some(
-      p => (p.name === 'energyTradingAmounts-calculateTradingAmount' || p.name === 'reserveTradingAmounts-calculateTradingAmount') && p.status === 'Completed'
+      p => (p.name === 'energyTradingAmounts-calculateTradingAmount' || p.name === 'reserveTradingAmounts-calculateTradingAmount') && p.status === 'Succeeded'
     );
 
     return action;
@@ -155,7 +155,7 @@ export class SettlementActionsPipe implements PipeTransform {
 
     action.permissions = isSettlementModule ? permissions : [];
     action.show = this.checkPermissions(action.permissions) && pipelines.some(
-      p => (p.name === 'energyTradingAmounts-finalize' || p.name === 'reserveTradingAmounts-finalize') && p.status === 'Completed'
+      p => (p.name === 'energyTradingAmounts-finalize' || p.name === 'reserveTradingAmounts-finalize') && p.status === 'Succeeded'
     );
 
     return action;
@@ -168,7 +168,7 @@ export class SettlementActionsPipe implements PipeTransform {
     action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_CALCULATE_GMRVAT] : [];
 
     action.show = this.checkPermissions(action.permissions) && (isRtaPipeline || isEtaPipeline) && pipelines.some(
-      p => (p.name === 'reserveTradingAmounts-calculateMSummary' || p.name === 'energyTradingAmounts-calculateMSummary') && p.status === 'Completed'
+      p => (p.name === 'reserveTradingAmounts-calculateMSummary' || p.name === 'energyTradingAmounts-calculateMSummary') && p.status === 'Succeeded'
     );
 
     return action;
