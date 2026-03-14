@@ -58,7 +58,19 @@
                                 <tr [class]="getChildRowClass(parentIndex, pipelineIndex)">
                                     <td [nzExpand]="isPipelineExpanded(parentIndex, pipelineIndex)"
                                         (nzExpandChange)="onPipelineExpandChange($event, parentIndex, pipelineIndex)"></td>
-                                    <td>{{ pipeline.id }}</td>
+                                    <td>
+                                      <div class="cell-lines">
+                                        <div class="cell-main">
+                                          {{ pipeline.id }}
+                                        </div>
+                                        @if (pipeline.referencePipelines) {
+                                          <div class="cell-sub">
+                                            <span class="cell-sub-label">{{ labels.NULLIFIED_WORKSPACE_ID }}: </span>
+                                            <span class="cell-sub-value">{{ pipeline.referencePipelines }}</span>
+                                          </div>
+                                        }
+                                      </div>
+                                    </td>
                                     <td>{{ dfs.formatDateTime(pipeline.lastModifiedDatetime) }}</td>
                                     <td>{{ pipeline.lastModifiedBy }}</td>
                                     <td>{{ data.processType }}</td>

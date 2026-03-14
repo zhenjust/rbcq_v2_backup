@@ -94,6 +94,7 @@ export interface meterProcessPipelineRuns {
 export interface meterProcessPipeline {
     name: string
     id: number
+    referencePipelines: string
     status: string
     lastModifiedBy: string
     lastModifiedDatetime: Date
