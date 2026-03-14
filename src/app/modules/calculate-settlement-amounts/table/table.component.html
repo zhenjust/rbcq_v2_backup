@@ -182,7 +182,7 @@
 <ng-template #nameTpl let-data="data" let-allData="allData">
   <div class="cell-lines">
     <div class="cell-main">
-      {{ data }}
+      {{ data + (allData.partial ? " - Partial" : "")}}
     </div>
 
     @if (allData.parameters?.meteringWorkspaceId) {
