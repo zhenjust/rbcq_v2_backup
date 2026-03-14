@@ -119,21 +119,10 @@
   justify-content: space-between;
 }
 
-.cell-lines {
-  line-height: 1.2;
+.cell-sub-label {
+  font-weight: 600;
+}
 
-  .cell-sub {
-    margin-top: 2px;
-    font-size: 12px;
-    color: #8c8c8c;
-
-    .cell-sub-label {
-      font-weight: 600;
-      margin-right: 4px;
-    }
-
-    .cell-sub-value {
-      color: #595959;
-    }
-  }
+.cell-sub-value {
+  color: #595959;
 }
