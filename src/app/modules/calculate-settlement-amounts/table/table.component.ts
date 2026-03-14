@@ -648,11 +648,11 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 }
 
 const expandedTableCols: Record<string, TPL_TABLE_COLUMN> = {
-  [LABELS.NAME]: { label: LABELS.NAME, propName: 'description', type: 'template', width: '180px', hasRowSpan: true },
-  [LABELS.RUN_ID]: { label: LABELS.RUN_ID, propName: 'runId', type: 'string', width: '110px' },
-  [LABELS.RUN_START]: { label: LABELS.RUN_START, propName: 'runStart', type: 'date', width: '140px', align: 'center' },
-  [LABELS.RUN_END]: { label: LABELS.RUN_END, propName: 'runEnd', type: 'date', width: '140px', align: 'center' },
-  [LABELS.DURATION]: { label: LABELS.DURATION, propName: 'duration', type: 'string', width: '60px' },
+  [LABELS.NAME]: { label: LABELS.NAME, propName: 'description', type: 'template', width: '200px', hasRowSpan: true },
+  [LABELS.RUN_ID]: { label: LABELS.RUN_ID, propName: 'runId', type: 'string', width: '100px' },
+  [LABELS.RUN_START]: { label: LABELS.RUN_START, propName: 'runStart', type: 'date', width: '100px', align: 'center' },
+  [LABELS.RUN_END]: { label: LABELS.RUN_END, propName: 'runEnd', type: 'date', width: '100px', align: 'center' },
+  [LABELS.DURATION]: { label: LABELS.DURATION, propName: 'duration', type: 'string', width: '100px' },
   [LABELS.RUN_BY]: { label: LABELS.RUN_BY, propName: 'runBy', type: 'string', width: '100px' },
   [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', type: 'template', width: '100px', align: 'center' }
 }
