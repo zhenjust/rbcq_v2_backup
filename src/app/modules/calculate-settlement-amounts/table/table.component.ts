@@ -6,7 +6,7 @@ import { RunSettlementService } from '@shared/services/settlement';
 import { ToastrService } from 'ngx-toastr';
 import { ETA_JOBS, MeterProcessTypes } from '@shared/enums';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { isAfter, isBefore, startOfDay, subDays } from 'date-fns';
+import { isAfter, isBefore, setHours, startOfDay, subDays } from 'date-fns';
 import { SettlementService } from '@shared/services/api';
 import { LABELS } from '@shared/constants/labels.const';
 import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
@@ -641,7 +641,8 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
   createDisabledDate = (rowData: any) => {
     return (current: Date) => {
-      return !(isBefore(current, rowData.billingEndDate) && isAfter(current, subDays(rowData.billingStartDate, 1)))
+      const endDate = setHours(rowData?.billingEndDate, 23).setMinutes(59);
+      return !(isBefore(current, endDate) && isAfter(current, subDays(rowData.billingStartDate, 1)))
     };
   }
 
