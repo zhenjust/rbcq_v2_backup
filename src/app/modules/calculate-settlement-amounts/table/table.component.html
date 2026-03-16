@@ -40,6 +40,12 @@
                                         }
                                     </ul>
                                 </nz-dropdown-menu>
+                            } @else {
+                                @if (data?.status?.startsWith('In-Progress')) {
+                                    <div class="px-3">
+                                        <nz-progress [nzStrokeWidth]="4" [nzPercent]="99.9" [nzShowInfo]="false" [nzStrokeColor]="{ '0%': '#108ee9', '100%': '#87d068' }" nzStatus="active" />
+                                    </div>
+                                }
                             }
                         } @else {
                             {{ data | settlementTblFormatter: column}}
