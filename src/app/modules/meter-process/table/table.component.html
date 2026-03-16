@@ -145,7 +145,7 @@
                           @for (runs of pipelineTable.data; track runs; let runIndex = $index) {
                             <tr [class]="getGrandchildRowClass(parentIndex, pipelineIndex, runIndex)">
                               <td>{{ runs.description }}</td>
-                              <td>{{ runs.runId }}</td>
+                              <!-- <td>{{ runs.runId }}</td> -->
                               <td>{{ dfs.formatDateTime(runs.runStart) }}</td>
                               <td>{{ dfs.formatDateTime(runs.runEnd) }}</td>
                               <td>{{ runs.duration }}</td>

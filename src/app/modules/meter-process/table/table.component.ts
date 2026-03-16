@@ -89,7 +89,7 @@ export class TableComponent implements OnInit {
 
   pipelineColumnItem: tableColumn[] = [
     {name: 'Name'},
-    {name: 'Run Id'},
+    // {name: 'Run Id'},
     {name: 'Run Start'},
     {name: 'Run End'},
     {name: 'Duration'},
