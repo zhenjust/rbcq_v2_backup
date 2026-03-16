@@ -532,9 +532,10 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       ...modalConfig,
       nzTitle: this.getActionDetails(action).label,
       nzContent: ConfirmWithContentComponent,
-      nzData: { template: this.dateTpl, rowData: row, otherData: {dates} },
+      nzData: { template: this.dateTpl, rowData: row, otherData: {dates}, okAction: LABELS.PROCEED },
       nzOnOk: (comp: ConfirmWithContentComponent) => {
         const dates = comp.nzDataRef?.otherData?.dates;
+
         if (dates?.length) {
           const [billingStartDate, billingEndDate] = dates;
           row.billingStartDate = billingStartDate;
@@ -542,6 +543,9 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
           const job = this.jobNameRecord[action];
 
           this.runEtaStlJobs(row, job);
+          return true;
+        } else {
+          return false;
         }
       }
     });

@@ -210,5 +210,5 @@
 
 
 <ng-template #dateTpl let-row="row" let-otherData="otherData">
-    <app-date-range-picker #tpl [date]="otherData?.dates" (datesChange)="otherData.dates = $event" [label]="LABELS.TRADING_DATE" [disabledDate]="createDisabledDate(row)"></app-date-range-picker>
+  <app-date-range-picker #tpl [date]="otherData?.dates" (datesChange)="otherData.dates = $event" [label]="LABELS.TRADING_DATE" [disabledDate]="createDisabledDate(row)"></app-date-range-picker>
 </ng-template>

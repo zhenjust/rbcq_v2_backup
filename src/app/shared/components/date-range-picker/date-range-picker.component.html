@@ -1,8 +1,12 @@
+@if (dates()?.invalid && dates()?.touched) {
+  <nz-alert [nzBanner]="true" nzType="error" class="mb-2" [nzMessage]="MESSAGE.REQUIRED_FIELD"></nz-alert>
+}
+
 <form nz-form nzLayout="vertical" class="w-100">
   <nz-form-item>
-    <nz-form-label>Select {{ label() }}</nz-form-label>
+    <nz-form-label nzRequired>Select {{ label() }}</nz-form-label>
     <nz-form-control>
-      <nz-range-picker class="w-100" [formControl]="dates()" [nzDisabledDate]="disabledDate()"></nz-range-picker>
+      <nz-range-picker class="w-100" [formControl]="dates()" [nzDisabledDate]="disabledDate()" [nzStatus]="dates()?.invalid && dates()?.touched ? 'error' : ''"></nz-range-picker>
     </nz-form-control>
   </nz-form-item>
 </form>
