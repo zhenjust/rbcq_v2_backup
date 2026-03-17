@@ -424,7 +424,14 @@ export class NavbarComponent implements OnInit {
             show: true,
             externalLink: externalRoutes.ADMIN.MANAGE_FIELD_SETTINGS,
             permission: [PHASE_ONE_AUTHORITIES.MANAGE_FIELD_SETTINGS]
+          },
+          {
+            title: 'Manage SEC Parameters',
+            show: true,
+            path: NEW_ROUTES.SEC,
+            permission: [PHASE_TWO_AUTHORITIES.RUN_MQ_UPLOADER]
           }
+
         ]
       },
       //User Account Route

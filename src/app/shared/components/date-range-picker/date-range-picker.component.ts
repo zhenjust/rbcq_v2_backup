@@ -1,5 +1,7 @@
 import { Component, input, OnInit, output } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { RxwebValidators } from '@rxweb/reactive-form-validators';
+import { MESSAGES } from '@shared/constants/messages.const';
 
 @Component({
   selector: 'app-date-range-picker',
@@ -9,11 +11,12 @@ import { FormControl } from '@angular/forms';
 })
 export class DateRangePickerComponent implements OnInit {
 
+  MESSAGE = MESSAGES;
   label = input.required<string>();
   disabledDate = input<(current: Date) => boolean>();
 
   date = input<Date[]>();
-  dates = input<FormControl>(new FormControl([]));
+  dates = input<FormControl>(new FormControl([], RxwebValidators.minLength({ value: 1 })));
   datesChange = output<Date[]>();
 
   ngOnInit(): void {

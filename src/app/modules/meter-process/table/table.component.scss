@@ -37,11 +37,11 @@
 
     .parent-odd {
         &.child-even td {
-            background-color: #f8f9fa !important;
+            background-color: #ffffff !important;
         }
 
         &.child-odd td {
-            background-color: #ffffff !important;
+            background-color: #f8f9fa !important;
         }
 
         &.child-even-expanded td {
@@ -67,21 +67,21 @@
 
     .parent-even.child-odd {
         &.grandchild-even td {
-            background-color: #f8f9fa !important;
+            background-color: #ffffff !important;
         }
 
         &.grandchild-odd td {
-            background-color: #e9ecef !important;
+            background-color: #f8f9fa !important;
         }
     }
 
     .parent-odd.child-even {
         &.grandchild-even td {
-            background-color: #f8f9fa !important;
+            background-color: #ffffff !important;
         }
 
         &.grandchild-odd td {
-            background-color: #e9ecef !important;
+            background-color: #f8f9fa !important;
         }
     }
 
@@ -117,4 +117,12 @@
   transition: background-size 0.3s ease;
   padding: 24px;
   justify-content: space-between;
+}
+
+.cell-sub-label {
+  font-weight: 600;
+}
+
+.cell-sub-value {
+  color: #595959;
 }

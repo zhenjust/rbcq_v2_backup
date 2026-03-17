@@ -40,6 +40,12 @@
                                         }
                                     </ul>
                                 </nz-dropdown-menu>
+                            } @else {
+                                @if (data?.status?.startsWith('In-Progress')) {
+                                    <div class="px-3">
+                                        <nz-progress [nzStrokeWidth]="4" [nzPercent]="99.9" [nzShowInfo]="false" [nzStrokeColor]="{ '0%': '#108ee9', '100%': '#87d068' }" nzStatus="active" />
+                                    </div>
+                                }
                             }
                         } @else {
                             {{ data | settlementTblFormatter: column}}
@@ -182,7 +188,7 @@
 <ng-template #nameTpl let-data="data" let-allData="allData">
   <div class="cell-lines">
     <div class="cell-main">
-      {{ data }}
+      {{ data + (allData.partial ? " - Partial" : "")}}
     </div>
 
     @if (allData.parameters?.meteringWorkspaceId) {
@@ -198,10 +204,17 @@
         <span class="cell-sub-value">{{ allData.parameters.billingStartDate?.dateValue + " - " + allData.parameters.billingEndDate?.dateValue }}</span>
       </div>
     }
+
+    @if (allData.parameters?.adjustmentWorkspaceId) {
+      <div class="cell-sub">
+        <span class="cell-sub-label">{{ LABELS.ADJUSTMENT_WORKSPACE_ID }}: </span>
+        <span class="cell-sub-value">{{ allData.parameters.adjustmentWorkspaceId.numericValue }}</span>
+      </div>
+    }
   </div>
 </ng-template>
 
 
 <ng-template #dateTpl let-row="row" let-otherData="otherData">
-    <app-date-range-picker #tpl [date]="otherData?.dates" (datesChange)="otherData.dates = $event" [label]="LABELS.TRADING_DATE" [disabledDate]="createDisabledDate(row)"></app-date-range-picker>
+  <app-date-range-picker #tpl [date]="otherData?.dates" (datesChange)="otherData.dates = $event" [label]="LABELS.TRADING_DATE" [disabledDate]="createDisabledDate(row)"></app-date-range-picker>
 </ng-template>

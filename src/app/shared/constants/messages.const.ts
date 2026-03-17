@@ -11,6 +11,7 @@ export const MESSAGES = {
   DUPLICATE_FILES: 'Please choose a different file.',
   UPLOAD_IN_PROGRESS: 'Uploads are in progress.',
   REQUIRED_FIELDS: 'Please fill out the required fields.',
+  REQUIRED_FIELD: 'This is a required field.',
   CONFIRM_ACTION: 'Do you want to proceed with the action?',
   SESSION_TIMEOUT_TITLE: 'Session Expiring Soon',
   SESSION_TIMEOUT_MSG_1: 'You have been inactive for a while. For your security, you will be logged out in',

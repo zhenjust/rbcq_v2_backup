@@ -6,7 +6,7 @@ import { RunSettlementService } from '@shared/services/settlement';
 import { ToastrService } from 'ngx-toastr';
 import { ETA_JOBS, MeterProcessTypes } from '@shared/enums';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { isAfter, isBefore, startOfDay, subDays } from 'date-fns';
+import { isAfter, isBefore, setHours, startOfDay, subDays } from 'date-fns';
 import { SettlementService } from '@shared/services/api';
 import { LABELS } from '@shared/constants/labels.const';
 import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
@@ -532,9 +532,10 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       ...modalConfig,
       nzTitle: this.getActionDetails(action).label,
       nzContent: ConfirmWithContentComponent,
-      nzData: { template: this.dateTpl, rowData: row, otherData: {dates} },
+      nzData: { template: this.dateTpl, rowData: row, otherData: {dates}, okAction: LABELS.PROCEED },
       nzOnOk: (comp: ConfirmWithContentComponent) => {
         const dates = comp.nzDataRef?.otherData?.dates;
+
         if (dates?.length) {
           const [billingStartDate, billingEndDate] = dates;
           row.billingStartDate = billingStartDate;
@@ -542,6 +543,9 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
           const job = this.jobNameRecord[action];
 
           this.runEtaStlJobs(row, job);
+          return true;
+        } else {
+          return false;
         }
       }
     });
@@ -629,7 +633,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     return [
       ...['25px', '100px', '140px', '100px', '180px', '200px'],
       ...(this.isLineRentalStatus ? ['200px'] : []),
-      ...['100px', '100px']
+      ...['100px']
     ];
   }
 
@@ -641,18 +645,19 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
   createDisabledDate = (rowData: any) => {
     return (current: Date) => {
-      return !(isBefore(current, rowData.billingEndDate) && isAfter(current, subDays(rowData.billingStartDate, 1)))
+      const endDate = setHours(rowData?.billingEndDate, 23).setMinutes(59);
+      return !(isBefore(current, endDate) && isAfter(current, subDays(rowData.billingStartDate, 1)))
     };
   }
 
 }
 
 const expandedTableCols: Record<string, TPL_TABLE_COLUMN> = {
-  [LABELS.NAME]: { label: LABELS.NAME, propName: 'description', type: 'template', width: '180px', hasRowSpan: true },
-  [LABELS.RUN_ID]: { label: LABELS.RUN_ID, propName: 'runId', type: 'string', width: '110px' },
-  [LABELS.RUN_START]: { label: LABELS.RUN_START, propName: 'runStart', type: 'date', width: '140px', align: 'center' },
-  [LABELS.RUN_END]: { label: LABELS.RUN_END, propName: 'runEnd', type: 'date', width: '140px', align: 'center' },
-  [LABELS.DURATION]: { label: LABELS.DURATION, propName: 'duration', type: 'string', width: '60px' },
+  [LABELS.NAME]: { label: LABELS.NAME, propName: 'description', type: 'template', width: '200px', hasRowSpan: true },
+  // [LABELS.RUN_ID]: { label: LABELS.RUN_ID, propName: 'runId', type: 'string', width: '100px' },
+  [LABELS.RUN_START]: { label: LABELS.RUN_START, propName: 'runStart', type: 'date', width: '100px', align: 'center' },
+  [LABELS.RUN_END]: { label: LABELS.RUN_END, propName: 'runEnd', type: 'date', width: '100px', align: 'center' },
+  [LABELS.DURATION]: { label: LABELS.DURATION, propName: 'duration', type: 'string', width: '100px' },
   [LABELS.RUN_BY]: { label: LABELS.RUN_BY, propName: 'runBy', type: 'string', width: '100px' },
   [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', type: 'template', width: '100px', align: 'center' }
 }
