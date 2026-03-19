@@ -979,6 +979,12 @@ export class NavbarComponent implements OnInit {
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
               },
               {
+                title: 'Calculate Financial Penalty',
+                show: true,
+                path: NEW_ROUTES.WESM_PENALTY,
+                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
+              },
+              {
                 title: 'Manage Additional Compensation Claims',
                 show: true,
                 path: NEW_ROUTES.ADDITIONAL_COMPENSATION_LIST,

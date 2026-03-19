@@ -36,6 +36,12 @@ const routes: Routes = [
           import('./modules/metering/metering.module').then(m => m.MeteringModule)
       },
       {
+        path: 'settlement',
+        canActivateChild: [AuthorizeGuard],
+        loadChildren: () =>
+          import('./modules/settlement/settlement.module').then(m => m.SettlementModule)
+      },
+      {
         path: 'admin',
         canActivateChild: [AuthorizeGuard],
         loadChildren: () =>

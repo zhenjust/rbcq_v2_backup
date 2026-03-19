@@ -167,4 +167,20 @@ export const LABELS = {
   ACTIVE: 'Active',
   INACTIVE: 'Inactive',
 
+  WESM_PENALTY: 'WESM Penalty',
+  BILLING_ID: 'Billing ID',
+  TYPE: 'Type',
+  AMOUNT: 'Amount',
+  PENALTY_AMOUNT: 'Penalty Amount',
+  DOCUMENT_NUMBER: 'Document Number',
+  DATE: 'Date',
+  RESOURCE_ID: 'Resource ID',
+  PENALTY_OR_REFUND: 'Penalty (or Refund)',
+
+  MORE_ACTIONS: 'More Actions',
+  GENERATE_REFUND_IWS: 'Generate Refund IWS',
+  GENERATE_PENALTY_IWS: 'Generate Penalty IWS',
+
+  CALCULATE: 'Calculate',
+  FINALIZE: 'Finalize'
 }

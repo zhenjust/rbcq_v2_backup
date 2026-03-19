@@ -86,7 +86,7 @@ export const SettlementJobActions: JobSelect[] = [
   { label: LABELS.VIEW_VALIDATIONS, value: 'validations' }, // perm: VALIDATE_INPUT, vm.resource === 'trading-amounts'
 ];
 
-export const SettlementJobSubActions:  JobSelect[] = [
+export const SettlementJobSubActions: JobSelect[] = [
   { label: LABELS.CANCEL_RUN, value: 'cancelRun' }, // implemented
 ]
 
@@ -115,3 +115,20 @@ export const MDV_LABELS: Record<MDV, string> = {
   [MDV.MDV8]: 'Billing Run Comparison',
   [MDV.MDV9]: 'Metering Summary in Meter Data Validation',
 };
+
+export const WESM_PENALTY_STATUS = [
+  'COMPLETED - CALCULATE-PENALTY',
+  'COMPLETED - FINALIZE-PENALTY',
+  'COMPLETED - CALCULATE-REFUND',
+  'COMPLETED - FINALIZE-REFUND',
+  'FAILED - CALCULATE-PENALTY',
+  'FAILED - FINALIZE-PENALTY',
+  'FAILED - CALCULATE-REFUND',
+  'FAILED - FINALIZE-REFUND'
+];
+
+export const WESM_PENALTY_TYPE = {
+  ALL: 'All',
+  PENALTY: 'Penalty',
+  REFUND: 'Refund'
+}

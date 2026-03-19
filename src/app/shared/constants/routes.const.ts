@@ -13,6 +13,7 @@ export const NEW_ROUTES = {
     METERING_MASTERFILE: 'metering/metering-masterfile',
     METER_DATA_VALIDATION: 'metering/meter-data-validation',
     SEC: 'admin/sec',
+    WESM_PENALTY: 'settlement/wesm-penalty',
 }
 
 export const HEADER_ROUTES = {
