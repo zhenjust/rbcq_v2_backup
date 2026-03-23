@@ -29,6 +29,29 @@ export class SettlementActionsPipe implements PipeTransform {
           return action;
         }
 
+        const pipelinesFinalize = [
+          'generateInputWorkspace',
+          'generateReserveInputWorkspace',
+          'calculateEnergyTradingAmount',
+          'calculateReserveTradingAmount',
+          'calculateMSummary',
+          'energyTradingAmounts-calculateMSummary',
+          'reserveTradingAmounts-calculateMSummary',
+          'reserveTradingAmounts-calculateGmrVat',
+          'energyTradingAmounts-calculateGmrVat',
+          'energyTradingAmounts-finalize',
+          'reserveTradingAmounts-finalize'
+        ];
+
+        const hasFinalized = pipelines.some(
+          p => (p.name === 'energyTradingAmounts-finalize' || p.name === 'reserveTradingAmounts-finalize') && p.status === 'Completed'
+        );
+
+        if (pipelinesFinalize.includes(value) && hasFinalized) {
+          action.show = false;
+          return action;
+        }
+
         if (status.startsWith('In-Progress')) {
           action.show = false;
           return action;
