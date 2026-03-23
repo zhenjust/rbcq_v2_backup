@@ -4,6 +4,7 @@ import { apiPath } from '@shared/constants';
 import { environment } from 'environments/environment';
 import { Observable } from 'rxjs';
 import { ParamsUtilService } from '../utils';
+import { Reference, ReferenceResponse } from '@shared/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,24 @@ export class AdminService {
 
   public getConfigurations(key: string): Observable<string> {
     return this.http.get<string>(`${this.baseEndpoint}/admin/config/${key}/value`);
+  }
+
+  public getReferences(type: string): Observable<ReferenceResponse<Reference>> {
+    const _filters = {
+      pageNo: 0,
+      pageSize: 10,
+      mapParams: {
+        type
+      },
+      orderList: [
+        {
+          sortColumn: 'type',
+          sortDirection: 'DESC'
+        }
+      ]
+    };
+
+    return this.http.post<ReferenceResponse<Reference>>(`${this.baseEndpoint}/admin/ref/lov/view-all`, _filters);
   }
 
 }

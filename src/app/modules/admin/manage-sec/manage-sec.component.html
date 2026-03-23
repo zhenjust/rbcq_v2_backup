@@ -18,19 +18,13 @@
 </nz-card>
 
 <!-- Column Templates -->
-<ng-template #fileTpl let-d="allData">
-  <div class="text-break" style="max-width: auto;">
-    {{ d.fileName }}
-  </div>
-</ng-template>
-
-<ng-template #bpTpl let-allData="allData">
-  @let params = allData?.parameters;
-  {{ params?.processType === 'DAILY' ? params?.startDate : `${params?.startDate} - ${params?.endDate}` }}
-</ng-template>
-
 <ng-template #tagTpl let-data="data">
-  <nz-tag class="break-word-tag">
-    {{ data }}
+  <nz-tag class="break-word-tag me-0" [nzColor]="data ? 'success' : 'default'">
+    {{ data ? LABELS.ACTIVE : LABELS.INACTIVE  }}
   </nz-tag>
 </ng-template>
+
+<ng-template #fuelTypeTpl let-data="data">
+  {{ fuelTypeOpts[data] || data || '-' }}
+</ng-template>
+
