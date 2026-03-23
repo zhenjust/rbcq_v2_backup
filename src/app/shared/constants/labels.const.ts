@@ -36,6 +36,7 @@ export const LABELS = {
   ADD: 'Add',
   SAVE: 'Save',
   SEARCH: 'Search',
+  UPDATE: 'Update',
 
   // Field Labels
   CONSOLIDATE: 'Consolidate',

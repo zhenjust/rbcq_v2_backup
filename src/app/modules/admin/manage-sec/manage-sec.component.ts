@@ -10,6 +10,7 @@ import { ToastrService } from 'ngx-toastr';
 import { debounceTime, Observable, of } from 'rxjs';
 import { CreateSecParamComponent } from './create-sec-param/create-sec-param.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MESSAGES } from '@shared/constants/messages.const';
 
 @Component({
   selector: 'app-manage-sec',
@@ -91,10 +92,28 @@ export class ManageSecComponent implements OnInit {
     return this.secService.listSecParameters(formValues, this.paginatedTable?.tableParams);
   }
 
+  delete(id: number): void {
+    console.log({id});
+
+    this.modalService.confirm({
+      nzTitle: `${LABELS.DELETE} ${LABELS.SEC_PARAMETER}`,
+      nzContent: MESSAGES.CONFIRM_DELETE_ITEM(LABELS.SEC_PARAMETER),
+      nzCentered: true,
+      nzOnOk: () => {
+        of(null)
+          .pipe(takeUntilDestroyed(this.destroyRef$))
+          .subscribe(() => {
+            this.toastrService.success(MESSAGES.SUCCESS_DELETE_ITEM(LABELS.SEC_PARAMETER));
+            this.paginatedTable.search()
+          });
+      }
+    })
+  }
 
   get actionControls(): TableAction<any>[] {
     return [
-      // { label: LABELS.DELETE, value: 'generate', click: (rowData: any) => this.delete(rowData), danger: true},
+      { label: LABELS.UPDATE, value: 'update', click: (rowData: any) => this.delete(rowData.id)},
+      { label: LABELS.DELETE, value: 'delete', click: (rowData: any) => this.delete(rowData.id), danger: true},
     ];
   }
 
