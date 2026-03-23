@@ -113,7 +113,7 @@ export class ManageSecComponent implements OnInit {
   get actionControls(): TableAction<any>[] {
     return [
       { label: LABELS.UPDATE, value: 'update', click: (rowData: any) => this.delete(rowData.id)},
-      { label: LABELS.DELETE, value: 'delete', click: (rowData: any) => this.delete(rowData.id), danger: true},
+      { label: LABELS.DELETE, value: 'delete', hidden: (rowData: any) => rowData.active, click: (rowData: any) => this.delete(rowData.id), danger: true},
     ];
   }
 

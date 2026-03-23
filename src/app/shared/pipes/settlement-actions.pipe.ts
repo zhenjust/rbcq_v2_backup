@@ -110,7 +110,8 @@ export class SettlementActionsPipe implements PipeTransform {
     const statuses =  [
       SettlementStatus.IN_PROGRESS_GENERATE_INPUT_RESERVE_WORKSPACE,
       SettlementStatus.IN_PROGRESS_GENERATE_INPUT_ENERGY_WORKSPACE,
-      SettlementStatus.COMPLETED_TAGGING
+      SettlementStatus.COMPLETED_TAGGING,
+      SettlementStatus.COMPLETED_FINALIZE
     ];
 
     action.permissions = [PHASE_TWO_AUTHORITIES.TA_GENERATE_IW];
