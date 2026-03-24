@@ -1103,12 +1103,22 @@ export class NavbarComponent implements OnInit {
                 externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.IMPORT_SETTLEMENT_METERING_POINT_CONFIGURATION,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SETTLEMENT_METERING_CONFIGURATION]
               },
+              // {
+              //   title: 'Settlement SEIN Masterlist',
+              //   show: true,
+              //   externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.SETTLEMENT_SEIN_MASTERLIST,
+              //   permission: [PHASE_TWO_AUTHORITIES.SET_STL_SEIN_CONFIG]
+              // },
               {
-                title: 'Settlement SEIN Masterlist',
-                show: true,
-                externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.SETTLEMENT_SEIN_MASTERLIST,
-                permission: [PHASE_TWO_AUTHORITIES.SET_STL_SEIN_CONFIG]
-              },
+                  title: 'Metering Configuration',
+                  show: true,
+                  externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.METERING_CONFIGURATION,
+                  permission: [
+                    PHASE_TWO_AUTHORITIES.SET_STL_SEIN_CONFIG,
+                    PHASE_TWO_AUTHORITIES.SET_MTN_MODEL_CONFIG
+                  ]
+                },
+
               {
                 title: 'Historical Factors Maintenance',
                 show: true,
@@ -1121,12 +1131,12 @@ export class NavbarComponent implements OnInit {
                 externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.VIRTUAL_SEIN_MAPPING,
                 permission: [PHASE_TWO_AUTHORITIES.SET_VSEIN_MAPPING]
               },
-              {
-                title: 'MTN Model Configuration',
-                show: true,
-                externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.MTN_MODEL_CONFIGURATION,
-                permission: [PHASE_TWO_AUTHORITIES.SET_MTN_MODEL_CONFIG]
-              },
+              // {
+              //   title: 'MTN Model Configuration',
+              //   show: true,
+              //   externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.MTN_MODEL_CONFIGURATION,
+              //   permission: [PHASE_TWO_AUTHORITIES.SET_MTN_MODEL_CONFIG]
+              // },
               {
                 title: 'MTN Group and Schedule',
                 show: true,
