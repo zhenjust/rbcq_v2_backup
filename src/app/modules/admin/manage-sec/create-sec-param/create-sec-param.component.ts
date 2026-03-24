@@ -7,7 +7,7 @@ import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { AdminService, SecParamsService } from '@shared/services/api';
 import { format } from 'date-fns';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
 import { ToastrService } from 'ngx-toastr';
 import { distinctUntilChanged, Subscription } from 'rxjs';
@@ -25,6 +25,7 @@ export class CreateSecParamComponent implements OnInit {
   private adminService = inject(AdminService);
   private destroyRef$ = inject(DestroyRef);
   private toastService = inject(ToastrService);
+  private modalData = inject(NZ_MODAL_DATA);
 
   paramForm: FormGroup;
   busy$: Subscription;
@@ -41,10 +42,17 @@ export class CreateSecParamComponent implements OnInit {
 
   buildForm(): void {
     this.paramForm = this.formBuilder.group({
+      groupId: [null],
       effectiveDate: [null, [RxwebValidators.required(), RxwebValidators.minLength({ value: 1})]],
       fuelType: [null, [RxwebValidators.required(), RxwebValidators.minLength({ value: 1})]],
       active: [null, [RxwebValidators.required()]],
     });
+
+    if (this.modalData?.item) {
+      const item = this.modalData.item;
+      item.effectiveDate = [item.effectiveStartDate, item.effectiveEndDate];
+      this.paramForm.patchValue(item);
+    }
   }
 
   getFuelTypes(): void {

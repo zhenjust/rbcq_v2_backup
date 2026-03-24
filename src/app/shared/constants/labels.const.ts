@@ -158,6 +158,7 @@ export const LABELS = {
   REPORT_CODE: 'Report Code',
 
   FUEL_TYPE: 'Fuel Type',
+  FUEL_TYPES: 'Fuel Types',
   EFFECTIVE_START_DATE: 'Effective Start Date',
   EFFECTIVE_END_DATE: 'Effective End Date',
 
@@ -183,5 +184,6 @@ export const LABELS = {
   GENERATE_PENALTY_IWS: 'Generate Penalty IWS',
 
   CALCULATE: 'Calculate',
-  FINALIZE: 'Finalize'
+  FINALIZE: 'Finalize',
+  SELECTED: 'Selected',
 }

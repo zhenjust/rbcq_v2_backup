@@ -11,6 +11,7 @@ import { debounceTime, Observable, of } from 'rxjs';
 import { CreateSecParamComponent } from './create-sec-param/create-sec-param.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MESSAGES } from '@shared/constants/messages.const';
+import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
 
 @Component({
   selector: 'app-manage-sec',
@@ -35,7 +36,9 @@ export class ManageSecComponent implements OnInit {
   FUEL_TYPE = FUEL_TYPE;
   form: FormGroup;
   paramForm: FormGroup;
-  fuelTypeOpts: Record<string, string>;
+  // fuelTypeOpts: Record<string, string>;
+  fuelTypeOpts: NzSelectOptionInterface[] = [];
+  fuelTypeRecords: Record<string, string>;
 
   ngOnInit(): void {
     this.getFuelTypes();
@@ -61,18 +64,21 @@ export class ManageSecComponent implements OnInit {
     this.adminService.getReferences('FACILITY_GENERATOR_TYPE')
       .pipe(takeUntilDestroyed(this.destroyRef$))
       .subscribe(res => {
-        this.fuelTypeOpts = res.data.reduce((acc, d) => {
+        this.fuelTypeOpts = res.data.map(d => ({ label: d.desc, value: d.code }));
+        this.fuelTypeRecords = res.data.reduce((acc, d) => {
           acc[d.code] = d.label;
           return acc;
-        }, {} as Record<string, string>);      });
+        }, {} as Record<string, string>);
+      });
   }
 
-  add(): void {
+  add(item?: any): void {
     const modal = this.modalService.create({
       nzTitle: `${LABELS.ADD} ${LABELS.FUEL_TYPE}`,
       nzCentered: true,
       nzContent: CreateSecParamComponent,
-      nzFooter: null
+      nzFooter: null,
+      nzData: { item }
     });
 
     modal.afterClose.subscribe(res => {
@@ -100,7 +106,7 @@ export class ManageSecComponent implements OnInit {
       nzContent: MESSAGES.CONFIRM_DELETE_ITEM(LABELS.SEC_PARAMETER),
       nzCentered: true,
       nzOnOk: () => {
-        of(null)
+        this.secService.deleteSecParams(id)
           .pipe(takeUntilDestroyed(this.destroyRef$))
           .subscribe(() => {
             this.toastrService.success(MESSAGES.SUCCESS_DELETE_ITEM(LABELS.SEC_PARAMETER));
@@ -112,8 +118,8 @@ export class ManageSecComponent implements OnInit {
 
   get actionControls(): TableAction<any>[] {
     return [
-      { label: LABELS.UPDATE, value: 'update', click: (rowData: any) => this.delete(rowData.id)},
-      { label: LABELS.DELETE, value: 'delete', hidden: (rowData: any) => rowData.active, click: (rowData: any) => this.delete(rowData.id), danger: true},
+      { label: LABELS.UPDATE, value: 'update', click: (rowData: any) => this.add(rowData)},
+      { label: LABELS.DELETE, value: 'delete', hidden: (rowData: any) => rowData.active, click: (rowData: any) => this.delete(rowData.groupId), danger: true},
     ];
   }
 

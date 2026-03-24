@@ -4,6 +4,7 @@ export interface SecParameters {
   effectiveEnd: string;
   fuelType: string;
   active: boolean;
+  groupId?: number;
 }
 
 export interface ReferenceResponse<Reference> {
