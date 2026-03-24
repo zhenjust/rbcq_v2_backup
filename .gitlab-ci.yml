@@ -1,4 +1,4 @@
-image: node:lts-alpine
+image: exist.azurecr.io/node:lts-alpine
 
 stages:
   - prepare
