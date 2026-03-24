@@ -15,7 +15,6 @@ export class SettlementActionsPipe implements PipeTransform {
   stlStatus = SettlementStatus;
   settlementModules = ['reserveTradingAmounts', 'energyTradingAmounts'];
 
-
   transform(actions: JobSelect[], data: settlementPipeline, module: string): JobSelect[] {
     return actions
       .filter(action => action.type === module || !action.type)
@@ -29,26 +28,22 @@ export class SettlementActionsPipe implements PipeTransform {
           return action;
         }
 
-        const pipelinesFinalize = [
-          'generateInputWorkspace',
-          'generateReserveInputWorkspace',
-          'calculateEnergyTradingAmount',
-          'calculateReserveTradingAmount',
-          'calculateMSummary',
-          'energyTradingAmounts-calculateMSummary',
-          'reserveTradingAmounts-calculateMSummary',
-          'reserveTradingAmounts-calculateGmrVat',
-          'energyTradingAmounts-calculateGmrVat',
-          'energyTradingAmounts-finalize',
-          'reserveTradingAmounts-finalize'
-        ];
-
         const hasFinalized = pipelines.some(
           p => (p.name === 'energyTradingAmounts-finalize' || p.name === 'reserveTradingAmounts-finalize') && p.status === 'Completed'
         );
 
-        if (pipelinesFinalize.includes(value) && hasFinalized) {
+        if (this.DISABLE_ON_FINALIZED.includes(value) && hasFinalized) {
           action.show = false;
+          return action;
+        }
+
+        if (status.startsWith('In-Progress') && !status.includes('Generate Input Workspace') && !status.includes('Settlement Calculation')) {
+          action.show = false;
+          return action;
+        }
+
+        if (status.startsWith('In-Progress') && (status.includes('Generate Input Workspace') || !status.includes('Settlement Calculation')) && this.GEN_IWS_CALC_TA_NAMES.includes(value) ) {
+          action.show = true;
           return action;
         }
 
@@ -56,6 +51,7 @@ export class SettlementActionsPipe implements PipeTransform {
           action.show = false;
           return action;
         }
+
 
         if (value === 'publish') {
           action.show = !data.published;
@@ -124,7 +120,30 @@ export class SettlementActionsPipe implements PipeTransform {
     SettlementStatus.FAILED_RESERVE_SETTLEMENT_CALCULATION,
     SettlementStatus.CANCELLED_RESERVE_SETTLEMENT_CALCULATION,
     SettlementStatus.CANCELLED_SETTLEMENT_CALCULATION,
-  ]
+  ];
+
+  DISABLE_ON_FINALIZED = [
+    'generateInputWorkspace',
+    'generateReserveInputWorkspace',
+    'calculateEnergyTradingAmount',
+    'calculateReserveTradingAmount',
+    'calculateMSummary',
+    'energyTradingAmounts-calculateMSummary',
+    'reserveTradingAmounts-calculateMSummary',
+    'reserveTradingAmounts-calculateGmrVat',
+    'energyTradingAmounts-calculateGmrVat',
+    'energyTradingAmounts-finalize',
+    'reserveTradingAmounts-finalize'
+  ];
+
+  GEN_IWS_CALC_TA_NAMES = [
+    'generateInputWorkspace',
+    'generateReserveInputWorkspace',
+    'calculateEnergyTradingAmount',
+    'generateReserveInputWorkspace'
+  ];
+
+
 
   handleGenerateStatus(action: JobSelect, module: string, status: keyof typeof SettlementStatus): JobSelect {
     const isRta = module === 'reserveTradingAmounts' && action.value === 'generateReserveInputWorkspace';
