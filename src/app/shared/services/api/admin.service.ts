@@ -30,7 +30,7 @@ export class AdminService {
   public getReferences(type: string): Observable<ReferenceResponse<Reference>> {
     const _filters = {
       pageNo: 0,
-      pageSize: 10,
+      pageSize: 100,
       mapParams: {
         type
       },

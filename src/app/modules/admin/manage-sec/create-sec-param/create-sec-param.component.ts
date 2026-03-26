@@ -6,7 +6,7 @@ import { STATUS_OPTIONS } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { AdminService, SecParamsService } from '@shared/services/api';
-import { format } from 'date-fns';
+import { format, isBefore } from 'date-fns';
 import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
 import { ToastrService } from 'ngx-toastr';
@@ -43,14 +43,14 @@ export class CreateSecParamComponent implements OnInit {
   buildForm(): void {
     this.paramForm = this.formBuilder.group({
       groupId: [null],
-      effectiveDate: [null, [RxwebValidators.required(), RxwebValidators.minLength({ value: 1})]],
+      effectiveStart: [null, RxwebValidators.required()],
+      effectiveEnd: [null],
       fuelType: [null, [RxwebValidators.required(), RxwebValidators.minLength({ value: 1})]],
       active: [null, [RxwebValidators.required()]],
     });
 
     if (this.modalData?.item) {
       const item = this.modalData.item;
-      item.effectiveDate = [item.effectiveStartDate, item.effectiveEndDate];
       this.paramForm.patchValue(item);
     }
   }
@@ -84,10 +84,11 @@ export class CreateSecParamComponent implements OnInit {
       return;
     }
 
-    payload.effectiveStart = format(payload.effectiveDate[0], 'yyyy-MM-dd hh:mm');
-    payload.effectiveEnd = format(payload.effectiveDate[1], 'yyyy-MM-dd hh:mm');
+    payload.effectiveStart = format(payload.effectiveStart, 'yyyy-MM-dd hh:mm');
 
-    delete payload.effectiveDate;
+    if (payload.effectiveEnd) {
+      format(payload.effectiveEnd, 'yyyy-MM-dd hh:mm')
+    }
 
     this.busy$ = this.secService.createSecParameters(payload)
       .pipe()
@@ -98,6 +99,10 @@ export class CreateSecParamComponent implements OnInit {
   }
 
   triggerClose = () => this.modalRef.close();
+
+  disabledDate = (current: Date) => isBefore(current, this.effectiveStart?.value);
+
+  get effectiveStart(): AbstractControl { return this.paramForm?.get('effectiveStart') as AbstractControl; }
 
   get fuelType(): AbstractControl | null { return this.paramForm.get('fuelType'); }
 
