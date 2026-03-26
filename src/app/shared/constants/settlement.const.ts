@@ -113,7 +113,7 @@ export const MDV_LABELS: Record<MDV, string> = {
   [MDV.MDV5]: 'Adjusted MQ vs GESQ',
   [MDV.MDV7]: 'MQ per interval (WESM & RCOA)',
   [MDV.MDV8]: 'Billing Run Comparison',
-  [MDV.MDV9]: 'Metering Summary in Meter Data Validation',
+  [MDV.MDV9]: 'Metering Summary',
 };
 
 export const WESM_PENALTY_STATUS = [
