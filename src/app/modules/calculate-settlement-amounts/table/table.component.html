@@ -198,7 +198,7 @@
       </div>
     }
 
-    @if (allData.parameters.processType?.textValue !== "DAILY" && [LABELS.GENERATE_INPUT_WORKSPACE, LABELS.SETTLEMENT_CALCULATION].includes(data)) {
+    @if (allData.parameters.processType?.textValue !== "DAILY" && [LABELS.GENERATE_INPUT_WORKSPACE, LABELS.SETTLEMENT_CALCULATION, LABELS.GENERATE_RESERVE_INPUT_WORKSPACE, LABELS.RESERVE_SETTLEMENT_CALCULATION].includes(data)) {
       <div class="cell-sub">
         <span class="cell-sub-label">{{ LABELS.TRADING_DATE }}: </span>
         <span class="cell-sub-value">{{ allData.parameters.billingStartDate?.dateValue + " - " + allData.parameters.billingEndDate?.dateValue }}</span>
