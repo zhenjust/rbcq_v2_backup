@@ -37,12 +37,16 @@ export class SettlementActionsPipe implements PipeTransform {
           return action;
         }
 
-        if (status.startsWith('In-Progress') && !status.includes('Generate Input Workspace') && !status.includes('Settlement Calculation')) {
+        /**
+         * Show actions when status is inprogress (for Gen IWS and Calc TA)
+         */
+
+        if (status.startsWith('In-Progress') && this.GEN_IWS_CALC_TA_STATUSES.every(stat => !status.includes(stat))) {
           action.show = false;
           return action;
         }
 
-        if (status.startsWith('In-Progress') && (status.includes('Generate Input Workspace') || !status.includes('Settlement Calculation')) && this.GEN_IWS_CALC_TA_NAMES.includes(value) ) {
+        if (status.startsWith('In-Progress') && this.GEN_IWS_CALC_TA_STATUSES.some(stat => status.includes(stat)) && this.GEN_IWS_CALC_TA_NAMES.includes(value) ) {
           action.show = true;
           return action;
         }
@@ -140,9 +144,15 @@ export class SettlementActionsPipe implements PipeTransform {
     'generateInputWorkspace',
     'generateReserveInputWorkspace',
     'calculateEnergyTradingAmount',
-    'generateReserveInputWorkspace'
+    'calculateReserveTradingAmount'
   ];
 
+  GEN_IWS_CALC_TA_STATUSES = [
+    'Generate Input Workspace',
+    'Settlement Calculation',
+    'Reserve Settlement Calculation',
+    'Generate Reserve Input Workspace'
+  ];
 
 
   handleGenerateStatus(action: JobSelect, module: string, status: keyof typeof SettlementStatus): JobSelect {
