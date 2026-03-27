@@ -322,118 +322,6 @@ export class NavbarComponent implements OnInit {
           }
         ]
       },
-      //Admin External Routes
-      {
-        title: 'Admin',
-        show: true,
-        icon: faUserLarge,
-        permission: [
-          PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS,
-          PHASE_ONE_AUTHORITIES.MANAGE_SYS_CONFIG,
-          PHASE_ONE_AUTHORITIES.MANAGE_JOB_SCHEDULER,
-          PHASE_ONE_AUTHORITIES.MANAGE_WESM_MARKET_PRODUCTS,
-          PHASE_ONE_AUTHORITIES.MANAGE_FIELD_SETTINGS,
-          PHASE_ONE_AUTHORITIES.MANAGE_SEC
-        ],
-        children: [
-          {
-            title: 'MO User Management',
-            show: true,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_MARKET_OPERATORS, PHASE_ONE_AUTHORITIES.VIEW_ROLE, PHASE_ONE_AUTHORITIES.VIEW_PRIVILEGES],
-            children: [
-              {
-                title: 'Manage Market Operator Users',
-                show: true,
-                externalLink: externalRoutes.ADMIN.MO_USER_MANAGEMENT.MANAGE_MARKET_OPERATOR_USERS,
-                permission: [PHASE_ONE_AUTHORITIES.MANAGE_MARKET_OPERATORS]
-              },
-              {
-                title: 'Manage User Roles',
-                show: true,
-                externalLink: externalRoutes.ADMIN.MO_USER_MANAGEMENT.MANAGE_USER_ROLES,
-                permission: [PHASE_ONE_AUTHORITIES.VIEW_ROLE]
-              },
-              {
-                title: 'View Privileges',
-                show: true,
-                externalLink: externalRoutes.ADMIN.MO_USER_MANAGEMENT.VIEW_PRIVILEGES,
-                permission:[PHASE_ONE_AUTHORITIES.VIEW_PRIVILEGES]
-              }
-            ]
-          },
-          {
-            title: 'View Audit Logs',
-            show: true,
-            externalLink: externalRoutes.ADMIN.VIEW_AUDIT_LOGS,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS]
-          },
-          {
-            title: 'View XDF Audit Logs',
-            show: true,
-            externalLink: externalRoutes.ADMIN.VIEW_XDF_AUDIT_LOGS,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS]
-          },
-          {
-            title: 'System Configuration',
-            show: true,
-            externalLink: externalRoutes.ADMIN.SYSTEM_CONFIGURATION,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_SYS_CONFIG,]
-          },
-          {
-            title: 'Manage Scheduled Jobs',
-            show: true,
-            externalLink: externalRoutes.ADMIN.MANAGE_SCHEDULED_JOBS,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_JOB_SCHEDULER]
-          },
-          {
-            title: 'Data Interface Management',
-            show: true,
-            permission: [
-              PHASE_TWO_AUTHORITIES.SET_TOD_GEN_CONFIG,
-              PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY
-            ],
-            children: [
-              {
-                title: 'Manage Trading Operations Data Interface',
-                show: true,
-                externalLink: externalRoutes.ADMIN.DATA_INTERFACE_MANAGEMENT.MANAGE_TRADING_OPERATIONS_DATA_INTERFACES,
-                permission: [PHASE_TWO_AUTHORITIES.SET_TOD_GEN_CONFIG]
-              },
-              {
-                title: 'Import Trading Operations Data',
-                show: true,
-                externalLink: externalRoutes.ADMIN.DATA_INTERFACE_MANAGEMENT.IMPORT_TRADING_OPERATIONS_DATA,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY]
-              }
-            ]
-          },
-          {
-            title: 'Manage Market Products',
-            show: true,
-            externalLink: externalRoutes.ADMIN.MANAGE_MARKET_PRODUCTS,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_WESM_MARKET_PRODUCTS]
-          },
-          {
-            title: 'Manage Sub Market Products',
-            show: true,
-            externalLink: externalRoutes.ADMIN.MANAGE_SUB_MARKET_PRODUCTS,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_WESM_MARKET_PRODUCTS]
-          },
-          {
-            title: 'Manage Field Settings',
-            show: true,
-            externalLink: externalRoutes.ADMIN.MANAGE_FIELD_SETTINGS,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_FIELD_SETTINGS]
-          },
-          {
-            title: 'Manage SEC Parameters',
-            show: true,
-            path: NEW_ROUTES.SEC,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_SEC]
-          }
-
-        ]
-      },
       //User Account Route
       {
         title: 'Manage User Accounts',
@@ -1217,6 +1105,117 @@ export class NavbarComponent implements OnInit {
         icon: faRoadCircleCheck,
         permission: [PHASE_TWO_AUTHORITIES.VIEW_QUEUE],
         externalLink: externalRoutes.JOB_QUEUE
+      },
+      //Admin External Routes
+      {
+        title: 'Admin',
+        show: true,
+        icon: faUserLarge,
+        permission: [
+          PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS,
+          PHASE_ONE_AUTHORITIES.MANAGE_SYS_CONFIG,
+          PHASE_ONE_AUTHORITIES.MANAGE_JOB_SCHEDULER,
+          PHASE_ONE_AUTHORITIES.MANAGE_WESM_MARKET_PRODUCTS,
+          PHASE_ONE_AUTHORITIES.MANAGE_FIELD_SETTINGS,
+          PHASE_ONE_AUTHORITIES.MANAGE_SEC
+        ],
+        children: [
+          {
+            title: 'MO User Management',
+            show: true,
+            permission: [PHASE_ONE_AUTHORITIES.MANAGE_MARKET_OPERATORS, PHASE_ONE_AUTHORITIES.VIEW_ROLE, PHASE_ONE_AUTHORITIES.VIEW_PRIVILEGES],
+            children: [
+              {
+                title: 'Manage Market Operator Users',
+                show: true,
+                externalLink: externalRoutes.ADMIN.MO_USER_MANAGEMENT.MANAGE_MARKET_OPERATOR_USERS,
+                permission: [PHASE_ONE_AUTHORITIES.MANAGE_MARKET_OPERATORS]
+              },
+              {
+                title: 'Manage User Roles',
+                show: true,
+                externalLink: externalRoutes.ADMIN.MO_USER_MANAGEMENT.MANAGE_USER_ROLES,
+                permission: [PHASE_ONE_AUTHORITIES.VIEW_ROLE]
+              },
+              {
+                title: 'View Privileges',
+                show: true,
+                externalLink: externalRoutes.ADMIN.MO_USER_MANAGEMENT.VIEW_PRIVILEGES,
+                permission:[PHASE_ONE_AUTHORITIES.VIEW_PRIVILEGES]
+              }
+            ]
+          },
+          {
+            title: 'View Audit Logs',
+            show: true,
+            externalLink: externalRoutes.ADMIN.VIEW_AUDIT_LOGS,
+            permission: [PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS]
+          },
+          {
+            title: 'View XDF Audit Logs',
+            show: true,
+            externalLink: externalRoutes.ADMIN.VIEW_XDF_AUDIT_LOGS,
+            permission: [PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS]
+          },
+          {
+            title: 'System Configuration',
+            show: true,
+            externalLink: externalRoutes.ADMIN.SYSTEM_CONFIGURATION,
+            permission: [PHASE_ONE_AUTHORITIES.MANAGE_SYS_CONFIG,]
+          },
+          {
+            title: 'Manage Scheduled Jobs',
+            show: true,
+            externalLink: externalRoutes.ADMIN.MANAGE_SCHEDULED_JOBS,
+            permission: [PHASE_ONE_AUTHORITIES.MANAGE_JOB_SCHEDULER]
+          },
+          {
+            title: 'Data Interface Management',
+            show: true,
+            permission: [
+              PHASE_TWO_AUTHORITIES.SET_TOD_GEN_CONFIG,
+              PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY
+            ],
+            children: [
+              {
+                title: 'Manage Trading Operations Data Interface',
+                show: true,
+                externalLink: externalRoutes.ADMIN.DATA_INTERFACE_MANAGEMENT.MANAGE_TRADING_OPERATIONS_DATA_INTERFACES,
+                permission: [PHASE_TWO_AUTHORITIES.SET_TOD_GEN_CONFIG]
+              },
+              {
+                title: 'Import Trading Operations Data',
+                show: true,
+                externalLink: externalRoutes.ADMIN.DATA_INTERFACE_MANAGEMENT.IMPORT_TRADING_OPERATIONS_DATA,
+                permission: [PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY]
+              }
+            ]
+          },
+          {
+            title: 'Manage Market Products',
+            show: true,
+            externalLink: externalRoutes.ADMIN.MANAGE_MARKET_PRODUCTS,
+            permission: [PHASE_ONE_AUTHORITIES.MANAGE_WESM_MARKET_PRODUCTS]
+          },
+          {
+            title: 'Manage Sub Market Products',
+            show: true,
+            externalLink: externalRoutes.ADMIN.MANAGE_SUB_MARKET_PRODUCTS,
+            permission: [PHASE_ONE_AUTHORITIES.MANAGE_WESM_MARKET_PRODUCTS]
+          },
+          {
+            title: 'Manage Field Settings',
+            show: true,
+            externalLink: externalRoutes.ADMIN.MANAGE_FIELD_SETTINGS,
+            permission: [PHASE_ONE_AUTHORITIES.MANAGE_FIELD_SETTINGS]
+          },
+          {
+            title: 'Manage SEC Parameters',
+            show: true,
+            path: NEW_ROUTES.SEC,
+            permission: [PHASE_ONE_AUTHORITIES.MANAGE_SEC]
+          }
+        ]
       },
       {
         title: LABELS.MQ_UPLOADER,
