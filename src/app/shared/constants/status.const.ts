@@ -68,7 +68,6 @@ export const EtaSettlementStatus = {
 }
 
 export const SettlementStatus = {
-  NULLIFIED: 'Nullified',
   COMPLETED_SETTLEMENT_READY: 'Completed - Settlement Ready',
   COMPLETED_TAGGING: 'Completed - Tagging',
 

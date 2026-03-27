@@ -131,7 +131,6 @@ export class SettlementActionsPipe implements PipeTransform {
     'generateReserveInputWorkspace',
     'calculateEnergyTradingAmount',
     'calculateReserveTradingAmount',
-    'calculateMSummary',
     'energyTradingAmounts-calculateMSummary',
     'reserveTradingAmounts-calculateMSummary',
     'reserveTradingAmounts-calculateGmrVat',
