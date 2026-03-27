@@ -16,14 +16,14 @@
       <nz-form-item>
         <nz-form-label nzRequired>{{ LABELS.EFFECTIVE_START_DATE }}</nz-form-label>
         <nz-form-control>
-          <nz-date-picker formControlName="effectiveStart" class="w-100" nzFormat="yyyy-MM-dd hh:mm a" [nzShowTime]="{ nzFormat: 'HH:mm', nzMinuteStep: 5, nzUse12Hours: true }"></nz-date-picker>
+          <nz-date-picker formControlName="effectiveStart" class="w-100" nzFormat="yyyy-MM-dd hh:mm a" [nzShowTime]="{ nzFormat: 'hh:mm', nzMinuteStep: 5, nzUse12Hours: true }"></nz-date-picker>
         </nz-form-control>
       </nz-form-item>
 
       <nz-form-item>
         <nz-form-label>{{ LABELS.EFFECTIVE_END_DATE }}</nz-form-label>
         <nz-form-control>
-          <nz-date-picker formControlName="effectiveEnd" class="w-100" nzFormat="yyyy-MM-dd hh:mm a" [nzShowTime]="{ nzFormat: 'HH:mm', nzMinuteStep: 5, nzUse12Hours: true }" [nzDisabledDate]="disabledDate"></nz-date-picker>
+          <nz-date-picker formControlName="effectiveEnd" class="w-100" nzFormat="yyyy-MM-dd hh:mm a" [nzShowTime]="{ nzFormat: 'hh:mm', nzMinuteStep: 5, nzUse12Hours: true }" [nzDisabledDate]="disabledDate"></nz-date-picker>
         </nz-form-control>
       </nz-form-item>
     </div>

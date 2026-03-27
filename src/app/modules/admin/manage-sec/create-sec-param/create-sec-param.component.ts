@@ -51,6 +51,8 @@ export class CreateSecParamComponent implements OnInit {
 
     if (this.modalData?.item) {
       const item = this.modalData.item;
+      item.effectiveStart = new Date(item.effectiveStartDate);
+      item.effectiveEnd = item.effectiveEndDate ? new Date(item.effectiveEndDate) : null;
       this.paramForm.patchValue(item);
     }
   }
@@ -84,10 +86,10 @@ export class CreateSecParamComponent implements OnInit {
       return;
     }
 
-    payload.effectiveStart = format(payload.effectiveStart, 'yyyy-MM-dd hh:mm');
+    payload.effectiveStart = format(payload.effectiveStart, 'yyyy-MM-dd HH:mm');
 
     if (payload.effectiveEnd) {
-      format(payload.effectiveEnd, 'yyyy-MM-dd hh:mm')
+      payload.effectiveEnd = format(payload.effectiveEnd, 'yyyy-MM-dd HH:mm')
     }
 
     this.busy$ = this.secService.createSecParameters(payload)
