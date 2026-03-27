@@ -56,7 +56,6 @@ export class SettlementActionsPipe implements PipeTransform {
           return action;
         }
 
-
         if (value === 'publish') {
           action.show = !data.published;
         }
@@ -67,10 +66,6 @@ export class SettlementActionsPipe implements PipeTransform {
 
         if (value === 'calculateEnergyTradingAmount' || value === 'calculateReserveTradingAmount') {
           action = this.handleCalculateTA(action, pipelines, isSettlementModules);
-        }
-
-        if (value === 'calculateMSummary') {
-          action.show = status === SettlementStatus.COMPLETED_SETTLEMENT_COMPLETE;
         }
 
         if (value === 'generate_energy_files' || value === 'generate_reserve_files') {
