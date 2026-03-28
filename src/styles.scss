@@ -104,3 +104,29 @@ td {
     margin: 0px !important;
   }
 // }
+
+
+.popover-calendar {
+  .ant-popover-inner-content {
+    padding: 0px !important;
+  }
+
+  .ant-picker-footer-extra {
+    display: flex;
+    justify-content: center;
+    padding: 0.2rem 0rem;
+  }
+
+  .ant-btn-link, .btn-link {
+    color: black;
+  }
+
+
+
+}
+
+// .ng-invalid.ng-touched.ng-dirty {
+//   .ctrl-calendar {
+//     border: 1px solid red;
+//   }
+// }

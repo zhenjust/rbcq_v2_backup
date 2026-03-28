@@ -6,7 +6,7 @@ import { STATUS_OPTIONS } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { AdminService, SecParamsService } from '@shared/services/api';
-import { format, isBefore } from 'date-fns';
+import { differenceInCalendarDays, format } from 'date-fns';
 import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
 import { ToastrService } from 'ngx-toastr';
@@ -102,7 +102,7 @@ export class CreateSecParamComponent implements OnInit {
 
   triggerClose = () => this.modalRef.close();
 
-  disabledDate = (current: Date) => isBefore(current, this.effectiveStart?.value);
+  disabledDate = (current: Date) => differenceInCalendarDays(current, this.effectiveStart?.value) < 1;
 
   get effectiveStart(): AbstractControl { return this.paramForm?.get('effectiveStart') as AbstractControl; }
 

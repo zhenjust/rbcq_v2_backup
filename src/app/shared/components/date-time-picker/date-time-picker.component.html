@@ -1,0 +1,41 @@
+<div class="ctrl-calendar" nz-popover [nzPopoverContent]="calendarTpl" nzPopoverTrigger="click" nzPopoverPlacement="right" (nzPopoverVisibleChange)="onVisibleChange($event)" nzPopoverOverlayClassName="popover-calendar" [nzPopoverVisible]="isVisible">
+  @if (value) {
+    <div class="d-flex justify-content-between">
+      <span>{{ value | date: 'yyyy-MM-dd HH:mm'}}</span>
+      <nz-icon nzType="close-circle" (click)="$event.stopPropagation(); $event.preventDefault(); value = null"/>
+    </div>
+
+  } @else {
+    <div class="d-flex justify-content-between">
+      <span style="color: #bfbfbf">Select Date</span>
+      <nz-icon nzType="calendar" style="color: #bfbfbf"/>
+    </div>
+  }
+</div>
+
+<ng-template #calendarTpl>
+  @if (showCalendar()) {
+    <nz-date-picker nzInline [(ngModel)]="value" [nzDisabledDate]="disabledDate()" (ngModelChange)="updateValue(value)" [ngModelOptions]="{ standalone: true }" [nzRenderExtraFooter]="timeTpl" [nzShowToday]="false"/>
+  } @else {
+    <div class="d-flex justify-content-around py-2">
+      <button nz-button nzType="link" (click)="toggleTime()">
+        <nz-icon nzType="calendar" />
+      </button>
+      <button nz-button nzType="link" (click)="setTimeDefault()">
+        <nz-icon nzType="delete" />
+      </button>
+    </div>
+    <div class="px-5 pt-3 pb-5">
+      <ngb-timepicker [(ngModel)]="time" (ngModelChange)="onTimeChange($event)" [ngModelOptions]="{ standalone: true }" [minuteStep]="5"/>
+    </div>
+  }
+</ng-template>
+
+<ng-template #timeTpl>
+  @if (showCalendar()) {
+    <button nz-button nzType="link" (click)="toggleTime()">
+      <nz-icon nzType="clock-circle" />
+    </button>
+  }
+</ng-template>
+

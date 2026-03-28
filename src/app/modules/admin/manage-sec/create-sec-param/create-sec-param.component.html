@@ -13,17 +13,17 @@
     </nz-form-item>
 
     <div class="d-flex gap-4">
-      <nz-form-item>
+      <nz-form-item class="w-50">
         <nz-form-label nzRequired>{{ LABELS.EFFECTIVE_START_DATE }}</nz-form-label>
         <nz-form-control>
-          <nz-date-picker formControlName="effectiveStart" class="w-100" nzFormat="yyyy-MM-dd hh:mm a" [nzShowTime]="{ nzFormat: 'hh:mm', nzMinuteStep: 5, nzUse12Hours: true }"></nz-date-picker>
-        </nz-form-control>
+          <app-date-time-picker formControlName="effectiveStart"></app-date-time-picker>
+          </nz-form-control>
       </nz-form-item>
 
-      <nz-form-item>
+      <nz-form-item class="w-50">
         <nz-form-label>{{ LABELS.EFFECTIVE_END_DATE }}</nz-form-label>
         <nz-form-control>
-          <nz-date-picker formControlName="effectiveEnd" class="w-100" nzFormat="yyyy-MM-dd hh:mm a" [nzShowTime]="{ nzFormat: 'hh:mm', nzMinuteStep: 5, nzUse12Hours: true }" [nzDisabledDate]="disabledDate"></nz-date-picker>
+          <app-date-time-picker formControlName="effectiveEnd" [disabledDate]="disabledDate"></app-date-time-picker>
         </nz-form-control>
       </nz-form-item>
     </div>
