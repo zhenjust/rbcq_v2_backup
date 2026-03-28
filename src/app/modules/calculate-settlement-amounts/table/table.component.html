@@ -21,9 +21,9 @@
     </thead>
     <tbody>
         @for (data of nzTable.data; track data;) {
-            <tr [class.highlight-row]="data.outdated"
+            <tr [class.highlight-row]="data.outdatedId || data.outdatedRun"
                   nz-tooltip
-                  [nzTooltipTitle]="data.outdated ? ('Metering rerun completed with new workspace id: ' + data.workspaceId) : null"
+                  [nzTooltipTitle]="data.outdatedId ? ('Metering rerun completed with new workspace id: ' + data.workspaceId) : data.outdatedRun ? 'Last run job not same with workspace status' : null"
                   nzTooltipPlacement="top">
                 <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)" [nzShowExpand]="!!data.pipelines.length"></td>
 
