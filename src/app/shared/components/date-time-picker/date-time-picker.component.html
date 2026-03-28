@@ -1,4 +1,4 @@
-<div class="ctrl-calendar" nz-popover [nzPopoverContent]="calendarTpl" nzPopoverTrigger="click" nzPopoverPlacement="right" (nzPopoverVisibleChange)="onVisibleChange($event)" nzPopoverOverlayClassName="popover-calendar" [nzPopoverVisible]="isVisible">
+<div class="ctrl-calendar" nz-popover [nzPopoverContent]="calendarTpl" nzPopoverTrigger="click" nzPopoverPlacement="bottom" [nzPopoverArrowPointAtCenter]="true" (nzPopoverVisibleChange)="onVisibleChange($event)" nzPopoverOverlayClassName="popover-calendar" [nzPopoverVisible]="isVisible">
   @if (value) {
     <div class="d-flex justify-content-between">
       <span>{{ value | date: 'yyyy-MM-dd HH:mm'}}</span>
@@ -25,7 +25,7 @@
         <nz-icon nzType="delete" />
       </button>
     </div>
-    <div class="px-5 pt-3 pb-5">
+    <div class="px-4 pt-3 pb-5">
       <ngb-timepicker [(ngModel)]="time" (ngModelChange)="onTimeChange($event)" [ngModelOptions]="{ standalone: true }" [minuteStep]="5"/>
     </div>
   }

@@ -120,13 +120,21 @@ td {
   .ant-btn-link, .btn-link {
     color: black;
   }
-
-
-
 }
 
-// .ng-invalid.ng-touched.ng-dirty {
-//   .ctrl-calendar {
-//     border: 1px solid red;
-//   }
-// }
+.ngb-tp-spacer {
+  margin-left: 1.5rem !important;
+  margin-right: 1.5rem !important;
+}
+
+.ngb-tp-input {
+  font-weight: bold;
+}
+
+.ngb-tp-input {
+  border-right: none;
+  border-left: none;
+  border-bottom: none;
+  border-radius: 0px;
+}
+
