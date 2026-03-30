@@ -4,7 +4,7 @@ import { RxwebValidators } from '@rxweb/reactive-form-validators';
 import { MDV_LABELS, METER_PROCESS_TYPE_OPTION } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
-import { MeterProcessTypes } from '@shared/enums';
+import { MDV, MeterProcessTypes } from '@shared/enums';
 import { GenerateMetering, meterProcessBillingPeriod } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { addDays, format, isAfter } from 'date-fns';
@@ -64,6 +64,22 @@ export class GenerateMdvComponent implements OnInit {
 
     this.processType?.valueChanges
       .subscribe(() => {
+        this.reportCodes?.reset();
+        this.options = this.options.map(option => {
+          if ([MDV.MDV7, MDV.MDV8, MDV.MDV9].includes(option.value as MDV)) {
+            if (this.isDaily || this.isPrelim) {
+              option.disabled = true;
+              return option;
+            }
+
+            option.disabled = false;
+            return option;
+          }
+
+          option.disabled = false;
+          return option;
+        });
+
         if (this.isDaily) {
           this.billingPeriod?.clearValidators();
           this.tradingDate?.addValidators([ RxwebValidators.required() ]);
@@ -132,6 +148,7 @@ export class GenerateMdvComponent implements OnInit {
   get billingPeriod(): AbstractControl | null { return this.form?.get('billingPeriod'); }
 
   get isDaily(): boolean { return this.processType?.value === MeterProcessTypes.DAILY; }
+  get isPrelim(): boolean { return this.processType?.value === MeterProcessTypes.PRELIM; }
 
   get reportCodes(): AbstractControl | null { return this.form?.get('reportCodes') as AbstractControl; }
 }
