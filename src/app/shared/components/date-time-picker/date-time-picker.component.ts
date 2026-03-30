@@ -60,6 +60,7 @@ export class DateTimePickerComponent implements ControlValueAccessor {
   }
 
   setTimeDefault(): void {
+    this.time = { hour: 0, minute: 0 };
     const date = set(this.value || new Date(), { hours: 0, minutes: 0 });
     this.showCalendar.set(!this.showCalendar());
     this.updateValue(date);
