@@ -74,7 +74,7 @@ export class ManageSecComponent implements OnInit {
 
   add(item?: any): void {
     const modal = this.modalService.create({
-      nzTitle: `${LABELS.ADD} ${LABELS.SEC_PARAMETER}`,
+      nzTitle: `${item ? LABELS.UPDATE : LABELS.ADD} ${LABELS.SEC_PARAMETER}`,
       nzCentered: true,
       nzContent: CreateSecParamComponent,
       nzFooter: null,
