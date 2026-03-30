@@ -25,6 +25,11 @@ export class SecParamsService {
       params = params.append('fuelType', '');
     }
 
+    if (params.get('fuelType') && params.get('fuelType')?.toLowerCase() === 'all') {
+      params = params.delete('fuelType');
+      params = params.append('allFuelType', 'true');
+    }
+
     return this.http.get<TableDataResult<SecParameters[]>>(`${this.settlementEndpoint}/sec-maintenance/list`, { params });
   }
 
