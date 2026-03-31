@@ -100,6 +100,13 @@ export class ManageSecComponent implements OnInit {
       return of();
     }
 
+    if (!this.paginatedTable?.tableParams?.sort) {
+      this.paginatedTable.tableParams.sort = {
+        dir: 'desc',
+        prop: 'effectiveStartDate'
+      }
+    }
+
     const formValues = this.form?.getRawValue();
 
     console.log(this.paginatedTable)
