@@ -104,3 +104,37 @@ td {
     margin: 0px !important;
   }
 // }
+
+
+.popover-calendar {
+  .ant-popover-inner-content {
+    padding: 0px !important;
+  }
+
+  .ant-picker-footer-extra {
+    display: flex;
+    justify-content: center;
+    padding: 0.2rem 0rem;
+  }
+
+  .ant-btn-link, .btn-link {
+    color: black;
+  }
+}
+
+.ngb-tp-spacer {
+  margin-left: 1.5rem !important;
+  margin-right: 1.5rem !important;
+}
+
+.ngb-tp-input {
+  font-weight: bold;
+}
+
+.ngb-tp-input {
+  border-right: none;
+  border-left: none;
+  border-bottom: none;
+  border-radius: 0px;
+}
+

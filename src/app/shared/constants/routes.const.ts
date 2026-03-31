@@ -14,9 +14,10 @@ export const NEW_ROUTES = {
     METER_DATA_VALIDATION: 'metering/meter-data-validation',
     SEC: 'admin/sec',
     RBCQ: 'rbcq-v2',
-        RBCQ_SUBMIT: 'rbcq-v2/submit',
-        RBCQ_VIEW: 'rbcq-v2/view',
-        RBCQ_PROCESS: 'rbcq-v2/process'
+    RBCQ_SUBMIT: 'rbcq-v2/submit',
+    RBCQ_VIEW: 'rbcq-v2/view',
+    RBCQ_PROCESS: 'rbcq-v2/process',
+    WESM_PENALTY: 'settlement/wesm-penalty',
 }
 
 export const HEADER_ROUTES = {
@@ -184,6 +185,7 @@ const CALCULATION_MAINTENANCE_AND_CONFIGURATION = {
     IMPORT_METERING_CONFIGURATION: `${environment.__PHASE_TWO_URL__}/#/import-metering-config`,
     IMPORT_SETTLEMENT_METERING_POINT_CONFIGURATION: `${environment.__PHASE_TWO_URL__}/#/import-stl-mpconfig`,
     SETTLEMENT_SEIN_MASTERLIST: `${environment.__PHASE_TWO_URL__}/#/settlement-mpoint`,
+    METERING_CONFIGURATION: `${environment.__PHASE_TWO_URL__}/#/metering-config`,
     HISTORICAL_FACTOR_MAINTENANCE: `${environment.__PHASE_TWO_URL__}/#/historical-factor`,
     VIRTUAL_SEIN_MAPPING: `${environment.__PHASE_TWO_URL__}/#/virtual-sein-mapping`,
     MTN_MODEL_CONFIGURATION: `${environment.__PHASE_TWO_URL__}/#/mtn-model-config`,

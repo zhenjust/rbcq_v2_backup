@@ -36,6 +36,7 @@ export const LABELS = {
   ADD: 'Add',
   SAVE: 'Save',
   SEARCH: 'Search',
+  UPDATE: 'Update',
 
   // Field Labels
   CONSOLIDATE: 'Consolidate',
@@ -53,9 +54,10 @@ export const LABELS = {
   ALL: 'All',
   TRANSACTION_REPORT: 'Transaction Report',
   DUE_DATE: 'Due Date',
-  SETTLEMENT_CALCULATION: 'Settlement Calculation',
   CALCULATE_ENERGY_TRADING_AMOUNT: 'Calculate Energy Trading Amount',
   CALCULATE_RESERVE_TRADING_AMOUNT: 'Calculate Reserve Trading Amount',
+  SETTLEMENT_CALCULATION: 'Settlement Calculation',
+  RESERVE_SETTLEMENT_CALCULATION: 'Reserve Settlement Calculation',
   GENERATE_MONTHLY_SUMMARY: 'Generate Monthly Summary',
   GENERATE_INPUT_WORKSPACE: 'Generate Input Workspace',
   GENERATE_ENERGY_INPUT_WORKSPACE: 'Generate Energy Input Workspace',
@@ -157,6 +159,7 @@ export const LABELS = {
   REPORT_CODE: 'Report Code',
 
   FUEL_TYPE: 'Fuel Type',
+  FUEL_TYPES: 'Fuel Types',
   EFFECTIVE_START_DATE: 'Effective Start Date',
   EFFECTIVE_END_DATE: 'Effective End Date',
 
@@ -167,4 +170,21 @@ export const LABELS = {
   ACTIVE: 'Active',
   INACTIVE: 'Inactive',
 
+  WESM_PENALTY: 'WESM Penalty',
+  BILLING_ID: 'Billing ID',
+  TYPE: 'Type',
+  AMOUNT: 'Amount',
+  PENALTY_AMOUNT: 'Penalty Amount',
+  DOCUMENT_NUMBER: 'Document Number',
+  DATE: 'Date',
+  RESOURCE_ID: 'Resource ID',
+  PENALTY_OR_REFUND: 'Penalty (or Refund)',
+
+  MORE_ACTIONS: 'More Actions',
+  GENERATE_REFUND_IWS: 'Generate Refund IWS',
+  GENERATE_PENALTY_IWS: 'Generate Penalty IWS',
+
+  CALCULATE: 'Calculate',
+  FINALIZE: 'Finalize',
+  SELECTED: 'Selected',
 }

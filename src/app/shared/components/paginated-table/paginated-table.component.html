@@ -87,7 +87,9 @@
               <nz-dropdown-menu #menu="nzDropdownMenu">
                 <ul nz-menu nzSelectable>
                     @for (action of actionControls(); track action.label) {
+                      @if (!action.hidden || !action.hidden(row)) {
                         <li nz-menu-item (click)="action.click(row)" [nzDanger]="action?.danger">{{ action.label }}</li>
+                      }
                     }
                 </ul>
               </nz-dropdown-menu>

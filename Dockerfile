@@ -1,4 +1,4 @@
-FROM nginx:alpine
+FROM exist.azurecr.io/nginx:alpine
 
 COPY nginx.conf /etc/nginx/nginx.conf
 

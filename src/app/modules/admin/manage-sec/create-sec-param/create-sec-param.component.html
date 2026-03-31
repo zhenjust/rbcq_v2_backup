@@ -7,17 +7,27 @@
     <nz-form-item>
       <nz-form-label nzRequired>{{ LABELS.FUEL_TYPE }}</nz-form-label>
       <nz-form-control>
-        <nz-select formControlName="fuelType" [nzOptions]="fuelTypeOptions" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
+        <nz-select formControlName="fuelType" nzMode="multiple" nzShowArrow [nzOptions]="fuelTypeOptions" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
           [nzAllowClear]="true" nzShowSearch></nz-select>
       </nz-form-control>
     </nz-form-item>
 
-    <nz-form-item>
-      <nz-form-label nzRequired>{{ LABELS.EFFECTIVE_DATE }}</nz-form-label>
-      <nz-form-control>
-        <nz-range-picker formControlName="effectiveDate" class="w-100"></nz-range-picker>
-      </nz-form-control>
-    </nz-form-item>
+    <div class="d-flex gap-4">
+      <nz-form-item class="w-50">
+        <nz-form-label nzRequired>{{ LABELS.EFFECTIVE_START_DATE }}</nz-form-label>
+        <nz-form-control>
+          <app-date-time-picker formControlName="effectiveStart"></app-date-time-picker>
+          </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item class="w-50">
+        <nz-form-label>{{ LABELS.EFFECTIVE_END_DATE }}</nz-form-label>
+        <nz-form-control>
+          <app-date-time-picker formControlName="effectiveEnd" [disabledDate]="disabledDate"></app-date-time-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
 
     <nz-form-item class="mb-0">
       <nz-form-label nzRequired>{{ LABELS.STATUS }}</nz-form-label>
@@ -34,6 +44,6 @@
 <div class="d-flex justify-content-end" *nzModalFooter>
   <nz-space>
     <button *nzSpaceItem nz-button (click)="triggerClose()">{{ LABELS.CLOSE }}</button>
-    <button *nzSpaceItem nz-button nzType="primary" (click)="save()">{{ LABELS.SAVE }}</button>
+    <button *nzSpaceItem nz-button nzType="primary" (click)="save()" [disabled]="paramForm?.invalid">{{ LABELS.SAVE }}</button>
   </nz-space>
 </div>

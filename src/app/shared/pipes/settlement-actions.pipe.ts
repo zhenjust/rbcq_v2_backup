@@ -15,7 +15,6 @@ export class SettlementActionsPipe implements PipeTransform {
   stlStatus = SettlementStatus;
   settlementModules = ['reserveTradingAmounts', 'energyTradingAmounts'];
 
-
   transform(actions: JobSelect[], data: settlementPipeline, module: string): JobSelect[] {
     return actions
       .filter(action => action.type === module || !action.type)
@@ -26,6 +25,29 @@ export class SettlementActionsPipe implements PipeTransform {
 
         if (value === 'cancelRun') {
           action.show = status.startsWith('In-Progress');
+          return action;
+        }
+
+        const hasFinalized = pipelines.some(
+          p => (p.name === 'energyTradingAmounts-finalize' || p.name === 'reserveTradingAmounts-finalize') && p.status === 'Completed'
+        );
+
+        if (this.DISABLE_ON_FINALIZED.includes(value) && hasFinalized) {
+          action.show = false;
+          return action;
+        }
+
+        /**
+         * Show actions when status is inprogress (for Gen IWS and Calc TA)
+         */
+
+        if (status.startsWith('In-Progress') && this.GEN_IWS_CALC_TA_STATUSES.every(stat => !status.includes(stat))) {
+          action.show = false;
+          return action;
+        }
+
+        if (status.startsWith('In-Progress') && this.GEN_IWS_CALC_TA_STATUSES.some(stat => status.includes(stat)) && this.GEN_IWS_CALC_TA_NAMES.includes(value) ) {
+          action.show = true;
           return action;
         }
 
@@ -44,10 +66,6 @@ export class SettlementActionsPipe implements PipeTransform {
 
         if (value === 'calculateEnergyTradingAmount' || value === 'calculateReserveTradingAmount') {
           action = this.handleCalculateTA(action, pipelines, isSettlementModules);
-        }
-
-        if (value === 'calculateMSummary') {
-          action.show = status === SettlementStatus.COMPLETED_SETTLEMENT_COMPLETE;
         }
 
         if (value === 'generate_energy_files' || value === 'generate_reserve_files') {
@@ -101,7 +119,35 @@ export class SettlementActionsPipe implements PipeTransform {
     SettlementStatus.FAILED_RESERVE_SETTLEMENT_CALCULATION,
     SettlementStatus.CANCELLED_RESERVE_SETTLEMENT_CALCULATION,
     SettlementStatus.CANCELLED_SETTLEMENT_CALCULATION,
-  ]
+  ];
+
+  DISABLE_ON_FINALIZED = [
+    'generateInputWorkspace',
+    'generateReserveInputWorkspace',
+    'calculateEnergyTradingAmount',
+    'calculateReserveTradingAmount',
+    'energyTradingAmounts-calculateMSummary',
+    'reserveTradingAmounts-calculateMSummary',
+    'reserveTradingAmounts-calculateGmrVat',
+    'energyTradingAmounts-calculateGmrVat',
+    'energyTradingAmounts-finalize',
+    'reserveTradingAmounts-finalize'
+  ];
+
+  GEN_IWS_CALC_TA_NAMES = [
+    'generateInputWorkspace',
+    'generateReserveInputWorkspace',
+    'calculateEnergyTradingAmount',
+    'calculateReserveTradingAmount'
+  ];
+
+  GEN_IWS_CALC_TA_STATUSES = [
+    'Generate Input Workspace',
+    'Settlement Calculation',
+    'Reserve Settlement Calculation',
+    'Generate Reserve Input Workspace'
+  ];
+
 
   handleGenerateStatus(action: JobSelect, module: string, status: keyof typeof SettlementStatus): JobSelect {
     const isRta = module === 'reserveTradingAmounts' && action.value === 'generateReserveInputWorkspace';
@@ -110,7 +156,8 @@ export class SettlementActionsPipe implements PipeTransform {
     const statuses =  [
       SettlementStatus.IN_PROGRESS_GENERATE_INPUT_RESERVE_WORKSPACE,
       SettlementStatus.IN_PROGRESS_GENERATE_INPUT_ENERGY_WORKSPACE,
-      SettlementStatus.COMPLETED_TAGGING
+      SettlementStatus.COMPLETED_TAGGING,
+      SettlementStatus.COMPLETED_FINALIZE
     ];
 
     action.permissions = [PHASE_TWO_AUTHORITIES.TA_GENERATE_IW];

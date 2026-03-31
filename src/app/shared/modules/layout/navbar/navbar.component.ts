@@ -1,7 +1,7 @@
 import { Component, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
 import { externalRoutes, NEW_ROUTES } from '@shared/constants';
 import { CurrentUser, navItems } from '@shared/interfaces';
-import { faBell, faHome, faChevronDown, faChevronRight, faAddressCard, faBuilding, faCopy, faUserLarge, faCircleUser, faCalendar, faFileArchive, faAddressBook, faBuildingUn, faTachometer, faTachometerAlt, faBinoculars, faContactCard, faHandHoldingHand, faTachometerAverage, faListCheck, faRoadCircleCheck ,faFileContract} from '@fortawesome/free-solid-svg-icons';
+import { faBell, faHome, faChevronDown, faChevronRight, faAddressCard, faFileContract,faBuilding, faCopy, faUserLarge, faCircleUser, faCalendar, faFileArchive, faAddressBook, faBuildingUn, faTachometer, faTachometerAlt, faBinoculars, faContactCard, faHandHoldingHand, faTachometerAverage, faListCheck, faRoadCircleCheck, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { Router } from '@angular/router';
 import { PHASE_ONE_AUTHORITIES, PHASE_TWO_AUTHORITIES } from '@shared/constants';
 import { isAuthorizedAny } from '@shared/validators';
@@ -319,111 +319,6 @@ export class NavbarComponent implements OnInit {
             show: true,
             externalLink: externalRoutes.MANAGE_MIRF.MIRF_UPDATES,
             permission: [PHASE_ONE_AUTHORITIES.MIRF_UPLOAD_VIEW]
-          }
-        ]
-      },
-      //Admin External Routes
-      {
-        title: 'Admin',
-        show: true,
-        icon: faUserLarge,
-        permission: [
-          PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS,
-          PHASE_ONE_AUTHORITIES.MANAGE_SYS_CONFIG,
-          PHASE_ONE_AUTHORITIES.MANAGE_JOB_SCHEDULER,
-          PHASE_ONE_AUTHORITIES.MANAGE_WESM_MARKET_PRODUCTS,
-          PHASE_ONE_AUTHORITIES.MANAGE_FIELD_SETTINGS,
-          PHASE_ONE_AUTHORITIES.MANAGE_SEC
-        ],
-        children: [
-          {
-            title: 'MO User Management',
-            show: true,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_MARKET_OPERATORS, PHASE_ONE_AUTHORITIES.VIEW_ROLE, PHASE_ONE_AUTHORITIES.VIEW_PRIVILEGES],
-            children: [
-              {
-                title: 'Manage Market Operator Users',
-                show: true,
-                externalLink: externalRoutes.ADMIN.MO_USER_MANAGEMENT.MANAGE_MARKET_OPERATOR_USERS,
-                permission: [PHASE_ONE_AUTHORITIES.MANAGE_MARKET_OPERATORS]
-              },
-              {
-                title: 'Manage User Roles',
-                show: true,
-                externalLink: externalRoutes.ADMIN.MO_USER_MANAGEMENT.MANAGE_USER_ROLES,
-                permission: [PHASE_ONE_AUTHORITIES.VIEW_ROLE]
-              },
-              {
-                title: 'View Privileges',
-                show: true,
-                externalLink: externalRoutes.ADMIN.MO_USER_MANAGEMENT.VIEW_PRIVILEGES,
-                permission:[PHASE_ONE_AUTHORITIES.VIEW_PRIVILEGES]
-              }
-            ]
-          },
-          {
-            title: 'View Audit Logs',
-            show: true,
-            externalLink: externalRoutes.ADMIN.VIEW_AUDIT_LOGS,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS]
-          },
-          {
-            title: 'View XDF Audit Logs',
-            show: true,
-            externalLink: externalRoutes.ADMIN.VIEW_XDF_AUDIT_LOGS,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS]
-          },
-          {
-            title: 'System Configuration',
-            show: true,
-            externalLink: externalRoutes.ADMIN.SYSTEM_CONFIGURATION,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_SYS_CONFIG,]
-          },
-          {
-            title: 'Manage Scheduled Jobs',
-            show: true,
-            externalLink: externalRoutes.ADMIN.MANAGE_SCHEDULED_JOBS,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_JOB_SCHEDULER]
-          },
-          {
-            title: 'Data Interface Management',
-            show: true,
-            permission: [
-              PHASE_TWO_AUTHORITIES.SET_TOD_GEN_CONFIG,
-              PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY
-            ],
-            children: [
-              {
-                title: 'Manage Trading Operations Data Interface',
-                show: true,
-                externalLink: externalRoutes.ADMIN.DATA_INTERFACE_MANAGEMENT.MANAGE_TRADING_OPERATIONS_DATA_INTERFACES,
-                permission: [PHASE_TWO_AUTHORITIES.SET_TOD_GEN_CONFIG]
-              },
-              {
-                title: 'Import Trading Operations Data',
-                show: true,
-                externalLink: externalRoutes.ADMIN.DATA_INTERFACE_MANAGEMENT.IMPORT_TRADING_OPERATIONS_DATA,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY]
-              }
-            ]
-          },
-          {
-            title: 'Manage Market Products',
-            show: true,
-            externalLink: externalRoutes.ADMIN.MANAGE_MARKET_PRODUCTS,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_WESM_MARKET_PRODUCTS]
-          },
-          {
-            title: 'Manage Sub Market Products',
-            show: true,
-            externalLink: externalRoutes.ADMIN.MANAGE_SUB_MARKET_PRODUCTS,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_WESM_MARKET_PRODUCTS]
-          },
-          {
-            title: 'Manage Field Settings',
-            show: true,
-            externalLink: externalRoutes.ADMIN.MANAGE_FIELD_SETTINGS,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_FIELD_SETTINGS]
           }
         ]
       },
@@ -972,6 +867,12 @@ export class NavbarComponent implements OnInit {
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
               },
               {
+                title: 'Calculate Financial Penalty',
+                show: true,
+                path: NEW_ROUTES.WESM_PENALTY,
+                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
+              },
+              {
                 title: 'Manage Additional Compensation Claims',
                 show: true,
                 path: NEW_ROUTES.ADDITIONAL_COMPENSATION_LIST,
@@ -1090,12 +991,22 @@ export class NavbarComponent implements OnInit {
                 externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.IMPORT_SETTLEMENT_METERING_POINT_CONFIGURATION,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SETTLEMENT_METERING_CONFIGURATION]
               },
+              // {
+              //   title: 'Settlement SEIN Masterlist',
+              //   show: true,
+              //   externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.SETTLEMENT_SEIN_MASTERLIST,
+              //   permission: [PHASE_TWO_AUTHORITIES.SET_STL_SEIN_CONFIG]
+              // },
               {
-                title: 'Settlement SEIN Masterlist',
-                show: true,
-                externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.SETTLEMENT_SEIN_MASTERLIST,
-                permission: [PHASE_TWO_AUTHORITIES.SET_STL_SEIN_CONFIG]
-              },
+                  title: 'Metering Configuration',
+                  show: true,
+                  externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.METERING_CONFIGURATION,
+                  permission: [
+                    PHASE_TWO_AUTHORITIES.SET_STL_SEIN_CONFIG,
+                    PHASE_TWO_AUTHORITIES.SET_MTN_MODEL_CONFIG
+                  ]
+                },
+
               {
                 title: 'Historical Factors Maintenance',
                 show: true,
@@ -1108,12 +1019,12 @@ export class NavbarComponent implements OnInit {
                 externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.VIRTUAL_SEIN_MAPPING,
                 permission: [PHASE_TWO_AUTHORITIES.SET_VSEIN_MAPPING]
               },
-              {
-                title: 'MTN Model Configuration',
-                show: true,
-                externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.MTN_MODEL_CONFIGURATION,
-                permission: [PHASE_TWO_AUTHORITIES.SET_MTN_MODEL_CONFIG]
-              },
+              // {
+              //   title: 'MTN Model Configuration',
+              //   show: true,
+              //   externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.MTN_MODEL_CONFIGURATION,
+              //   permission: [PHASE_TWO_AUTHORITIES.SET_MTN_MODEL_CONFIG]
+              // },
               {
                 title: 'MTN Group and Schedule',
                 show: true,
@@ -1195,8 +1106,118 @@ export class NavbarComponent implements OnInit {
         permission: [PHASE_TWO_AUTHORITIES.VIEW_QUEUE],
         externalLink: externalRoutes.JOB_QUEUE
       },
+      //Admin External Routes
+      {
+        title: 'Admin',
+        show: true,
+        icon: faUserLarge,
+        permission: [
+          PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS,
+          PHASE_ONE_AUTHORITIES.MANAGE_SYS_CONFIG,
+          PHASE_ONE_AUTHORITIES.MANAGE_JOB_SCHEDULER,
+          PHASE_ONE_AUTHORITIES.MANAGE_WESM_MARKET_PRODUCTS,
+          PHASE_ONE_AUTHORITIES.MANAGE_FIELD_SETTINGS,
+          PHASE_ONE_AUTHORITIES.MANAGE_SEC
+        ],
+        children: [
+          {
+            title: 'MO User Management',
+            show: true,
+            permission: [PHASE_ONE_AUTHORITIES.MANAGE_MARKET_OPERATORS, PHASE_ONE_AUTHORITIES.VIEW_ROLE, PHASE_ONE_AUTHORITIES.VIEW_PRIVILEGES],
+            children: [
+              {
+                title: 'Manage Market Operator Users',
+                show: true,
+                externalLink: externalRoutes.ADMIN.MO_USER_MANAGEMENT.MANAGE_MARKET_OPERATOR_USERS,
+                permission: [PHASE_ONE_AUTHORITIES.MANAGE_MARKET_OPERATORS]
+              },
+              {
+                title: 'Manage User Roles',
+                show: true,
+                externalLink: externalRoutes.ADMIN.MO_USER_MANAGEMENT.MANAGE_USER_ROLES,
+                permission: [PHASE_ONE_AUTHORITIES.VIEW_ROLE]
+              },
+              {
+                title: 'View Privileges',
+                show: true,
+                externalLink: externalRoutes.ADMIN.MO_USER_MANAGEMENT.VIEW_PRIVILEGES,
+                permission:[PHASE_ONE_AUTHORITIES.VIEW_PRIVILEGES]
+              }
+            ]
+          },
+          {
+            title: 'View Audit Logs',
+            show: true,
+            externalLink: externalRoutes.ADMIN.VIEW_AUDIT_LOGS,
+            permission: [PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS]
+          },
+          {
+            title: 'View XDF Audit Logs',
+            show: true,
+            externalLink: externalRoutes.ADMIN.VIEW_XDF_AUDIT_LOGS,
+            permission: [PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS]
+          },
+          {
+            title: 'System Configuration',
+            show: true,
+            externalLink: externalRoutes.ADMIN.SYSTEM_CONFIGURATION,
+            permission: [PHASE_ONE_AUTHORITIES.MANAGE_SYS_CONFIG,]
+          },
+          {
+            title: 'Manage Scheduled Jobs',
+            show: true,
+            externalLink: externalRoutes.ADMIN.MANAGE_SCHEDULED_JOBS,
+            permission: [PHASE_ONE_AUTHORITIES.MANAGE_JOB_SCHEDULER]
+          },
+          {
+            title: 'Data Interface Management',
+            show: true,
+            permission: [
+              PHASE_TWO_AUTHORITIES.SET_TOD_GEN_CONFIG,
+              PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY
+            ],
+            children: [
+              {
+                title: 'Manage Trading Operations Data Interface',
+                show: true,
+                externalLink: externalRoutes.ADMIN.DATA_INTERFACE_MANAGEMENT.MANAGE_TRADING_OPERATIONS_DATA_INTERFACES,
+                permission: [PHASE_TWO_AUTHORITIES.SET_TOD_GEN_CONFIG]
+              },
+              {
+                title: 'Import Trading Operations Data',
+                show: true,
+                externalLink: externalRoutes.ADMIN.DATA_INTERFACE_MANAGEMENT.IMPORT_TRADING_OPERATIONS_DATA,
+                permission: [PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY]
+              }
+            ]
+          },
+          {
+            title: 'Manage Market Products',
+            show: true,
+            externalLink: externalRoutes.ADMIN.MANAGE_MARKET_PRODUCTS,
+            permission: [PHASE_ONE_AUTHORITIES.MANAGE_WESM_MARKET_PRODUCTS]
+          },
+          {
+            title: 'Manage Sub Market Products',
+            show: true,
+            externalLink: externalRoutes.ADMIN.MANAGE_SUB_MARKET_PRODUCTS,
+            permission: [PHASE_ONE_AUTHORITIES.MANAGE_WESM_MARKET_PRODUCTS]
+          },
+          {
+            title: 'Manage Field Settings',
+            show: true,
+            externalLink: externalRoutes.ADMIN.MANAGE_FIELD_SETTINGS,
+            permission: [PHASE_ONE_AUTHORITIES.MANAGE_FIELD_SETTINGS]
+          },
+          {
+            title: 'Manage SEC Parameters',
+            show: true,
+            path: NEW_ROUTES.SEC,
+            permission: [PHASE_ONE_AUTHORITIES.MANAGE_SEC]
+          }
+        ]
+      },
 
-       //Job Queue route
       {
         title: 'RBCQ',
         show: true,
@@ -1221,7 +1242,10 @@ export class NavbarComponent implements OnInit {
             title: 'Process RBCQ',
             path: NEW_ROUTES.RBCQ_PROCESS,
             show: true,
-            permission: []
+            permission: [
+              PHASE_TWO_AUTHORITIES.SET_TOD_GEN_CONFIG,
+              PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY
+            ],
           }
           // {
           //   title: 'BCQ Download Template',
@@ -1230,7 +1254,19 @@ export class NavbarComponent implements OnInit {
           // }
         ]
       },
+
+      {
+        title: LABELS.MQ_UPLOADER,
+        show: this.regCategory === 'MSP',
+        icon: faUpload,
+        path: NEW_ROUTES.MSP_MQ_UPLOADER,
+      },
     ];
+
+    
+
+
+    
 
     this.navItems = this.navItems.filter(item => this.hasPermission(item)); //for checking
     this.getNavbarInfo();

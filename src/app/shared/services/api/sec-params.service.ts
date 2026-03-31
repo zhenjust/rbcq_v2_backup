@@ -29,8 +29,13 @@ export class SecParamsService {
   }
 
   public createSecParameters(payload: SecParameters): Observable<SecParameters> {
-    const endpoint = payload.id ? 'update' : 'add'
+    const endpoint = payload.groupId ? 'update' : 'add'
     return this.http.post<SecParameters>(`${this.settlementEndpoint}/sec-maintenance/${endpoint}`, payload);
   }
+
+  public deleteSecParams(id: number): Observable<null> {
+    return this.http.delete<null>(`${this.settlementEndpoint}/sec-maintenance/remove/${id}`);
+  }
+
 
 }

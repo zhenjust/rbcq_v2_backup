@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RbcqService } from '@shared/services/api/rbcq.service';
+import { ToastrService } from 'ngx-toastr';
 
 interface FinalizedRow {
   dispatch_interval: string;
@@ -24,7 +25,7 @@ export class ViewRbcqComponent implements OnInit {
   startDate: Date;
   endDate: Date;
 
-  constructor(private rbcqService: RbcqService) { }
+  constructor(private rbcqService: RbcqService, private toast: ToastrService) { }
 
   ngOnInit(): void {
     this.setDefaults();
@@ -32,6 +33,17 @@ export class ViewRbcqComponent implements OnInit {
   }
 
   load(): void {
+    // validate minute intervals
+    if (!this.isFiveMinuteInterval(this.startDate) || !this.isFiveMinuteInterval(this.endDate)) {
+      this.toast.error('Start and End minutes must be a 5-minute interval');
+      return;
+    }
+
+    if (this.startDate >= this.endDate) {
+      this.toast.error('Start date must be before End date');
+      return;
+    }
+
     this.loading = true;
     const s = this.formatLocal(this.startDate);
     const e = this.formatLocal(this.endDate);
@@ -45,6 +57,12 @@ export class ViewRbcqComponent implements OnInit {
     });
   }
 
+  private isFiveMinuteInterval(d: Date | undefined | null): boolean {
+    if (!d) return false;
+    const m = d.getMinutes();
+    return m % 5 === 0;
+  }
+
   clear(): void {
     this.setDefaults();
     this.rows = [];
@@ -52,8 +70,9 @@ export class ViewRbcqComponent implements OnInit {
 
   private setDefaults(): void {
     const now = new Date();
-    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
-    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+    // default to 00:05 and 23:55
+    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 5, 0);
+    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 55, 0);
     this.startDate = start;
     this.endDate = end;
   }

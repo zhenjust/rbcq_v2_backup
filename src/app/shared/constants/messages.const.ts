@@ -29,6 +29,7 @@ export const MESSAGES = {
   SUCCESS_IMPORT_ITEM: (item: string) => `Successfully imported ${item}.`,
   SUCCESS_DOWNLOAD_ITEM: (item: string) => `Successfully downloaded ${item}.`,
   SUCCESS_DELETE_ITEM: (item: string) => `Successfully deleted ${item}.`,
+  SUCCESS_SAVE_ITEM: (item: string) => `Successfully saved ${item}.`,
 
   CONFIRM_CONSOLIDATE_ITEMS: (item: string) => `Do you want to consolidate the selected ${item}?`,
   CONFIRM_DELETE_ITEM: (item: string) => `Do you want to delete the selected ${item}?`,

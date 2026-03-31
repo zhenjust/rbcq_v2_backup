@@ -1,15 +1,16 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { RxwebValidators } from '@rxweb/reactive-form-validators';
 import { STATUS_OPTIONS } from '@shared/constants';
-import { FUEL_TYPE } from '@shared/constants/fuel-type.const';
 import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
-import { SecParamsService } from '@shared/services/api';
-import { format } from 'date-fns';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { AdminService, SecParamsService } from '@shared/services/api';
+import { differenceInCalendarDays, format } from 'date-fns';
+import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
-import { Subscription } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
+import { distinctUntilChanged, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-create-sec-param',
@@ -21,6 +22,10 @@ export class CreateSecParamComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
   private secService = inject(SecParamsService);
   private modalRef = inject(NzModalRef);
+  private adminService = inject(AdminService);
+  private destroyRef$ = inject(DestroyRef);
+  private toastService = inject(ToastrService);
+  private modalData = inject(NZ_MODAL_DATA);
 
   paramForm: FormGroup;
   busy$: Subscription;
@@ -31,17 +36,47 @@ export class CreateSecParamComponent implements OnInit {
 
   ngOnInit(): void {
     this.buildForm();
-    this.fuelTypeOptions = FUEL_TYPE;
+    this.getFuelTypes();
     this.statusOptions = STATUS_OPTIONS;
   }
 
   buildForm(): void {
     this.paramForm = this.formBuilder.group({
-      effectiveDate: [null, [RxwebValidators.required(), RxwebValidators.minLength({ value: 1})]],
-      fuelType: [null, [RxwebValidators.required()]],
+      groupId: [null],
+      effectiveStart: [null, RxwebValidators.required()],
+      effectiveEnd: [null],
+      fuelType: [null, [RxwebValidators.required(), RxwebValidators.minLength({ value: 1})]],
       active: [null, [RxwebValidators.required()]],
     });
+
+    if (this.modalData?.item) {
+      const item = this.modalData.item;
+      item.effectiveStart = new Date(item.effectiveStartDate);
+      item.effectiveEnd = item.effectiveEndDate ? new Date(item.effectiveEndDate) : null;
+      this.paramForm.patchValue(item);
+    }
   }
+
+  getFuelTypes(): void {
+    this.adminService.getReferences('FACILITY_GENERATOR_TYPE')
+      .pipe(takeUntilDestroyed(this.destroyRef$))
+      .subscribe(res => {
+        const allOptions = res.data.map(d => d.code);
+        this.fuelTypeOptions = res.data.map(d => ({ label: d.label, value: d.code }));
+        this.fuelTypeOptions.unshift({ label: LABELS.ALL, value: 'all' });
+
+        this.fuelType
+          ?.valueChanges
+          ?.pipe(distinctUntilChanged())
+          ?.subscribe(val => {
+            if (val.includes('all')) {
+              this.fuelType?.setValue(allOptions,
+                { emitEvent: false, onlySelf: true });
+            }
+          })
+      });
+  }
+
 
   save(): void {
     const payload = this.paramForm.getRawValue();
@@ -51,18 +86,26 @@ export class CreateSecParamComponent implements OnInit {
       return;
     }
 
-    payload.effectiveStart = format(payload.effectiveDate[0], 'yyyy-MM-dd hh:mm');
-    payload.effectiveEnd = format(payload.effectiveDate[1], 'yyyy-MM-dd hh:mm');
+    payload.effectiveStart = format(payload.effectiveStart, 'yyyy-MM-dd HH:mm');
 
-    delete payload.effectiveDate;
+    if (payload.effectiveEnd) {
+      payload.effectiveEnd = format(payload.effectiveEnd, 'yyyy-MM-dd HH:mm')
+    }
 
     this.busy$ = this.secService.createSecParameters(payload)
       .pipe()
       .subscribe(() => {
-        this.modalRef.close();
+        this.toastService.success(MESSAGES.SUCCESS_SAVE_ITEM(LABELS.SEC_PARAMETER));
+        this.modalRef.close(true);
       });
   }
 
   triggerClose = () => this.modalRef.close();
+
+  disabledDate = (current: Date) => differenceInCalendarDays(current, this.effectiveStart?.value) < 1;
+
+  get effectiveStart(): AbstractControl { return this.paramForm?.get('effectiveStart') as AbstractControl; }
+
+  get fuelType(): AbstractControl | null { return this.paramForm.get('fuelType'); }
 
 }
