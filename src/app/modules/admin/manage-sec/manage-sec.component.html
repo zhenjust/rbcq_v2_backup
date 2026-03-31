@@ -1,7 +1,10 @@
 <nz-card [nzTitle]="LABELS.MANAGE_SEC_PARAMETERS">
   <div class="d-flex justify-content-end">
     <nz-space>
-      <button *nzSpaceItem nz-button nzType="primary" (click)="add()">{{ LABELS.ADD }} {{ LABELS.SEC_PARAMETER }}</button>
+      @if (hasManagePerm) {
+        <button *nzSpaceItem nz-button nzType="primary" (click)="add()">{{ LABELS.ADD }} {{ LABELS.SEC_PARAMETER }}</button>
+      }
+
       <form *nzSpaceItem nz-form [formGroup]="form" nzLayout="horizontal" class="column flex-grow-1">
         <nz-form-item class="mb-3">
           <nz-form-control>
@@ -13,7 +16,7 @@
   </div>
 
   <!-- Table -->
-  <app-paginated-table #paginatedTable [tableColumns]="tableColumns" [url]="listUrl()" [showActions]="true"
+  <app-paginated-table #paginatedTable [tableColumns]="tableColumns" [url]="listUrl()" [showActions]="hasManagePerm"
     [actionControls]="actionControls" [tableConfig]="{ height: '60vh' }"></app-paginated-table>
 </nz-card>
 

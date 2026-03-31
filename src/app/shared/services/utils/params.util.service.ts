@@ -29,6 +29,24 @@ export class ParamsUtilService {
       params = params
         .append('page', page?.toString())
         .append('size', _tableParams?.size?.toString());
+
+        const toParam = (sort: any) => {
+          let dir = sort.dir && sort.dir.toString().toLowerCase();
+          dir = dir === 'ascend' ? 'asc' : 'desc';
+          const sortParam = decodeURIComponent(sort.prop + ',' + dir);
+          return sortParam;
+        };
+
+        if (_tableParams.sort) {
+          if (Array.isArray(_tableParams.sort)) {
+            _tableParams.sort.forEach((sort: any) => {
+              params = params.append('sort', toParam(sort));
+            });
+          } else {
+            params = params.append('sort', toParam(_tableParams.sort));
+          }
+        }
+
     }
 
       return params;

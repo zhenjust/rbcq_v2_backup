@@ -12,6 +12,8 @@ import { CreateSecParamComponent } from './create-sec-param/create-sec-param.com
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
+import { NgxPermissionsService } from 'ngx-permissions';
+import { PHASE_ONE_AUTHORITIES } from '@shared/constants';
 
 @Component({
   selector: 'app-manage-sec',
@@ -29,6 +31,7 @@ export class ManageSecComponent implements OnInit {
   private readonly toastrService = inject(ToastrService);
   private readonly adminService = inject(AdminService);
   private readonly formBuilder = inject(FormBuilder);
+  private readonly permissionsService = inject(NgxPermissionsService);
   private readonly destroyRef$ = inject(DestroyRef);
 
   tableColumns: TPL_TABLE_COLUMN[];
@@ -39,6 +42,7 @@ export class ManageSecComponent implements OnInit {
   // fuelTypeOpts: Record<string, string>;
   fuelTypeOpts: NzSelectOptionInterface[] = [];
   fuelTypeRecords: Record<string, string>;
+  hasManagePerm: boolean;
 
   ngOnInit(): void {
     this.getFuelTypes();
@@ -48,6 +52,9 @@ export class ManageSecComponent implements OnInit {
 
     this.tableColumns = Object.values(tableColumns);
     this.buildForm();
+
+    this.permissionsService.hasPermission([ PHASE_ONE_AUTHORITIES.MANAGE_SEC ])
+      .then(hasPerm => this.hasManagePerm = hasPerm );
   }
 
   buildForm(): void {
@@ -95,6 +102,7 @@ export class ManageSecComponent implements OnInit {
 
     const formValues = this.form?.getRawValue();
 
+    console.log(this.paginatedTable)
     return this.secService.listSecParameters(formValues, this.paginatedTable?.tableParams);
   }
 
@@ -127,8 +135,8 @@ export class ManageSecComponent implements OnInit {
 
 const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.FUEL_TYPE]: { label: LABELS.FUEL_TYPE, propName: 'fuelType', width: '150px', type: 'template' },
-  [LABELS.EFFECTIVE_START_DATE]: { label: LABELS.EFFECTIVE_START_DATE, propName: 'effectiveStartDate', type: 'date',  width: '150PX' },
-  [LABELS.EFFECTIVE_END_DATE]: { label: LABELS.EFFECTIVE_END_DATE, propName: 'effectiveEndDate', width: '150px', type: 'date' },
-  [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'active', width: '100px', align: 'center', type: 'template' },
+  [LABELS.EFFECTIVE_START_DATE]: { label: LABELS.EFFECTIVE_START_DATE, propName: 'effectiveStartDate', type: 'date',  width: '150PX', sort: true },
+  [LABELS.EFFECTIVE_END_DATE]: { label: LABELS.EFFECTIVE_END_DATE, propName: 'effectiveEndDate', width: '150px', type: 'date', sort: true },
+  [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'active', width: '100px', align: 'center', type: 'template', sort: true },
 }
 

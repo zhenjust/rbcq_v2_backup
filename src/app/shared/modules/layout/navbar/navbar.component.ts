@@ -1213,7 +1213,10 @@ export class NavbarComponent implements OnInit {
             title: 'Manage SEC Parameters',
             show: true,
             path: NEW_ROUTES.SEC,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_SEC]
+            permission: [
+              PHASE_ONE_AUTHORITIES.MANAGE_SEC,
+              PHASE_ONE_AUTHORITIES.VIEW_SEC
+            ]
           }
         ]
       },
