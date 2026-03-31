@@ -46,7 +46,7 @@ export class DateTimePickerComponent implements ControlValueAccessor {
   // }
 
   updateValue(date: Date | null) {
-    this.value = set(date!, { hours: this.time.hour, minutes: this.time.minute });
+    this.value = date ? set(date!, { hours: this.time.hour, minutes: this.time.minute }) : null;
     this.onChange(this.value);
     this.onTouched();
   }

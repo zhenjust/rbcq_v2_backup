@@ -2,7 +2,7 @@
   @if (value) {
     <div class="d-flex justify-content-between">
       <span>{{ value | date: 'yyyy-MM-dd HH:mm'}}</span>
-      <nz-icon nzType="close-circle" (click)="$event.stopPropagation(); $event.preventDefault(); value = null"/>
+      <nz-icon nzType="close-circle" (click)="$event.stopPropagation(); $event.preventDefault(); updateValue(null)"/>
     </div>
 
   } @else {
