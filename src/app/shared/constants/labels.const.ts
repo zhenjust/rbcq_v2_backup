@@ -187,4 +187,9 @@ export const LABELS = {
   CALCULATE: 'Calculate',
   FINALIZE: 'Finalize',
   SELECTED: 'Selected',
+
+  PRICING_CONDITION: 'Pricing Condition',
+  PROGRESS: 'Progress',
+  APPROVED_RATE: 'Approved Rate',
+  ADDITIONAL_COMPENSATION_CLAIMS: 'Additional Compensation Claims',
 }

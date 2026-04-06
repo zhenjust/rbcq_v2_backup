@@ -4,11 +4,13 @@ import { CommonModule } from '@angular/common';
 import { SettlementRoutingModule } from './settlement-routing.module';
 import { WesmPenaltyComponent } from './wesm-penalty/wesm-penalty.component';
 import { SharedModule } from '@shared/shared.module';
+import { AdditionalCompensationComponent } from './additional-compensation/additional-compensation.component';
 
 
 @NgModule({
   declarations: [
-    WesmPenaltyComponent
+    WesmPenaltyComponent,
+    AdditionalCompensationComponent
   ],
   imports: [
     CommonModule,

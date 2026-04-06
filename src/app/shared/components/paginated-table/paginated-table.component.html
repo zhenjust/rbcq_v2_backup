@@ -48,7 +48,7 @@
         @if (enableCheckbox) {
           <td
             [nzChecked]="selectedItems.has(row[checkboxProperty])"
-            [nzDisabled]="checkboxCondition(row)"
+            [nzDisabled]="checkboxCondition?.(row) || false"
             (nzCheckedChange)="checkRow($event, row[checkboxProperty])"
             class="px-3"></td>
         }

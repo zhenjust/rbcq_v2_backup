@@ -46,7 +46,7 @@ export class PaginatedTableComponent<T> extends SearchListBase {
   }
 
   override busy$: Subscription;
-  override resultsProp: string;
+  @Input() override resultsProp: string;
 
   override getListUrl(): Observable<any> {
     return this.url;

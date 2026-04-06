@@ -6,7 +6,6 @@ export const NEW_ROUTES = {
     RESERVE_TRADING_AMOUNTS_CALCULATION: 'reserve-trading-amounts-calculation-v2',
     ENERGY_MARKET_FEE_CALCULATION: 'energy-market-fee-calculation-v2',
     RESERVE_MARKET_FEE_CALCULATION: 'reserve-market-fee-calculation-v2',
-    ADDITIONAL_COMPENSATION_LIST: 'additional-compensation-v2',
     ADDITIONAL_COMPENSATION_INVOICE: 'addtl-comp-ams-update-v2',
     MQ_UPLOADER: 'metering/mq-uploader',
     MSP_MQ_UPLOADER: 'msp-mq-uploader',
@@ -14,6 +13,7 @@ export const NEW_ROUTES = {
     METER_DATA_VALIDATION: 'metering/meter-data-validation',
     SEC: 'admin/sec',
     WESM_PENALTY: 'settlement/wesm-penalty',
+    ADDITIONAL_COMPENSATION_LIST: 'settlement/additional-compensation',
 }
 
 export const HEADER_ROUTES = {
