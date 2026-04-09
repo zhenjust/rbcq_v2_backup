@@ -30,6 +30,7 @@ export const LABELS = {
   GENERATE: 'Generate',
   DOWNLOAD: 'Download',
   ACTIONS: 'Actions',
+  ACTION: 'Action',
   DELETE: 'Delete',
   SELECT_ALL: 'Select All',
   DESELECT_ALL: 'Deselect All',
@@ -192,4 +193,8 @@ export const LABELS = {
   PROGRESS: 'Progress',
   APPROVED_RATE: 'Approved Rate',
   ADDITIONAL_COMPENSATION_CLAIMS: 'Additional Compensation Claims',
+  FILE_A_CLAIM: 'File a Claim',
+
+  DATE_RANGE: 'Date Range',
+  CLAIMANT: 'Claimant',
 }

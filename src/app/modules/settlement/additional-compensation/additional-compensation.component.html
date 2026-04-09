@@ -1,50 +1,56 @@
 <nz-card [nzTitle]="LABELS.ADDITIONAL_COMPENSATION_CLAIMS">
   <!-- Filters -->
   @if (showForm) {
-    <form nz-form [formGroup]="form" nzLayout="horizontal" class="column">
-      <div class="row">
-        <div class="col-sm-12 col-md-4 col-lg-4">
-          <nz-form-item class="mb-3">
-            <nz-form-label nzSpan="8">{{ LABELS.BILLING_PERIOD }}</nz-form-label>
-            <nz-form-control nzSpan="16">
-              <nz-select formControlName="billingPeriod" [nzOptions]="billingPeriodOpts" [nzPlaceHolder]="LABELS.ALL"
+  <form nz-form [formGroup]="form" nzLayout="horizontal" class="column">
+    <div class="row">
+      <div class="col-sm-12 col-md-4 col-lg-4">
+        <nz-form-item class="mb-3">
+          <nz-form-label nzSpan="8">{{ LABELS.PRICING_CONDITION }}</nz-form-label>
+          <nz-form-control nzSpan="16">
+            <nz-select formControlName="pricingCondition" [nzOptions]="pricingConditionOpts"
+              [nzPlaceHolder]="LABELS.ALL" [nzAllowClear]="true" nzShowSearch></nz-select>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item class="mb-3">
+          <nz-form-label nzSpan="8">{{ LABELS.BILLING_PERIOD }}</nz-form-label>
+          <nz-form-control nzSpan="16">
+            <nz-select formControlName="billingPeriod" [nzOptions]="billingPeriodOpts" [nzPlaceHolder]="LABELS.ALL"
               [nzAllowClear]="true" nzShowSearch></nz-select>
-            </nz-form-control>
-          </nz-form-item>
+          </nz-form-control>
+        </nz-form-item>
 
-            <nz-form-item>
-              <nz-form-label nzSpan="8">{{ LABELS.STATUS }}</nz-form-label>
-              <nz-form-control nzSpan="16">
-                <nz-select formControlName="status" [nzOptions]="statusOptions" [nzPlaceHolder]="LABELS.ALL" [nzAllowClear]="true" nzShowSearch></nz-select>
-              </nz-form-control>
-            </nz-form-item>
-
-            <nz-form-item class="mb-3">
-              <nz-form-label nzSpan="8">{{ LABELS.TYPE }}</nz-form-label>
-              <nz-form-control nzSpan="16">
-                <nz-select formControlName="type" [nzOptions]="typeOptions" [nzPlaceHolder]="LABELS.ALL" [nzAllowClear]="true" nzShowSearch></nz-select>
-              </nz-form-control>
-            </nz-form-item>
-        </div>
+        <nz-form-item>
+          <nz-form-label nzSpan="8">{{ LABELS.STATUS }}</nz-form-label>
+          <nz-form-control nzSpan="16">
+            <nz-select formControlName="status" [nzOptions]="statusOpts" [nzPlaceHolder]="LABELS.ALL"
+              [nzAllowClear]="true" nzShowSearch></nz-select>
+          </nz-form-control>
+        </nz-form-item>
       </div>
-    </form>
+    </div>
+  </form>
   }
 
   <div class="d-flex justify-content-between mb-3">
     <nz-space>
       @if (showForm) {
-        <button nz-button *nzSpaceItem [disabled]="form.invalid" (click)="resetFilters()">
-          {{ LABELS.CLEAR_FILTERS }}
-        </button>
+      <button nz-button *nzSpaceItem [disabled]="form.invalid" (click)="resetFilters()">
+        {{ LABELS.CLEAR_FILTERS }}
+      </button>
       }
 
-      <button nz-button *nzSpaceItem nzType="primary" [disabled]="form.invalid" (click)="showForm ? paginatedTable?.search() : showForm =! showForm">
+      <button nz-button *nzSpaceItem nzType="primary" [disabled]="form.invalid"
+        (click)="showForm ? applyFilter() : (showForm =! showForm)">
         {{ showForm ? LABELS.APPLY_FILTERS : LABELS.SET_FILTERS }}
       </button>
     </nz-space>
 
     <nz-space>
-      <button *nzSpaceItem nz-button>
+      <button *nzSpaceItem nz-button nzType="primary" (click)="triggerFileClaim()">
+        {{ LABELS.FILE_A_CLAIM }}
+      </button>
+      <!-- <button *nzSpaceItem nz-button>
         {{ LABELS.GENERATE_PENALTY_IWS }}
       </button>
 
@@ -63,16 +69,19 @@
           <li nz-menu-item>{{ LABELS.PUBLISH }}</li>
           <li nz-menu-item>{{ LABELS.GENERATE_FILES }}</li>
         </ul>
-      </nz-dropdown-menu>
+      </nz-dropdown-menu> -->
     </nz-space>
   </div>
 
   <!-- Table -->
-  <app-paginated-table #paginatedTable resultsProp="pipelineGroup" [enableCheckbox]="true" [tableColumns]="tableColumns" [url]="getUrl()" [showActions]="true" [tableConfig]="{ height: '60vh' }" [enableExpand]="true" [expandTpl]="expandTpl"></app-paginated-table>
+  <app-paginated-table #paginatedTable resultsProp="pipelineGroup" [enableCheckbox]="true" [tableColumns]="tableColumns"
+    [url]="getUrl()" [showActions]="true" [tableConfig]="{ height: '60vh' }" [enableExpand]="true"
+    [expandTpl]="expandTpl"></app-paginated-table>
 
   <ng-template #expandTpl let-row="row">
     <div class="d-flex w-100 my-2 pe-2">
-      <app-template-table class="w-100" [tableColumns]="expandedTableCols" [tableData]="row?.pipelines" ></app-template-table>
+      <app-template-table class="w-100" [tableColumns]="expandedTableCols"
+        [tableData]="row?.pipelines"></app-template-table>
 
       <!-- [actionsTpl]="expandTplActions" -->
       <!-- <ng-template #expandTplActions let-subRowData="row">
@@ -86,32 +95,45 @@
 
 <!-- Column Templates -->
 <ng-template #bpTpl let-allData="allData">
-  {{ allData?.processType === 'DAILY' ? allData?.billingStartDate : `${allData?.billingStartDate} - ${allData?.billingEndDate}` }}
+  {{ allData?.processType === 'DAILY' ? allData?.billingStartDate : `${allData?.billingStartDate} -
+  ${allData?.billingEndDate}` }}
 </ng-template>
 
 <ng-template #rateTpl let-allData="allData">
   @if (allData?.claims?.length) {
-    {{ allData?.claims[0]?.approveRate }}
+  {{ allData?.claims[0]?.approveRate }}
   } @else {
-    -
+  -
   }
 </ng-template>
 
 <ng-template #mtnTpl let-allData="allData">
   @if (allData?.claims?.length) {
-    {{ allData?.claims[0]?.mtn }}
+  {{ allData?.claims[0]?.mtn }}
   } @else {
-    -
+  -
   }
 </ng-template>
 
 <ng-template #billingIdTpl let-allData="allData">
   @if (allData?.claims?.length) {
-    {{ allData?.claims[0]?.billingId }}
+  {{ allData?.claims[0]?.billingId }}
   } @else {
-    -
+  -
   }
 </ng-template>
+
+<ng-template #progressTpl let-allData="allData">
+  @if (allData?.status?.startsWith('In-Progress')) {
+    <div class="px-3">
+        <nz-progress [nzStrokeWidth]="4" [nzPercent]="99.9" [nzShowInfo]="false" [nzStrokeColor]="{ '0%': '#108ee9', '100%': '#87d068' }" nzStatus="active" />
+    </div>
+  }
+  </ng-template>
+
+
+
+
 
 
 <ng-template #tagTpl let-data="data">
@@ -119,5 +141,3 @@
     {{ data }}
   </nz-tag>
 </ng-template>
-
-

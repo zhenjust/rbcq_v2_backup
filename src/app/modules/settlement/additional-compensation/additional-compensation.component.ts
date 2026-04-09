@@ -1,18 +1,19 @@
-import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
-import { WESM_PENALTY_STATUS, WESM_PENALTY_TYPE } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
-import { meterProcessBillingPeriod, TPL_TABLE_COLUMN } from '@shared/interfaces';
-import { SettlementService } from '@shared/services/api';
+import { meterProcessBillingPeriod, Reference, TPL_TABLE_COLUMN } from '@shared/interfaces';
+import { AdminService, MeterprocessService, SettlementService } from '@shared/services/api';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
-import { Observable, of } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
+import { FileAClaimComponent } from './file-a-claim/file-a-claim.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-additional-compensation',
   standalone: false,
-  templateUrl: './additional-compensation.component.html',
-  styleUrl: './additional-compensation.component.scss'
+  templateUrl: './additional-compensation.component.html'
 })
 export class AdditionalCompensationComponent implements OnInit {
 
@@ -21,33 +22,37 @@ export class AdditionalCompensationComponent implements OnInit {
   @ViewChild('rateTpl', { static: true }) rateTpl!: TemplateRef<HTMLElement>;
   @ViewChild('mtnTpl', { static: true }) mtnTpl!: TemplateRef<HTMLElement>;
   @ViewChild('billingIdTpl', { static: true }) billingIdTpl!: TemplateRef<HTMLElement>;
+  @ViewChild('progressTpl', { static: true }) progressTpl!: TemplateRef<HTMLElement>;
 
   private readonly formBuilder = inject(FormBuilder);
   private readonly settlementService = inject(SettlementService);
+  private readonly meteringService = inject(MeterprocessService);
+  private readonly modalService = inject(NzModalService);
+  private readonly adminService = inject(AdminService);
+  private readonly destroyRef$ = inject(DestroyRef);
 
   LABELS = LABELS;
   tableColumns: TPL_TABLE_COLUMN[] = [];
   form: FormGroup;
   showForm = false;
   expandedTableCols: TPL_TABLE_COLUMN[];
+
   billingPeriods: meterProcessBillingPeriod[] = [];
   billingPeriodOpts: { label: any; value: any; }[] = [];
-  statusOptions: NzSelectOptionInterface[] = [];
-  typeOptions: NzSelectOptionInterface[] = [];
+  pricingConditionOpts: NzSelectOptionInterface[] = [];
+  statusOpts: NzSelectOptionInterface[] = [];
 
+  filters: any = {};
 
   ngOnInit(): void {
-    this.statusOptions = WESM_PENALTY_STATUS.map(opt => ({ label: opt, value: opt}));
-    this.typeOptions = Object.keys(WESM_PENALTY_TYPE)
-      .map(key => ({ label: WESM_PENALTY_TYPE[key as keyof typeof WESM_PENALTY_TYPE], value: key}))
-
     this.buildForm();
     this.formatTableColumns();
-    this.getBillingPeriods();
+    this.getReferences();
   }
 
   buildForm(): void {
     this.form = this.formBuilder.group({
+      pricingCondition: [null],
       billingPeriod: [null],
       status: [null],
       type: [null]
@@ -56,11 +61,11 @@ export class AdditionalCompensationComponent implements OnInit {
 
   formatTableColumns(): void {
     tableColumns[LABELS.TRADING_DATE].template = this.bpTpl;
+    tableColumns[LABELS.PROGRESS].template = this.progressTpl;
     expandedTableCols[LABELS.APPROVED_RATE].template = this.rateTpl;
     expandedTableCols[LABELS.MTN].template = this.mtnTpl;
     expandedTableCols[LABELS.BILLING_ID].template = this.billingIdTpl;
-
-    // tableColumns[LABELS.STATUS].template = this.tagTpl;
+    expandedTableCols[LABELS.PROGRESS].template = this.progressTpl;
 
     this.tableColumns = Object.values(tableColumns);
     this.expandedTableCols = Object.values(expandedTableCols);
@@ -71,38 +76,72 @@ export class AdditionalCompensationComponent implements OnInit {
       return of([]);
     }
 
-    return this.settlementService.search({}, 'additionalCompensation', this.paginatedTable?.tableParams);
+    return this.settlementService.search(this.filters, 'additionalCompensation', this.paginatedTable?.tableParams);
   }
 
-  getBillingPeriods(): void {
-    // this.meteringService.getBillingPeriod()
-    //   .subscribe({
-    //     next: options => {
-    //       this.billingPeriods = options as meterProcessBillingPeriod[];
-    //       this.billingPeriodOpts = (options as meterProcessBillingPeriod[])
-    //         .map(bp => ({ label: bp.supplyMonth, value: bp.billingPeriod }));
-    //     }
-    //   })
+  getReferences(): void {
+    const formatOpts = (opts: Reference[]) => opts.map(({label}) => ({ label, value: label }));
+
+    forkJoin({
+      billingPeriod: this.meteringService.getBillingPeriod(),
+      pricingCondition: this.adminService.getRefByType('AC_PRICING_CONDITION'),
+      status: this.adminService.getRefByType('AC_STATUS'),
+    })
+      .pipe(takeUntilDestroyed(this.destroyRef$))
+      .subscribe(({ billingPeriod, pricingCondition , status }) => {
+        this.billingPeriods = billingPeriod as meterProcessBillingPeriod[];
+        this.billingPeriodOpts = (billingPeriod as meterProcessBillingPeriod[])
+          .map(bp => ({ label: bp.supplyMonth, value: bp.supplyMonth }));
+
+        this.pricingConditionOpts = formatOpts(pricingCondition);
+        this.statusOpts = formatOpts(status);
+      });
   }
 
   applyFilter(): void {
-    // if (this.filterSettlementForm.valid) {
-    //   const { processType, billingPeriod, date }: settlementParams = this.filterSettlementForm.getRawValue();
+    const values = this.form.getRawValue();
+    this.filters = values;
+    this.paginatedTable.search();
+  }
 
-    //   const formattedValues: Partial<settlementParams> = {
-    //     processType,
-    //     billingPeriod: this.notDaily ? billingPeriod : undefined,
-    //     tradingStartDate: this.isDaily && date?.length ? this.fdp.transformDate(date[0]) : undefined,
-    //     tradingEndDate: this.isDaily && date?.length ? this.fdp.transformDate(date[1]) : undefined,
-    //   };
+  triggerFileClaim(): void {
+    const modal = this.modalService.create({
+      nzTitle: LABELS.FILE_A_CLAIM,
+      nzContent: FileAClaimComponent,
+      nzCentered: true,
+      nzWidth: '800px',
+      nzMaskClosable: false,
+      nzFooter: [
+        {
+          label: LABELS.CLOSE,
+          onClick: (component: FileAClaimComponent) => component.triggerClose(),
+          disabled: (component?: FileAClaimComponent) => component ? (component?.busy$ && !component?.busy$?.closed) : true
+        },
+        {
+          label: LABELS.FILE_A_CLAIM,
+          type: 'primary',
+          onClick: (component: FileAClaimComponent) => component.triggerOk(),
+          disabled: (component?: FileAClaimComponent) => component ? (component.form.invalid || (component?.busy$ && !component?.busy$?.closed)) : true
+        }
+      ],
+      nzBodyStyle: {
+        maxHeight: '75vh',
+        overflowY: 'auto'
+      },
+    });
 
-    //   this.filtersEvent.emit(formattedValues);
-    // }
+    modal.afterClose.subscribe(res => {
+      if (res) {
+        this.paginatedTable?.search();
+      }
+    })
   }
 
   resetFilters(): void {
     this.form.reset();
+    this.filters = null;
     this.showForm = false;
+    this.paginatedTable?.search();
   }
 
 }
@@ -110,7 +149,7 @@ export class AdditionalCompensationComponent implements OnInit {
 const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.TRADING_DATE]: { label: LABELS.TRADING_DATE, propName: 'billingStartDate', width: '150px', type: 'template' },
   [LABELS.WORKSPACE_ID]: { label: LABELS.WORKSPACE_ID, propName: 'id', width: '100px' },
-  [LABELS.PRICING_CONDITION]: { label: LABELS.PRICING_CONDITION, propName: 'lastModifiedDatetime', width: '100px', align: 'center', type: 'date' },
+  [LABELS.PRICING_CONDITION]: { label: LABELS.PRICING_CONDITION, propName: 'pricingCondition', width: '100px', align: 'center' },
   [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', width: '200px', align: 'center' },
   [LABELS.PROGRESS]: { label: LABELS.PROGRESS, propName: 'status', width: '100px', align: 'center', type: 'template' },
 }

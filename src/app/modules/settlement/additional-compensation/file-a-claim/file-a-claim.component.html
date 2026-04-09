@@ -1,0 +1,141 @@
+<nz-spin [nzSpinning]="busy$ && !busy$.closed">
+  @if (form.invalid && form.touched) {
+  <nz-alert nzBanner nzType="error" [nzMessage]="MESSAGE.REQUIRED_FIELDS" class="mb-3"></nz-alert>
+  }
+
+  <form nz-form [formGroup]="form" nzLayout="vertical" nzNoColon class="row">
+    <nz-form-item class="col-sm-6 col-lg-6">
+      <nz-form-label nzRequired>{{ LABELS.BILLING_PERIOD }}</nz-form-label>
+      <nz-form-control>
+        <nz-select formControlName="billingPeriod" [nzOptions]="billingPeriodOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
+          [nzAllowClear]="true" nzShowSearch></nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <div class="col-sm-6"></div>
+
+    <nz-form-item class="col-sm-12 col-md-6">
+      <nz-form-label nzRequired>{{ LABELS.START_DATE }}</nz-form-label>
+      <nz-form-control>
+        <input nz-input [disabled]="true" [ngModel]="selectedBp?.startDate | date: 'yyyy-MM-dd'"
+          [ngModelOptions]="{ standalone: true }" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item class="col-sm-12 col-md-6">
+      <nz-form-label nzRequired>{{ LABELS.END_DATE }}</nz-form-label>
+      <nz-form-control>
+        <input nz-input [disabled]="true" [ngModel]="selectedBp?.endDate | date: 'yyyy-MM-dd'"
+          [ngModelOptions]="{ standalone: true }" />
+      </nz-form-control>
+    </nz-form-item>
+
+    @if (selectedBp) {
+      <nz-table nzTemplateMode [nzTitle]="header" nzSize="small" class="mb-4  ">
+        <thead>
+          <tr>
+            <th>{{ LABELS.DATE_RANGE }}</th>
+            <th nzAlign="center" nzWidth="80px">{{ LABELS.ACTION }}</th>
+          </tr>
+        </thead>
+        <tbody formArrayName="startEndDateRanges">
+          @for (group of dateRanges?.controls; track $index) {
+          <tr [formGroupName]="$index">
+            <td>
+              <nz-range-picker formControlName="range" class="w-100" [nzDisabledDate]="disableRange"></nz-range-picker>
+            </td>
+            <td nzAlign="center">
+              <a nz-button nzType="link" (click)="removeDateRange($index)" nzDanger>
+                <nz-icon nzType="delete" nzTheme="outline" />
+              </a>
+            </td>
+          </tr>
+          }
+
+          @if (!dateRanges?.length) {
+            <tr>
+              <td colspan="3">
+                <nz-empty></nz-empty>
+              </td>
+            </tr>
+          }
+
+        </tbody>
+
+      </nz-table>
+
+      <ng-template #header>
+        <div class="d-flex justify-content-end">
+          <button nz-button (click)="addDateRange()" [disabled]="dateRanges?.invalid">
+            Add {{ LABELS.DATE_RANGE }}
+          </button>
+        </div>
+      </ng-template>
+    }
+
+    <nz-form-item class="col-sm-6 col-lg-6">
+      <nz-form-label nzRequired>{{ LABELS.PRICING_CONDITION }}</nz-form-label>
+      <nz-form-control>
+        <nz-select formControlName="pricingCondition" [nzOptions]="pricingConditionOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
+          [nzAllowClear]="true" nzShowSearch></nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    @if (pricingCondition?.value) {
+      <nz-table nzTemplateMode [nzTitle]="header2" nzSize="small">
+        <thead>
+          <tr>
+            <th nzWidth="30%">{{ LABELS.BILLING_ID }} <span class="text-danger">*</span></th>
+            <th nzWidth="30">{{ LABELS.MTN }} <span class="text-danger">*</span></th>
+            <th nzWidth="30%" nzAlign="center">{{ LABELS.APPROVED_RATE }} <span class="text-danger">*</span></th>
+            <th nzWidth="10%" nzAlign="center">{{ LABELS.ACTION }}</th>
+          </tr>
+        </thead>
+        <tbody formArrayName="claims">
+          @for (group of claims?.controls; track $index) {
+          <tr [formGroupName]="$index">
+            <td>
+              <nz-select class="w-100" formControlName="billingId" [nzOptions]="billingIdOptions" [nzPlaceHolder]="LABELS.CHOOSE_HERE" [nzAllowClear]="true" nzShowSearch>
+              </nz-select>
+            </td>
+            <td>
+              <nz-select class="w-100" formControlName="mtn" [nzOptions]="mtnOptions[group.value?.billingId] || []" [nzPlaceHolder]="LABELS.CHOOSE_HERE" [nzAllowClear]="true" nzShowSearch></nz-select>
+            </td>
+            <td>
+              <nz-input-number formControlName="approveRate" nzMin="0" class="w-100"></nz-input-number>
+            </td>
+            <td nzAlign="center">
+              <a nz-button nzType="link" (click)="removeClaim($index)" nzDanger>
+                <nz-icon nzType="delete" nzTheme="outline" />
+              </a>
+            </td>
+          </tr>
+          }
+
+          @if (!claims?.length) {
+            <tr>
+              <td colspan="4">
+                <nz-empty></nz-empty>
+              </td>
+            </tr>
+          }
+
+        </tbody>
+
+      </nz-table>
+
+      <ng-template #header2>
+        <div class="d-flex {{ !claims?.length ? 'justify-content-between' : 'justify-content-end' }}">
+          @if (!claims?.length) {
+            <div class="text-danger">{{ CLAIM_MSG }}</div>
+          }
+
+          <button nz-button (click)="addClaims()" [disabled]="(claims?.invalid && claims?.length > 0) || !pricingCondition?.value">
+            Add {{ LABELS.CLAIMANT }}
+          </button>
+        </div>
+      </ng-template>
+    }
+  </form>
+</nz-spin>
+

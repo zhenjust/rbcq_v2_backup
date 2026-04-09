@@ -42,12 +42,13 @@ import { ReloginComponent } from './components/relogin/relogin.component';
 import { NzResultModule } from 'ng-zorro-antd/result';
 import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { DateTimePickerComponent } from './components/date-time-picker/date-time-picker.component';
-
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 const ngZorroConfig: NzConfig = {
   notification: { nzDuration: 300, nzMaxStack: 3, nzTop: '150px' }
 };
 
 const NgZorroModules = [
+  NzInputNumberModule,
   NzTableModule,
   NzEmptyModule,
   NzAlertModule,

@@ -14,6 +14,7 @@ export class SettlementService {
   private ADD_COMP: string = '/data-flow/task-executions/additional-compensation/multi';
   private REG = `/reg/stl-meter-file`;
   private GRP_API_URL: string = '/stl-data-pipeline/job/group';
+  private ADDTL_COMP: string = '/settlement/addtl-comp';
 
   private paramUtil = inject(ParamsUtilService);
   private http = inject(HttpClient);
@@ -71,5 +72,20 @@ export class SettlementService {
   public cancelRun(workspaceId: number): Observable<null> {
     return this.http.post<null>(`${this.API_URL}/cancel/${workspaceId}`, {});
   }
+
+  getBillingIdViaPricingCond(filters: { acPc: string, startDate: string | undefined, endDate: string | undefined }): Observable<any> {
+    let params = this.paramUtil.buildParams(filters);
+    params = params.append('search', '');
+    return this.http.get<any>(`${this.ADDTL_COMP}/billing-id-list`, { params });
+  }
+
+
+	// https://crss-dev.exist.com.ph/settlement/addtl-comp/mtns-by-billing-id?search=&billingId=BPC&acPc=MRU&startDate=2026-01-26&endDate=2026-02-25
+  getMtnsByBillingId(filters: { billingId: string, acPc: string, startDate: string, endDate: string }): Observable<any> {
+    let params = this.paramUtil.buildParams(filters);
+    params = params.append('search', '');
+    return this.http.get<any>(`${this.ADDTL_COMP}/mtns-by-billing-id`, { params });
+  }
+
 
 }
