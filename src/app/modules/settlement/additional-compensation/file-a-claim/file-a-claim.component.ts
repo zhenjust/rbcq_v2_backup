@@ -1,6 +1,6 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormGroup, FormBuilder, AbstractControl, FormArray, ValidatorFn } from '@angular/forms';
+import { FormGroup, FormBuilder, AbstractControl, FormArray } from '@angular/forms';
 import { RxwebValidators } from '@rxweb/reactive-form-validators';
 import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
@@ -186,7 +186,7 @@ export class FileAClaimComponent implements OnInit {
       isGroup: true,
       parameters: {
         pricingCondition: formValue.pricingCondition,
-        billingPeriodName: this.billingPeriods.find(bp => bp.billingPeriod === formValue?.billingPeriod)?.supplyMonth
+        billingPeriodName: this.billingPeriods.find(bp => bp.billingPeriod === formValue.billingPeriod)!.supplyMonth
       },
       startEndDateRanges: this.dateRanges?.value.map((d: any) => ({
         startDate: format(new Date(d.range[0]), 'yyyy-MM-dd HH:mm:ss'),
@@ -220,7 +220,7 @@ export class FileAClaimComponent implements OnInit {
 
   disableRange = (curr: Date) => {
     const filtered = this.dateRanges?.value?.filter((d: {range: Date[] | null}) => d?.range) || [];
-    const isWithinBp = isWithinInterval(curr, {start: new Date(this.selectedBp?.startDate!), end: new Date(this.selectedBp?.endDate!)});
+    const isWithinBp = isWithinInterval(curr, {start: new Date(this.selectedBp?.startDate!), end: new Date(this.selectedBp?.endDate!)}); // eslint-disable-line
     const selectedDates = filtered?.some((d: any) => isSameDay(d.range[0], curr) || isSameDay(d.range[1], curr) || isWithinInterval(curr, { start: new Date(d.range[0]), end: new Date(d.range[1]) }));
     return !isWithinBp || selectedDates;
   }
