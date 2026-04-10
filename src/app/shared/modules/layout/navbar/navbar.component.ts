@@ -1261,15 +1261,12 @@ export class NavbarComponent implements OnInit {
     if (item.externalLink && item.externalLink.trim() !== '') {
       window.location.href = item.externalLink;
     } else if (item.path && item.path.trim() !== '') {
-      // console.log(item, item.path)
-      // const path = item.path.split('/');
-      // if (path.length > 1) {
-      // this.r.navigate(path);
-
-      // }
-      const cleanPath = item.path.replace(/^\/+/, '');
-      const segments = cleanPath.split('/');
-      this.r.navigate(segments, { relativeTo: this.r.routerState.root });    }
+      this.r.navigate([item.path]);
+    }
+      // const cleanPath = item.path.replace(/^\/+/, '');
+      // const segments = cleanPath.split('/');
+      // console.log()
+      // this.r.navigate(segments, { relativeTo: this.r.routerState.root });    }
   }
 
   toggleDropdown(item: navItems, isOpen: boolean): void {
