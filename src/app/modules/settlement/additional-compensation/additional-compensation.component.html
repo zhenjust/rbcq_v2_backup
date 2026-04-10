@@ -50,31 +50,11 @@
       <button *nzSpaceItem nz-button nzType="primary" (click)="triggerFileClaim()">
         {{ LABELS.FILE_A_CLAIM }}
       </button>
-      <!-- <button *nzSpaceItem nz-button>
-        {{ LABELS.GENERATE_PENALTY_IWS }}
-      </button>
-
-      <button *nzSpaceItem nz-button>
-        {{ LABELS.GENERATE_REFUND_IWS }}
-      </button>
-
-      <button *nzSpaceItem nz-button nzType="primary" nz-dropdown [nzDropdownMenu]="menu">
-        {{ LABELS.MORE_ACTIONS }} <nz-icon nzType="down" />
-      </button>
-
-      <nz-dropdown-menu #menu="nzDropdownMenu">
-        <ul nz-menu nzSelectable>
-          <li nz-menu-item>{{ LABELS.CALCULATE }}</li>
-          <li nz-menu-item>{{ LABELS.FINALIZE }}</li>
-          <li nz-menu-item>{{ LABELS.PUBLISH }}</li>
-          <li nz-menu-item>{{ LABELS.GENERATE_FILES }}</li>
-        </ul>
-      </nz-dropdown-menu> -->
     </nz-space>
   </div>
 
   <!-- Table -->
-  <app-paginated-table #paginatedTable resultsProp="pipelineGroup" [enableCheckbox]="true" [tableColumns]="tableColumns"
+  <app-paginated-table #paginatedTable resultsProp="pipelineGroup" [tableColumns]="tableColumns"
     [url]="getUrl()" [showActions]="true" [tableConfig]="{ height: '60vh' }" [enableExpand]="true"
     [expandTpl]="expandTpl"></app-paginated-table>
 
@@ -129,12 +109,7 @@
         <nz-progress [nzStrokeWidth]="4" [nzPercent]="99.9" [nzShowInfo]="false" [nzStrokeColor]="{ '0%': '#108ee9', '100%': '#87d068' }" nzStatus="active" />
     </div>
   }
-  </ng-template>
-
-
-
-
-
+</ng-template>
 
 <ng-template #tagTpl let-data="data">
   <nz-tag class="break-word-tag">
