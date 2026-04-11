@@ -58,7 +58,9 @@
                 <tr [class]="getChildRowClass(parentIndex, pipelineIndex)">
                   <td [nzExpand]="isPipelineExpanded(parentIndex, pipelineIndex)"
                       (nzExpandChange)="onPipelineExpandChange($event, parentIndex, pipelineIndex)"
-                      [attr.rowspan]="pipeline.referencePipelines ? 2 : 1"></td>
+                      [attr.rowspan]="pipeline.referencePipelines ? 2 : 1"
+                      [class.rowspan-top-align]="pipeline.referencePipelines"
+                  ></td>
                   <td>{{ pipeline.id }}</td>
                   <td>{{ dfs.formatDateTime(pipeline.lastModifiedDatetime) }}</td>
                   <td>{{ pipeline.lastModifiedBy }}</td>
