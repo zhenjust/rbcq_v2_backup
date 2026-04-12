@@ -55,12 +55,10 @@
             </thead>
             <tbody>
               @for (pipeline of innerTable.data; track pipeline; let pipelineIndex = $index) {
-                <tr [class]="getChildRowClass(parentIndex, pipelineIndex)">
+                <tr [class]="getChildRowClass(parentIndex, pipelineIndex)"
+                    [class.no-bottom-border-row]="!!pipeline.referencePipelines">
                   <td [nzExpand]="isPipelineExpanded(parentIndex, pipelineIndex)"
-                      (nzExpandChange)="onPipelineExpandChange($event, parentIndex, pipelineIndex)"
-                      [attr.rowspan]="pipeline.referencePipelines ? 2 : 1"
-                      [class.rowspan-top-align]="pipeline.referencePipelines"
-                  ></td>
+                      (nzExpandChange)="onPipelineExpandChange($event, parentIndex, pipelineIndex)"></td>
                   <td>{{ pipeline.id }}</td>
                   <td>{{ dfs.formatDateTime(pipeline.lastModifiedDatetime) }}</td>
                   <td>{{ pipeline.lastModifiedBy }}</td>
@@ -116,7 +114,8 @@
                   </td>
                 </tr>
                 @if (pipeline.referencePipelines) {
-                  <tr [class]="getChildRowClass(parentIndex, pipelineIndex)">
+                  <tr [class]="getChildRowClass(parentIndex, pipelineIndex) + ' no-top-border-row'">
+                    <td></td>
                     <td [attr.colspan]="childColumnItem.length + 1">
                       <span class="cell-sub-label">{{ labels.NULLIFIED_WORKSPACE_ID }}: </span>
                       <span class="cell-sub-value">{{ pipeline.referencePipelines }}</span>

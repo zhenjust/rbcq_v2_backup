@@ -123,6 +123,14 @@
   vertical-align: top;
 }
 
+.no-top-border-row td {
+  border-top: none !important;
+}
+
+.no-bottom-border-row > td {
+  border-bottom: none !important;
+}
+
 .cell-sub-label {
   font-weight: 600;
 }
