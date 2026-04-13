@@ -72,9 +72,6 @@
                     </nz-tag>
                   </td>
                   <td>
-                    <!-- PROGRESS SECTION -->
-                  </td>
-                  <td>
 
                     @if (pipeline?.status?.startsWith('In-Progress')) {
                       <a nz-button nzType="link" nzBlock class="break-word-button" (click)="cancelRun(pipeline)">
