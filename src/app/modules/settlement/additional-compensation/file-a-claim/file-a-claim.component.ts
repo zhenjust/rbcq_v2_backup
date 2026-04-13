@@ -6,7 +6,7 @@ import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { meterProcessBillingPeriod } from '@shared/interfaces';
 import { AdminService, MeterprocessService, SettlementService } from '@shared/services/api';
-import { format, isSameDay, isWithinInterval, startOfDay } from 'date-fns';
+import { format, isSameDay, isWithinInterval } from 'date-fns';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
 import { ToastrService } from 'ngx-toastr';
@@ -42,6 +42,7 @@ export class FileAClaimComponent implements OnInit {
   mtnOptions: Record<string, NzSelectOptionInterface[]> = {};
 
   CLAIM_MSG = MESSAGES.MIN_REQUIRED_LENGTH(1, 'claim');
+  startOfSelectedDate: Date;
 
   constructor() { }
 
@@ -69,6 +70,7 @@ export class FileAClaimComponent implements OnInit {
         if (res) {
           this.pricingCondition?.enable();
           this.selectedBp = res ? this.billingPeriods.find(bp => bp.billingPeriod === res) : null;
+          this.startOfSelectedDate = new Date(this.selectedBp!.startDate!);
         } else {
           this.form.reset();
           this.dateRanges?.clear();
@@ -235,7 +237,5 @@ export class FileAClaimComponent implements OnInit {
   get claims(): FormArray | null { return this.form.get('claims') as FormArray; }
   get pricingCondition(): AbstractControl | null { return this.form.get('pricingCondition'); }
   get billingPeriod(): AbstractControl | null { return this.form?.get('billingPeriod'); }
-
-  get startOfSelectedDate(): Date | null | undefined { return this.selectedBp?.startDate ? new Date(startOfDay(new Date(this.selectedBp.startDate))) : null }
 
 }

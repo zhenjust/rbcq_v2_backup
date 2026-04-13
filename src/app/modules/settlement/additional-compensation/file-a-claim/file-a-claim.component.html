@@ -54,7 +54,7 @@
               <app-date-time-picker formControlName="startDate" [disabledDate]="disableRange" [defaultDate]="startOfSelectedDate"></app-date-time-picker>
             </td>
             <td style="vertical-align: center;">
-              <app-date-time-picker formControlName="endDate" [disabledDate]="disableRange"></app-date-time-picker>
+              <app-date-time-picker formControlName="endDate" [disabledDate]="disableRange" [defaultDate]="startOfSelectedDate"></app-date-time-picker>
               @if (group?.get('endDate').errors?.minDate) {
                 <small class="text-danger">{{ MESSAGE.MIN_DATE }}</small>
               }
