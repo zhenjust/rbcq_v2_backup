@@ -6,7 +6,7 @@ import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { meterProcessBillingPeriod } from '@shared/interfaces';
 import { AdminService, MeterprocessService, SettlementService } from '@shared/services/api';
-import { format, isSameDay, isWithinInterval } from 'date-fns';
+import { format, isSameDay, isWithinInterval, set } from 'date-fns';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
 import { ToastrService } from 'ngx-toastr';
@@ -197,8 +197,8 @@ export class FileAClaimComponent implements OnInit {
         billingEndDate: format(new Date(selectedBp!.endDate), 'yyyy-MM-dd')
       },
       startEndDateRanges: this.dateRanges?.value.map((d: any) => ({
-        startDate: format(new Date(d.startDate), 'yyyy-MM-dd HH:mm:ss'),
-        endDate: format(new Date(d.endDate), 'yyyy-MM-dd HH:mm:ss'),
+        startDate: format(set(new Date(d.startDate), { seconds: 0}), 'yyyy-MM-dd HH:mm:ss'),
+        endDate: format(set(new Date(d.endDate), { seconds: 0}), 'yyyy-MM-dd HH:mm:ss'),
       })),
       claims: this.claims?.value
     };
