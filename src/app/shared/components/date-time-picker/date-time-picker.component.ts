@@ -20,6 +20,7 @@ export class DateTimePickerComponent implements ControlValueAccessor {
   value: Date | null = null;
 
   disabledDate = input<(current: Date) => boolean>(() => false);
+  defaultDate = input<Date | null>(new Date());
 
   showCalendar = signal<boolean>(true);
   time = { hour: 0, minute: 0 };

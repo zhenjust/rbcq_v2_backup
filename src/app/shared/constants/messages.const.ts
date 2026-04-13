@@ -16,6 +16,7 @@ export const MESSAGES = {
   SESSION_TIMEOUT_TITLE: 'Session Expiring Soon',
   SESSION_TIMEOUT_MSG_1: 'You have been inactive for a while. For your security, you will be logged out in',
   SESSION_TIMEOUT_MSG_2: 'Move your cursor to continue with your session',
+  MIN_DATE: 'End date should be after the start date.',
 
   // DYNAMIC MESSAGES
   ITEMS_REQUIRED: (item: string) => `${item} are required.`,

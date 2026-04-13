@@ -6,7 +6,7 @@ import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { meterProcessBillingPeriod } from '@shared/interfaces';
 import { AdminService, MeterprocessService, SettlementService } from '@shared/services/api';
-import { format, isSameDay, isWithinInterval } from 'date-fns';
+import { format, isSameDay, isWithinInterval, startOfDay } from 'date-fns';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
 import { ToastrService } from 'ngx-toastr';
@@ -39,7 +39,7 @@ export class FileAClaimComponent implements OnInit {
   selectedBp: meterProcessBillingPeriod | undefined | null;
   pricingConditionOpts: NzSelectOptionInterface[] = [];
   billingIdOptions: NzSelectOptionInterface[] = [];
-  mtnOptions: Record<string, string[]> = {};
+  mtnOptions: Record<string, NzSelectOptionInterface[]> = {};
 
   CLAIM_MSG = MESSAGES.MIN_REQUIRED_LENGTH(1, 'claim');
 
@@ -60,7 +60,6 @@ export class FileAClaimComponent implements OnInit {
 
     this.onBillingPeriodChange();
     this.onPricingConditionChange();
-
   }
 
   onBillingPeriodChange(): void {
@@ -107,10 +106,8 @@ export class FileAClaimComponent implements OnInit {
 
   addDateRange(): void {
     const formGroup = this.formBuilder.group({
-      range: [null, [
-        RxwebValidators.required(),
-        RxwebValidators.minLength({ value: 1 })
-      ]],
+      startDate: [null, RxwebValidators.required()],
+      endDate: [null, [RxwebValidators.required(), RxwebValidators.minDate({ fieldName: 'startDate' })]]
     });
 
     this.dateRanges?.push(formGroup);
@@ -124,7 +121,7 @@ export class FileAClaimComponent implements OnInit {
 
   addClaims(): void {
     const formGroup = this.formBuilder.group({
-      billingId: [null, [RxwebValidators.required(), RxwebValidators.unique()]],
+      billingId: [null, RxwebValidators.required()],
       mtn: [null, RxwebValidators.required()],
       approveRate: [null, RxwebValidators.required()],
     });
@@ -132,32 +129,38 @@ export class FileAClaimComponent implements OnInit {
     this.claims?.push(formGroup);
     this.pricingCondition?.disable();
 
+    const mtn = formGroup.get('mtn');
+    const approveRate = formGroup.get('approveRate');
+
     formGroup.get('billingId')?.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef$), distinctUntilChanged())
       .subscribe(billingId => {
-          const claimsBillingId = this.claims?.controls
-            .map(control => control.get('billingId')?.value)
-            .filter(d => d);
-
-          const billingIdUpdated = [...this.billingIdOptions].map(opt => ({...opt, disabled: claimsBillingId?.includes(opt.value) }));
-          this.billingIdOptions = [...billingIdUpdated];
-
           if (billingId) {
-            const filters = {
-              acPc: this.pricingCondition?.value,
-              startDate: format(new Date(this.selectedBp!.startDate), 'yyyy-MM-dd') ,
-              endDate: format(new Date(this.selectedBp!.endDate), 'yyyy-MM-dd'),
-              billingId
-            };
+            mtn?.reset();
+            approveRate?.reset();
 
-            this.busy$ = this.settlementService.getMtnsByBillingId(filters)
-              .pipe(takeUntilDestroyed(this.destroyRef$))
-              .subscribe(mtn => {
-                this.mtnOptions[billingId] = mtn.map((m: string) => ({ label: m, value: m }));
-              });
+            if (billingId) {
+              const filters = {
+                acPc: this.pricingCondition?.value,
+                startDate: format(new Date(this.selectedBp!.startDate), 'yyyy-MM-dd') ,
+                endDate: format(new Date(this.selectedBp!.endDate), 'yyyy-MM-dd'),
+                billingId
+              };
+
+              this.busy$ = this.settlementService.getMtnsByBillingId(filters)
+                .pipe(takeUntilDestroyed(this.destroyRef$))
+                .subscribe(mtn => {
+                  this.mtnOptions[billingId] = mtn.map((m: string) => ({ label: m, value: m, disabled: this.selectedMtns?.includes(m) }));
+                });
+            }
+          } else {
+            mtn?.reset();
+            approveRate?.reset();
           }
         });
   }
+
+  get selectedMtns(): string[] { return this.claims?.value?.map((c: any) => c.mtn); }
 
   removeClaim(i: number): void {
     this.claims?.removeAt(i);
@@ -188,12 +191,12 @@ export class FileAClaimComponent implements OnInit {
       parameters: {
         pricingCondition: formValue.pricingCondition,
         billingPeriodName: selectedBp!.supplyMonth,
-        billingStartDate: selectedBp!.startDate,
-        billingEndDate: selectedBp!.endDate
+        billingStartDate: format(new Date(selectedBp!.startDate), 'yyyy-MM-dd'),
+        billingEndDate: format(new Date(selectedBp!.endDate), 'yyyy-MM-dd')
       },
       startEndDateRanges: this.dateRanges?.value.map((d: any) => ({
-        startDate: format(new Date(d.range[0]), 'yyyy-MM-dd HH:mm:ss'),
-        endDate: format(new Date(d.range[1]), 'yyyy-MM-dd HH:mm:ss'),
+        startDate: format(new Date(d.startDate), 'yyyy-MM-dd HH:mm:ss'),
+        endDate: format(new Date(d.endDate), 'yyyy-MM-dd HH:mm:ss'),
       })),
       claims: this.claims?.value
     };
@@ -222,9 +225,9 @@ export class FileAClaimComponent implements OnInit {
   }
 
   disableRange = (curr: Date) => {
-    const filtered = this.dateRanges?.value?.filter((d: {range: Date[] | null}) => d?.range) || [];
+    const filtered = this.dateRanges?.value?.filter((d: {startDate: Date[] | null, endDate: Date[] | null}) => d.startDate && d.endDate) || [];
     const isWithinBp = isWithinInterval(curr, {start: new Date(this.selectedBp?.startDate!), end: new Date(this.selectedBp?.endDate!)}); // eslint-disable-line
-    const selectedDates = filtered?.some((d: any) => isSameDay(d.range[0], curr) || isSameDay(d.range[1], curr) || isWithinInterval(curr, { start: new Date(d.range[0]), end: new Date(d.range[1]) }));
+    const selectedDates = filtered?.some((d: any) => isSameDay(d.startDate, curr) || isSameDay(d.endDate, curr) || isWithinInterval(curr, { start: new Date(d.startDate), end: new Date(d.endDate) }));
     return !isWithinBp || selectedDates;
   }
 
@@ -232,5 +235,7 @@ export class FileAClaimComponent implements OnInit {
   get claims(): FormArray | null { return this.form.get('claims') as FormArray; }
   get pricingCondition(): AbstractControl | null { return this.form.get('pricingCondition'); }
   get billingPeriod(): AbstractControl | null { return this.form?.get('billingPeriod'); }
+
+  get startOfSelectedDate(): Date | null | undefined { return this.selectedBp?.startDate ? new Date(startOfDay(new Date(this.selectedBp.startDate))) : null }
 
 }
