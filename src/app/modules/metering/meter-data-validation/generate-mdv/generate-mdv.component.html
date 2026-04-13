@@ -34,9 +34,10 @@
     <nz-card nzSize="small" [nzTitle]="title">
       <ng-template #title>
         <label nz-checkbox
-        [(ngModel)]="checked"
-        (ngModelChange)="onCheckedChange()"
-        [nzIndeterminate]="!!reportCodes?.value?.length && (options.length !== reportCodes?.value?.length)"
+        [nzDisabled]="!processType?.value"
+        [ngModel]="checked()"
+        (ngModelChange)="checked.set($event); onCheckedChange()"
+        [nzIndeterminate]="!!reportCodes?.value?.length && (enabledOptions !== reportCodes?.value?.length)"
         [ngModelOptions]="{ standalone: true }">{{ isAllSelected ? LABELS.DESELECT_ALL : LABELS.SELECT_ALL }} {{ LABELS.REPORT_CODE }}s</label>
       </ng-template>
 
