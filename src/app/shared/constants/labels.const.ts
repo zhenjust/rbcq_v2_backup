@@ -197,4 +197,7 @@ export const LABELS = {
 
   DATE_RANGE: 'Date Range',
   CLAIMANT: 'Claimant',
+
+  CREATED_DATE: 'Created Date',
+
 }

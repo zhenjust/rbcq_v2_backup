@@ -60,8 +60,17 @@
 
   <ng-template #expandTpl let-row="row">
     <div class="d-flex w-100 my-2 pe-2">
-      <app-template-table class="w-100" [tableColumns]="expandedTableCols"
-        [tableData]="row?.pipelines"></app-template-table>
+      <div class="d-flex flex-column w-100">
+        <p class="fw-bold">Billing ID Entries</p>
+        <app-template-table class="w-100 mb-3" [tableColumns]="claimsTableCols"
+        [tableData]="row?.allClaims"></app-template-table>
+
+        @if (row?.pipelines?.length) {
+          <p class="fw-bold">Pipelines</p>
+          <app-template-table class="w-100" [tableColumns]="expandedTableCols"
+          [tableData]="row?.pipelines[0]?.pipelineRuns"></app-template-table>
+        }
+      </div>
 
       <!-- [actionsTpl]="expandTplActions" -->
       <!-- <ng-template #expandTplActions let-subRowData="row">

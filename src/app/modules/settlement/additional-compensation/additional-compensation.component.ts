@@ -23,6 +23,7 @@ export class AdditionalCompensationComponent implements OnInit {
   @ViewChild('mtnTpl', { static: true }) mtnTpl!: TemplateRef<HTMLElement>;
   @ViewChild('billingIdTpl', { static: true }) billingIdTpl!: TemplateRef<HTMLElement>;
   @ViewChild('progressTpl', { static: true }) progressTpl!: TemplateRef<HTMLElement>;
+  @ViewChild('tagTpl', { static: true }) tagTpl!: TemplateRef<HTMLElement>;
 
   private readonly formBuilder = inject(FormBuilder);
   private readonly settlementService = inject(SettlementService);
@@ -35,6 +36,7 @@ export class AdditionalCompensationComponent implements OnInit {
   tableColumns: TPL_TABLE_COLUMN[] = [];
   form: FormGroup;
   showForm = false;
+  claimsTableCols: TPL_TABLE_COLUMN[];
   expandedTableCols: TPL_TABLE_COLUMN[];
 
   billingPeriods: meterProcessBillingPeriod[] = [];
@@ -62,13 +64,17 @@ export class AdditionalCompensationComponent implements OnInit {
   formatTableColumns(): void {
     tableColumns[LABELS.TRADING_DATE].template = this.bpTpl;
     tableColumns[LABELS.PROGRESS].template = this.progressTpl;
-    expandedTableCols[LABELS.APPROVED_RATE].template = this.rateTpl;
-    expandedTableCols[LABELS.MTN].template = this.mtnTpl;
-    expandedTableCols[LABELS.BILLING_ID].template = this.billingIdTpl;
-    expandedTableCols[LABELS.PROGRESS].template = this.progressTpl;
+
+    claimTableCols[LABELS.APPROVED_RATE].template = this.rateTpl;
+    claimTableCols[LABELS.MTN].template = this.mtnTpl;
+    claimTableCols[LABELS.BILLING_ID].template = this.billingIdTpl;
+
+    expandedTableCols[LABELS.STATUS].template = this.tagTpl;
 
     this.tableColumns = Object.values(tableColumns);
+    this.claimsTableCols = Object.values(claimTableCols);
     this.expandedTableCols = Object.values(expandedTableCols);
+
   }
 
   getUrl(): Observable<any> {
@@ -156,9 +162,19 @@ const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
 
 const expandedTableCols: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.NAME]: { label: LABELS.NAME, propName: 'name', width: '180px' },
-  [LABELS.BILLING_ID]: { label: LABELS.BILLING_ID, propName: 'mtn', width: '150px', type: 'template' },
-  [LABELS.MTN]: { label: LABELS.MTN, propName: 'mtn', width: '150px', type: 'template' },
-  [LABELS.APPROVED_RATE]: { label: LABELS.APPROVED_RATE, propName: 'fileName', width: '250px', type: 'template' },
-  [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', width: '250px' },
-  [LABELS.PROGRESS]: { label: LABELS.PROGRESS, propName: 'fileName', width: '250px', type: 'template' },
+  [LABELS.RUN_START]: { label: LABELS.RUN_START, propName: 'runStart', width: '150px', type: 'date' },
+  [LABELS.RUN_END]: { label: LABELS.RUN_END, propName: 'runEnd', width: '150px', type: 'date' },
+  [LABELS.DURATION]: { label: LABELS.DURATION, propName: 'duration' },
+  [LABELS.RUN_BY]: { label: LABELS.RUN_BY, propName: 'runBy' },
+  [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', type: 'template' },
+}
+
+const claimTableCols: Record<string, TPL_TABLE_COLUMN> = {
+  [LABELS.BILLING_ID]: { label: LABELS.BILLING_ID, propName: 'billingId', width: '150px' },
+  [LABELS.MTN]: { label: LABELS.MTN, propName: 'mtn', width: '150px' },
+  [LABELS.APPROVED_RATE]: { label: LABELS.APPROVED_RATE, propName: 'approveRate', width: '250px' },
+
+  [LABELS.START_DATE]: { label: LABELS.START_DATE, propName: 'startDate', type: 'date' },
+  [LABELS.END_DATE]: { label: LABELS.END_DATE, propName: 'endDate', type: 'date' },
+  [LABELS.CREATED_DATE]: { label: LABELS.CREATED_DATE, propName: 'createdDate', type: 'date' },
 }
