@@ -27,8 +27,8 @@
   </nz-tag>
 </ng-template>
 
-<ng-template #fuelTypeTpl let-data="data">
-  @if (fuelTypeOpts?.length !== data.length) {
+<ng-template #fuelTypeTpl let-data="data" let-allData="allData">
+  @if (!allData?.allFuelType) {
     <a nz-button nzSize="small" class="p-0" nzType="link" nz-popover [nzPopoverTitle]="LABELS.FUEL_TYPES" nzPopoverPlacement="right" [nzPopoverContent]="contentTpl">{{ LABELS.SELECTED }}</a>
     <ng-template #contentTpl>
       @for (item of data; track item) {

@@ -32,7 +32,8 @@ export class AdminService {
       pageNo: 0,
       pageSize: 100,
       mapParams: {
-        type
+        type,
+        status: true
       },
       orderList: [
         {

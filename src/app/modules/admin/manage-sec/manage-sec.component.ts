@@ -109,7 +109,6 @@ export class ManageSecComponent implements OnInit {
 
     const formValues = this.form?.getRawValue();
 
-    console.log(this.paginatedTable)
     return this.secService.listSecParameters(formValues, this.paginatedTable?.tableParams);
   }
 
