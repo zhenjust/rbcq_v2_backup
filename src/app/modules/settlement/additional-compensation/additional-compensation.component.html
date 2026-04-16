@@ -120,6 +120,13 @@
   }
 </ng-template>
 
+<ng-template #datetimeTpl let-allData="allData">
+  @for (range of allData?.customDateRanges; track $index) {
+    <div>{{ range?.startDate }} - {{ range?.endDate }}</div>
+  }
+</ng-template>
+
+
 <ng-template #tagTpl let-data="data">
   <nz-tag class="break-word-tag">
     {{ data }}

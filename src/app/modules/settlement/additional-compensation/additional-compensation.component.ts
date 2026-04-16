@@ -24,6 +24,7 @@ export class AdditionalCompensationComponent implements OnInit {
   @ViewChild('billingIdTpl', { static: true }) billingIdTpl!: TemplateRef<HTMLElement>;
   @ViewChild('progressTpl', { static: true }) progressTpl!: TemplateRef<HTMLElement>;
   @ViewChild('tagTpl', { static: true }) tagTpl!: TemplateRef<HTMLElement>;
+  @ViewChild('datetimeTpl', { static: true }) datetimeTpl!: TemplateRef<HTMLElement>;
 
   private readonly formBuilder = inject(FormBuilder);
   private readonly settlementService = inject(SettlementService);
@@ -63,11 +64,12 @@ export class AdditionalCompensationComponent implements OnInit {
 
   formatTableColumns(): void {
     tableColumns[LABELS.TRADING_DATE].template = this.bpTpl;
-    tableColumns[LABELS.PROGRESS].template = this.progressTpl;
+    // tableColumns[LABELS.PROGRESS].template = this.progressTpl;
 
     claimTableCols[LABELS.APPROVED_RATE].template = this.rateTpl;
     claimTableCols[LABELS.MTN].template = this.mtnTpl;
     claimTableCols[LABELS.BILLING_ID].template = this.billingIdTpl;
+    claimTableCols[LABELS.DATE_TIME_RANGE].template = this.datetimeTpl;
 
     expandedTableCols[LABELS.STATUS].template = this.tagTpl;
 
@@ -157,7 +159,7 @@ const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.WORKSPACE_ID]: { label: LABELS.WORKSPACE_ID, propName: 'id', width: '100px' },
   [LABELS.PRICING_CONDITION]: { label: LABELS.PRICING_CONDITION, propName: 'pricingCondition', width: '100px', align: 'center' },
   [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', width: '200px', align: 'center' },
-  [LABELS.PROGRESS]: { label: LABELS.PROGRESS, propName: 'status', width: '100px', align: 'center', type: 'template' },
+  // [LABELS.PROGRESS]: { label: LABELS.PROGRESS, propName: 'status', width: '100px', align: 'center', type: 'template' },
 }
 
 const expandedTableCols: Record<string, TPL_TABLE_COLUMN> = {
@@ -174,7 +176,6 @@ const claimTableCols: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.MTN]: { label: LABELS.MTN, propName: 'mtn', width: '150px' },
   [LABELS.APPROVED_RATE]: { label: LABELS.APPROVED_RATE, propName: 'approveRate', width: '250px' },
 
-  [LABELS.START_DATE]: { label: LABELS.START_DATE, propName: 'startDate', type: 'date' },
-  [LABELS.END_DATE]: { label: LABELS.END_DATE, propName: 'endDate', type: 'date' },
-  [LABELS.CREATED_DATE]: { label: LABELS.CREATED_DATE, propName: 'createdDate', type: 'date' },
+  [LABELS.DATE_TIME_RANGE]: { label: LABELS.DATE_TIME_RANGE, propName: 'startDate', width: '250px', type: 'template' },
+  [LABELS.CREATED_DATE]: { label: LABELS.CREATED_DATE, propName: 'creationDate', type: 'date' },
 }
