@@ -199,5 +199,7 @@ export const LABELS = {
   CLAIMANT: 'Claimant',
 
   CREATED_DATE: 'Created Date',
+  PIPELINES: 'Pipelines',
+  DETAILS: 'Details',
 
 }

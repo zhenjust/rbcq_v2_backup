@@ -12,7 +12,7 @@ const routes: Routes = [
       canActivate: [ngxPermissionsGuard],
       data: {
         permissions: {
-          only: [PHASE_TWO_AUTHORITIES.RUN_MQ_UPLOADER],
+          only: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS],
           redirectTo: externalRoutes.HOME
         }
       },

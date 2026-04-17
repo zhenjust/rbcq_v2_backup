@@ -9,6 +9,7 @@ import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
 import { forkJoin, Observable, of } from 'rxjs';
 import { FileAClaimComponent } from './file-a-claim/file-a-claim.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { PipelineTableColumns } from '@shared/constants/pipelines.const';
 
 @Component({
   selector: 'app-additional-compensation',
@@ -71,11 +72,11 @@ export class AdditionalCompensationComponent implements OnInit {
     claimTableCols[LABELS.BILLING_ID].template = this.billingIdTpl;
     claimTableCols[LABELS.DATE_TIME_RANGE].template = this.datetimeTpl;
 
-    expandedTableCols[LABELS.STATUS].template = this.tagTpl;
+    PipelineTableColumns[LABELS.STATUS].template = this.tagTpl;
 
     this.tableColumns = Object.values(tableColumns);
     this.claimsTableCols = Object.values(claimTableCols);
-    this.expandedTableCols = Object.values(expandedTableCols);
+    this.expandedTableCols = Object.values(PipelineTableColumns);
 
   }
 
@@ -160,15 +161,6 @@ const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.PRICING_CONDITION]: { label: LABELS.PRICING_CONDITION, propName: 'pricingCondition', width: '100px', align: 'center' },
   [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', width: '200px', align: 'center' },
   // [LABELS.PROGRESS]: { label: LABELS.PROGRESS, propName: 'status', width: '100px', align: 'center', type: 'template' },
-}
-
-const expandedTableCols: Record<string, TPL_TABLE_COLUMN> = {
-  [LABELS.NAME]: { label: LABELS.NAME, propName: 'name', width: '180px' },
-  [LABELS.RUN_START]: { label: LABELS.RUN_START, propName: 'runStart', width: '150px', type: 'date' },
-  [LABELS.RUN_END]: { label: LABELS.RUN_END, propName: 'runEnd', width: '150px', type: 'date' },
-  [LABELS.DURATION]: { label: LABELS.DURATION, propName: 'duration' },
-  [LABELS.RUN_BY]: { label: LABELS.RUN_BY, propName: 'runBy' },
-  [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', type: 'template' },
 }
 
 const claimTableCols: Record<string, TPL_TABLE_COLUMN> = {

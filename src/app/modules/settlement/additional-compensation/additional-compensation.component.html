@@ -67,8 +67,7 @@
 
         @if (row?.pipelines?.length) {
           <p class="fw-bold">Pipelines</p>
-          <app-template-table class="w-100" [tableColumns]="expandedTableCols"
-          [tableData]="row?.pipelines[0]?.pipelineRuns"></app-template-table>
+          <app-pipeline-table [rowData]="row?.pipelines[0]?.pipelineRuns"></app-pipeline-table>
         }
       </div>
 
