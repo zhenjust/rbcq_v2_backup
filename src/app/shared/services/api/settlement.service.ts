@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ParamsUtilService } from '../utils';
-import { BaseResponse, EnergyTradingAmounts, PublishSettlement, SettlementJob, SettlementJobParams, settlementParams, settlementTableDate, TableParams } from '@shared/interfaces';
+import { BaseResponse, EnergyTradingAmounts, PublishSettlement, ReferenceOption1, SettlementJob, SettlementJobParams, settlementParams, settlementTableDate, TableParams } from '@shared/interfaces';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -87,5 +87,8 @@ export class SettlementService {
     return this.http.get<any>(`${this.ADDTL_COMP}/mtns-by-billing-id`, { params });
   }
 
+  getPenaltyStatuses(): Observable<ReferenceOption1[]> {
+    return this.http.get<ReferenceOption1[]>(`/stl-data-pipeline/penalty/status`);
+  }
 
 }

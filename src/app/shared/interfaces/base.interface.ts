@@ -50,3 +50,8 @@ export interface TableAction<T> {
   click: (rowData: T) => void;
   hidden?: (rowData: T) => boolean;
 }
+
+export interface ReferenceOption1 {
+  name: string;
+  label: string;
+}

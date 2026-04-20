@@ -22,7 +22,7 @@
             <nz-form-item class="mb-3">
               <nz-form-label nzSpan="8">{{ LABELS.TYPE }}</nz-form-label>
               <nz-form-control nzSpan="16">
-                <nz-select formControlName="type" [nzOptions]="typeOptions" [nzPlaceHolder]="LABELS.ALL" [nzAllowClear]="true" nzShowSearch></nz-select>
+                <nz-select formControlName="penaltyType" [nzOptions]="typeOptions" [nzPlaceHolder]="LABELS.ALL" [nzAllowClear]="true" nzShowSearch></nz-select>
               </nz-form-control>
             </nz-form-item>
         </div>
@@ -38,13 +38,13 @@
         </button>
       }
 
-      <button nz-button *nzSpaceItem nzType="primary" [disabled]="form.invalid" (click)="showForm ? paginatedTable?.search() : showForm =! showForm">
+      <button nz-button *nzSpaceItem nzType="primary" [disabled]="form.invalid" (click)="showForm ? applyFilter() : showForm =! showForm">
         {{ showForm ? LABELS.APPLY_FILTERS : LABELS.SET_FILTERS }}
       </button>
     </nz-space>
 
     <nz-space>
-      <button *nzSpaceItem nz-button>
+      <button *nzSpaceItem nz-button (click)="generateIws()">
         {{ LABELS.GENERATE_PENALTY_IWS }}
       </button>
 
@@ -99,3 +99,4 @@
   {{ allData?.processType === 'DAILY' ? allData?.billingStartDate : `${allData?.billingStartDate} -
   ${allData?.billingEndDate}` }}
 </ng-template>
+

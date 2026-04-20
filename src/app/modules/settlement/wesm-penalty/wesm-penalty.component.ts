@@ -1,12 +1,15 @@
-import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { WESM_PENALTY_STATUS, WESM_PENALTY_TYPE } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { meterProcessBillingPeriod, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { MeterprocessService, SettlementService } from '@shared/services/api';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
 import { Observable, of } from 'rxjs';
+import { PenaltyGenerateIwsComponent } from './penalty-generate-iws/penalty-generate-iws.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-wesm-penalty',
@@ -21,6 +24,8 @@ export class WesmPenaltyComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly meteringService = inject(MeterprocessService);
   private readonly settlementService = inject(SettlementService);
+  private readonly modalService = inject(NzModalService);
+  private readonly destroyRef$ = inject(DestroyRef);
 
   LABELS = LABELS;
   tableColumns: TPL_TABLE_COLUMN[];
@@ -43,14 +48,14 @@ export class WesmPenaltyComponent implements OnInit {
 
     this.buildForm();
     this.formatTableColumns();
-    this.getBillingPeriods();
+    this.getOptions();
   }
 
   buildForm(): void {
     this.form = this.formBuilder.group({
       billingPeriod: [null],
       status: [null],
-      type: [null]
+      penaltyType: [null]
     });
   }
 
@@ -72,35 +77,63 @@ export class WesmPenaltyComponent implements OnInit {
 
     return this.settlementService.search(this.filters, 'penalty', this.paginatedTable?.tableParams);
   }
-  getBillingPeriods(): void {
+
+  generateIws(): void {
+    const modal = this.modalService.create({
+      nzTitle: LABELS.GENERATE_INPUT_WORKSPACE,
+      nzContent: PenaltyGenerateIwsComponent,
+      nzCentered: true,
+      nzMaskClosable: false,
+      nzFooter: [
+        {
+          label: LABELS.CLOSE,
+          onClick: (component: PenaltyGenerateIwsComponent) => component.triggerClose(),
+          disabled: (component?: PenaltyGenerateIwsComponent) => component ? (component?.busy$ && !component?.busy$?.closed) : true
+        },
+        {
+          label: LABELS.GENERATE_INPUT_WORKSPACE,
+          type: 'primary',
+          onClick: (component: PenaltyGenerateIwsComponent) => component.triggerOk(),
+          disabled: (component?: PenaltyGenerateIwsComponent) => component ? (component.form.invalid || (component?.busy$ && !component?.busy$?.closed)) : true
+        }
+      ],
+    });
+
+    modal.afterClose.subscribe(res => {
+      if (res) {
+        this.paginatedTable?.search();
+      }
+    })
+  }
+
+  getOptions(): void {
     this.meteringService.getBillingPeriod()
+      .pipe(takeUntilDestroyed(this.destroyRef$))
       .subscribe({
         next: options => {
           this.billingPeriods = options as meterProcessBillingPeriod[];
           this.billingPeriodOpts = (options as meterProcessBillingPeriod[])
-            .map(bp => ({ label: bp.supplyMonth, value: bp.billingPeriod }));
+            .map(bp => ({ label: bp.supplyMonth, value: bp.supplyMonth }));
         }
-      })
+      });
+
+    this.settlementService.getPenaltyStatuses()
+      .pipe(takeUntilDestroyed(this.destroyRef$))
+      .subscribe({
+        next: options => this.statusOptions = options?.map(opt => ({ label: opt.label, value: opt.label }))
+      });
   }
 
   applyFilter(): void {
-    // if (this.filterSettlementForm.valid) {
-    //   const { processType, billingPeriod, date }: settlementParams = this.filterSettlementForm.getRawValue();
-
-    //   const formattedValues: Partial<settlementParams> = {
-    //     processType,
-    //     billingPeriod: this.notDaily ? billingPeriod : undefined,
-    //     tradingStartDate: this.isDaily && date?.length ? this.fdp.transformDate(date[0]) : undefined,
-    //     tradingEndDate: this.isDaily && date?.length ? this.fdp.transformDate(date[1]) : undefined,
-    //   };
-
-    //   this.filtersEvent.emit(formattedValues);
-    // }
+    this.filters = this.form.getRawValue();
+    this.paginatedTable?.search();
   }
 
   resetFilters(): void {
     this.form.reset();
     this.showForm = false;
+    this.filters = null;
+    this.paginatedTable?.search();
   }
 
 }
