@@ -36,10 +36,10 @@ export abstract class SearchListBase {
     if (sort.length) {
       const currentSort = sort.find(item => item.value);
       if (currentSort) {
-        // this.tableParams.sort = {
-        //   prop: currentSort?.key || null,
-        //   dir: currentSort?.value || null,
-        // };
+        this.tableParams.sort = {
+          prop: currentSort?.key,
+          dir: currentSort?.value as string,
+        };
       }
     }
 

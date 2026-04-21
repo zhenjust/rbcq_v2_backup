@@ -16,6 +16,7 @@ export const MESSAGES = {
   SESSION_TIMEOUT_TITLE: 'Session Expiring Soon',
   SESSION_TIMEOUT_MSG_1: 'You have been inactive for a while. For your security, you will be logged out in',
   SESSION_TIMEOUT_MSG_2: 'Move your cursor to continue with your session',
+  MIN_DATE: 'End date should be after the start date.',
 
   // DYNAMIC MESSAGES
   ITEMS_REQUIRED: (item: string) => `${item} are required.`,
@@ -30,6 +31,7 @@ export const MESSAGES = {
   SUCCESS_DOWNLOAD_ITEM: (item: string) => `Successfully downloaded ${item}.`,
   SUCCESS_DELETE_ITEM: (item: string) => `Successfully deleted ${item}.`,
   SUCCESS_SAVE_ITEM: (item: string) => `Successfully saved ${item}.`,
+  SUCCESS_FILE_ITEM: (item: string) => `Successfully filed ${item}.`,
 
   CONFIRM_CONSOLIDATE_ITEMS: (item: string) => `Do you want to consolidate the selected ${item}?`,
   CONFIRM_DELETE_ITEM: (item: string) => `Do you want to delete the selected ${item}?`,
@@ -38,6 +40,9 @@ export const MESSAGES = {
   CALCULATE_STL: (date: string) => `You are going to calculate trading amount for the following dates: <strong>${date}</strong>. Do you want to proceed?`,
   CONFIRM_SETTLEMENT_MSG: (action: string) => `You are going to ${action}. Do you want to proceed?`,
   CONFIRM_RUN_JOB: (jobType: string) => `You are going to run a ${jobType}.`,
+
+  MIN_REQUIRED_LENGTH: (length: number, item: string) => `Minimum of ${length} ${item} is required.`,
+
 
 
 

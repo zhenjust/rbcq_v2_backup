@@ -7,6 +7,7 @@ export interface TPL_TABLE_COLUMN {
   width?: string,
   template?: any,
   hasRowSpan?: boolean,
+  sort?: boolean;
 }
 
 export interface BaseResponse {
@@ -30,6 +31,10 @@ export class TableParams {
   numberOfElements: number;
   size = 20;
   page = 0;
+  sort?: {
+    prop?: string;
+    dir?: string;
+  }
 }
 
 export interface TableDataResult<T> {
@@ -44,4 +49,9 @@ export interface TableAction<T> {
   danger?: true;
   click: (rowData: T) => void;
   hidden?: (rowData: T) => boolean;
+}
+
+export interface ReferenceOption1 {
+  name: string;
+  label: string;
 }

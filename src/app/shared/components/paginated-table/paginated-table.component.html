@@ -28,7 +28,7 @@
     }
 
     @for (column of tableColumns; track column.label) {
-      <th [nzAlign]="column?.align || 'left'" class="p-3">{{ column.label }}</th>
+      <th [nzAlign]="column?.align || 'left'" class="p-3" [nzColumnKey]="column.propName" [nzShowSort]="column?.sort" [nzSortFn]="column?.sort ?? false">{{ column.label }}</th>
     }
 
     @if (showActions()) {
@@ -48,7 +48,7 @@
         @if (enableCheckbox) {
           <td
             [nzChecked]="selectedItems.has(row[checkboxProperty])"
-            [nzDisabled]="checkboxCondition(row)"
+            [nzDisabled]="checkboxCondition?.(row) || false"
             (nzCheckedChange)="checkRow($event, row[checkboxProperty])"
             class="px-3"></td>
         }

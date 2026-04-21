@@ -22,7 +22,7 @@
             <nz-form-item class="mb-3">
               <nz-form-label nzSpan="8">{{ LABELS.TYPE }}</nz-form-label>
               <nz-form-control nzSpan="16">
-                <nz-select formControlName="type" [nzOptions]="typeOptions" [nzPlaceHolder]="LABELS.ALL" [nzAllowClear]="true" nzShowSearch></nz-select>
+                <nz-select formControlName="penaltyType" [nzOptions]="typeOptions" [nzPlaceHolder]="LABELS.ALL" [nzAllowClear]="true" nzShowSearch></nz-select>
               </nz-form-control>
             </nz-form-item>
         </div>
@@ -38,13 +38,13 @@
         </button>
       }
 
-      <button nz-button *nzSpaceItem nzType="primary" [disabled]="form.invalid" (click)="showForm ? paginatedTable?.search() : showForm =! showForm">
+      <button nz-button *nzSpaceItem nzType="primary" [disabled]="form.invalid" (click)="showForm ? applyFilter() : showForm =! showForm">
         {{ showForm ? LABELS.APPLY_FILTERS : LABELS.SET_FILTERS }}
       </button>
     </nz-space>
 
     <nz-space>
-      <button *nzSpaceItem nz-button>
+      <button *nzSpaceItem nz-button (click)="generateIws()">
         {{ LABELS.GENERATE_PENALTY_IWS }}
       </button>
 
@@ -68,11 +68,22 @@
   </div>
 
   <!-- Table -->
-  <app-paginated-table #paginatedTable [enableCheckbox]="true" [tableColumns]="tableColumns" [url]="getUrl()" [showActions]="true" [tableConfig]="{ height: '60vh' }" [enableExpand]="true" [expandTpl]="expandTpl"></app-paginated-table>
+  <app-paginated-table #paginatedTable [enableCheckbox]="true" resultsProp="pipelineGroup" [tableColumns]="tableColumns" [url]="getUrl()" [showActions]="true" [tableConfig]="{ height: '60vh' }" [enableExpand]="true" [expandTpl]="expandTpl"></app-paginated-table>
 
   <ng-template #expandTpl let-row="row">
-    <div class="d-flex w-100 my-2 pe-2">
-      <app-template-table class="w-100" [tableColumns]="expandedTableCols" [tableData]="row?.pipelineRuns" ></app-template-table>
+    <div class="d-flex flex-column w-100 my-2 pe-2">
+
+      <p class="fw-bold">{{ LABELS.DETAILS }}</p>
+      <app-template-table class="w-100 mb-3" [tableColumns]="billingColumns" [tableData]="row?.penaltyHeaders" [enableExpand]="true" [expandTpl]="billingExpandTpl" expandProp="headerId" [useDarkBg]="true"></app-template-table>
+
+      <ng-template #billingExpandTpl let-billingRow="row">
+        <app-template-table class="w-100" [tableColumns]="expandedTableCols" [tableData]="billingRow?.penaltyDetails"></app-template-table>
+      </ng-template>
+
+      @if (row?.pipelines?.length) {
+        <p class="fw-bold">{{ LABELS.PIPELINES }}</p>
+        <app-pipeline-table class="w-100" [rowData]="row?.pipelines[0]?.pipelineRuns"></app-pipeline-table>
+      }
 
       <!-- [actionsTpl]="expandTplActions" -->
       <!-- <ng-template #expandTplActions let-subRowData="row">
@@ -84,22 +95,8 @@
   </ng-template>
 </nz-card>
 
-<!-- Column Templates -->
-<!-- <ng-template #fileTpl let-d="allData">
-  <div class="text-break" style="max-width: auto;">
-    {{ d.fileName }}
-  </div>
-</ng-template>
-
 <ng-template #bpTpl let-allData="allData">
-  @let params = allData?.parameters;
-  {{ params?.processType === 'DAILY' ? params?.startDate : `${params?.startDate} - ${params?.endDate}` }}
+  {{ allData?.processType === 'DAILY' ? allData?.billingStartDate : `${allData?.billingStartDate} -
+  ${allData?.billingEndDate}` }}
 </ng-template>
-
-<ng-template #tagTpl let-data="data">
-  <nz-tag class="break-word-tag">
-    {{ data }}
-  </nz-tag>
-</ng-template> -->
-
 

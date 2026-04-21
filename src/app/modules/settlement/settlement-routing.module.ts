@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { WesmPenaltyComponent } from './wesm-penalty/wesm-penalty.component';
 import { ngxPermissionsGuard } from 'ngx-permissions';
 import { externalRoutes, PHASE_TWO_AUTHORITIES } from '@shared/constants';
+import { AdditionalCompensationComponent } from './additional-compensation/additional-compensation.component';
 
 const routes: Routes = [
     {
@@ -11,11 +12,23 @@ const routes: Routes = [
       canActivate: [ngxPermissionsGuard],
       data: {
         permissions: {
-          only: [PHASE_TWO_AUTHORITIES.RUN_MQ_UPLOADER],
+          only: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS],
           redirectTo: externalRoutes.HOME
         }
       },
     },
+    {
+      path: 'additional-compensation',
+      component: AdditionalCompensationComponent,
+      canActivate: [ngxPermissionsGuard],
+      data: {
+        permissions: {
+          only: [PHASE_TWO_AUTHORITIES.VIEW_ADDTL_COMP],
+          redirectTo: externalRoutes.HOME
+        }
+      },
+    },
+
 
 ];
 

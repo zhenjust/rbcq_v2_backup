@@ -42,12 +42,14 @@ import { ReloginComponent } from './components/relogin/relogin.component';
 import { NzResultModule } from 'ng-zorro-antd/result';
 import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { DateTimePickerComponent } from './components/date-time-picker/date-time-picker.component';
-
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { PipelineTableComponent } from './components/pipeline-table/pipeline-table.component';
 const ngZorroConfig: NzConfig = {
   notification: { nzDuration: 300, nzMaxStack: 3, nzTop: '150px' }
 };
 
 const NgZorroModules = [
+  NzInputNumberModule,
   NzTableModule,
   NzEmptyModule,
   NzAlertModule,
@@ -98,7 +100,8 @@ const Pipes = [
     ConfirmWithContentComponent,
     DateRangePickerComponent,
     ReloginComponent,
-    DateTimePickerComponent
+    DateTimePickerComponent,
+    PipelineTableComponent
   ],
   imports: [
     CommonModule,
@@ -120,7 +123,8 @@ const Pipes = [
     NgxPermissionsModule,
     FormsModule,
     DateRangePickerComponent,
-    DateTimePickerComponent
+    DateTimePickerComponent,
+    PipelineTableComponent
   ],
   providers: [
     { provide: NZ_CONFIG, useValue: ngZorroConfig }

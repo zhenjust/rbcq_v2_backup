@@ -32,7 +32,8 @@ export class AdminService {
       pageNo: 0,
       pageSize: 100,
       mapParams: {
-        type
+        type,
+        status: true
       },
       orderList: [
         {
@@ -44,5 +45,10 @@ export class AdminService {
 
     return this.http.post<ReferenceResponse<Reference>>(`${this.baseEndpoint}/admin/ref/lov/view-all`, _filters);
   }
+
+  public getRefByType(type: string): Observable<Reference[]> {
+    return this.http.get<Reference[]>(`${this.baseEndpoint}/admin/ref/lov/search?type=${type}`);
+  }
+
 
 }

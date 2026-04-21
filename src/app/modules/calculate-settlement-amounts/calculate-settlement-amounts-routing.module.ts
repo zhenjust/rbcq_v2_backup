@@ -40,7 +40,17 @@ const routes: Routes = [
       isLineRentalStatus: true,
       searchName: settlementSearchNames.ENERGY_TRADING_AMOUNTS
     }
-  }
+  },
+  // {
+  //   path: NEW_ROUTES.ADDITIONAL_COMPENSATION_LIST,
+  //   component: AdditionalCompensationComponent,
+  //   data: {
+  //     pageTitle: settlementPageTitles.TRADING_AMOUNTS_CALCULATION,
+  //     isLineRentalStatus: true,
+  //     searchName: settlementSearchNames.ENERGY_TRADING_AMOUNTS
+  //   }
+  // }
+
 ];
 
 @NgModule({

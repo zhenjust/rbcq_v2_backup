@@ -2,7 +2,7 @@
   @if (value) {
     <div class="d-flex justify-content-between">
       <span>{{ value | date: 'yyyy-MM-dd HH:mm'}}</span>
-      <nz-icon nzType="close-circle" (click)="$event.stopPropagation(); $event.preventDefault(); value = null"/>
+      <nz-icon nzType="close-circle" (click)="$event.stopPropagation(); $event.preventDefault(); updateValue(null)"/>
     </div>
 
   } @else {
@@ -15,7 +15,7 @@
 
 <ng-template #calendarTpl>
   @if (showCalendar()) {
-    <nz-date-picker nzInline [(ngModel)]="value" [nzDisabledDate]="disabledDate()" (ngModelChange)="updateValue(value)" [ngModelOptions]="{ standalone: true }" [nzRenderExtraFooter]="timeTpl" [nzShowToday]="false"/>
+    <nz-date-picker nzInline [(ngModel)]="value" [nzDisabledDate]="disabledDate()" [nzDefaultPickerValue]="defaultDate()" (ngModelChange)="updateValue(value)" [ngModelOptions]="{ standalone: true }" [nzRenderExtraFooter]="timeTpl" [nzShowToday]="false"/>
   } @else {
     <div class="d-flex justify-content-around py-2">
       <button nz-button nzType="link" (click)="toggleTime()">

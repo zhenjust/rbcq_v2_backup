@@ -26,6 +26,14 @@ export class TemplateTableComponent {
   @Input() disableSelectAll = false;
   @Input() checkboxCondition!: (rowData: any) => boolean;
 
+  enableExpand = input<boolean>();
+  expandProp = input<string>('id');
+  expandTpl = input<TemplateRef<any>>();
+  expandSet = new Set<number>();
+
+  useDarkBg = input<boolean>(false);
+
+
   LABELS = LABELS;
   selectedItems = new Set<number>();
 
@@ -51,6 +59,19 @@ export class TemplateTableComponent {
 
   // End of Checkbox Handling
 
+  /**
+   * Handling of Expand
+   */
+
+  onExpandChange(id: number, status = false): void {
+    if (status) {
+      this.expandSet.clear();
+      this.expandSet.add(id);
+    } else {
+      this.expandSet.delete(id);
+    }
+  }
+
   get isIndeterminate(): boolean { return (this.selectedItems?.size !== this.tableData?.length) && !!this.selectedItems.size; }
   get isAllChecked(): boolean { return !!this.tableData?.length && (this.selectedItems?.size === this.tableData?.length); }
   get isLoading(): boolean { return (this.loading$ && !this.loading$?.closed) || false; }
@@ -59,6 +80,7 @@ export class TemplateTableComponent {
 
   get widthConfig(): string[] {
     return [
+      ...(this.enableExpand() ? ['20px'] : []),
       ...(this.enableCheckbox ? ['30px'] : []),
       ...(this.tableColumns?.length ? this.tableColumns.map(col => col?.width ? col?.width : '150px') : []),
       ...(this.actionsTpl() ? ['100px'] : [])

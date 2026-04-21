@@ -128,7 +128,6 @@ export const WESM_PENALTY_STATUS = [
 ];
 
 export const WESM_PENALTY_TYPE = {
-  ALL: 'All',
   PENALTY: 'Penalty',
   REFUND: 'Refund'
 }

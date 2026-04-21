@@ -20,6 +20,7 @@ export class DateTimePickerComponent implements ControlValueAccessor {
   value: Date | null = null;
 
   disabledDate = input<(current: Date) => boolean>(() => false);
+  defaultDate = input<Date | null>(new Date());
 
   showCalendar = signal<boolean>(true);
   time = { hour: 0, minute: 0 };
@@ -46,7 +47,7 @@ export class DateTimePickerComponent implements ControlValueAccessor {
   // }
 
   updateValue(date: Date | null) {
-    this.value = set(date!, { hours: this.time.hour, minutes: this.time.minute });
+    this.value = date ? set(date!, { hours: this.time.hour, minutes: this.time.minute }) : null;
     this.onChange(this.value);
     this.onTouched();
   }

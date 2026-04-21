@@ -1,6 +1,10 @@
 <!-- Reusable Table Component for Fixed Data, implementing NgZorro nzTemplateMode -->
 <nz-table #table nzTemplateMode [nzWidthConfig]="widthConfig" [nzBordered]="true" nzSize="small" [nzLoading]="isLoading" [nzOuterBordered]="true" [nzScroll]="{ x: 'auto' }" class="m-0 template-table">
   <thead>
+    @if (enableExpand()) {
+      <th nzAlign="center"></th>
+    }
+
     @if (enableCheckbox) {
       <th
         [nzShowCheckbox]="enableCheckbox && !disableSelectAll"
@@ -25,6 +29,10 @@
   <tbody>
     @for (row of tableData; track $index) {
       <tr>
+        @if (enableExpand()) {
+          <td nzAlign="center" class="text-center" [nzExpand]="expandSet.has(row[expandProp() || 'id'])" (nzExpandChange)="onExpandChange(row[expandProp() || 'id'], $event)"></td>
+        }
+
         @if (enableCheckbox) {
           <td
             [nzChecked]="selectedItems.has(row[checkboxProperty])"
@@ -69,9 +77,18 @@
           </td>
         }
       </tr>
+
+      @if (expandSet.has(row[expandProp() || 'id'])) {
+        <tr>
+          <td [attr.colspan]="widthConfig.length" class="px-3" [style.background-color]="useDarkBg() ? '#e1e1e1' : 'whitesmoke'">
+            <ng-container *ngTemplateOutlet="expandTpl()!; context:  { row }"></ng-container>
+          </td>
+        <tr>
+      }
+
     }
 
-    @if (!tableData.length) {
+    @if (!tableData?.length) {
       <tr>
         <td [attr.colspan]="widthConfig.length" nzAlign="center">
           <nz-empty nzNotFoundImage="simple"></nz-empty>

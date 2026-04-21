@@ -83,7 +83,7 @@ export class TableComponent implements OnInit {
     { name: 'End Date Time' },
     { name: 'MTN' },
     { name: 'Status' },
-    { name: 'Progress' },
+    // { name: 'Progress' },
     { name: 'Actions' }
   ];
 

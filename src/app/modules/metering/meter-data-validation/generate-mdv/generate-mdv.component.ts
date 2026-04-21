@@ -47,7 +47,10 @@ export class GenerateMdvComponent implements OnInit {
 
   onCheckedChange(): void {
     if (this.checked()) {
-      const codes = this.options.map(d => d.value);
+      const codes = this.options
+        .map(d => d.value && !d.disabled ? d.value : null)
+        .filter(d => d);
+
       this.reportCodes?.setValue(codes);
     } else {
       this.reportCodes?.setValue([]);
@@ -62,9 +65,22 @@ export class GenerateMdvComponent implements OnInit {
       reportCodes: [null, [RxwebValidators.required(), RxwebValidators.minLength({ value: 1 })]]
     });
 
+    this.handleProcessTypeChange();
+    this.formatOptions();
+  }
+
+  formatOptions(): void {
+    this.options = Object.keys(MDV_LABELS).map(key => (
+      { label: MDV_LABELS[key as keyof typeof MDV_LABELS], value: key, disabled: true }
+    )) as NzCheckboxOption[];
+  }
+
+  handleProcessTypeChange(): void {
     this.processType?.valueChanges
-      .subscribe(() => {
+    .subscribe(processType => {
+      if (processType) {
         this.reportCodes?.reset();
+        this.checked.set(false);
         this.options = this.options.map(option => {
           if ([MDV.MDV7, MDV.MDV8, MDV.MDV9].includes(option.value as MDV)) {
             if (this.isDaily || this.isPrelim) {
@@ -89,12 +105,13 @@ export class GenerateMdvComponent implements OnInit {
           this.billingPeriod?.addValidators([ RxwebValidators.required() ]);
           this.billingPeriod?.updateValueAndValidity();
         }
-      });
-
-    this.options = Object.keys(MDV_LABELS).map(key => (
-      { label: MDV_LABELS[key as keyof typeof MDV_LABELS], value: key}
-    )) as NzCheckboxOption[];
+      } else {
+        this.checked.set(false);
+        this.formatOptions();
+      }
+    });
   }
+
 
   triggerClose(): void {
     this.modalRef.destroy();
@@ -142,7 +159,7 @@ export class GenerateMdvComponent implements OnInit {
     return isAfter(current, addDays(new Date(), 1));
   };
 
-  get isAllSelected(): boolean { return !!this.reportCodes?.value?.length && this.options?.length === this.reportCodes?.value?.length; }
+  get isAllSelected(): boolean { return !!this.reportCodes?.value?.length && this.enabledOptions === this.reportCodes?.value?.length; }
   get processType(): AbstractControl | null { return this.form?.get('processType'); }
   get tradingDate(): AbstractControl | null { return this.form?.get('tradingDate'); }
   get billingPeriod(): AbstractControl | null { return this.form?.get('billingPeriod'); }
@@ -151,4 +168,6 @@ export class GenerateMdvComponent implements OnInit {
   get isPrelim(): boolean { return this.processType?.value === MeterProcessTypes.PRELIM; }
 
   get reportCodes(): AbstractControl | null { return this.form?.get('reportCodes') as AbstractControl; }
+  get enabledOptions(): number { return this.options.filter(o => !o.disabled)?.length; }
+
 }

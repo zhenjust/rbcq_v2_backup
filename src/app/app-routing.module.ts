@@ -26,24 +26,24 @@ const routes: Routes = [
             .then(m => m.MeterProcessModule)
       },
       {
-        path: 'additional-compensation',
+        path: 'settlement',
         canActivateChild: [AuthorizeGuard],
         loadChildren: () =>
-          import('./modules/additional-compensation-list/additional-compensation-list.module')
-            .then(m => m.AdditionalCompensationListModule)
+          import('./modules/settlement/settlement.module')
+            .then(m => m.SettlementModule)
       },
+      // {
+      //   path: '',
+      //   canActivateChild: [AuthorizeGuard],
+      //   loadChildren: () =>
+      //     import('./modules/additional-compensation-list/additional-compensation-list.module').then(m => m.AdditionalCompensationListModule)
+      // },
       {
         path: 'metering',
         canActivateChild: [AuthorizeGuard],
         loadChildren: () =>
           import('./modules/metering/metering.module')
             .then(m => m.MeteringModule)
-      },
-      {
-        path: 'settlement',
-        canActivateChild: [AuthorizeGuard],
-        loadChildren: () =>
-          import('./modules/settlement/settlement.module').then(m => m.SettlementModule)
       },
       {
         path: 'admin',
