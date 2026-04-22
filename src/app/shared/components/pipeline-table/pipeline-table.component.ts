@@ -1,4 +1,4 @@
-import { TPL_TABLE_COLUMN } from '@shared/interfaces';
+import { pipeline, PipelineRun, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { AfterViewInit, Component, input, TemplateRef, ViewChild } from '@angular/core';
 import { PipelineTableColumns } from '@shared/constants/pipelines.const';
 import { LABELS } from '@shared/constants/labels.const';
@@ -14,7 +14,8 @@ export class PipelineTableComponent implements AfterViewInit {
 
   columns: TPL_TABLE_COLUMN[];
 
-  rowData = input.required();
+  rowData = input.required<pipeline[]>();
+  tableData: PipelineRun[];
 
   constructor() {
   }
@@ -22,6 +23,10 @@ export class PipelineTableComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     PipelineTableColumns[LABELS.STATUS].template = this.tagTpl;
     this.columns = Object.values(PipelineTableColumns);
+
+    this.tableData = this.rowData()
+      .filter(row => row.pipelineRuns?.length)
+      .map(row => row?.pipelineRuns[0]);
   }
 
 }

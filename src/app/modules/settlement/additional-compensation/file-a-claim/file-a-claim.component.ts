@@ -186,6 +186,8 @@ export class FileAClaimComponent implements OnInit {
 
     const formValue = this.form.getRawValue();
     const selectedBp = this.billingPeriods.find(bp => bp.billingPeriod === formValue.billingPeriod);
+    const startDate = format(new Date(selectedBp!.startDate), 'yyyy-MM-dd');
+    const endDate = format(new Date(selectedBp!.endDate), 'yyyy-MM-dd');
 
     const payload = {
       pipelineName: 'additionalCompensation-calculateAdditionalCompensation',
@@ -193,13 +195,13 @@ export class FileAClaimComponent implements OnInit {
       parameters: {
         pricingCondition: formValue.pricingCondition,
         billingPeriodName: selectedBp!.supplyMonth,
-        billingStartDate: format(new Date(selectedBp!.startDate), 'yyyy-MM-dd'),
-        billingEndDate: format(new Date(selectedBp!.endDate), 'yyyy-MM-dd')
+        billingStartDate: startDate,
+        billingEndDate: endDate
       },
-      startEndDateRanges: this.dateRanges?.value.map((d: any) => ({
+      startEndDateRanges: this.dateRanges?.length ? this.dateRanges?.value.map((d: any) => ({
         startDate: format(set(new Date(d.startDate), { seconds: 0}), 'yyyy-MM-dd HH:mm:ss'),
         endDate: format(set(new Date(d.endDate), { seconds: 0}), 'yyyy-MM-dd HH:mm:ss'),
-      })),
+      })) : [{ startDate, endDate }],
       claims: this.claims?.value
     };
 
