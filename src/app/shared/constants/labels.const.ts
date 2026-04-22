@@ -202,4 +202,8 @@ export const LABELS = {
   PIPELINES: 'Pipelines',
   DETAILS: 'Details',
 
+  ALLOCATION_DATE: 'Allocation Date',
+  ALLOCATION_DUE_DATE: 'Allocation Due Date',
+  ALLOCATION_REMARKS: 'Allocation Remarks',
+
 }

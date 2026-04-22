@@ -59,6 +59,8 @@ export const SettlementJobActions: JobSelect[] = [
    * IN_PROGRESS
    */
 
+  { label: LABELS.CALCULATE_RESERVE_TRANSACTION_ALLOCATION, value: 'reserveTradingAmounts-calculateTransAlloc', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS }, // vm.resource === 'reserve-trading-amounts', perm: PROCESS_TRANSACTION_ALLOCATION, item.parentStlJobGroupDto.taggingStatus === 'COMPLETED', condition: (item.processType == 'FINAL' || item.processType == 'PRELIM' || item.processType == 'ADJUSTED')"
+  { label: LABELS.CALCULATE_ENERGY_TRANSACTION_ALLOCATION, value: 'energyTradingAmounts-calculateTransAlloc', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
 
 
   /**
@@ -66,9 +68,7 @@ export const SettlementJobActions: JobSelect[] = [
    */
   { label: LABELS.CALCULATE_LINE_RENTAL, value: 'calculate_line_rental' }, // TA_CALCULATE_LR, !vm.hideCalcLrButtons(item.parentStlJobGroupDto.groupId), vm.resource === 'trading-amounts', item.parentStlJobGroupDto.hasCompletedGenInputWs, !item.parentStlJobGroupDto.lockedLr
   { label: LABELS.CALCULATE_RESERVE_GMR_VAT, value: 'calculate_reserve_gmr_vat' }, // vm.resource === 'reserve-trading-amounts', processType is not daily, TA_CALCULATE_GMRVAT, !parentStlJobGroupDto.locked, ((item.parentStlJobGroupDto.genMonthlyRsvSummaryIsLatestJob && item.parentStlJobGroupDto.genRsvMonthlySummaryStatus === 'COMPLETED') || item.parentStlJobGroupDto.calculateRgmrIsLatestJob)
-  { label: LABELS.CALCULATE_RESERVE_TRANSACTION_ALLOCATION, value: 'calculate_reserve_transaction_allocation' }, // vm.resource === 'reserve-trading-amounts', perm: PROCESS_TRANSACTION_ALLOCATION, item.parentStlJobGroupDto.taggingStatus === 'COMPLETED', condition: (item.processType == 'FINAL' || item.processType == 'PRELIM' || item.processType == 'ADJUSTED')"
   { label: LABELS.CALCULATE_SETTLEMENT, value: 'calculate_settlement' },
-  { label: LABELS.CALCULATE_ENERGY_TRANSACTION_ALLOCATION, value: 'calculate_transactions' },
 
   { label: LABELS.FINALIZE_LINE_RENTAL, value: 'finalize_line_rental' }, // TA_FINALIZE_LR, vm.showTaggingLrButton(item), vm.hideCalcLrButtons(item.parentStlJobGroupDto.groupId)
   { label: LABELS.FINALIZE_SETTLEMENT, value: 'finalize_settlement' }, // TA_FINALIZE, vm.showParentTaggingButton(item), !vm.hideCalcButtons(item.parentStlJobGroupDto.groupId), vm.finalizeAction

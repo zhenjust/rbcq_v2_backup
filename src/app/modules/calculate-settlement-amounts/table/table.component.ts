@@ -16,6 +16,7 @@ import { BaseTableItem, modalConfig, SettlementJobActions, SettlementJobSubActio
 import { SearchListBase } from '@shared/services/utils/list.util.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ConfirmWithContentComponent } from '@shared/components/confirm-with-content/confirm-with-content.component';
+import { TransactionAllocComponent } from '@modules/settlement/shared/transaction-alloc/transaction-alloc.component';
 
 @Component({
   selector: 'app-table',
@@ -355,7 +356,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     return isBefore(dateOnly, minOnly) || isAfter(dateOnly, maxOnly);
   };
 
-
   onRangeChange(value: Date[] | null): void {
     if (!value || value.length !== 2) {
       this.selectedRange.set(value);
@@ -476,6 +476,8 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     'energyTradingAmounts-calculateGmrVat',
     'reserveTradingAmounts-finalize',
     'energyTradingAmounts-finalize',
+    'energyTradingAmounts-calculateTransAlloc',
+    'reserveTradingAmounts-calculateTransAlloc',
   ];
 
   triggerAction(action: string, row: any): void {
@@ -499,6 +501,8 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       ['reserveTradingAmounts-finalize']: () => this.runJobWithConfirmation(action, row),
       ['energyTradingAmounts-finalize']: () => this.runJobWithConfirmation(action, row),
 
+      ['energyTradingAmounts-calculateTransAlloc']: () => this.calcTransactionAllocation(action, row),
+      ['reserveTradingAmounts-calculateTransAlloc']: () => this.calcTransactionAllocation(action, row),
     };
 
     actions[action]();
@@ -648,6 +652,38 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       const endDate = setHours(rowData?.billingEndDate, 23).setMinutes(59);
       return !(isBefore(current, endDate) && isAfter(current, subDays(rowData.billingStartDate, 1)))
     };
+  }
+
+  /**
+   * Calculate Transaction Allocation
+   */
+
+  calcTransactionAllocation(action: string, row: any): void {
+    const modal = this.modal.create({
+      nzTitle: LABELS.RUN_JOB,
+      nzContent: TransactionAllocComponent,
+      nzCentered: true,
+      nzData: { rowData: row, action },
+      nzFooter: [
+        {
+          label: LABELS.CLOSE,
+          onClick: (component) => component?.triggerClose(),
+          disabled: (component) => component ? (component?.busy$ && !component?.busy$?.closed) : true
+        },
+        {
+          label: LABELS.RUN_JOB,
+          type: 'primary',
+          onClick: (component) => component?.submit(),
+          disabled: (component) => component ? (component.form.invalid || (component?.busy$ && !component?.busy$?.closed)) : true
+        }
+      ],
+    });
+
+    modal.afterClose.subscribe(res => {
+      if (res) {
+        this.search();
+      }
+    })
   }
 
 }
