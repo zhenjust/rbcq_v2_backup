@@ -201,7 +201,7 @@ export class FileAClaimComponent implements OnInit {
       startEndDateRanges: this.dateRanges?.length ? this.dateRanges?.value.map((d: any) => ({
         startDate: format(set(new Date(d.startDate), { seconds: 0}), 'yyyy-MM-dd HH:mm:ss'),
         endDate: format(set(new Date(d.endDate), { seconds: 0}), 'yyyy-MM-dd HH:mm:ss'),
-      })) : [{ startDate, endDate }],
+      })) : [{ startDate: startDate + ' 00:00:00', endDate: endDate + ' 00:00:00' }],
       claims: this.claims?.value
     };
 
