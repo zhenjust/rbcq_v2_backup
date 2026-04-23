@@ -7,6 +7,7 @@ import { SharedModule } from '@shared/shared.module';
 import { AdditionalCompensationComponent } from './additional-compensation/additional-compensation.component';
 import { FileAClaimComponent } from './additional-compensation/file-a-claim/file-a-claim.component';
 import { PenaltyGenerateIwsComponent } from './wesm-penalty/penalty-generate-iws/penalty-generate-iws.component';
+import { TransactionAllocComponent } from './shared/transaction-alloc/transaction-alloc.component';
 
 
 @NgModule({
@@ -14,7 +15,8 @@ import { PenaltyGenerateIwsComponent } from './wesm-penalty/penalty-generate-iws
     WesmPenaltyComponent,
     AdditionalCompensationComponent,
     FileAClaimComponent,
-    PenaltyGenerateIwsComponent
+    PenaltyGenerateIwsComponent,
+    TransactionAllocComponent
   ],
   imports: [
     CommonModule,
