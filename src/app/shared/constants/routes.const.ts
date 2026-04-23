@@ -14,6 +14,9 @@ export const NEW_ROUTES = {
     SEC: 'admin/sec',
     WESM_PENALTY: 'settlement/wesm-penalty',
     ADDITIONAL_COMPENSATION_LIST: 'settlement/additional-compensation',
+    ENERGY_MF: 'settlement/energy-market-fee',
+    RESERVE_MF: 'settlement/reserve-market-fee',
+
 }
 
 export const HEADER_ROUTES = {

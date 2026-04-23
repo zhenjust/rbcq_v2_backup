@@ -206,4 +206,13 @@ export const LABELS = {
   ALLOCATION_DUE_DATE: 'Allocation Due Date',
   ALLOCATION_REMARKS: 'Allocation Remarks',
 
+  ENERGY: 'Energy',
+  RESERVE: 'Reserve',
+  MARKET_FEE: 'Market Fee Calculation',
+
+  MODE: 'Mode',
+  PRELIM: 'Preliminary',
+  FINAL: 'Final',
+  ADJUSTED: 'Adjustment'
+
 }

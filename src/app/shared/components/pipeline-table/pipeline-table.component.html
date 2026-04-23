@@ -1,7 +1,23 @@
-<app-template-table class="w-100" [tableColumns]="columns" [tableData]="tableData"></app-template-table>
+<app-template-table class="w-100" [tableColumns]="columns" [tableData]="useCustomTableData() || tableData"></app-template-table>
 
 <ng-template #tagTpl let-data="data">
   <nz-tag class="break-word-tag">
     {{ data }}
   </nz-tag>
 </ng-template>
+
+<ng-template #nameTpl let-data="data" let-allData="allData">
+  <div class="cell-lines">
+    <div class="cell-main">
+      {{ data + (allData.partial ? " - Partial" : "")}}
+    </div>
+
+    @if (allData.parameters?.meteringWorkspaceId) {
+      <div class="cell-sub">
+        <span class="cell-sub-label">{{ LABELS.METERING_WORKSPACE_ID }}: </span>
+        <span class="cell-sub-value">{{ allData.parameters.meteringWorkspaceId?.numericValue }}</span>
+      </div>
+    }
+  </div>
+</ng-template>
+

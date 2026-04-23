@@ -857,13 +857,13 @@ export class NavbarComponent implements OnInit {
               {
                 title: 'Calculate Energy Market Fee',
                 show: true,
-                path: NEW_ROUTES.ENERGY_MARKET_FEE_CALCULATION,
+                path: NEW_ROUTES.ENERGY_MF,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
               },
               {
                 title: 'Calculate Reserve Market Fee',
                 show: true,
-                path: NEW_ROUTES.RESERVE_MARKET_FEE_CALCULATION,
+                path: NEW_ROUTES.RESERVE_MF,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
               },
               {

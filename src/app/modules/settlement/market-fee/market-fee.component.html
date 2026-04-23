@@ -1,0 +1,113 @@
+<nz-card [nzTitle]="(isEnergy() ? LABELS.ENERGY : LABELS.RESERVE) + ' ' +LABELS.MARKET_FEE">
+  <!-- Filters -->
+  @if (showForm) {
+  <form nz-form [formGroup]="form" nzLayout="horizontal" class="column">
+    <div class="row">
+      <div class="col-sm-12 col-md-4 col-lg-4">
+        <nz-form-item class="mb-3">
+          <nz-form-label nzSpan="8">{{ LABELS.BILLING_PERIOD }}</nz-form-label>
+          <nz-form-control nzSpan="16">
+            <nz-select formControlName="billingPeriod" [nzOptions]="billingPeriodOpts" [nzPlaceHolder]="LABELS.ALL"
+              [nzAllowClear]="true" nzShowSearch></nz-select>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label nzSpan="8">{{ LABELS.PROCESS_TYPE }}</nz-form-label>
+          <nz-form-control nzSpan="16">
+            <nz-select formControlName="processType" [nzOptions]="processTypeOptions" [nzPlaceHolder]="LABELS.ALL"
+              [nzAllowClear]="true" nzShowSearch></nz-select>
+          </nz-form-control>
+      </nz-form-item>
+      </div>
+    </div>
+  </form>
+  }
+
+  <div class="d-flex justify-content-between mb-3">
+    <nz-space>
+      @if (showForm) {
+      <button nz-button *nzSpaceItem [disabled]="form.invalid" (click)="resetFilters()">
+        {{ LABELS.CLEAR_FILTERS }}
+      </button>
+      }
+
+      <button nz-button *nzSpaceItem nzType="primary" [disabled]="form.invalid"
+        (click)="showForm ? applyFilter() : (showForm =! showForm)">
+        {{ showForm ? LABELS.APPLY_FILTERS : LABELS.SET_FILTERS }}
+      </button>
+    </nz-space>
+  </div>
+
+  <!-- Table -->
+  <app-paginated-table #paginatedTable resultsProp="pipelineGroup" [tableColumns]="tableColumns"
+    [url]="getUrl()" [showActions]="false" [tableConfig]="{ height: '60vh' }" [enableExpand]="true"
+    [expandTpl]="expandTpl"></app-paginated-table>
+
+  <ng-template #expandTpl let-row="row">
+    <div class="d-flex w-100 my-2 pe-2">
+      <div class="d-flex flex-column w-100">
+        <app-template-table class="w-100 mb-3" [tableColumns]="expandedTableColumns"
+        [tableData]="row?.pipelines" [enableExpand]="true" [expandTpl]="pipelineTpl" [actionsTpl]="actionsTpl" [useDarkBg]="true" ></app-template-table>
+
+        <ng-template #pipelineTpl let-pipelineRow="row">
+          <app-pipeline-table [rowData]="[]" [useCustomTableData]="pipelineRow?.pipelineRuns"></app-pipeline-table>
+        </ng-template>
+      </div>
+
+      <ng-template #actionsTpl let-subRowData="row">
+      </ng-template>
+    </div>
+  </ng-template>
+</nz-card>
+
+<!-- Column Templates -->
+<ng-template #bpTpl let-allData="allData">
+  {{ allData?.processType === 'DAILY' ? allData?.billingStartDate : `${allData?.billingStartDate} -
+  ${allData?.billingEndDate}` }}
+</ng-template>
+
+<ng-template #rateTpl let-allData="allData">
+  @if (allData?.claims?.length) {
+  {{ allData?.claims[0]?.approveRate }}
+  } @else {
+  -
+  }
+</ng-template>
+
+<ng-template #mtnTpl let-allData="allData">
+  @if (allData?.claims?.length) {
+  {{ allData?.claims[0]?.mtn }}
+  } @else {
+  -
+  }
+</ng-template>
+
+<ng-template #billingIdTpl let-allData="allData">
+  @if (allData?.claims?.length) {
+  {{ allData?.claims[0]?.billingId }}
+  } @else {
+  -
+  }
+</ng-template>
+
+<ng-template #progressTpl let-allData="allData">
+  @if (allData?.status?.startsWith('In-Progress')) {
+    <div class="px-3">
+        <nz-progress [nzStrokeWidth]="4" [nzPercent]="99.9" [nzShowInfo]="false" [nzStrokeColor]="{ '0%': '#108ee9', '100%': '#87d068' }" nzStatus="active" />
+    </div>
+  }
+</ng-template>
+
+<ng-template #datetimeTpl let-allData="allData">
+  @for (range of allData?.customDateRanges; track $index) {
+    <div>{{ range?.startDate }} - {{ range?.endDate }}</div>
+  }
+</ng-template>
+
+
+<ng-template #tagTpl let-data="data">
+  <nz-tag class="break-word-tag">
+    {{ data }}
+  </nz-tag>
+</ng-template>

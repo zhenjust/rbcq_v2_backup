@@ -1,0 +1,123 @@
+import { Component, DestroyRef, inject, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
+import { LABELS } from '@shared/constants/labels.const';
+import { PipelineTableColumns } from '@shared/constants/pipelines.const';
+import { TPL_TABLE_COLUMN, meterProcessBillingPeriod } from '@shared/interfaces';
+import { SettlementService, MeterprocessService } from '@shared/services/api';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
+import { Observable, of, forkJoin } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { MeterProcessTypes } from '@shared/enums';
+
+@Component({
+  selector: 'app-market-fee',
+  standalone: false,
+  templateUrl: './market-fee.component.html',
+})
+export class MarketFeeComponent  implements OnInit {
+
+  @ViewChild('paginatedTable') paginatedTable!: PaginatedTableComponent<any>;
+  @ViewChild('bpTpl', { static: true }) bpTpl!: TemplateRef<HTMLElement>;
+  @ViewChild('rateTpl', { static: true }) rateTpl!: TemplateRef<HTMLElement>;
+  @ViewChild('mtnTpl', { static: true }) mtnTpl!: TemplateRef<HTMLElement>;
+  @ViewChild('billingIdTpl', { static: true }) billingIdTpl!: TemplateRef<HTMLElement>;
+  @ViewChild('progressTpl', { static: true }) progressTpl!: TemplateRef<HTMLElement>;
+  @ViewChild('tagTpl', { static: true }) tagTpl!: TemplateRef<HTMLElement>;
+  @ViewChild('datetimeTpl', { static: true }) datetimeTpl!: TemplateRef<HTMLElement>;
+
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly settlementService = inject(SettlementService);
+  private readonly meteringService = inject(MeterprocessService);
+  private readonly modalService = inject(NzModalService);
+  private readonly destroyRef$ = inject(DestroyRef);
+  private readonly activatedRoute = inject(ActivatedRoute);
+
+  isEnergy = signal<boolean>(false);
+
+  LABELS = LABELS;
+  tableColumns: TPL_TABLE_COLUMN[] = [];
+  form: FormGroup;
+  showForm = false;
+  expandedTableColumns: TPL_TABLE_COLUMN[];
+
+  billingPeriods: meterProcessBillingPeriod[] = [];
+  billingPeriodOpts: NzSelectOptionInterface[] = [];
+  processTypeOptions: NzSelectOptionInterface[] = [];
+  filters: any = {};
+
+  ngOnInit(): void {
+    this.processTypeOptions = Object.keys(MeterProcessTypes).map(opt => ({ label: LABELS[opt as keyof typeof LABELS], value: opt }));
+    this.isEnergy.set(this.activatedRoute.snapshot.data['isEnergy']);
+
+    this.buildForm();
+    this.formatTableColumns();
+    this.getReferences();
+  }
+
+  buildForm(): void {
+    this.form = this.formBuilder.group({
+      billingPeriod: [null],
+      processType: [null]
+    });
+  }
+
+  formatTableColumns(): void {
+    tableColumns[LABELS.BILLING_PERIOD].template = this.bpTpl;
+    PipelineTableColumns[LABELS.STATUS].template = this.tagTpl;
+
+    this.tableColumns = Object.values(tableColumns);
+    this.expandedTableColumns = Object.values(expandedTableColumns);
+  }
+
+  getUrl(): Observable<any> {
+    const groupName = this.isEnergy() ? 'energyMarketFee' : 'reserveMarketFee';
+
+    if (!this.paginatedTable) {
+      return of([]);
+    }
+
+    return this.settlementService.search(this.filters, groupName, this.paginatedTable?.tableParams);
+  }
+
+  getReferences(): void {
+    forkJoin({
+      billingPeriod: this.meteringService.getBillingPeriod(),
+    })
+      .pipe(takeUntilDestroyed(this.destroyRef$))
+      .subscribe(({ billingPeriod }) => {
+        this.billingPeriods = billingPeriod as meterProcessBillingPeriod[];
+        this.billingPeriodOpts = (billingPeriod as meterProcessBillingPeriod[])
+          .map(bp => ({ label: bp.supplyMonth, value: bp.supplyMonth }));
+      });
+  }
+
+  applyFilter(): void {
+    const values = this.form.getRawValue();
+    this.filters = values;
+    this.paginatedTable.search();
+  }
+
+  resetFilters(): void {
+    this.form.reset();
+    this.filters = null;
+    this.showForm = false;
+    this.paginatedTable?.search();
+  }
+
+}
+
+const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
+  [LABELS.WORKSPACE_ID]: { label: LABELS.WORKSPACE_ID, propName: 'id' },
+  [LABELS.RUN_DATE_AND_TIME]: { label: LABELS.RUN_DATE_AND_TIME, propName: 'runDatetime', type: 'date' },
+  [LABELS.BILLING_PERIOD]: { label: LABELS.BILLING_PERIOD, propName: 'billingStartDate', type: 'template' },
+  [LABELS.PROCESS_TYPE]: { label: LABELS.PROCESS_TYPE, propName: 'processType', type: 'enumLabel' },
+}
+
+const expandedTableColumns: Record<string, TPL_TABLE_COLUMN> = {
+  [LABELS.TYPE]: { label: LABELS.TYPE, propName: 'parameters', secondPropName: 'marketFeeType' },
+  [LABELS.MODE]: { label: LABELS.MODE, propName: 'parameters', secondPropName: 'marketFeeMode' },
+  [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status' },
+}

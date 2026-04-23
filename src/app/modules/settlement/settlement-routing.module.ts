@@ -4,6 +4,7 @@ import { WesmPenaltyComponent } from './wesm-penalty/wesm-penalty.component';
 import { ngxPermissionsGuard } from 'ngx-permissions';
 import { externalRoutes, PHASE_TWO_AUTHORITIES } from '@shared/constants';
 import { AdditionalCompensationComponent } from './additional-compensation/additional-compensation.component';
+import { MarketFeeComponent } from './market-fee/market-fee.component';
 
 const routes: Routes = [
     {
@@ -28,6 +29,32 @@ const routes: Routes = [
         }
       },
     },
+    {
+      path: 'energy-market-fee',
+      component: MarketFeeComponent,
+      canActivate: [ngxPermissionsGuard],
+      data: {
+        isEnergy: true,
+        permissions: {
+          only: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS],
+          redirectTo: externalRoutes.HOME
+        }
+      },
+    },
+    {
+      path: 'reserve-market-fee',
+      component: MarketFeeComponent,
+      canActivate: [ngxPermissionsGuard],
+      data: {
+        isEnergy: false,
+        permissions: {
+          only: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS],
+          redirectTo: externalRoutes.HOME
+        }
+      },
+    },
+
+
 
 
 ];
