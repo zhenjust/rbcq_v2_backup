@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { LABELS } from '@shared/constants/labels.const';
 import { DownloadMmfParams, meterProcessBillingPeriod, meterProcessOptions, TableAction, TableDataResult, TPL_TABLE_COLUMN } from '@shared/interfaces';
@@ -13,6 +13,7 @@ import { DownloadUtilService } from '@shared/services/utils';
 import { ToastrService } from 'ngx-toastr';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { format } from 'date-fns';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-metering-masterfile',
@@ -34,6 +35,7 @@ export class MeteringMasterfileComponent implements OnInit {
   readonly modalService = inject(NzModalService);
   readonly downloadService = inject(DownloadUtilService);
   readonly toastrService = inject(ToastrService);
+  readonly destroyRef$ = inject(DestroyRef);
 
   formBuilder = inject(FormBuilder);
 
@@ -136,7 +138,10 @@ export class MeteringMasterfileComponent implements OnInit {
       nzContent: MESSAGES.CONFIRM_DELETE_ITEM(LABELS.METERING_MASTERFILE),
       nzOnOk: () => {
         const id = data.pipelineRuns[0].workspaceId;
-        this.paginatedTable.busy$ = this.meterService.deleteMeteringReport(id, 'mmf-delete')
+        const processType = data.parameters?.processType;
+
+        this.paginatedTable.busy$ = this.meterService.deleteMeteringReport(id, 'mmf-delete', processType)
+          .pipe(takeUntilDestroyed(this.destroyRef$))
           .subscribe(() => {
             const message = MESSAGES.SUCCESS_DELETE_ITEM(LABELS.METERING_MASTERFILE);
             this.toastrService.success(message);

@@ -111,8 +111,13 @@ export class MeterprocessService {
    * @param workspaceId
    * @param pipeline
    */
-  public deleteMeteringReport(workspaceId: number, pipeline: string): Observable<null> {
-    return this.http.post<null>(`${this.MTR_PIPELINE_URL}/report-generation/${pipeline}`, { workspaceId });
+  public deleteMeteringReport(workspaceId: number, pipeline: string, processType?: string): Observable<null> {
+    const payload = {
+      workspaceId,
+      ...(processType && { processType })
+    };
+
+    return this.http.post<null>(`${this.MTR_PIPELINE_URL}/report-generation/${pipeline}`, payload);
   }
 
   public generateMeteringList(payload: GenerateMetering, pipeline: string): Observable<any> {
