@@ -76,7 +76,7 @@ export class PenaltyGenerateIwsComponent implements OnInit {
       parameters: {
         billingStartDate: format(new Date(this.selectedBp!.startDate), 'yyyy-MM-dd'),
         billingEndDate: format(new Date(this.selectedBp!.endDate), 'yyyy-MM-dd'),
-        billingPeriod: this.selectedBp?.supplyMonth
+        billingPeriodName: this.selectedBp?.supplyMonth
       }
     };
 
