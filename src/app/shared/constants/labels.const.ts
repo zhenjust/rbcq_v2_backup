@@ -213,6 +213,7 @@ export const LABELS = {
   MODE: 'Mode',
   PRELIM: 'Preliminary',
   FINAL: 'Final',
-  ADJUSTED: 'Adjustment'
+  ADJUSTED: 'Adjustment',
+  ENERGY_MARKET_FEE: 'Energy Market Fee'
 
 }

@@ -11,6 +11,7 @@ import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
 import { Observable, of, forkJoin } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { MeterProcessTypes } from '@shared/enums';
+import { RunMarketFeeComponent } from './run-market-fee/run-market-fee.component';
 
 @Component({
   selector: 'app-market-fee',
@@ -49,7 +50,10 @@ export class MarketFeeComponent  implements OnInit {
   filters: any = {};
 
   ngOnInit(): void {
-    this.processTypeOptions = Object.keys(MeterProcessTypes).map(opt => ({ label: LABELS[opt as keyof typeof LABELS], value: opt }));
+    this.processTypeOptions = Object.keys(MeterProcessTypes)
+      .filter(key => key !== MeterProcessTypes.DAILY)
+      .map(opt => ({ label: LABELS[opt as keyof typeof LABELS], value: opt }));
+
     this.isEnergy.set(this.activatedRoute.snapshot.data['isEnergy']);
 
     this.buildForm();
@@ -105,6 +109,34 @@ export class MarketFeeComponent  implements OnInit {
     this.filters = null;
     this.showForm = false;
     this.paginatedTable?.search();
+  }
+
+  runMarketFee(): void {
+    const modal = this.modalService.create({
+      nzTitle: `${LABELS.RUN} ${LABELS.ENERGY_MARKET_FEE}`,
+      nzContent: RunMarketFeeComponent,
+      nzCentered: true,
+      nzMaskClosable: false,
+      nzFooter: [
+        {
+          label: LABELS.CLOSE,
+          onClick: (component) => component?.triggerClose(),
+          disabled: (component) => component ? (component?.busy$ && !component?.busy$?.closed) : true
+        },
+        {
+          label: LABELS.RUN,
+          type: 'primary',
+          onClick: (component) => component?.triggerOk(),
+          disabled: (component) => component ? (component.form.invalid || (component?.busy$ && !component?.busy$?.closed)) : true
+        }
+      ],
+    });
+
+    modal.afterClose.subscribe(res => {
+      if (res) {
+        this.paginatedTable?.search();
+      }
+    })
   }
 
 }

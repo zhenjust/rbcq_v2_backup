@@ -37,6 +37,12 @@
         {{ showForm ? LABELS.APPLY_FILTERS : LABELS.SET_FILTERS }}
       </button>
     </nz-space>
+
+    <nz-space>
+      <button nz-button *nzSpaceItem nzType="primary" (click)="runMarketFee()">
+        {{ LABELS.RUN }} {{ LABELS.ENERGY_MARKET_FEE }}
+      </button>
+    </nz-space>
   </div>
 
   <!-- Table -->
