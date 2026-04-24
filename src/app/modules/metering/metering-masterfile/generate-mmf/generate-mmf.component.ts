@@ -31,6 +31,7 @@ export class GenerateMmfComponent implements OnInit {
   billingPeriods: meterProcessBillingPeriod[];
   billingPeriodOpts: NzSelectOptionInterface[] = [];
   processTypeOpts: NzSelectOptionInterface[] = [];
+  showError: boolean;
 
   constructor() { }
 
@@ -55,9 +56,13 @@ export class GenerateMmfComponent implements OnInit {
 
   triggerOk(): void {
     if (this.form.invalid) {
+      this.showError = true;
       this.form.markAllAsTouched();
       return;
     }
+
+    this.showError = false;
+
     const formValue = this.form.getRawValue();
     const selectedBp = this.billingPeriods.find(bp => bp.billingPeriod === formValue.billingPeriod);
 
