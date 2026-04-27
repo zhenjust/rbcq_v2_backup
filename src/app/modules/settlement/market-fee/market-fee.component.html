@@ -53,7 +53,7 @@
   <ng-template #expandTpl let-row="row">
     <div class="d-flex w-100 my-2 pe-2">
       <div class="d-flex flex-column w-100">
-        <app-template-table class="w-100 mb-3" [tableColumns]="expandedTableColumns"
+        <app-template-table #tableComp class="w-100 mb-3" [tableColumns]="expandedTableColumns"
         [tableData]="row?.pipelines" [enableExpand]="true" [expandTpl]="pipelineTpl" [actionsTpl]="actionsTpl" [useDarkBg]="true" ></app-template-table>
 
         <ng-template #pipelineTpl let-pipelineRow="row">
@@ -62,6 +62,15 @@
       </div>
 
       <ng-template #actionsTpl let-subRowData="row">
+        @if (subRowData.status !== 'Nullified') {
+          <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu">{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu nzSelectable>
+                <!-- Available for any Status except any of the following: Completed Tagging, <Completed/Failed> Generate Energy Market Fee Files  or Published -->
+                <li nz-menu-item (click)="genInputWorkspace(subRowData, tableComp)">{{ LABELS.GENERATE_INPUT_WORKSPACE }}</li>
+              </ul>
+          </nz-dropdown-menu>
+        }
       </ng-template>
     </div>
   </ng-template>

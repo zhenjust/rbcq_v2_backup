@@ -72,7 +72,7 @@
         }
 
         @if (actionsTpl()) {
-          <td>
+          <td nzAlign="center">
             <ng-container *ngTemplateOutlet="actionsTpl()!; context: { row }"></ng-container>
           </td>
         }

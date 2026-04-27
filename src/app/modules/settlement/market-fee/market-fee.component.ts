@@ -12,6 +12,9 @@ import { Observable, of, forkJoin } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { MeterProcessTypes } from '@shared/enums';
 import { RunMarketFeeComponent } from './run-market-fee/run-market-fee.component';
+import { ToastrService } from 'ngx-toastr';
+import { MESSAGES } from '@shared/constants/messages.const';
+import { TemplateTableComponent } from '@shared/components/template-table/template-table.component';
 
 @Component({
   selector: 'app-market-fee',
@@ -35,6 +38,7 @@ export class MarketFeeComponent  implements OnInit {
   private readonly modalService = inject(NzModalService);
   private readonly destroyRef$ = inject(DestroyRef);
   private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly toastrService = inject(ToastrService);
 
   isEnergy = signal<boolean>(false);
 
@@ -138,6 +142,34 @@ export class MarketFeeComponent  implements OnInit {
       }
     })
   }
+
+  genInputWorkspace(rowData: any, component: TemplateTableComponent): void {
+    const payload = {
+      pipelineName: `${this.pipelineName}-generateInputWorkspace`,
+      isGroup: true,
+      refId: rowData.id
+    };
+
+    const msg = MESSAGES.CONFIRM_SETTLEMENT_MSG(LABELS.GENERATE_INPUT_WORKSPACE);
+
+    this.modalService.confirm({
+      nzTitle: LABELS.GENERATE_INPUT_WORKSPACE,
+      nzCentered: true,
+      nzContent: msg,
+      nzOnOk: () => this.runJob(payload, false, component)
+    });
+  }
+
+  runJob(payload: any, isGroup = false, component: TemplateTableComponent): void {
+    component.loading$ = this.settlementService.etaJobs(payload, isGroup)
+      .pipe(takeUntilDestroyed(this.destroyRef$))
+      .subscribe(() => {
+        this.toastrService.success(MESSAGES.SUCCESS_JOB_TRIGGER);
+        this.paginatedTable?.search();
+      });
+  }
+
+  get pipelineName(): string { return this.isEnergy() ? 'energyMarketFee' : 'reserveMarketFee'; }
 
 }
 
