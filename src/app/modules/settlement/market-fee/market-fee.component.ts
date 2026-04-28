@@ -15,6 +15,7 @@ import { RunMarketFeeComponent } from './run-market-fee/run-market-fee.component
 import { ToastrService } from 'ngx-toastr';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { TemplateTableComponent } from '@shared/components/template-table/template-table.component';
+import { PHASE_TWO_AUTHORITIES } from '@shared/constants';
 
 @Component({
   selector: 'app-market-fee',
@@ -39,6 +40,8 @@ export class MarketFeeComponent  implements OnInit {
   private readonly destroyRef$ = inject(DestroyRef);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly toastrService = inject(ToastrService);
+
+  AUTH = PHASE_TWO_AUTHORITIES;
 
   isEnergy = signal<boolean>(false);
 

@@ -39,9 +39,11 @@
     </nz-space>
 
     <nz-space>
-      <button nz-button *nzSpaceItem nzType="primary" (click)="runMarketFee()">
-        {{ LABELS.RUN }} {{ LABELS.ENERGY_MARKET_FEE }}
-      </button>
+      <ng-container *ngxPermissionsOnly="AUTH.EMF_GENERATE_IW">
+        <button nz-button *nzSpaceItem nzType="primary" (click)="runMarketFee()">
+          {{ LABELS.RUN }} {{ LABELS.ENERGY_MARKET_FEE }}
+        </button>
+      </ng-container>
     </nz-space>
   </div>
 
@@ -67,7 +69,7 @@
           <nz-dropdown-menu #menu="nzDropdownMenu">
               <ul nz-menu nzSelectable>
                 <!-- Available for any Status except any of the following: Completed Tagging, <Completed/Failed> Generate Energy Market Fee Files  or Published -->
-                <li nz-menu-item (click)="genInputWorkspace(subRowData, tableComp)">{{ LABELS.GENERATE_INPUT_WORKSPACE }}</li>
+                <li nz-menu-item *ngxPermissionsOnly="[ AUTH.EMF_GENERATE_IW ]" (click)="genInputWorkspace(subRowData, tableComp)">{{ LABELS.GENERATE_INPUT_WORKSPACE }}</li>
               </ul>
           </nz-dropdown-menu>
         }

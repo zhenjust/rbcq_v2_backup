@@ -36,7 +36,14 @@ const routes: Routes = [
       data: {
         isEnergy: true,
         permissions: {
-          only: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS],
+          only: [
+            PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS,
+            PHASE_TWO_AUTHORITIES.EMF_GENERATE_IW,
+            PHASE_TWO_AUTHORITIES.EMF_CALCULATE,
+            PHASE_TWO_AUTHORITIES.EMF_FINALIZE,
+            PHASE_TWO_AUTHORITIES.EMF_GENERATE_EMF_FILE,
+            PHASE_TWO_AUTHORITIES.UPLOAD_BILLING_STATEMENT,
+          ],
           redirectTo: externalRoutes.HOME
         }
       },
@@ -53,10 +60,6 @@ const routes: Routes = [
         }
       },
     },
-
-
-
-
 ];
 
 @NgModule({
