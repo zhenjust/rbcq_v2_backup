@@ -665,7 +665,12 @@ export class NavbarComponent implements OnInit {
           PHASE_TWO_AUTHORITIES.VIEW_ADDTL_COMP,
           PHASE_TWO_AUTHORITIES.AC_VIEW_AMS_INV_FOR_UPDATE,
           PHASE_TWO_AUTHORITIES.VIEW_WORKSPACE,
-          PHASE_TWO_AUTHORITIES.APPROVE_STL_TP_WORKLIST
+          PHASE_TWO_AUTHORITIES.APPROVE_STL_TP_WORKLIST,
+          PHASE_TWO_AUTHORITIES.EMF_GENERATE_IW,
+          PHASE_TWO_AUTHORITIES.EMF_CALCULATE,
+          PHASE_TWO_AUTHORITIES.EMF_FINALIZE,
+          PHASE_TWO_AUTHORITIES.EMF_GENERATE_EMF_FILE,
+          PHASE_TWO_AUTHORITIES.UPLOAD_BILLING_STATEMENT,
         ],
         children: [
           //PEMC ROUTES
@@ -839,7 +844,12 @@ export class NavbarComponent implements OnInit {
             permission: [
               PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS,
               PHASE_TWO_AUTHORITIES.VIEW_ADDTL_COMP,
-              PHASE_TWO_AUTHORITIES.AC_VIEW_AMS_INV_FOR_UPDATE
+              PHASE_TWO_AUTHORITIES.AC_VIEW_AMS_INV_FOR_UPDATE,
+              PHASE_TWO_AUTHORITIES.EMF_GENERATE_IW,
+              PHASE_TWO_AUTHORITIES.EMF_CALCULATE,
+              PHASE_TWO_AUTHORITIES.EMF_FINALIZE,
+              PHASE_TWO_AUTHORITIES.EMF_GENERATE_EMF_FILE,
+              PHASE_TWO_AUTHORITIES.UPLOAD_BILLING_STATEMENT,
             ],
             children: [
               {
@@ -858,7 +868,14 @@ export class NavbarComponent implements OnInit {
                 title: 'Calculate Energy Market Fee',
                 show: true,
                 path: NEW_ROUTES.ENERGY_MF,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
+                permission: [
+                  PHASE_TWO_AUTHORITIES.EMF_GENERATE_IW,
+                  PHASE_TWO_AUTHORITIES.EMF_CALCULATE,
+                  PHASE_TWO_AUTHORITIES.EMF_FINALIZE,
+                  PHASE_TWO_AUTHORITIES.EMF_GENERATE_EMF_FILE,
+                  PHASE_TWO_AUTHORITIES.UPLOAD_BILLING_STATEMENT,
+                  PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS
+                ]
               },
               {
                 title: 'Calculate Reserve Market Fee',
