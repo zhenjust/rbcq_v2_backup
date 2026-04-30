@@ -68,8 +68,10 @@
           <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu">{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
           <nz-dropdown-menu #menu="nzDropdownMenu">
               <ul nz-menu nzSelectable>
-                <!-- Available for any Status except any of the following: Completed Tagging, <Completed/Failed> Generate Energy Market Fee Files  or Published -->
-                <li nz-menu-item *ngxPermissionsOnly="[ AUTH.EMF_GENERATE_IW ]" (click)="genInputWorkspace(subRowData, tableComp)">{{ LABELS.GENERATE_INPUT_WORKSPACE }}</li>
+                <!-- TODO: Available for any Status except any of the following: Completed Tagging, <Completed/Failed> Generate Energy Market Fee Files  or Published -->
+                @if (subRowData.status !== SettlementStatus.COMPLETED_TAGGING) {
+                  <li nz-menu-item *ngxPermissionsOnly="[ AUTH.EMF_GENERATE_IW ]" (click)="genInputWorkspace(subRowData, tableComp)">{{ LABELS.GENERATE_INPUT_WORKSPACE }}</li>
+                }
               </ul>
           </nz-dropdown-menu>
         }

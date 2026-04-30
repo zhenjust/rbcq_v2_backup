@@ -16,6 +16,7 @@ import { ToastrService } from 'ngx-toastr';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { TemplateTableComponent } from '@shared/components/template-table/template-table.component';
 import { PHASE_TWO_AUTHORITIES } from '@shared/constants';
+import { SettlementStatus } from '@shared/constants';
 
 @Component({
   selector: 'app-market-fee',
@@ -50,6 +51,7 @@ export class MarketFeeComponent  implements OnInit {
   form: FormGroup;
   showForm = false;
   expandedTableColumns: TPL_TABLE_COLUMN[];
+  SettlementStatus = SettlementStatus;
 
   billingPeriods: meterProcessBillingPeriod[] = [];
   billingPeriodOpts: NzSelectOptionInterface[] = [];
