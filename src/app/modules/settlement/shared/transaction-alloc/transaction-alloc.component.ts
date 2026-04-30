@@ -69,7 +69,7 @@ export class TransactionAllocComponent implements OnInit {
       }
     };
 
-    this.busy$ = this.settlementService.etaJobs(payload, true)
+    this.busy$ = this.settlementService.etaJobs(payload)
       .pipe(takeUntilDestroyed(this.destroyRef$))
       .subscribe(() => {
         this.modalRef$?.destroy(true);
