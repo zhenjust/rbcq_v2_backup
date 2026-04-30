@@ -209,7 +209,7 @@ export class TableComponent implements OnInit {
                   nzCentered: true,
                   nzTitle: 'Jobs Successfully Triggered!'
                 });
-                this.sfs.refreshJobs({});
+                this.sfs.refreshJobs(this.sfs.params()!);
                 resolve();
               },
               error: (err) => {
@@ -359,7 +359,7 @@ export class TableComponent implements OnInit {
 
     modal.afterClose.subscribe(res => {
       if (res) {
-        this.sfs.refreshJobs({});
+        this.sfs.refreshJobs(this.sfs.params()!);
       }
     });
   }
@@ -373,7 +373,7 @@ export class TableComponent implements OnInit {
         this.mpa.cancelRun(baseTableData.id)
           .pipe(this.untilDestroy$)
           .subscribe(() => {
-            this.sfs.refreshJobs({});
+            this.sfs.refreshJobs(this.sfs.params()!);
             this.toast.success(MESSAGES.SUCCESS_CANCEL_ITEM('run'));
           });
       }

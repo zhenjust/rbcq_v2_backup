@@ -3,13 +3,15 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { WESM_PENALTY_STATUS, WESM_PENALTY_TYPE } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
-import { meterProcessBillingPeriod, TPL_TABLE_COLUMN } from '@shared/interfaces';
+import { meterProcessBillingPeriod, TPL_TABLE_COLUMN, TableAction } from '@shared/interfaces';
 import { MeterprocessService, SettlementService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
 import { Observable, of } from 'rxjs';
 import { PenaltyGenerateIwsComponent } from './penalty-generate-iws/penalty-generate-iws.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MESSAGES } from '@shared/constants/messages.const';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-wesm-penalty',
@@ -26,6 +28,7 @@ export class WesmPenaltyComponent implements OnInit {
   private readonly settlementService = inject(SettlementService);
   private readonly modalService = inject(NzModalService);
   private readonly destroyRef$ = inject(DestroyRef);
+  private readonly toastrService = inject(ToastrService);
 
   LABELS = LABELS;
   tableColumns: TPL_TABLE_COLUMN[];
@@ -135,6 +138,45 @@ export class WesmPenaltyComponent implements OnInit {
     this.filters = null;
     this.paginatedTable?.search();
   }
+
+  calculatePenalty(rowData: any): void {
+    const payload = {
+      pipelineName: `penalty-calculate`,
+      isGroup: true,
+      parameters: {
+        billingStartDate: rowData.billingStartDate,
+        billingEndDate: rowData.billingEndDate,
+        billingPeriod: rowData.billingPeriod,
+        refId: rowData.id
+      },
+    };
+
+    const msg = MESSAGES.CONFIRM_SETTLEMENT_MSG('Calculate Financial Penalty');
+
+    this.modalService.confirm({
+      nzTitle: LABELS.CALCULATE,
+      nzCentered: true,
+      nzContent: msg,
+      nzOnOk: () => this.runJob(payload, false)
+    });
+  }
+
+  runJob(payload: any, isGroup = false): void {
+    this.paginatedTable.busy$ = this.settlementService.etaJobs(payload, isGroup)
+      .pipe(takeUntilDestroyed(this.destroyRef$))
+      .subscribe(() => {
+        this.toastrService.success(MESSAGES.SUCCESS_JOB_TRIGGER);
+        this.paginatedTable?.search();
+      });
+  }
+
+
+  get actionControls(): TableAction<any>[] {
+    return [
+      { label: LABELS.CALCULATE, value: 'calculate', click: (rowData: any) => this.calculatePenalty(rowData) },
+    ];
+  }
+
 
 }
 

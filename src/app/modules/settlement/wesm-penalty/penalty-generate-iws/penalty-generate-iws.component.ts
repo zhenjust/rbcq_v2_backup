@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup, FormBuilder, AbstractControl } from '@angular/forms';
 import { RxwebValidators } from '@rxweb/reactive-form-validators';
@@ -35,6 +35,8 @@ export class PenaltyGenerateIwsComponent implements OnInit {
   billingPeriodOpts: NzSelectOptionInterface[] = [];
   selectedBp: meterProcessBillingPeriod | undefined | null;
 
+  showError = signal<boolean>(false);
+
   constructor() { }
 
   ngOnInit(): void {
@@ -67,8 +69,11 @@ export class PenaltyGenerateIwsComponent implements OnInit {
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.showError.set(true);
       return;
     }
+
+    this.showError.set(false);
 
     const payload = {
       pipelineName: 'penalty-generateInputWorkspace',

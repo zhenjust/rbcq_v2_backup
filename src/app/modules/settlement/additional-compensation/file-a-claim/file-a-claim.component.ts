@@ -44,6 +44,8 @@ export class FileAClaimComponent implements OnInit {
   CLAIM_MSG = MESSAGES.MIN_REQUIRED_LENGTH(1, 'claim');
   startOfSelectedDate: Date;
 
+  showError = signal<boolean>(false);
+
   constructor() { }
 
   ngOnInit(): void {
@@ -180,9 +182,12 @@ export class FileAClaimComponent implements OnInit {
     this.form.updateValueAndValidity();
 
     if (this.form.invalid) {
+      this.showError.set(true);
       this.form.markAllAsTouched();
       return;
     }
+
+    this.showError.set(false);
 
     const formValue = this.form.getRawValue();
     const selectedBp = this.billingPeriods.find(bp => bp.billingPeriod === formValue.billingPeriod);

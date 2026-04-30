@@ -130,7 +130,7 @@ export class AdditionalCompensationComponent implements OnInit {
           label: LABELS.FILE_A_CLAIM,
           type: 'primary',
           onClick: (component: FileAClaimComponent) => component.triggerOk(),
-          disabled: (component?: FileAClaimComponent) => component ? (component.form.invalid || (component?.busy$ && !component?.busy$?.closed)) : true
+          disabled: (component?: FileAClaimComponent) => component ? (component?.busy$ && !component?.busy$?.closed) : true
         }
       ],
       nzBodyStyle: {
