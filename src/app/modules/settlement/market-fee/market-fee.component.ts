@@ -181,7 +181,7 @@ export class MarketFeeComponent  implements OnInit {
 
     modal.afterClose.subscribe(res => {
       if (res) {
-        this.paginatedTable?.search();
+        this.reload$.next();
       }
     })
   }
@@ -208,7 +208,7 @@ export class MarketFeeComponent  implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef$))
       .subscribe(() => {
         this.toastrService.success(MESSAGES.SUCCESS_JOB_TRIGGER);
-        this.paginatedTable?.search();
+        this.reload$.next();
       });
   }
 

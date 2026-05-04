@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild, effect } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild, effect, output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { METER_PROCESS_TYPE_OPTION, MeterDataPipelineName } from '@shared/constants';
 import { MESSAGES } from '@shared/constants/messages.const';
@@ -24,6 +24,8 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
   hasFilter: boolean = false;
   meterProcessTypeOptions: meterProcessOptions[] = METER_PROCESS_TYPE_OPTION;
   meterProcessBillingPeriod: meterProcessBillingPeriod[] = [];
+
+  onFiltersEvent = output<Partial<meterProcessJobSearchGroupParams>>();
 
   @ViewChild('runMeterDataModal', { static: true }) runMeterDataModal!: TemplateRef<void>;
 
@@ -142,6 +144,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
       };
 
       this.sfs.refreshJobs(formattedValues);
+      this.onFiltersEvent.emit(formattedValues);
     }
   }
 
@@ -152,6 +155,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
     this.hasFilter = false;
     this.meterProcessParams = null;
     this.sfs.refreshJobs({});
+    this.onFiltersEvent.emit({});
   }
 
   openRunWesmModal(): void {

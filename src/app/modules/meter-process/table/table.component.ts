@@ -3,7 +3,7 @@ import { AuthorizationService } from '@core/services/authorization.service';
 import { MeterDataPipelineName, MeterProcessStatus, MeterDataPipelineProcess, PipelineStatus, MeterDataPipelineNameLabel } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { MeterProcessTypes } from '@shared/enums';
-import { HttpResponseProgress, meterProcessPipeline, meterProcessPipelineGroup, meterProcessTable } from '@shared/interfaces';
+import { HttpResponseProgress, meterProcessJobSearchGroupParams, meterProcessPipeline, meterProcessPipelineGroup, meterProcessTable } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { SearchFilterService } from '@shared/services/meterProcess';
 import { DateFormatterUtilService } from '@shared/services/utils';
@@ -64,6 +64,8 @@ export class TableComponent implements OnInit {
   labels = LABELS;
   tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
   isLoading = computed(() => this.sfs.isLoading());
+
+  filters: Partial<meterProcessJobSearchGroupParams>;
 
   // Add property to store current modal data
   currentModalData: ModalData | null = null;
@@ -136,6 +138,7 @@ export class TableComponent implements OnInit {
   onPageChange(newPageIndex: number): void {
     const currentSize = this.tableData().size || 10;
     this.sfs.refreshJobs({
+      ...this.filters,
       page: newPageIndex - 1,
       size: currentSize
     });
@@ -143,6 +146,7 @@ export class TableComponent implements OnInit {
 
   onPageSizeChange(newSize: number): void {
     this.sfs.refreshJobs({
+      ...this.filters,
       page: 0,
       size: newSize
     });
