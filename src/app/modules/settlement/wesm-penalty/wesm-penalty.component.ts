@@ -54,7 +54,6 @@ export class WesmPenaltyComponent implements OnInit {
     },
   }
 
-
   ngOnInit(): void {
     this.statusOptions = WESM_PENALTY_STATUS.map(opt => ({ label: opt, value: opt}));
     this.typeOptions = Object.keys(WESM_PENALTY_TYPE)

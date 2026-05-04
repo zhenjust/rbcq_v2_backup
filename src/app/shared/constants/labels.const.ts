@@ -214,6 +214,7 @@ export const LABELS = {
   PRELIM: 'Preliminary',
   FINAL: 'Final',
   ADJUSTED: 'Adjustment',
-  ENERGY_MARKET_FEE: 'Energy Market Fee'
+  ENERGY_MARKET_FEE: 'Energy Market Fee',
+  CALCULATE_FINANCIAL_PENALTY: 'Calculate Financial Penalty'
 
 }
