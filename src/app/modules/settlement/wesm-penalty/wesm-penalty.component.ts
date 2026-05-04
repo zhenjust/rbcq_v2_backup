@@ -43,6 +43,17 @@ export class WesmPenaltyComponent implements OnInit {
   typeOptions: NzSelectOptionInterface[] = [];
   filters: any = {};
 
+  pipelineRecords: Record<string, any> = {
+    ['penalty-calculate']: {
+      message: MESSAGES.CONFIRM_SETTLEMENT_MSG('Calculate Financial Penalty'),
+      modalTitle: LABELS.CALCULATE
+    },
+    ['penalty-finalize']: {
+      message: MESSAGES.CONFIRM_SETTLEMENT_MSG('Finalize Financial Penalty'),
+      modalTitle: LABELS.FINALIZE
+    },
+  }
+
 
   ngOnInit(): void {
     this.statusOptions = WESM_PENALTY_STATUS.map(opt => ({ label: opt, value: opt}));
@@ -64,10 +75,6 @@ export class WesmPenaltyComponent implements OnInit {
 
   formatTableColumns(): void {
     tableColumns[LABELS.BILLING_PERIOD_TRADING_DATE].template = this.bpTpl;
-    // expandedTableCols[LABELS.FILE].template = this.fileTpl;
-    // expandedTableCols[LABELS.STATUS].template = this.tagTpl;
-    // tableColumns[LABELS.STATUS].template = this.tagTpl;
-
     this.tableColumns = Object.values(tableColumns);
     this.billingColumns = Object.values(billingColumns);
     this.expandedTableCols = Object.values(expandedTableCols);
@@ -139,9 +146,22 @@ export class WesmPenaltyComponent implements OnInit {
     this.paginatedTable?.search();
   }
 
-  calculatePenalty(rowData: any): void {
+//   {
+//     "pipelineName": "penalty-finalize",
+//     "isGroup": true,
+//     "refId": 168,
+//     "parameters": {
+//         "billingStartDate": "2025-11-26",
+//         "billingEndDate": "2025-12-25",
+//         "billingPeriodName": "December 2025",
+//         "allocDate": "2026-04-30",
+//         "dueDate": "2026-05-30",
+//         "remarks": "Penalty Allocation for December 2025"
+//     }
+// }
+  triggerAction(pipelineName: string, rowData: any): void {
     const payload = {
-      pipelineName: `penalty-calculate`,
+      pipelineName,
       isGroup: true,
       refId: rowData.id,
       parameters: {
@@ -151,15 +171,14 @@ export class WesmPenaltyComponent implements OnInit {
       },
     };
 
-    const msg = MESSAGES.CONFIRM_SETTLEMENT_MSG('Calculate Financial Penalty');
-
     this.modalService.confirm({
-      nzTitle: LABELS.CALCULATE,
+      nzTitle: this.pipelineRecords[pipelineName].modalTitle,
       nzCentered: true,
-      nzContent: msg,
+      nzContent: this.pipelineRecords[pipelineName].message,
       nzOnOk: () => this.runJob(payload, false)
     });
   }
+
 
   runJob(payload: any, isGroup = false): void {
     this.paginatedTable.busy$ = this.settlementService.etaJobs(payload, isGroup)
@@ -173,7 +192,8 @@ export class WesmPenaltyComponent implements OnInit {
 
   get actionControls(): TableAction<any>[] {
     return [
-      { label: LABELS.CALCULATE, value: 'calculate', click: (rowData: any) => this.calculatePenalty(rowData) },
+      { label: LABELS.CALCULATE, value: 'calculate', click: (rowData: any) => this.triggerAction('penalty-calculate', rowData) },
+      { label: LABELS.FINALIZE, value: 'finalize', click: (rowData: any) => this.triggerAction('penalty-finalize', rowData) },
     ];
   }
 
