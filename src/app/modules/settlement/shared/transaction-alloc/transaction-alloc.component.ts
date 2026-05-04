@@ -54,7 +54,7 @@ export class TransactionAllocComponent implements OnInit {
   submit(): void {
     const row = this.rowData();
     const form = this.form.getRawValue();
-
+    const isFinalize = this.action() === 'penalty-finalize';
     const payload = {
       pipelineName: this.modalData?.action,
       isGroup: true,
@@ -62,10 +62,11 @@ export class TransactionAllocComponent implements OnInit {
       parameters: {
         billingStartDate: row?.billingStartDate,
         billingEndDate: row?.billingEndDate,
+        ...(isFinalize ? { billingPeriodName: row.billingPeriod} : {}),
         processType: row?.processType,
-        allocRemarks: form.allocRemarks,
+        [isFinalize ? 'remarks' : 'allocRemarks']: form.allocRemarks,
         allocDate: format(form.allocDate, 'yyyy-MM-dd'),
-        allocDueDate: format(form.allocDueDate, 'yyyy-MM-dd')
+        [isFinalize ? 'dueDate' : 'allocDueDate']: format(form.allocDueDate, 'yyyy-MM-dd')
       }
     };
 

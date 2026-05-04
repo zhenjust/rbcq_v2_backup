@@ -12,6 +12,7 @@ import { PenaltyGenerateIwsComponent } from './penalty-generate-iws/penalty-gene
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { ToastrService } from 'ngx-toastr';
+import { TransactionAllocComponent } from '../shared/transaction-alloc/transaction-alloc.component';
 
 @Component({
   selector: 'app-wesm-penalty',
@@ -55,9 +56,9 @@ export class WesmPenaltyComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.statusOptions = WESM_PENALTY_STATUS.map(opt => ({ label: opt, value: opt}));
+    this.statusOptions = WESM_PENALTY_STATUS.map(opt => ({ label: opt, value: opt }));
     this.typeOptions = Object.keys(WESM_PENALTY_TYPE)
-      .map(key => ({ label: WESM_PENALTY_TYPE[key as keyof typeof WESM_PENALTY_TYPE], value: key}))
+      .map(key => ({ label: WESM_PENALTY_TYPE[key as keyof typeof WESM_PENALTY_TYPE], value: key }))
 
     this.buildForm();
     this.formatTableColumns();
@@ -145,19 +146,19 @@ export class WesmPenaltyComponent implements OnInit {
     this.paginatedTable?.search();
   }
 
-//   {
-//     "pipelineName": "penalty-finalize",
-//     "isGroup": true,
-//     "refId": 168,
-//     "parameters": {
-//         "billingStartDate": "2025-11-26",
-//         "billingEndDate": "2025-12-25",
-//         "billingPeriodName": "December 2025",
-//         "allocDate": "2026-04-30",
-//         "dueDate": "2026-05-30",
-//         "remarks": "Penalty Allocation for December 2025"
-//     }
-// }
+  //   {
+  //     "pipelineName": "penalty-finalize",
+  //     "isGroup": true,
+  //     "refId": 168,
+  //     "parameters": {
+  //         "billingStartDate": "2025-11-26",
+  //         "billingEndDate": "2025-12-25",
+  //         "billingPeriodName": "December 2025",
+  //         "allocDate": "2026-04-30",
+  //         "dueDate": "2026-05-30",
+  //         "remarks": "Penalty Allocation for December 2025"
+  //     }
+  // }
   triggerAction(pipelineName: string, rowData: any): void {
     const payload = {
       pipelineName,
@@ -188,13 +189,41 @@ export class WesmPenaltyComponent implements OnInit {
       });
   }
 
+  calcTransactionAllocation(action: string, row: any): void {
+    const modal = this.modalService.create({
+      nzTitle: LABELS.FINALIZE,
+      nzContent: TransactionAllocComponent,
+      nzCentered: true,
+      nzData: { rowData: row, action },
+      nzFooter: [
+        {
+          label: LABELS.CLOSE,
+          onClick: (component) => component?.triggerClose(),
+          disabled: (component) => component ? (component?.busy$ && !component?.busy$?.closed) : true
+        },
+        {
+          label: LABELS.RUN_JOB,
+          type: 'primary',
+          onClick: (component) => component?.submit(),
+          disabled: (component) => component ? (component.form.invalid || (component?.busy$ && !component?.busy$?.closed)) : true
+        }
+      ],
+    });
 
-  get actionControls(): TableAction<any>[] {
-    return [
-      { label: LABELS.CALCULATE, value: 'calculate', click: (rowData: any) => this.triggerAction('penalty-calculate', rowData) },
-      { label: LABELS.FINALIZE, value: 'finalize', click: (rowData: any) => this.triggerAction('penalty-finalize', rowData) },
-    ];
+    modal.afterClose.subscribe(res => {
+      if (res) {
+        this.paginatedTable?.search();
+      }
+    })
   }
+
+
+  get actionControls(): TableAction < any > [] {
+  return [
+    { label: LABELS.CALCULATE, value: 'calculate', click: (rowData: any) => this.triggerAction('penalty-calculate', rowData) },
+    { label: LABELS.FINALIZE, value: 'finalize', click: (rowData: any) => this.calcTransactionAllocation('penalty-finalize', rowData) },
+  ];
+}
 
 
 }
@@ -206,7 +235,7 @@ const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
 }
 
 const billingColumns: Record<string, TPL_TABLE_COLUMN> = {
-  [LABELS.BILLING_ID]: { label: LABELS.BILLING_ID, propName: 'billingId'},
+  [LABELS.BILLING_ID]: { label: LABELS.BILLING_ID, propName: 'billingId' },
   [LABELS.TYPE]: { label: LABELS.TYPE, propName: 'type', align: 'center' },
   [LABELS.PENALTY_AMOUNT]: { label: LABELS.PENALTY_AMOUNT, propName: 'penaltyAmount', align: 'center', type: 'number' },
 }
