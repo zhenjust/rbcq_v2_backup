@@ -1,7 +1,7 @@
 <nz-table #table
   [nzWidthConfig]="widthConfig"
   nzSize="small"
-  [nzLoading]="isLoading"
+  [nzLoading]="showCustomLoading ? loading : isLoading"
   [nzOuterBordered]="true"
   [nzFrontPagination]="false"
   [nzData]="tableData"

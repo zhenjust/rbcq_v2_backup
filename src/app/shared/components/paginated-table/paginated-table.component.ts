@@ -22,6 +22,8 @@ export class PaginatedTableComponent<T> extends SearchListBase {
   @Input() disableSelectAll = false;
   @Input() checkboxCondition!: (rowData: any) => boolean;
   @Input() url: Observable<any>;
+  @Input() showCustomLoading: boolean;
+
 
   enableExpand = input<boolean>();
   expandTpl = input<TemplateRef<any>>();

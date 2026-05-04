@@ -37,20 +37,7 @@
         {{ showForm ? LABELS.APPLY_FILTERS : LABELS.SET_FILTERS }}
       </button>
 
-      <nz-space-compact>
-        <button nz-button>Dropdown</button>
-        <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzPlacement="bottomRight">
-          <nz-icon nzType="ellipsis" />
-        </button>
-      </nz-space-compact>
-
-      <nz-dropdown-menu #menu="nzDropdownMenu">
-        <ul nz-menu>
-          <li nz-menu-item>menu 1st menu item</li>
-          <li nz-menu-item>menu 2nd menu item</li>
-          <li nz-menu-item>menu 3rd menu item</li>
-        </ul>
-      </nz-dropdown-menu>
+      <app-polling-timer *nzSpaceItem (emitEvent)="pollingTime.set($event)" (emitReload)="reload$.next()"></app-polling-timer>
     </nz-space>
 
     <nz-space>
@@ -64,8 +51,8 @@
 
   <!-- Table -->
   <app-paginated-table #paginatedTable resultsProp="pipelineGroup" [tableColumns]="tableColumns"
-    [url]="getUrl()" [showActions]="false" [tableConfig]="{ height: '60vh' }" [enableExpand]="true"
-    [expandTpl]="expandTpl"></app-paginated-table>
+    [url]="url$" [showActions]="false" [tableConfig]="{ height: '60vh' }" [enableExpand]="true"
+    [expandTpl]="expandTpl" [showCustomLoading]="true"></app-paginated-table>
 
   <ng-template #expandTpl let-row="row">
     <div class="d-flex w-100 my-2 pe-2">

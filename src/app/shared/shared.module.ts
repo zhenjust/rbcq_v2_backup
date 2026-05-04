@@ -44,6 +44,9 @@ import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { DateTimePickerComponent } from './components/date-time-picker/date-time-picker.component';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { PipelineTableComponent } from './components/pipeline-table/pipeline-table.component';
+import { PollingTimerComponent } from './components/polling-timer/polling-timer.component';
+import { ReloadOutline } from '@ant-design/icons-angular/icons';
+
 const ngZorroConfig: NzConfig = {
   notification: { nzDuration: 300, nzMaxStack: 3, nzTop: '150px' }
 };
@@ -58,7 +61,7 @@ const NgZorroModules = [
   NzProgressModule,
   NzFormModule,
   NzDropDownModule,
-  NzIconModule,
+  NzIconModule.forChild([ ReloadOutline ]),
   NzCardModule,
   NzTagModule,
   NzTabsModule,
@@ -72,7 +75,6 @@ const NgZorroModules = [
   NzToolTipModule,
   NzPopoverModule,
   NzFloatButtonModule,
-  NzIconModule,
   NzBadgeModule,
   NzSpinModule,
   NzInputModule,
@@ -102,7 +104,8 @@ const Pipes = [
     DateRangePickerComponent,
     ReloginComponent,
     DateTimePickerComponent,
-    PipelineTableComponent
+    PipelineTableComponent,
+    PollingTimerComponent
   ],
   imports: [
     CommonModule,
@@ -125,7 +128,8 @@ const Pipes = [
     FormsModule,
     DateRangePickerComponent,
     DateTimePickerComponent,
-    PipelineTableComponent
+    PipelineTableComponent,
+    PollingTimerComponent
   ],
   providers: [
     { provide: NZ_CONFIG, useValue: ngZorroConfig }

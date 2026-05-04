@@ -8,7 +8,7 @@ import { TPL_TABLE_COLUMN, meterProcessBillingPeriod } from '@shared/interfaces'
 import { SettlementService, MeterprocessService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
-import { Observable, of, forkJoin } from 'rxjs';
+import { Observable, forkJoin, timer, switchMap, Subject, merge, BehaviorSubject, finalize, shareReplay } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { MeterProcessTypes } from '@shared/enums';
 import { RunMarketFeeComponent } from './run-market-fee/run-market-fee.component';
@@ -17,7 +17,7 @@ import { MESSAGES } from '@shared/constants/messages.const';
 import { TemplateTableComponent } from '@shared/components/template-table/template-table.component';
 import { PHASE_TWO_AUTHORITIES } from '@shared/constants';
 import { SettlementStatus } from '@shared/constants';
-
+import { effect } from '@angular/core';
 @Component({
   selector: 'app-market-fee',
   standalone: false,
@@ -58,6 +58,20 @@ export class MarketFeeComponent  implements OnInit {
   processTypeOptions: NzSelectOptionInterface[] = [];
   filters: any = {};
 
+  // POLLING
+  pollingTime = signal<number>(60000);
+  private reload$ = new Subject<void>();
+  private pollingTime$ = new BehaviorSubject<number>(this.pollingTime());
+  url$: Observable<any>;
+  // END OF POLLING
+
+  constructor() {
+    this.pollingTime$.next(this.pollingTime());
+    effect(() => {
+      this.pollingTime$.next(this.pollingTime());
+    });
+  }
+
   ngOnInit(): void {
     this.processTypeOptions = Object.keys(MeterProcessTypes)
       .filter(key => key !== MeterProcessTypes.DAILY)
@@ -68,6 +82,7 @@ export class MarketFeeComponent  implements OnInit {
     this.buildForm();
     this.formatTableColumns();
     this.getReferences();
+    this.url$ = this.getUrl();
   }
 
   buildForm(): void {
@@ -88,11 +103,34 @@ export class MarketFeeComponent  implements OnInit {
   getUrl(): Observable<any> {
     const groupName = this.isEnergy() ? 'energyMarketFee' : 'reserveMarketFee';
 
-    if (!this.paginatedTable) {
-      return of([]);
-    }
+    const polling$ = this.pollingTime$.pipe(
+      switchMap(interval => {
+        return timer(0, interval)
+      })
+    );
 
-    return this.settlementService.search(this.filters, groupName, this.paginatedTable?.tableParams);
+    return merge(
+      polling$,
+      this.reload$
+    ).pipe(
+      switchMap(() => {
+        this.paginatedTable.loading = true
+        return this.settlementService.search(
+          this.filters,
+          groupName,
+          this.paginatedTable?.tableParams
+        ).pipe(
+          finalize(() => {
+            if (this.paginatedTable) {
+              this.paginatedTable.loading = false;
+            }
+          })
+        )
+
+      }
+      ),
+      shareReplay(1)
+    );
   }
 
   getReferences(): void {
@@ -110,14 +148,14 @@ export class MarketFeeComponent  implements OnInit {
   applyFilter(): void {
     const values = this.form.getRawValue();
     this.filters = values;
-    this.paginatedTable.search();
+    this.reload$.next();
   }
 
   resetFilters(): void {
     this.form.reset();
     this.filters = null;
     this.showForm = false;
-    this.paginatedTable?.search();
+    this.reload$.next();
   }
 
   runMarketFee(): void {
