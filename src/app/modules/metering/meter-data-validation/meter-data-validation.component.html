@@ -86,4 +86,20 @@
   </nz-tag>
 </ng-template>
 
+<ng-template #tagPopoverTpl let-allData="allData">
+  <nz-tag
+    nz-popover
+    [nzPopoverContent]="allData.status === 'Failed' ? errorTpl : undefined"
+    [nzPopoverTitle]="allData.status === 'Failed' ? 'Error' : undefined"
+    nzPopoverTrigger="hover"
+    class="break-word-tag">
+    {{ allData.status }}
+  </nz-tag>
+  <ng-template #errorTpl>
+    <div style="max-width: 800px; max-height: 300px; overflow: auto;">
+      <pre>{{ allData.message }}</pre>
+    </div>
+  </ng-template>
+</ng-template>
+
 

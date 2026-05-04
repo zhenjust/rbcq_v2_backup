@@ -26,6 +26,7 @@ import { MeterProcessTypes } from '@shared/enums';
     @ViewChild('bpTpl', { static: true }) bpTpl: TemplateRef<HTMLElement>;
     @ViewChild('fileTpl', { static: true }) fileTpl: TemplateRef<HTMLElement>;
     @ViewChild('tagTpl', { static: true }) tagTpl: TemplateRef<HTMLElement>;
+    @ViewChild('tagPopoverTpl', { static: true }) tagPopoverTpl: TemplateRef<HTMLElement>;
 
     tableColumns: TPL_TABLE_COLUMN[];
     LABELS = LABELS;
@@ -90,8 +91,8 @@ import { MeterProcessTypes } from '@shared/enums';
     formatTableColumns(): void {
       tableColumns[LABELS.BILLING_PERIOD_TRADING_DATE].template = this.bpTpl;
       expandedTableCols[LABELS.FILE].template = this.fileTpl;
-      expandedTableCols[LABELS.STATUS].template = this.tagTpl;
       tableColumns[LABELS.STATUS].template = this.tagTpl;
+      expandedTableCols[LABELS.STATUS].template = this.tagPopoverTpl;
 
       this.tableColumns = Object.values(tableColumns);
       this.expandedTableCols = Object.values(expandedTableCols);
