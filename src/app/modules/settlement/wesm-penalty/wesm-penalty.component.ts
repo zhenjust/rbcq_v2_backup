@@ -143,11 +143,11 @@ export class WesmPenaltyComponent implements OnInit {
     const payload = {
       pipelineName: `penalty-calculate`,
       isGroup: true,
+      refId: rowData.id,
       parameters: {
         billingStartDate: rowData.billingStartDate,
         billingEndDate: rowData.billingEndDate,
-        billingPeriod: rowData.billingPeriod,
-        refId: rowData.id
+        billingPeriodName: rowData.billingPeriod,
       },
     };
 
