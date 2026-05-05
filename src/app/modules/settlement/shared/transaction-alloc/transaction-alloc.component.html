@@ -10,20 +10,20 @@
       <nz-form-item class="col-sm-12">
         <nz-form-label nzRequired>{{ LABELS.ALLOCATION_DATE }}</nz-form-label>
         <nz-form-control>
-          <nz-date-picker formControlName="allocDate" class="w-100" [nzDisabledDate]="nzDisabledDate" [nzDefaultPickerValue]="startDate"></nz-date-picker>
+          <nz-date-picker formControlName="allocDate" class="w-100" [nzDisabledDate]="disabledAllocDate"></nz-date-picker>
         </nz-form-control>
       </nz-form-item>
     }
 
     <nz-form-item class="col-sm-12">
-      <nz-form-label nzRequired>{{ LABELS.ALLOCATION_DUE_DATE }}</nz-form-label>
+      <nz-form-label>{{ LABELS.ALLOCATION_DUE_DATE }}</nz-form-label>
       <nz-form-control>
-        <nz-date-picker formControlName="allocDueDate" class="w-100"></nz-date-picker>
+        <nz-date-picker formControlName="allocDueDate" class="w-100" [nzDisabledDate]="disabledAllocDueDate"></nz-date-picker>
       </nz-form-control>
     </nz-form-item>
 
     <nz-form-item class="col-sm-12">
-      <nz-form-label nzRequired>{{ LABELS.ALLOCATION_REMARKS }}</nz-form-label>
+      <nz-form-label>{{ LABELS.ALLOCATION_REMARKS }}</nz-form-label>
       <nz-form-control>
         <textarea nz-input formControlName="allocRemarks" rows="2"></textarea>
       </nz-form-control>
