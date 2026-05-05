@@ -25,7 +25,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
   meterProcessTypeOptions: meterProcessOptions[] = METER_PROCESS_TYPE_OPTION;
   meterProcessBillingPeriod: meterProcessBillingPeriod[] = [];
 
-  onFiltersEvent = output<Partial<meterProcessJobSearchGroupParams>>();
+  filtersEvent = output<Partial<meterProcessJobSearchGroupParams>>();
 
   @ViewChild('runMeterDataModal', { static: true }) runMeterDataModal!: TemplateRef<void>;
 
@@ -144,7 +144,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
       };
 
       this.sfs.refreshJobs(formattedValues);
-      this.onFiltersEvent.emit(formattedValues);
+      this.filtersEvent.emit(formattedValues);
     }
   }
 
@@ -155,7 +155,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
     this.hasFilter = false;
     this.meterProcessParams = null;
     this.sfs.refreshJobs({});
-    this.onFiltersEvent.emit({});
+    this.filtersEvent.emit({});
   }
 
   openRunWesmModal(): void {
