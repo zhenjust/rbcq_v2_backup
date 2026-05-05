@@ -15,7 +15,7 @@ import { NgxPermissionsModule } from 'ngx-permissions';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { SettlementTableFormatterPipe } from './pipes/table-data-formatter.pipe';
-import { EnumsToLabelsPipe, FileSizeFormatterPipe, FormErrorHandler, HasInprogressPipe, SettlementActionsPipe, SettlementPipelineFormatterPipe } from './pipes';
+import { EnumsToLabelsPipe, FileSizeFormatterPipe, FormErrorHandler, HasCompletedStatusPipe, HasInprogressPipe, SettlementActionsPipe, SettlementPipelineFormatterPipe } from './pipes';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { PaginatedTableComponent } from './components/paginated-table/paginated-table.component';
@@ -91,7 +91,8 @@ const Pipes = [
   FileSizeFormatterPipe,
   EnumsToLabelsPipe,
   HasInprogressPipe,
-  FormErrorHandler
+  FormErrorHandler,
+  HasCompletedStatusPipe,
 ];
 
 @NgModule({

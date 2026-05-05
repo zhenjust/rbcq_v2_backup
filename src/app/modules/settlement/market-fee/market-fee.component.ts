@@ -186,17 +186,18 @@ export class MarketFeeComponent  implements OnInit {
     })
   }
 
-  genInputWorkspace(rowData: any, component: TemplateTableComponent): void {
+  triggerJob(pipelineName: string, rowData: any, component: TemplateTableComponent, label: string): void {
+    const mainPipelineName = this.pipelineName;
     const payload = {
-      pipelineName: `${this.pipelineName}-generateInputWorkspace`,
+      pipelineName: `${mainPipelineName}-${pipelineName}`,
       isGroup: true,
       refId: rowData.id
     };
 
-    const msg = MESSAGES.CONFIRM_SETTLEMENT_MSG(LABELS.GENERATE_INPUT_WORKSPACE);
+    const msg = MESSAGES.CONFIRM_SETTLEMENT_MSG(label);
 
     this.modalService.confirm({
-      nzTitle: LABELS.GENERATE_INPUT_WORKSPACE,
+      nzTitle: label,
       nzCentered: true,
       nzContent: msg,
       nzOnOk: () => this.runJob(payload, false, component)

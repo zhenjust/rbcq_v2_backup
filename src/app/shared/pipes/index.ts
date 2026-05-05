@@ -5,3 +5,4 @@ export * from './table-data-formatter.pipe';
 export * from './form-error-handler.pipe';
 export * from './enum-to-labels.pipe';
 export * from './has-inprogress.pipe';
+export * from './pipeline-some.pipe';

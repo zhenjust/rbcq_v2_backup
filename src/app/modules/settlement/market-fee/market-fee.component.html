@@ -72,7 +72,15 @@
               <ul nz-menu nzSelectable>
                 <!-- TODO: Available for any Status except any of the following: Completed Tagging, <Completed/Failed> Generate Energy Market Fee Files  or Published -->
                 @if (subRowData.status !== SettlementStatus.COMPLETED_TAGGING) {
-                  <li nz-menu-item *ngxPermissionsOnly="[ AUTH.EMF_GENERATE_IW ]" (click)="genInputWorkspace(subRowData, tableComp)">{{ LABELS.GENERATE_INPUT_WORKSPACE }}</li>
+                  <li nz-menu-item *ngxPermissionsOnly="[ AUTH.EMF_GENERATE_IW ]" (click)="triggerJob('generateInputWorkspace', subRowData, tableComp, LABELS.GENERATE_INPUT_WORKSPACE)">{{ LABELS.GENERATE_INPUT_WORKSPACE }}</li>
+                }
+
+                @if (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateInputWorkspace')] : 'Succeeded') {
+                  <li nz-menu-item *ngxPermissionsOnly="[ AUTH.EMF_CALCULATE ]" (click)="triggerJob('calculateMarketFee', subRowData, tableComp, LABELS.CALCULATE + ' ' + LABELS.ENERGY_MARKET_FEE)">{{ LABELS.CALCULATE }}</li>
+                }
+
+                @if (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded') {
+                  <li nz-menu-item *ngxPermissionsOnly="[ AUTH.EMF_FINALIZE ]" (click)="triggerJob('finalize', subRowData, tableComp, LABELS.FINALIZE + ' ' + LABELS.ENERGY_MARKET_FEE)">{{ LABELS.FINALIZE }}</li>
                 }
               </ul>
           </nz-dropdown-menu>
