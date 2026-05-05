@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { WESM_PENALTY_STATUS, WESM_PENALTY_TYPE } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
-import { meterProcessBillingPeriod, TPL_TABLE_COLUMN, TableAction } from '@shared/interfaces';
+import { meterProcessBillingPeriod, TPL_TABLE_COLUMN, TableAction, meterProcessPipelineGroup } from '@shared/interfaces';
 import { MeterprocessService, SettlementService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
@@ -220,8 +220,18 @@ export class WesmPenaltyComponent implements OnInit {
 
   get actionControls(): TableAction < any > [] {
   return [
-    { label: LABELS.CALCULATE, value: 'calculate', click: (rowData: any) => this.triggerAction('penalty-calculate', rowData) },
-    { label: LABELS.FINALIZE, value: 'finalize', click: (rowData: any) => this.calcTransactionAllocation('penalty-finalize', rowData) },
+    {
+      label: LABELS.CALCULATE,
+      value: 'calculate',
+      click: (rowData: meterProcessPipelineGroup) => this.triggerAction('penalty-calculate', rowData),
+      hidden: (rowData: meterProcessPipelineGroup) => !rowData.pipelines?.some(p => p.name === 'penalty' && p.status === 'Completed')
+    },
+    {
+      label: LABELS.FINALIZE,
+      value: 'finalize',
+      click: (rowData: any) => this.calcTransactionAllocation('penalty-finalize', rowData),
+      hidden: (rowData: meterProcessPipelineGroup) => !rowData.pipelines?.some(p => p.name === 'penalty-calculate' && p.status === 'Completed')
+    },
   ];
 }
 
