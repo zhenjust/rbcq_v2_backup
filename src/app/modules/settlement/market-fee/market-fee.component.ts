@@ -219,7 +219,7 @@ export class MarketFeeComponent  implements OnInit {
     const rowData = {...row, ...row.parameters};
 
     if (rowData.processType === MeterProcessTypes.DAILY || rowData?.processType === MeterProcessTypes.PRELIM) {
-      this.triggerJob('calculateMarketFee', rowData, component, LABELS.FINALIZE + ' ' + LABELS.ENERGY_MARKET_FEE);
+      this.triggerJob('finalize', rowData, component, LABELS.FINALIZE + ' ' + LABELS.ENERGY_MARKET_FEE);
     } else {
       this.stlUtil.triggerAllocModal(action, rowData, () => this.reload$.next());
     }
