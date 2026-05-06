@@ -18,6 +18,7 @@ import { TemplateTableComponent } from '@shared/components/template-table/templa
 import { PHASE_TWO_AUTHORITIES } from '@shared/constants';
 import { SettlementStatus } from '@shared/constants';
 import { effect } from '@angular/core';
+import { StlUtilitiesService } from '@shared/services/utils';
 @Component({
   selector: 'app-market-fee',
   standalone: false,
@@ -41,6 +42,7 @@ export class MarketFeeComponent  implements OnInit {
   private readonly destroyRef$ = inject(DestroyRef);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly toastrService = inject(ToastrService);
+  private readonly stlUtil = inject(StlUtilitiesService);
 
   AUTH = PHASE_TWO_AUTHORITIES;
 
@@ -213,9 +215,19 @@ export class MarketFeeComponent  implements OnInit {
       });
   }
 
-  get pipelineName(): string { return this.isEnergy() ? 'energyMarketFee' : 'reserveMarketFee'; }
+  finalize(action: string, row: any, component: TemplateTableComponent): void {
+    const rowData = {...row, ...row.parameters};
 
+    if (rowData.processType === MeterProcessTypes.DAILY || rowData?.processType === MeterProcessTypes.PRELIM) {
+      this.triggerJob('calculateMarketFee', rowData, component, LABELS.FINALIZE + ' ' + LABELS.ENERGY_MARKET_FEE);
+    } else {
+      this.stlUtil.triggerAllocModal(action, rowData, () => this.reload$.next());
+    }
+  }
+
+  get pipelineName(): string { return this.isEnergy() ? 'energyMarketFee' : 'reserveMarketFee'; }
 }
+
 
 const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.WORKSPACE_ID]: { label: LABELS.WORKSPACE_ID, propName: 'id' },

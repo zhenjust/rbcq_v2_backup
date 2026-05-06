@@ -80,7 +80,7 @@
                 }
 
                 @if (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded') {
-                  <li nz-menu-item *ngxPermissionsOnly="[ AUTH.EMF_FINALIZE ]" (click)="triggerJob('finalize', subRowData, tableComp, LABELS.FINALIZE + ' ' + LABELS.ENERGY_MARKET_FEE)">{{ LABELS.FINALIZE }}</li>
+                  <li nz-menu-item *ngxPermissionsOnly="[ AUTH.EMF_FINALIZE ]" (click)="finalize('finalize', subRowData, tableComp)">{{ LABELS.FINALIZE }}</li>
                 }
               </ul>
           </nz-dropdown-menu>
