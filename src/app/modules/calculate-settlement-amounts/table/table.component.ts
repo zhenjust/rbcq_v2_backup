@@ -498,14 +498,22 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       ['reserveTradingAmounts-calculateGmrVat']: () => this.runJobWithConfirmation(action, row),
       ['energyTradingAmounts-calculateGmrVat']: () => this.runJobWithConfirmation(action, row),
 
-      ['reserveTradingAmounts-finalize']: () => this.runJobWithConfirmation(action, row),
-      ['energyTradingAmounts-finalize']: () => this.runJobWithConfirmation(action, row),
+      ['reserveTradingAmounts-finalize']: () => this.handleFinalize(action, row),
+      ['energyTradingAmounts-finalize']: () => this.handleFinalize(action, row),
 
-      ['energyTradingAmounts-calculateTransAlloc']: () => this.calcTransactionAllocation(action, row),
-      ['reserveTradingAmounts-calculateTransAlloc']: () => this.calcTransactionAllocation(action, row),
+      ['energyTradingAmounts-calculateTransAlloc']: () => this.triggerAllocModal(action, row),
+      ['reserveTradingAmounts-calculateTransAlloc']: () => this.triggerAllocModal(action, row),
     };
 
     actions[action]();
+  }
+
+  handleFinalize(action: string, row: any): void {
+    if (row.processType !== MeterProcessTypes.PRELIM && row.processType !== MeterProcessTypes.DAILY) {
+      this.triggerAllocModal(action, row);
+    } else {
+      this.runJobWithConfirmation(action, row);
+    }
   }
 
   confirmAction(action: string, message?: string): NzModalRef {
@@ -658,7 +666,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
    * Calculate Transaction Allocation
    */
 
-  calcTransactionAllocation(action: string, row: any): void {
+  triggerAllocModal(action: string, row: any): void {
     const modal = this.modal.create({
       nzTitle: LABELS.RUN_JOB,
       nzContent: TransactionAllocComponent,

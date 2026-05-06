@@ -12,19 +12,19 @@
             </nz-form-control>
           </nz-form-item>
 
-            <nz-form-item>
-              <nz-form-label nzSpan="8">{{ LABELS.STATUS }}</nz-form-label>
-              <nz-form-control nzSpan="16">
-                <nz-select formControlName="status" [nzOptions]="statusOptions" [nzPlaceHolder]="LABELS.ALL" [nzAllowClear]="true" nzShowSearch></nz-select>
-              </nz-form-control>
-            </nz-form-item>
+          <nz-form-item class="mb-3">
+            <nz-form-label nzSpan="8">{{ LABELS.STATUS }}</nz-form-label>
+            <nz-form-control nzSpan="16">
+              <nz-select formControlName="status" [nzOptions]="statusOptions" [nzPlaceHolder]="LABELS.ALL" [nzAllowClear]="true" nzShowSearch></nz-select>
+            </nz-form-control>
+          </nz-form-item>
 
-            <nz-form-item class="mb-3">
-              <nz-form-label nzSpan="8">{{ LABELS.TYPE }}</nz-form-label>
-              <nz-form-control nzSpan="16">
-                <nz-select formControlName="penaltyType" [nzOptions]="typeOptions" [nzPlaceHolder]="LABELS.ALL" [nzAllowClear]="true" nzShowSearch></nz-select>
-              </nz-form-control>
-            </nz-form-item>
+          <nz-form-item class="mb-3">
+            <nz-form-label nzSpan="8">{{ LABELS.TYPE }}</nz-form-label>
+            <nz-form-control nzSpan="16">
+              <nz-select formControlName="penaltyType" [nzOptions]="typeOptions" [nzPlaceHolder]="LABELS.ALL" [nzAllowClear]="true" nzShowSearch></nz-select>
+            </nz-form-control>
+          </nz-form-item>
         </div>
       </div>
     </form>
@@ -43,7 +43,7 @@
       </button>
     </nz-space>
 
-    <nz-space>
+    <nz-space *ngxPermissionsOnly="[ AUTH.CALC_PENALTY ]">
       <button *nzSpaceItem nz-button (click)="generateIws()">
         {{ LABELS.GENERATE_PENALTY_IWS }}
       </button>
@@ -68,7 +68,7 @@
   </div>
 
   <!-- Table -->
-  <app-paginated-table #paginatedTable [enableCheckbox]="true" resultsProp="pipelineGroup" [tableColumns]="tableColumns" [url]="getUrl()" [showActions]="true" [tableConfig]="{ height: '60vh' }" [enableExpand]="true" [expandTpl]="expandTpl" [actionControls]="actionControls"></app-paginated-table>
+  <app-paginated-table #paginatedTable [enableCheckbox]="true" resultsProp="pipelineGroup" [tableColumns]="tableColumns" [url]="getUrl()" [showActions]="true" [tableConfig]="{ height: '60vh' }" [enableExpand]="true" [expandTpl]="expandTpl" [actionControls]="actionControls" [showActions]="hasCalcPerm"></app-paginated-table>
 
   <ng-template #expandTpl let-row="row">
     <div class="d-flex flex-column w-100 my-2 pe-2">
@@ -81,7 +81,7 @@
       </ng-template>
 
       @if (row?.pipelines?.length) {
-        <p class="fw-bold">{{ LABELS.PIPELINES }}</p>
+        <p class="fw-bold mt-3">{{ LABELS.PIPELINES }}</p>
         <app-pipeline-table class="w-100" [rowData]="row?.pipelines"></app-pipeline-table>
       }
     </div>

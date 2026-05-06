@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
-import { WESM_PENALTY_STATUS, WESM_PENALTY_TYPE } from '@shared/constants';
+import { PHASE_TWO_AUTHORITIES, WESM_PENALTY_STATUS, WESM_PENALTY_TYPE } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { meterProcessBillingPeriod, TPL_TABLE_COLUMN, TableAction, meterProcessPipelineGroup } from '@shared/interfaces';
 import { MeterprocessService, SettlementService } from '@shared/services/api';
@@ -13,6 +13,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { ToastrService } from 'ngx-toastr';
 import { TransactionAllocComponent } from '../shared/transaction-alloc/transaction-alloc.component';
+import { NgxPermissionsService } from 'ngx-permissions';
 
 @Component({
   selector: 'app-wesm-penalty',
@@ -30,8 +31,10 @@ export class WesmPenaltyComponent implements OnInit {
   private readonly modalService = inject(NzModalService);
   private readonly destroyRef$ = inject(DestroyRef);
   private readonly toastrService = inject(ToastrService);
+  private readonly permissionService = inject(NgxPermissionsService);
 
   LABELS = LABELS;
+  AUTH = PHASE_TWO_AUTHORITIES;
   tableColumns: TPL_TABLE_COLUMN[];
   form: FormGroup;
   showForm = false;
@@ -43,15 +46,16 @@ export class WesmPenaltyComponent implements OnInit {
   statusOptions: NzSelectOptionInterface[] = [];
   typeOptions: NzSelectOptionInterface[] = [];
   filters: any = {};
+  hasCalcPerm: boolean;
 
   pipelineRecords: Record<string, any> = {
     ['penalty-calculate']: {
       message: MESSAGES.CONFIRM_SETTLEMENT_MSG('Calculate Financial Penalty'),
-      modalTitle: LABELS.CALCULATE
+      modalTitle: `${LABELS.CALCULATE} ${LABELS.PENALTY}`
     },
     ['penalty-finalize']: {
       message: MESSAGES.CONFIRM_SETTLEMENT_MSG('Finalize Financial Penalty'),
-      modalTitle: LABELS.FINALIZE
+      modalTitle: `${LABELS.FINALIZE} ${LABELS.PENALTY}`
     },
   }
 
@@ -63,6 +67,9 @@ export class WesmPenaltyComponent implements OnInit {
     this.buildForm();
     this.formatTableColumns();
     this.getOptions();
+
+    this.permissionService.hasPermission(PHASE_TWO_AUTHORITIES.CALC_PENALTY)
+      .then(hasPerm => this.hasCalcPerm = hasPerm)
   }
 
   buildForm(): void {
@@ -191,7 +198,7 @@ export class WesmPenaltyComponent implements OnInit {
 
   calcTransactionAllocation(action: string, row: any): void {
     const modal = this.modalService.create({
-      nzTitle: LABELS.FINALIZE,
+      nzTitle: `${LABELS.FINALIZE} ${LABELS.PENALTY}`,
       nzContent: TransactionAllocComponent,
       nzCentered: true,
       nzData: { rowData: row, action },
@@ -218,22 +225,26 @@ export class WesmPenaltyComponent implements OnInit {
   }
 
 
-  get actionControls(): TableAction < any > [] {
-  return [
-    {
-      label: LABELS.CALCULATE,
-      value: 'calculate',
-      click: (rowData: meterProcessPipelineGroup) => this.triggerAction('penalty-calculate', rowData),
-      hidden: (rowData: meterProcessPipelineGroup) => !rowData.pipelines?.some(p => p.name === 'penalty' && p.status === 'Completed')
-    },
-    {
-      label: LABELS.FINALIZE,
-      value: 'finalize',
-      click: (rowData: any) => this.calcTransactionAllocation('penalty-finalize', rowData),
-      hidden: (rowData: meterProcessPipelineGroup) => !rowData.pipelines?.some(p => p.name === 'penalty-calculate' && p.status === 'Completed')
-    },
-  ];
-}
+  hideAction(rowData: meterProcessPipelineGroup, labelName: string): boolean {
+    return !rowData.pipelines?.some(p => p.name === labelName && p.status === 'Completed') || !this.hasCalcPerm;
+  }
+
+  get actionControls(): TableAction <any> [] {
+    return [
+      {
+        label: `${LABELS.CALCULATE} ${LABELS.PENALTY}`,
+        value: 'calculate',
+        click: (rowData: meterProcessPipelineGroup) => this.triggerAction('penalty-calculate', rowData),
+        hidden: (rowData: meterProcessPipelineGroup) => this.hideAction(rowData, 'penalty'),
+      },
+      {
+        label: `${LABELS.FINALIZE} ${LABELS.PENALTY}`,
+        value: 'finalize',
+        click: (rowData: any) => this.calcTransactionAllocation('penalty-finalize', rowData),
+        hidden: (rowData: meterProcessPipelineGroup) => this.hideAction(rowData, 'penalty-calculate'),
+      },
+    ];
+  }
 
 
 }
@@ -246,13 +257,13 @@ const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
 
 const billingColumns: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.BILLING_ID]: { label: LABELS.BILLING_ID, propName: 'billingId' },
-  [LABELS.TYPE]: { label: LABELS.TYPE, propName: 'type', align: 'center' },
-  [LABELS.PENALTY_AMOUNT]: { label: LABELS.PENALTY_AMOUNT, propName: 'penaltyAmount', align: 'center', type: 'number' },
+  [LABELS.TYPE]: { label: LABELS.TYPE, propName: 'type', align: 'center', type: 'enumLabel' },
+  [LABELS.PENALTY_AMOUNT]: { label: LABELS.PENALTY_AMOUNT, propName: 'penaltyAmount', align: 'right', type: 'amount' },
 }
 
 const expandedTableCols: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.DOCUMENT_NUMBER]: { label: LABELS.DOCUMENT_NUMBER, propName: 'documentNo' },
-  [LABELS.DATE]: { label: LABELS.DATE, propName: 'date', type: 'date', align: 'center' },
+  [LABELS.DATE]: { label: LABELS.DATE, propName: 'date', type: 'date' },
   [LABELS.RESOURCE_ID]: { label: LABELS.RESOURCE_ID, propName: 'resourceId' },
-  [LABELS.PENALTY_OR_REFUND]: { label: LABELS.PENALTY_OR_REFUND, propName: 'penalty', type: 'number' },
+  [LABELS.PENALTY_OR_REFUND]: { label: LABELS.PENALTY_OR_REFUND, propName: 'penalty', type: 'amount', align: 'right' },
 }

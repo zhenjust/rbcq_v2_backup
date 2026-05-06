@@ -64,6 +64,10 @@
                 <td [nzAlign]="align" class="px-3" [attr.rowspan]="rowspanValue">{{ (data | enumToLabel) || '-'}}</td>
               }
 
+              @case ('amount') {
+                <td [nzAlign]="align" class="px-3" [attr.rowspan]="rowspanValue">{{ (data | number: '1.2-2') || '-'}}</td>
+              }
+
               @default {
                 <td [nzAlign]="align" class="px-3 text-nowrap" [attr.rowspan]="rowspanValue">{{ data || '-' }}</td>
               }
@@ -80,7 +84,7 @@
 
       @if (expandSet.has(row[expandProp() || 'id'])) {
         <tr>
-          <td [attr.colspan]="widthConfig.length" class="px-3" [style.background-color]="useDarkBg() ? '#e1e1e1' : 'whitesmoke'">
+          <td [attr.colspan]="widthConfig.length" class="p-3" [style.background-color]="useDarkBg() ? '#e1e1e1' : 'whitesmoke'">
             <ng-container *ngTemplateOutlet="expandTpl()!; context:  { row }"></ng-container>
           </td>
         <tr>

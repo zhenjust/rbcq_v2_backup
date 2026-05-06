@@ -13,7 +13,10 @@ const routes: Routes = [
       canActivate: [ngxPermissionsGuard],
       data: {
         permissions: {
-          only: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS],
+          only: [
+            PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS,
+            PHASE_TWO_AUTHORITIES.CALC_PENALTY
+          ],
           redirectTo: externalRoutes.HOME
         }
       },

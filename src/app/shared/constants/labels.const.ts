@@ -215,6 +215,8 @@ export const LABELS = {
   FINAL: 'Final',
   ADJUSTED: 'Adjustment',
   ENERGY_MARKET_FEE: 'Energy Market Fee',
-  CALCULATE_FINANCIAL_PENALTY: 'Calculate Financial Penalty'
+  CALCULATE_FINANCIAL_PENALTY: 'Calculate Financial Penalty',
+  PENALTY: 'Penalty',
+  REFUND: 'Refund',
 
 }

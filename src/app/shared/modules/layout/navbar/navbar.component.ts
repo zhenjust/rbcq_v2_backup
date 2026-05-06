@@ -671,6 +671,7 @@ export class NavbarComponent implements OnInit {
           PHASE_TWO_AUTHORITIES.EMF_FINALIZE,
           PHASE_TWO_AUTHORITIES.EMF_GENERATE_EMF_FILE,
           PHASE_TWO_AUTHORITIES.UPLOAD_BILLING_STATEMENT,
+          PHASE_TWO_AUTHORITIES.CALC_PENALTY
         ],
         children: [
           //PEMC ROUTES
@@ -850,6 +851,7 @@ export class NavbarComponent implements OnInit {
               PHASE_TWO_AUTHORITIES.EMF_FINALIZE,
               PHASE_TWO_AUTHORITIES.EMF_GENERATE_EMF_FILE,
               PHASE_TWO_AUTHORITIES.UPLOAD_BILLING_STATEMENT,
+              PHASE_TWO_AUTHORITIES.CALC_PENALTY
             ],
             children: [
               {
@@ -887,7 +889,10 @@ export class NavbarComponent implements OnInit {
                 title: 'Calculate Financial Penalty',
                 show: true,
                 path: NEW_ROUTES.WESM_PENALTY,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
+                permission: [
+                  PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS,
+                  PHASE_TWO_AUTHORITIES.CALC_PENALTY
+                ]
               },
               {
                 title: 'Manage Additional Compensation Claims',

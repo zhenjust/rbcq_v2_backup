@@ -3,7 +3,7 @@ export interface TPL_TABLE_COLUMN {
   propName: string,
   secondPropName?: string,
   align?: 'center' | 'left' | 'right';
-  type?: 'string' | 'number' | 'date' | 'template' | 'enumLabel';
+  type?: 'string' | 'number' | 'date' | 'template' | 'enumLabel' | 'amount';
   width?: string,
   template?: any,
   hasRowSpan?: boolean,
