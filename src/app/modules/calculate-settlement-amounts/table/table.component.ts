@@ -645,7 +645,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     return [
       ...['25px', '100px', '140px', '100px', '180px', '200px'],
       ...(this.isLineRentalStatus ? ['200px'] : []),
-      ...['100px']
+      ...['100px', '100px']
     ];
   }
 

@@ -96,7 +96,7 @@ export const BaseTableItem: TableColumn[] = [
   { name: 'Trading Date', key: 'tradingDate' },
   { name: 'Status', key: 'status' },
   { name: 'Line Rental Status', key: 'lineRentalStatus' },
-  // { name: 'Progress', key: 'progress' },
+  { name: 'Published', key: 'published' },
   { name: 'Actions', key: 'actions' }
 ];
 
