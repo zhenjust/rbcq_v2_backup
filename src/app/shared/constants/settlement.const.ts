@@ -54,9 +54,10 @@ export const SettlementJobActions: JobSelect[] = [
   { label: LABELS.CALCULATE_RESERVE_TRANSACTION_ALLOCATION, value: 'reserveTradingAmounts-calculateTransAlloc', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
   { label: LABELS.GENERATE_ENERGY_TRANSACTION_REPORT, value: 'energyTradingAmounts-generateTransactionReport', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
   { label: LABELS.GENERATE_RESERVE_TRANSACTION_REPORT, value: 'reserveTradingAmounts-generateTransactionReport', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
-  { label: LABELS.GENERATE_RESERVE_FILES, value: 'reserveTradingAmounts-generateFiles', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
   { label: LABELS.GENERATE_ENERGY_FILES, value: 'energyTradingAmounts-generateFiles', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
-  { label: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`, value: 'publish' },
+  { label: LABELS.GENERATE_RESERVE_FILES, value: 'reserveTradingAmounts-generateFiles', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
+  { label: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`, value: 'energyTradingAmounts-publish', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
+  { label: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`, value: 'reserveTradingAmounts-publish', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
   /**
    * IN_PROGRESS
    */

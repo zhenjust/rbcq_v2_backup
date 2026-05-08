@@ -145,6 +145,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     });
   }
 
+  // for removal
   onActionSelect(selectedValue: string | any, rowData: settlementPipeline): void {
     const actionValue = typeof selectedValue === 'string' ? selectedValue : selectedValue?.toString();
     const processType = rowData.processType;
@@ -202,9 +203,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
         );
         break;
 
-      case 'publish':
-        this.handlePublishAction(rowData);
-        break;
       default:
         this.clearDateRange();
         this.resetActionSelection(rowData);
@@ -232,51 +230,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       nzTitle: label,
       nzContent: msg as any,
       nzOnOk: okAction$
-    });
-  }
-
-  handlePublishAction(rowData: settlementPipeline): void {
-    const payload: PublishSettlement = {
-      stlGroupId: +rowData.workspaceId,
-      processType: rowData.processType,
-      stlSource: 'ENERGY'
-    };
-
-    const api$ = () => {
-      this.ss.publish(payload)
-        .subscribe((res => {
-          this.toast.success(res.message);
-          this.search();
-        }
-        ));
-    };
-
-    // test data
-    const value = this.dp.transform(new Date(), 'yyyy-MM-dd');
-
-    const nzData = {
-      message: MESSAGES.CONFIRM_PUBLISH_ITEM(LABELS.TRANSACTION_REPORT.toLowerCase()),
-      okAction: LABELS.PUBLISH,
-      descriptions: [
-        {
-          label: LABELS.DUE_DATE,
-          value
-        },
-        {
-          label: `${LABELS.TRADING_DATE}/${LABELS.BILLING_PERIOD}`,
-          value: `${value} to ${value}`
-        },
-      ]
-    };
-
-    this.modal.create({
-      nzTitle: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`,
-      nzContent: ConfirmWithDescComponent,
-      nzCentered: true,
-      nzFooter: null,
-      nzData,
-      nzWidth: '600px',
-      nzOnOk: () => api$()
     });
   }
 
@@ -367,27 +320,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   /**
    * NEW IMPLEMENTATION FOR ACTIONS
    */
-
-  triggerActionNames = [
-    'cancelRun',
-    'energyTradingAmounts-generateInputWorkspace',
-    'reserveTradingAmounts-generateInputWorkspace',
-    'energyTradingAmounts-calculateTradingAmount',
-    'reserveTradingAmounts-calculateTradingAmount',
-    'energyTradingAmounts-calculateMSummary',
-    'reserveTradingAmounts-calculateMSummary',
-    'energyTradingAmounts-calculateGmrVat',
-    'reserveTradingAmounts-calculateGmrVat',
-    'energyTradingAmounts-finalize',
-    'reserveTradingAmounts-finalize',
-    'energyTradingAmounts-calculateTransAlloc',
-    'reserveTradingAmounts-calculateTransAlloc',
-    'energyTradingAmounts-generateTransactionReport',
-    'reserveTradingAmounts-generateTransactionReport',
-    'energyTradingAmounts-generateFiles',
-    'reserveTradingAmounts-generateFiles'
-  ];
-
   triggerAction(action: string, row: any): void {
     const actions: Record<string, () => unknown> = {
       ['cancelRun']: () => this.cancelRun(action, row.id),
@@ -414,7 +346,10 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       ['reserveTradingAmounts-generateTransactionReport']: () => this.generateFiles(action, row),
 
       ['energyTradingAmounts-generateFiles']: () => this.generateFiles(action, row),
-      ['reserveTradingAmounts-generateFiles']: () => this.generateFiles(action, row)
+      ['reserveTradingAmounts-generateFiles']: () => this.generateFiles(action, row),
+
+      ['energyTradingAmounts-publish']: () => this.handlePublishAction('ENERGY', row),
+      ['reserveTradingAmounts-publish']: () => this.handlePublishAction('RESERVE', row)
     };
 
     actions[action]();
@@ -517,6 +452,51 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
             this.toast.success(MESSAGES.SUCCESS_CANCEL_ITEM('run'));
           });
       }
+    });
+  }
+
+  handlePublishAction(stlSource: string, rowData: any): void {
+    const payload: PublishSettlement = {
+      stlGroupId: +rowData.workspaceId,
+      processType: rowData.processType,
+      stlSource: stlSource
+    };
+
+    const api$ = () => {
+      this.ss.publish(payload)
+        .subscribe((res => {
+            this.toast.success(res.message);
+            this.search();
+          }
+        ));
+    };
+
+    // test data
+    const value = this.dp.transform(new Date(), 'yyyy-MM-dd');
+
+    const nzData = {
+      message: MESSAGES.CONFIRM_PUBLISH_ITEM(LABELS.TRANSACTION_REPORT.toLowerCase()),
+      okAction: LABELS.PUBLISH,
+      descriptions: [
+        {
+          label: LABELS.DUE_DATE,
+          value
+        },
+        {
+          label: `${LABELS.TRADING_DATE}/${LABELS.BILLING_PERIOD}`,
+          value: `${value} to ${value}`
+        },
+      ]
+    };
+
+    this.modal.create({
+      nzTitle: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`,
+      nzContent: ConfirmWithDescComponent,
+      nzCentered: true,
+      nzFooter: null,
+      nzData,
+      nzWidth: '600px',
+      nzOnOk: () => api$()
     });
   }
 

@@ -84,7 +84,8 @@ export interface addtlCompensationRunDtos {
 export interface PublishSettlement {
     stlGroupId: number,
     processType: string,
-    stlSource: string
+    stlSource: string,
+    dueDate?: string
 }
 
 export interface EnergyTradingAmounts {

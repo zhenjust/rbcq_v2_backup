@@ -30,7 +30,6 @@ export class SettlementActionsPipe implements PipeTransform {
         const hasFinalized = pipelines.some(
           p => (p.name === 'energyTradingAmounts-finalize' || p.name === 'reserveTradingAmounts-finalize') && p.status === 'Completed'
         );
-
         if (this.DISABLE_ON_FINALIZED.includes(value) && hasFinalized) {
           action.show = false;
           return action;
@@ -55,8 +54,12 @@ export class SettlementActionsPipe implements PipeTransform {
           return action;
         }
 
-        if (value === 'publish') {
-          action.show = !data.published;
+        if (value === 'energyTradingAmounts-publish' || value === 'reserveTradingAmounts-publish') {
+          const canPublished = pipelines.some(
+            p => (p.name === 'energyTradingAmounts-generateTransactionReport' || p.name === 'reserveTradingAmounts-generateTransactionReport' ||
+              p.name === 'energyTradingAmounts-generateFiles' || p.name === 'reserveTradingAmounts-generateFiles') && p.status === 'Completed'
+          );
+          action.show = canPublished && !data.published;
         }
 
         if (value === 'energyTradingAmounts-generateInputWorkspace' || value === 'reserveTradingAmounts-generateInputWorkspace') {
@@ -134,9 +137,6 @@ export class SettlementActionsPipe implements PipeTransform {
   ];
 
   handleGenerateStatus(action: JobSelect, status: keyof typeof SettlementStatus): JobSelect {
-    const isRta = action.type === settlementSearchNames.RESERVE_TRADING_AMOUNTS && action.value === 'reserveTradingAmounts-generateInputWorkspace';
-    const isEta = action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS && action.value === 'energyTradingAmounts-generateInputWorkspace';
-
     const statuses =  [
       SettlementStatus.IN_PROGRESS_GENERATE_INPUT_RESERVE_WORKSPACE,
       SettlementStatus.IN_PROGRESS_GENERATE_INPUT_ENERGY_WORKSPACE,
@@ -145,17 +145,14 @@ export class SettlementActionsPipe implements PipeTransform {
     ];
 
     action.permissions = [PHASE_TWO_AUTHORITIES.TA_GENERATE_IW];
-    action.show = !statuses.includes(status) && (isRta || isEta) && this.checkPermissions(action.permissions);
+    action.show = !statuses.includes(status) && this.checkPermissions(action.permissions);
 
     return action;
   }
 
   handleCalculateTA(action: JobSelect, pipelines: any[], isSettlementModule = true): JobSelect {
-    const isRtaPipeline = action.type === settlementSearchNames.RESERVE_TRADING_AMOUNTS && action.value === 'reserveTradingAmounts-calculateTradingAmount';
-    const isEtaPipeline = action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS && action.value === 'energyTradingAmounts-calculateTradingAmount';
-
     action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_CALCULATE_TA] : [];
-    action.show = this.checkPermissions(action.permissions) && (isRtaPipeline || isEtaPipeline) && pipelines.some(
+    action.show = this.checkPermissions(action.permissions) && pipelines.some(
       p => (p.name === 'energyTradingAmounts-generateInputWorkspace' || p.name === 'reserveTradingAmounts-generateInputWorkspace') && p.status === 'Completed'
     );
 
@@ -163,11 +160,8 @@ export class SettlementActionsPipe implements PipeTransform {
   }
 
   handleGenerateMonthlySummary(action: JobSelect, pipelines: any[], isSettlementModule = true): JobSelect {
-    const isRtaPipeline = action.type === settlementSearchNames.RESERVE_TRADING_AMOUNTS && action.value === 'reserveTradingAmounts-calculateMSummary';
-    const isEtaPipeline = action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS && action.value === 'energyTradingAmounts-calculateMSummary';
-
     action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_GEN_MONTHLY_SUMMARY] : [];
-    action.show = this.checkPermissions(action.permissions) && (isRtaPipeline || isEtaPipeline) && pipelines.some(
+    action.show = this.checkPermissions(action.permissions) && pipelines.some(
       p => (p.name === 'energyTradingAmounts-calculateTradingAmount' || p.name === 'reserveTradingAmounts-calculateTradingAmount') && p.status === 'Completed'
     );
 
@@ -175,11 +169,8 @@ export class SettlementActionsPipe implements PipeTransform {
   }
 
   handleCalcGmrVat(action: JobSelect, pipelines: any[], isSettlementModule = true): JobSelect {
-    const isRtaPipeline = action.type === settlementSearchNames.RESERVE_TRADING_AMOUNTS && action.value === 'reserveTradingAmounts-calculateGmrVat';
-    const isEtaPipeline = action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS && action.value === 'energyTradingAmounts-calculateGmrVat';
-
     action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_CALCULATE_GMRVAT] : [];
-    action.show = this.checkPermissions(action.permissions) && (isRtaPipeline || isEtaPipeline) && pipelines.some(
+    action.show = this.checkPermissions(action.permissions) && pipelines.some(
       p => (p.name === 'reserveTradingAmounts-calculateMSummary' || p.name === 'energyTradingAmounts-calculateMSummary') && p.status === 'Completed'
     );
 
@@ -187,11 +178,8 @@ export class SettlementActionsPipe implements PipeTransform {
   }
 
   handleFinalizeSettlement(action: JobSelect, pipelines: any[], isSettlementModule = true): JobSelect {
-    const isRtaPipeline = action.type === settlementSearchNames.RESERVE_TRADING_AMOUNTS && action.value === 'reserveTradingAmounts-finalize';
-    const isEtaPipeline = action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS && action.value === 'energyTradingAmounts-finalize';
-
     action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_FINALIZE] : [];
-    action.show = this.checkPermissions(action.permissions) && (isRtaPipeline || isEtaPipeline) && pipelines.some(
+    action.show = this.checkPermissions(action.permissions) && pipelines.some(
       p => (p.name === 'reserveTradingAmounts-calculateGmrVat' || p.name === 'energyTradingAmounts-calculateGmrVat') && p.status === 'Completed'
     );
 
@@ -199,11 +187,8 @@ export class SettlementActionsPipe implements PipeTransform {
   }
 
   handleCalcTransAlloc(action: JobSelect, isSettlementModule = true, pipelines: any[]): JobSelect {
-    const isRtaPipeline = action.type === settlementSearchNames.RESERVE_TRADING_AMOUNTS && action.value === 'reserveTradingAmounts-calculateTransAlloc';
-    const isEtaPipeline = action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS && action.value === 'energyTradingAmounts-calculateTransAlloc';
-
     action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_CALCULATE_GMRVAT] : [];
-    action.show = this.checkPermissions(action.permissions) && (isRtaPipeline || isEtaPipeline) && pipelines.some(
+    action.show = this.checkPermissions(action.permissions) && pipelines.some(
       p => (p.name === 'energyTradingAmounts-finalize' || p.name === 'reserveTradingAmounts-finalize') && p.status === 'Completed'
     );
 
@@ -211,12 +196,9 @@ export class SettlementActionsPipe implements PipeTransform {
   }
 
   handleGenerateTransactionReport(action: JobSelect, pipelines: pipeline[], isSettlementModule = true): JobSelect {
-    const isRta = action.type === settlementSearchNames.RESERVE_TRADING_AMOUNTS && action.value === 'reserveTradingAmounts-calculateTransAlloc';
-    const isEta = action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS && action.value === 'energyTradingAmounts-calculateTransAlloc';
-
     const permissions = [
-      ...(isRta ? [PHASE_TWO_AUTHORITIES.TA_GENERATE_RESERVE_FILE] : []),
-      ...(isEta ? [PHASE_TWO_AUTHORITIES.TA_GENERATE_ENERGY_FILE] : []),
+      ...(action.type === settlementSearchNames.RESERVE_TRADING_AMOUNTS ? [PHASE_TWO_AUTHORITIES.TA_GENERATE_RESERVE_FILE] : []),
+      ...(action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS ? [PHASE_TWO_AUTHORITIES.TA_GENERATE_ENERGY_FILE] : []),
     ];
 
     action.permissions = isSettlementModule ? permissions : [];
@@ -228,12 +210,9 @@ export class SettlementActionsPipe implements PipeTransform {
   }
 
   handleGenerateFiles(action: JobSelect, pipelines: pipeline[], isSettlementModule = true): JobSelect {
-    const isRta = action.type === settlementSearchNames.RESERVE_TRADING_AMOUNTS && action.value === 'reserveTradingAmounts-generateFiles';
-    const isEta = action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS && action.value === 'energyTradingAmounts-generateFiles';
-
     const permissions = [
-      ...(isRta ? [PHASE_TWO_AUTHORITIES.TA_GENERATE_RESERVE_FILE] : []),
-      ...(isEta ? [PHASE_TWO_AUTHORITIES.TA_GENERATE_ENERGY_FILE] : []),
+      ...(action.type === settlementSearchNames.RESERVE_TRADING_AMOUNTS ? [PHASE_TWO_AUTHORITIES.TA_GENERATE_RESERVE_FILE] : []),
+      ...(action.type === settlementSearchNames.ENERGY_TRADING_AMOUNTS ? [PHASE_TWO_AUTHORITIES.TA_GENERATE_ENERGY_FILE] : []),
     ];
 
     action.permissions = isSettlementModule ? permissions : [];

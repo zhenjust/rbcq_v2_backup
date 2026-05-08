@@ -36,7 +36,7 @@
                                 <nz-dropdown-menu #menu="nzDropdownMenu">
                                     <ul nz-menu nzSelectable>
                                         @for (action of actions; track action.value) {
-                                            <li nz-menu-item (click)="triggerActionNames.includes(action.value) ? triggerAction(action.value, data) : onActionSelect(action.value, data)">{{ action.label }}</li>
+                                            <li nz-menu-item (click)="triggerAction(action.value, data)">{{ action.label }}</li>
                                         }
                                     </ul>
                                 </nz-dropdown-menu>
