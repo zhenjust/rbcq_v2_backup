@@ -398,9 +398,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       ['energyTradingAmounts-calculateTradingAmount']: () => this.runJobWithDateSelection(action, row),
       ['reserveTradingAmounts-calculateTradingAmount']: () => this.runJobWithDateSelection(action, row),
 
-      ['energyTradingAmounts-generateFiles']: () => this.generateFiles(action, row),
-      ['reserveTradingAmounts-generateFiles']: () => this.generateFiles(action, row),
-
       ['energyTradingAmounts-calculateMSummary']: () => this.runJobWithConfirmation(action, row),
       ['reserveTradingAmounts-calculateMSummary']: () => this.runJobWithConfirmation(action, row),
 
@@ -412,6 +409,12 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
       ['energyTradingAmounts-calculateTransAlloc']: () => this.triggerAllocModal(action, row),
       ['reserveTradingAmounts-calculateTransAlloc']: () => this.triggerAllocModal(action, row),
+
+      ['energyTradingAmounts-generateTransactionReport']: () => this.generateFiles(action, row),
+      ['reserveTradingAmounts-generateTransactionReport']: () => this.generateFiles(action, row),
+
+      ['energyTradingAmounts-generateFiles']: () => this.generateFiles(action, row),
+      ['reserveTradingAmounts-generateFiles']: () => this.generateFiles(action, row)
     };
 
     actions[action]();
