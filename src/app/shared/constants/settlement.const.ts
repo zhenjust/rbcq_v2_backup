@@ -53,8 +53,8 @@ export const SettlementJobActions: JobSelect[] = [
   { label: LABELS.CALCULATE_RESERVE_TRANSACTION_ALLOCATION, value: 'reserveTradingAmounts-calculateTransAlloc', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS }, // vm.resource === 'reserve-trading-amounts', perm: PROCESS_TRANSACTION_ALLOCATION, item.parentStlJobGroupDto.taggingStatus === 'COMPLETED', condition: (item.processType == 'FINAL' || item.processType == 'PRELIM' || item.processType == 'ADJUSTED')"
   { label: LABELS.CALCULATE_ENERGY_TRANSACTION_ALLOCATION, value: 'energyTradingAmounts-calculateTransAlloc', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
   { label: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`, value: 'publish' },
-  { label: LABELS.GENERATE_RESERVE_FILES, value: 'generate_reserve_files', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
-  { label: LABELS.GENERATE_ENERGY_FILES, value: 'generate_energy_files', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
+  { label: LABELS.GENERATE_RESERVE_FILES, value: 'generateReserveFiles', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
+  { label: LABELS.GENERATE_ENERGY_FILES, value: 'generateEnergyFiles', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
 
   /**
    * IN_PROGRESS

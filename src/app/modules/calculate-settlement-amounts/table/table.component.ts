@@ -72,8 +72,8 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     ['generateInputWorkspace']: ETA_JOBS.GEN_INPUT_WORKSPACE,
     ['calculateEnergyTradingAmount']: ETA_JOBS.CAL_TRADING_AMOUNTS,
     ['calculateReserveTradingAmount']: ETA_JOBS.CALC_RESERVE_TRADING_AMOUNTS,
-    ['generate_reserve_files']: ETA_JOBS.RTA_GENERATE_FILES,
-    ['generate_energy_files']: ETA_JOBS.ETA_GENERATE_FILES,
+    ['generateReserveFiles']: ETA_JOBS.RTA_GENERATE_FILES,
+    ['generateEnergyFiles']: ETA_JOBS.ETA_GENERATE_FILES,
   };
 
   constructor() {
@@ -466,8 +466,8 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     'cancelRun',
     'calculateEnergyTradingAmount',
     'calculateReserveTradingAmount',
-    'generate_energy_files',
-    'generate_reserve_files',
+    'generateEnergyFiles',
+    'generateReserveFiles',
     'generateInputWorkspace',
     'generateReserveInputWorkspace',
     'energyTradingAmounts-calculateMSummary',
