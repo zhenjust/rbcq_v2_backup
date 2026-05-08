@@ -36,6 +36,11 @@ export interface settlementPipeline {
     workspaceId: string
     published?: boolean;
     pipelines: pipeline[];
+    parameters?: {
+      dueDate?: string;
+      allocDate?: string;
+      remarks?: string;
+    }
 }
 
 export interface pipeline {

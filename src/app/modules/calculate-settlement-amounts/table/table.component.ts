@@ -339,8 +339,8 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       ['reserveTradingAmounts-finalize']: () => this.handleFinalize(action, row),
       ['energyTradingAmounts-finalize']: () => this.handleFinalize(action, row),
 
-      ['energyTradingAmounts-calculateTransAlloc']: () => this.triggerAllocModal(action, row),
-      ['reserveTradingAmounts-calculateTransAlloc']: () => this.triggerAllocModal(action, row),
+      ['energyTradingAmounts-calculateTransAlloc']: () => this.runJobWithConfirmation(action, row),
+      ['reserveTradingAmounts-calculateTransAlloc']: () => this.runJobWithConfirmation(action, row),
 
       ['energyTradingAmounts-generateTransactionReport']: () => this.generateFiles(action, row),
       ['reserveTradingAmounts-generateTransactionReport']: () => this.generateFiles(action, row),
@@ -425,9 +425,10 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
   runJobWithConfirmation(action: string, row: any): void {
     const modal = this.confirmAction(action);
+    const finalizePipeline = row.pipelines?.find((p: any) => p.name?.includes('finalize')) || {};
 
     modal.updateConfig({
-      nzOnOk: () => this.runEtaStlJobs(row, action)
+      nzOnOk: () => this.runEtaStlJobs({...row, ...finalizePipeline}, action)
     });
   }
 

@@ -1,10 +1,10 @@
-import {inject, Injectable} from '@angular/core';
-import {BaseResponse, EnergyTradingAmounts, settlementPipeline} from '@shared/interfaces';
-import {MeterProcessTypes} from '@shared/enums';
-import {SettlementService} from '../api';
-import {ToastrService} from 'ngx-toastr';
-import {DateFormatterUtilService} from '../utils';
-import {Observable} from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { BaseResponse, EnergyTradingAmounts, settlementPipeline } from '@shared/interfaces';
+import { MeterProcessTypes } from '@shared/enums';
+import { SettlementService } from '../api';
+import { ToastrService } from 'ngx-toastr';
+import { DateFormatterUtilService } from '../utils';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +28,7 @@ export class RunSettlementService {
 
   etaStlJobs(data: settlementPipeline, jobName: string, isGroupUrl = false): Observable<BaseResponse> {
     const payload = this.buildPayload(data, jobName);
-    return this.stlApi.etaJobs(payload, isGroupUrl)
+    return this.stlApi.etaJobs(payload, isGroupUrl);
   }
 
   viewCalculations(data: settlementPipeline): void {
@@ -46,6 +46,8 @@ export class RunSettlementService {
   // helper functions
   private buildPayload(data: settlementPipeline, pipelineName: string ): EnergyTradingAmounts {
     const [start, end] = this.getDateRangeForProcessType(data);
+    const shouldIncludeDueDate = pipelineName.includes('calculateTransAlloc');
+    console.log({data})
     return {
       pipelineName,
       refId: data?.id,
@@ -54,7 +56,12 @@ export class RunSettlementService {
         billingStartDate: start ? this.dateFormatter.formatDateOnly(start) : null,
         billingEndDate: end ? this.dateFormatter.formatDateOnly(end) : null,
         processType: data.processType,
-        meteringWorkspaceId: 'energyTradingAmounts-generateInputWorkspace' == pipelineName ? data?.workspaceId : null
+        meteringWorkspaceId: 'energyTradingAmounts-generateInputWorkspace' == pipelineName ? data?.workspaceId : null,
+        ...(shouldIncludeDueDate ? {
+          dueDate: data?.parameters?.dueDate,
+          allocDate: data?.parameters?.allocDate,
+          remarks: data?.parameters?.remarks
+        } : {}),
       }
     };
   }
