@@ -1,22 +1,46 @@
-import { Component, OnInit, OnDestroy, effect, computed, inject, ViewChild, TemplateRef, signal, DestroyRef } from '@angular/core';
-import { ActivatedRoute, Data } from '@angular/router';
-import { Observable, Subject, Subscription } from 'rxjs';
-import { JobSelect, PublishSettlement, settlementParams, settlementPipeline, TableColumn, TPL_TABLE_COLUMN } from '@shared/interfaces';
-import { RunSettlementService } from '@shared/services/settlement';
-import { ToastrService } from 'ngx-toastr';
-import { ETA_JOBS, MeterProcessTypes } from '@shared/enums';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { isAfter, isBefore, setHours, startOfDay, subDays } from 'date-fns';
-import { SettlementService } from '@shared/services/api';
-import { LABELS } from '@shared/constants/labels.const';
-import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
-import { MESSAGES } from '@shared/constants/messages.const';
-import { DatePipe } from '@angular/common';
-import { BaseTableItem, modalConfig, SettlementJobActions, SettlementJobSubActions, SettlementStatus } from '@shared/constants';
-import { SearchListBase } from '@shared/services/utils/list.util.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ConfirmWithContentComponent } from '@shared/components/confirm-with-content/confirm-with-content.component';
-import { TransactionAllocComponent } from '@modules/settlement/shared/transaction-alloc/transaction-alloc.component';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  TemplateRef,
+  ViewChild
+} from '@angular/core';
+import {ActivatedRoute, Data} from '@angular/router';
+import {Observable, Subject, Subscription} from 'rxjs';
+import {
+  JobSelect,
+  PublishSettlement,
+  settlementParams,
+  settlementPipeline,
+  TableColumn,
+  TPL_TABLE_COLUMN
+} from '@shared/interfaces';
+import {RunSettlementService} from '@shared/services/settlement';
+import {ToastrService} from 'ngx-toastr';
+import {MeterProcessTypes} from '@shared/enums';
+import {NzModalRef, NzModalService} from 'ng-zorro-antd/modal';
+import {isAfter, isBefore, setHours, startOfDay, subDays} from 'date-fns';
+import {SettlementService} from '@shared/services/api';
+import {LABELS} from '@shared/constants/labels.const';
+import {ConfirmWithDescComponent} from '@shared/components/confirm-with-desc/confirm-with-desc.component';
+import {MESSAGES} from '@shared/constants/messages.const';
+import {DatePipe} from '@angular/common';
+import {
+  BaseTableItem,
+  modalConfig,
+  SettlementJobActions,
+  SettlementJobSubActions,
+  SettlementStatus
+} from '@shared/constants';
+import {SearchListBase} from '@shared/services/utils/list.util.service';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {ConfirmWithContentComponent} from '@shared/components/confirm-with-content/confirm-with-content.component';
+import {TransactionAllocComponent} from '@modules/settlement/shared/transaction-alloc/transaction-alloc.component';
 
 @Component({
   selector: 'app-table',
@@ -66,15 +90,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   override busy$: Subscription;
   override resultsProp = 'pipelineGroup';
   filters: Partial<settlementParams>;
-
-  jobNameRecord: Record<string, ETA_JOBS> = {
-    ['generateReserveInputWorkspace']: ETA_JOBS.RTA_GENERATE_INPUT_WORKSPACE,
-    ['generateInputWorkspace']: ETA_JOBS.GEN_INPUT_WORKSPACE,
-    ['calculateEnergyTradingAmount']: ETA_JOBS.CAL_TRADING_AMOUNTS,
-    ['calculateReserveTradingAmount']: ETA_JOBS.CALC_RESERVE_TRADING_AMOUNTS,
-    ['generateReserveFiles']: ETA_JOBS.RTA_GENERATE_FILES,
-    ['generateEnergyFiles']: ETA_JOBS.ETA_GENERATE_FILES,
-  };
 
   constructor() {
     super();
@@ -132,7 +147,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
   onActionSelect(selectedValue: string | any, rowData: settlementPipeline): void {
     const actionValue = typeof selectedValue === 'string' ? selectedValue : selectedValue?.toString();
-    const label = this.settlementJobActions.find(act => act.value === actionValue)?.label.toString() as string;
     const processType = rowData.processType;
 
     if (!actionValue || actionValue === '') {
@@ -152,34 +166,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     };
 
     switch (actionValue) {
-      // case 'generateInputWorkspace':
-      //   this.handleGenerateInputWorkspace(rowData, label);
-      //   break;
-
-      // case 'calculateTradingAmount':
-      //   this.handleDateRangeAction(
-      //     rowData,
-      //     ETA_JOBS.CAL_TRADING_AMOUNTS,
-      //     'Calculate Energy Trading Amount for the following dates:',
-      //     'calculateTradingAmount'
-      //   );
-      //   break;
-
-      case 'calculateMSummary':
-        this.handleDateRangeAction(
-          rowData,
-          ETA_JOBS.GEN_MONTHLY_SUMMARY,
-          'Generate Monthly Summary for the following dates:',
-          'calculateMSummary'
-        );
-        break;
-
-      case 'finalize': {
-        const message = MESSAGES.CONFIRM_SETTLEMENT_MSG(label?.toLowerCase() as string);
-        this.handleAction(label, rowData, message, null, () => this.runSettlements.finalizeTradingAmounts(rowData))
-        break;
-      }
-
       case 'calculations':
         this.handleModalAction(
           rowData,
@@ -216,42 +202,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
         );
         break;
 
-      case 'calculate_transactions':
-        this.handleModalAction(
-          rowData,
-          () => this.runSettlements.calculateEnergyTransactionAllocation(rowData),
-          {
-            ...baseModalData,
-            actionMessage: 'Calculate Energy Transaction Allocation',
-            actionType: 'calculate_transactions'
-          }
-        );
-        break;
-
-      case 'generate_transac_reports':
-        this.handleModalAction(
-          rowData,
-          () => this.runSettlements.generateTransactionReport(rowData),
-          {
-            ...baseModalData,
-            actionMessage: 'Generate Transaction Report',
-            actionType: 'generate_transac_reports'
-          }
-        );
-        break;
-
-      case 'generate_energy_files':
-        this.handleModalAction(
-          rowData,
-          () => this.runSettlements.generateEnergyFiles(rowData),
-          {
-            ...baseModalData,
-            actionMessage: 'Generate Energy Files',
-            actionType: 'generate_energy_files'
-          }
-        );
-        break;
-
       case 'publish':
         this.handlePublishAction(rowData);
         break;
@@ -262,17 +212,15 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   }
 
   // for handling of actions; new implementation of modal
-  handleAction(label: string, rowData: settlementPipeline, msg: string | TemplateRef<HTMLElement>, job?: ETA_JOBS | null, api$?: () => any): void {
+  handleAction(label: string, rowData: settlementPipeline, msg: string | TemplateRef<HTMLElement>, action: string, api$?: () => any): void {
     const okAction$ = () => {
-      if (job) {
-        this.busy$ = this.runSettlements.etaStlJobs(rowData, job)
-          .subscribe(res => {
-            const message = res?.message || MESSAGES.SUCCESS_JOB_TRIGGER;
-            this.toast.success(message);
+      this.busy$ = this.runSettlements.etaStlJobs(rowData, action)
+        .subscribe(res => {
+          const message = res?.message || MESSAGES.SUCCESS_JOB_TRIGGER;
+          this.toast.success(message);
 
-            this.search();
-          });
-      }
+          this.search();
+        });
 
       if (api$) {
         api$();
@@ -330,16 +278,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       nzWidth: '600px',
       nzOnOk: () => api$()
     });
-  }
-
-  // for 'generateInputWorkspace' action
-  handleGenerateInputWorkspace(rowData: settlementPipeline, label: string, action: string): void {
-    const { processType, tradingDate, billingStartDate, billingEndDate } = rowData;
-    const isDaily = processType === MeterProcessTypes.DAILY;
-    const msg = MESSAGES.GENERATE_INPUT_WORKSPACE_TD(isDaily ? tradingDate : `${billingStartDate} to ${billingEndDate}`);
-    const jobName = this.jobNameRecord[action];
-
-    this.handleAction(label, rowData, msg, jobName);
   }
 
   // helper functions
@@ -415,38 +353,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     });
   }
 
-  handleDateRangeAction(rowData: settlementPipeline, jobName: ETA_JOBS, actionMessage: string, actionType: string): void {
-    this.clearDateRange();
-
-    if (rowData.processType !== MeterProcessTypes.DAILY) {
-      const startDate = new Date(rowData.billingStartDate);
-      const endDate = new Date(rowData.billingEndDate);
-
-      this.minDate.set(startDate);
-      this.maxDate.set(endDate);
-      this.selectedRange.set([startDate, endDate]);
-    }
-
-    const baseModalData = {
-      pipeline: rowData,
-      tradingDate: rowData.tradingDate,
-      billingPeriod: rowData.billingPeriod,
-      startDate: rowData.billingStartDate,
-      endDate: rowData.billingEndDate,
-      processType: rowData.processType
-    };
-
-    this.handleModalAction(
-      rowData,
-      () => this.runSettlements.etaStlJobs(rowData, jobName),
-      {
-        ...baseModalData,
-        actionMessage,
-        actionType
-      }
-    );
-  }
-
   onExpandChange(id: number, value: boolean): void {
     if (value) {
       this.expandSet.clear();
@@ -464,33 +370,36 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
   triggerActionNames = [
     'cancelRun',
-    'calculateEnergyTradingAmount',
-    'calculateReserveTradingAmount',
-    'generateEnergyFiles',
-    'generateReserveFiles',
-    'generateInputWorkspace',
-    'generateReserveInputWorkspace',
+    'energyTradingAmounts-generateInputWorkspace',
+    'reserveTradingAmounts-generateInputWorkspace',
+    'energyTradingAmounts-calculateTradingAmount',
+    'reserveTradingAmounts-calculateTradingAmount',
     'energyTradingAmounts-calculateMSummary',
     'reserveTradingAmounts-calculateMSummary',
-    'reserveTradingAmounts-calculateGmrVat',
     'energyTradingAmounts-calculateGmrVat',
-    'reserveTradingAmounts-finalize',
+    'reserveTradingAmounts-calculateGmrVat',
     'energyTradingAmounts-finalize',
+    'reserveTradingAmounts-finalize',
     'energyTradingAmounts-calculateTransAlloc',
     'reserveTradingAmounts-calculateTransAlloc',
+    'energyTradingAmounts-generateTransactionReport',
+    'reserveTradingAmounts-generateTransactionReport',
+    'energyTradingAmounts-generateFiles',
+    'reserveTradingAmounts-generateFiles'
   ];
 
   triggerAction(action: string, row: any): void {
     const actions: Record<string, () => unknown> = {
       ['cancelRun']: () => this.cancelRun(action, row.id),
 
-      ['calculateEnergyTradingAmount']: () => this.generateInputWorkspace(action, row),
-      ['calculateReserveTradingAmount']: () => this.generateInputWorkspace(action, row),
-      ['generateInputWorkspace']: () => this.generateInputWorkspace(action, row),
-      ['generateReserveInputWorkspace']: () => this.generateInputWorkspace(action, row),
+      ['energyTradingAmounts-generateInputWorkspace']: () => this.runJobWithDateSelection(action, row),
+      ['reserveTradingAmounts-generateInputWorkspace']: () => this.runJobWithDateSelection(action, row),
 
-      ['generate_energy_files']: () => this.generateFiles(action, row),
-      ['generate_reserve_files']: () => this.generateFiles(action, row),
+      ['energyTradingAmounts-calculateTradingAmount']: () => this.runJobWithDateSelection(action, row),
+      ['reserveTradingAmounts-calculateTradingAmount']: () => this.runJobWithDateSelection(action, row),
+
+      ['energyTradingAmounts-generateFiles']: () => this.generateFiles(action, row),
+      ['reserveTradingAmounts-generateFiles']: () => this.generateFiles(action, row),
 
       ['energyTradingAmounts-calculateMSummary']: () => this.runJobWithConfirmation(action, row),
       ['reserveTradingAmounts-calculateMSummary']: () => this.runJobWithConfirmation(action, row),
@@ -524,17 +433,23 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     });
   }
 
-  generateInputWorkspace(action: string, row: any): void {
+  runJobWithDateSelection(action: string, row: any): void {
     const isDaily = row.processType === MeterProcessTypes.DAILY;
-    const isCalc = ['calculateEnergyTradingAmount', 'calculateReserveTradingAmount'].includes(action);
+    const isCalc = ['energyTradingAmounts-calculateTradingAmount', 'reserveTradingAmounts-calculateTradingAmount'].includes(action);
 
     if (isDaily) {
+      const { processType, tradingDate, billingStartDate, billingEndDate } = row;
+      const isDaily = processType === MeterProcessTypes.DAILY;
       if (isCalc) {
-        this.calculate(action, row);
-        return;
+        const msg = MESSAGES.CALCULATE_STL(isDaily ? tradingDate : `${billingStartDate} to ${billingEndDate}`);
+        const modal = this.confirmAction(action, msg);
+        modal.updateConfig({
+          nzOnOk: () => this.runEtaStlJobs(row, action)
+        });
+      } else {
+        const msg = MESSAGES.GENERATE_INPUT_WORKSPACE_TD(isDaily ? tradingDate : `${billingStartDate} to ${billingEndDate}`);
+        this.handleAction(LABELS.GENERATE_INPUT_WORKSPACE, row, msg, action);
       }
-
-      this.handleGenerateInputWorkspace(row, LABELS.GENERATE_INPUT_WORKSPACE, action);
       return;
     }
 
@@ -552,9 +467,8 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
           const [billingStartDate, billingEndDate] = dates;
           row.billingStartDate = billingStartDate;
           row.billingEndDate = billingEndDate;
-          const job = this.jobNameRecord[action];
 
-          this.runEtaStlJobs(row, job);
+          this.runEtaStlJobs(row, action);
           return true;
         } else {
           return false;
@@ -563,25 +477,11 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     });
   }
 
-  calculate(action: string, row: any): void {
-    const { processType, tradingDate, billingStartDate, billingEndDate } = row;
-
-    const isDaily = processType === MeterProcessTypes.DAILY;
-    const msg = MESSAGES.CALCULATE_STL(isDaily ? tradingDate : `${billingStartDate} to ${billingEndDate}`);
-    const modal = this.confirmAction(action, msg);
-    const job = this.jobNameRecord[action];
-
-    modal.updateConfig({
-      nzOnOk: () => this.runEtaStlJobs(row, job)
-    });
-  }
-
   generateFiles(action: string, row: any): void {
     const modal = this.confirmAction(action);
-    const job = this.jobNameRecord[action];
 
     modal.updateConfig({
-      nzOnOk: () => this.runEtaStlJobs(row, job)
+      nzOnOk: () => this.runEtaStlJobs(row, action)
     });
   }
 
@@ -589,12 +489,12 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     const modal = this.confirmAction(action);
 
     modal.updateConfig({
-      nzOnOk: () => this.runEtaStlJobs(row, action as ETA_JOBS)
+      nzOnOk: () => this.runEtaStlJobs(row, action)
     });
   }
 
-  runEtaStlJobs(row: any, job: ETA_JOBS): void {
-    this.busy$ = this.runSettlements.etaStlJobs(row, job)
+  runEtaStlJobs(row: any, action: string): void {
+    this.busy$ = this.runSettlements.etaStlJobs(row, action)
       .pipe(takeUntilDestroyed(this.destroyRef$))
       .subscribe(res => {
         const message = res?.message || MESSAGES.SUCCESS_JOB_TRIGGER;

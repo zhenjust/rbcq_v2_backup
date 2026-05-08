@@ -11,9 +11,6 @@ export class SettlementActionsPipe implements PipeTransform {
 
   private readonly ps = inject(AuthorizationService);
 
-  stlStatus = SettlementStatus;
-  settlementModules = ['reserveTradingAmounts', 'energyTradingAmounts'];
-
   transform(actions: JobSelect[], data: settlementPipeline, module: string): JobSelect[] {
     return actions
       .filter(action => action.type === module || !action.type)
@@ -61,27 +58,6 @@ export class SettlementActionsPipe implements PipeTransform {
    *  Generate Files
    */
 
-  GEN_IWS_STATUSES = [
-    SettlementStatus.COMPLETED_GENERATE_INPUT_WORKSPACE,
-    SettlementStatus.COMPLETED_GENERATE_RESERVE_INPUT_WORKSPACE,
-    SettlementStatus.FAILED_GENERATE_INPUT_RESERVE_WORKSPACE,
-    SettlementStatus.FAILED_GENERATE_INPUT_WORKSPACE,
-    SettlementStatus.CANCELLED_GENERATE_INPUT_RESERVE_WORKSPACE,
-    SettlementStatus.CANCELLED_GENERATE_INPUT_WORKSPACE,
-
-    SettlementStatus.COMPLETED_SETTLEMENT_READY,
-    SettlementStatus.COMPLETED_TAGGING,
-  ];
-
-  CALC_TA_STATUSES = [
-    SettlementStatus.COMPLETED_SETTLEMENT_CALCULATION,
-    SettlementStatus.COMPLETED_RESERVE_SETTLEMENT_CALCULATION,
-    SettlementStatus.FAILED_SETTLEMENT_CALCULATION,
-    SettlementStatus.FAILED_RESERVE_SETTLEMENT_CALCULATION,
-    SettlementStatus.CANCELLED_RESERVE_SETTLEMENT_CALCULATION,
-    SettlementStatus.CANCELLED_SETTLEMENT_CALCULATION,
-  ];
-
   DISABLE_ON_FINALIZED = [
     'generateInputWorkspace',
     'generateReserveInputWorkspace',
@@ -94,21 +70,6 @@ export class SettlementActionsPipe implements PipeTransform {
     'energyTradingAmounts-finalize',
     'reserveTradingAmounts-finalize'
   ];
-
-  GEN_IWS_CALC_TA_NAMES = [
-    'generateInputWorkspace',
-    'generateReserveInputWorkspace',
-    'calculateEnergyTradingAmount',
-    'calculateReserveTradingAmount'
-  ];
-
-  GEN_IWS_CALC_TA_STATUSES = [
-    'Generate Input Workspace',
-    'Settlement Calculation',
-    'Reserve Settlement Calculation',
-    'Generate Reserve Input Workspace'
-  ];
-
 
   handleGenerateStatus(action: JobSelect, module: string, status: keyof typeof SettlementStatus): JobSelect {
     const isRta = module === 'reserveTradingAmounts' && action.value === 'generateReserveInputWorkspace';

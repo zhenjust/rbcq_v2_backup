@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {BaseResponse, EnergyTradingAmounts, settlementPipeline} from '@shared/interfaces';
-import {ETA_JOBS, MeterProcessTypes} from '@shared/enums';
+import {MeterProcessTypes} from '@shared/enums';
 import {SettlementService} from '../api';
 import {ToastrService} from 'ngx-toastr';
 import {DateFormatterUtilService} from '../utils';
@@ -26,13 +26,9 @@ export class RunSettlementService {
     console.log('Full row data for download:', data);
   }
 
-  etaStlJobs(data: settlementPipeline, jobName: ETA_JOBS, isGroupUrl = false): Observable<BaseResponse> {
+  etaStlJobs(data: settlementPipeline, jobName: string, isGroupUrl = false): Observable<BaseResponse> {
     const payload = this.buildPayload(data, jobName);
     return this.stlApi.etaJobs(payload, isGroupUrl)
-  }
-
-  finalizeTradingAmounts(data: settlementPipeline): void {
-    console.log('Finalize Trading Amounts - Full row data:', data);
   }
 
   viewCalculations(data: settlementPipeline): void {
@@ -47,20 +43,8 @@ export class RunSettlementService {
     console.log('View Validations - Full row data:', data);
   }
 
-  calculateEnergyTransactionAllocation(data: settlementPipeline){
-    console.log('Validate Input - Full row data:', data);
-  }
-
-  generateTransactionReport(data: settlementPipeline){
-    console.log('Validate Input - Full row data:', data);
-  }
-
-  generateEnergyFiles(data: settlementPipeline){
-    console.log('Validate Input - Full row data:', data);
-  }
-
   // helper functions
-  private buildPayload(data: settlementPipeline, pipelineName: ETA_JOBS ): EnergyTradingAmounts {
+  private buildPayload(data: settlementPipeline, pipelineName: string ): EnergyTradingAmounts {
     const [start, end] = this.getDateRangeForProcessType(data);
     return {
       pipelineName,
@@ -70,7 +54,7 @@ export class RunSettlementService {
         billingStartDate: start ? this.dateFormatter.formatDateOnly(start) : null,
         billingEndDate: end ? this.dateFormatter.formatDateOnly(end) : null,
         processType: data.processType,
-        meteringWorkspaceId: ETA_JOBS.GEN_INPUT_WORKSPACE == pipelineName ? data?.workspaceId : null
+        meteringWorkspaceId: 'energyTradingAmounts-generateInputWorkspace' == pipelineName ? data?.workspaceId : null
       }
     };
   }

@@ -1,21 +1,4 @@
-import { ETA_JOBS, MeterProcessTypes, pricingConditions, settlementPageTitles, settlementProcessTypes, settlementSearchNames } from "@shared/enums";
-
-export interface settlementPageData {
-    pageTitle: settlementPageTitles | string,
-    isLineRentalStatus: boolean
-}
-
-export interface settlementJobInstanceParams {
-    mapParams: {
-        endDate: string | null,
-        processType: settlementProcessTypes | null,
-        startDate: string | null,
-        tradingDateEnd: string | null,
-        tradingDateStart: string | null
-    },
-    pageNo: number,
-    pagsize: number
-}
+import { MeterProcessTypes, pricingConditions, settlementProcessTypes, settlementSearchNames } from "@shared/enums";
 
 export interface settlementJobInstanceOptions {
     id: string,
@@ -36,19 +19,6 @@ export interface settlementParams {
     name: string,
     tradingStartDate: string,
     tradingEndDate: string
-}
-
-export interface settlementPipelineParameters {
-    billingPeriod: string
-    startDatetime: string
-    endDatetime: string
-    billingPeriodName: string
-    adjNo?: number
-    regionGroup: string
-    mtn: string
-    processType: MeterProcessTypes,
-    tradingDate?: string,
-    pricingCondition?: string
 }
 
 export interface settlementPipeline {
@@ -118,7 +88,7 @@ export interface PublishSettlement {
 }
 
 export interface EnergyTradingAmounts {
-    pipelineName: ETA_JOBS,
+    pipelineName: string,
     refId?: number | string,
     isGroup: boolean,
     // workspaceId: number | string

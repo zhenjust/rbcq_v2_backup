@@ -134,15 +134,13 @@ export const LABELS = {
   FINALIZE_LINE_RENTAL: 'Finalize Line Rental',
   FINALIZE_SETTLEMENT: 'Finalize Settlement',
 
-  GENERATE_ENERGY_BILLING_STATEMENT: 'Generate Energy Billing Statement',
   GENERATE_ENERGY_FILES: 'Generate Energy Files',
   GENERATE_FILES: 'Generate Files',
   GENERATE_LINE_RENTAL_FILES: 'Generate Line Rental Files',
-  GENERATE_RESERVE_BILLING_STATEMENT: 'Generate Reserve Billing Statement',
   GENERATE_RESERVE_FILES: 'Generate Reserve Files',
   GENERATE_RESERVE_MONTHLY_SUMMARY: 'Generate Reserve Monthly Summary',
   GENERATE_RESERVE_TRANSACTION_REPORT: 'Generate Reserve Transaction Report',
-  GENERATE_TRANSACTION_REPORT: 'Generate Transaction Report',
+  GENERATE_ENERGY_TRANSACTION_REPORT: 'Generate Energy Transaction Report',
 
   PUBLISH_TRANSACTION_REPORT: 'Publish Transaction Report',
 

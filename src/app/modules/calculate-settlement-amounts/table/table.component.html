@@ -105,33 +105,6 @@
     <nz-flex nzVertical="true">
         @if (currentModalData) {
             @switch (currentModalData.actionType) {
-                @case ('generateInputWorkspace') {
-                    <ng-container *ngTemplateOutlet="dateRangeSelection; context: {
-                        actionMessage: currentModalData.actionMessage,
-                        tradingDate: currentModalData.tradingDate,
-                        processType: currentModalData.processType
-                    }"></ng-container>
-                }
-                @case ('calculateTradingAmount') {
-                    <ng-container *ngTemplateOutlet="dateRangeSelection; context: {
-                        actionMessage: currentModalData.actionMessage,
-                        tradingDate: currentModalData.tradingDate,
-                        processType: currentModalData.processType
-                    }"></ng-container>
-                }
-                @case ('calculateMSummary') {
-                    <ng-container *ngTemplateOutlet="dateRangeSelection; context: {
-                        actionMessage: currentModalData.actionMessage,
-                        tradingDate: currentModalData.tradingDate,
-                        processType: currentModalData.processType
-                    }"></ng-container>
-                }
-                @case ('finalize') {
-                    <nz-result
-                        nzStatus="warning"
-                        nzTitle="Finalize Energy Trading Amounts">
-                    </nz-result>
-                }
                 @case ('calculations') {
                     <nz-result
                         nzStatus="info"
@@ -143,24 +116,6 @@
                     <nz-result
                         nzStatus="info"
                         nzTitle="Validate Input">
-                    </nz-result>
-                }
-                @case ('calculate_transactions') {
-                    <nz-result
-                        nzStatus="info"
-                        nzTitle="Calculate Energy Transaction Allocation">
-                    </nz-result>
-                }
-                @case ('generate_transac_reports') {
-                    <nz-result
-                        nzStatus="info"
-                        nzTitle="Generate Transaction Report">
-                    </nz-result>
-                }
-                @case ('generate_energy_files') {
-                    <nz-result
-                        nzStatus="info"
-                        nzTitle="Generate Energy Files">
                     </nz-result>
                 }
             }
