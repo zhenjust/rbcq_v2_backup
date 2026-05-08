@@ -133,9 +133,7 @@ export class SettlementActionsPipe implements PipeTransform {
     'energyTradingAmounts-calculateMSummary',
     'reserveTradingAmounts-calculateMSummary',
     'reserveTradingAmounts-calculateGmrVat',
-    'energyTradingAmounts-calculateGmrVat',
-    'energyTradingAmounts-finalize',
-    'reserveTradingAmounts-finalize'
+    'energyTradingAmounts-calculateGmrVat'
   ];
 
   GEN_IWS_CALC_TA_NAMES = [
