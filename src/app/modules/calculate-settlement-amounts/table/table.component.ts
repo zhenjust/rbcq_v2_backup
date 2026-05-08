@@ -426,9 +426,10 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   runJobWithConfirmation(action: string, row: any): void {
     const modal = this.confirmAction(action);
     const finalizePipeline = row.pipelines?.find((p: any) => p.name?.includes('finalize')) || {};
+    const pipelineParams = finalizePipeline?.parameters || {};
 
     modal.updateConfig({
-      nzOnOk: () => this.runEtaStlJobs({...row, ...finalizePipeline}, action)
+      nzOnOk: () => this.runEtaStlJobs({...row, ...pipelineParams}, action)
     });
   }
 
