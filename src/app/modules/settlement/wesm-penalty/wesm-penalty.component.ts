@@ -95,12 +95,13 @@ export class WesmPenaltyComponent implements OnInit {
     return this.settlementService.search(this.filters, 'penalty', this.paginatedTable?.tableParams);
   }
 
-  generateIws(): void {
+  generateIws(isRefund = false): void {
     const modal = this.modalService.create({
-      nzTitle: LABELS.GENERATE_INPUT_WORKSPACE,
+      nzTitle: `Generate ${isRefund ? 'Refund' : 'Penalty'} Input Workspace`,
       nzContent: PenaltyGenerateIwsComponent,
       nzCentered: true,
       nzMaskClosable: false,
+      nzData: { isRefund },
       nzFooter: [
         {
           label: LABELS.CLOSE,

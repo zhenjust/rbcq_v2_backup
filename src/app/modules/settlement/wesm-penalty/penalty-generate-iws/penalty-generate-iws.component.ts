@@ -7,7 +7,7 @@ import { MESSAGES } from '@shared/constants/messages.const';
 import { meterProcessBillingPeriod } from '@shared/interfaces';
 import { MeterprocessService, SettlementService } from '@shared/services/api';
 import { format } from 'date-fns';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription, distinctUntilChanged } from 'rxjs';
@@ -30,6 +30,7 @@ export class PenaltyGenerateIwsComponent implements OnInit {
   private readonly destroyRef$ = inject(DestroyRef);
   private readonly settlementService = inject(SettlementService);
   private readonly toaster = inject(ToastrService);
+  private modalData = inject(NZ_MODAL_DATA);
 
   billingPeriods: meterProcessBillingPeriod[];
   billingPeriodOpts: NzSelectOptionInterface[] = [];
@@ -76,7 +77,7 @@ export class PenaltyGenerateIwsComponent implements OnInit {
     this.showError.set(false);
 
     const payload = {
-      pipelineName: 'penalty-generateInputWorkspace',
+      pipelineName: `penalty-generateInputWorkspace${this.modalData?.isRefund ? 'Refund' : ''}`,
       isGroup: true,
       parameters: {
         billingStartDate: format(new Date(this.selectedBp!.startDate), 'yyyy-MM-dd'),
