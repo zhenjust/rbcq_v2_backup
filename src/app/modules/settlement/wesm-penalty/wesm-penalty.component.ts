@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { PHASE_TWO_AUTHORITIES, WESM_PENALTY_STATUS, WESM_PENALTY_TYPE } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
-import { meterProcessBillingPeriod, TPL_TABLE_COLUMN, TableAction, meterProcessPipelineGroup } from '@shared/interfaces';
+import { meterProcessBillingPeriod, TPL_TABLE_COLUMN, TableAction, meterProcessPipelineGroup, pipeline } from '@shared/interfaces';
 import { MeterprocessService, SettlementService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
@@ -233,16 +233,28 @@ export class WesmPenaltyComponent implements OnInit {
   get actionControls(): TableAction <any> [] {
     return [
       {
-        label: `${LABELS.CALCULATE} ${LABELS.PENALTY}`,
+        label: LABELS.CALCULATE,
         value: 'calculate',
-        click: (rowData: meterProcessPipelineGroup) => this.triggerAction('penalty-calculate', rowData),
-        hidden: (rowData: meterProcessPipelineGroup) => this.hideAction(rowData, 'penalty'),
+        click: (rowData: meterProcessPipelineGroup) => {
+          const isPenalty = rowData.pipelines.some(p => p.name === 'penalty');
+          this.triggerAction(`penalty-calculate${isPenalty ? '' : 'Refund'}`, rowData);
+        },
+        hidden: (rowData: meterProcessPipelineGroup) => {
+          const isPenalty = rowData.pipelines.some(p => p.name === 'penalty');
+          return this.hideAction(rowData, `penalty${isPenalty ? '' : 'Refund'}`);
+        },
       },
       {
-        label: `${LABELS.FINALIZE} ${LABELS.PENALTY}`,
+        label: LABELS.FINALIZE,
         value: 'finalize',
-        click: (rowData: any) => this.calcTransactionAllocation('penalty-finalize', rowData),
-        hidden: (rowData: meterProcessPipelineGroup) => this.hideAction(rowData, 'penalty-calculate'),
+        click: (rowData: any) => {
+          const isRefund = rowData.pipelines.some((p: pipeline) => p.name === 'penalty-calculateRefund');
+          this.calcTransactionAllocation(`penalty-finalize${isRefund ? 'Refund' : ''}`, rowData);
+        },
+        hidden: (rowData: any) => {
+          const isRefund = rowData.pipelines.some((p: pipeline) => p.name === 'penalty-calculateRefund');
+          return this.hideAction(rowData, `penalty-calculate${isRefund ? 'Refund' : ''}`)
+        },
       },
     ];
   }
