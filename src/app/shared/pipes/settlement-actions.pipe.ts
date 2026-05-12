@@ -202,7 +202,7 @@ export class SettlementActionsPipe implements PipeTransform {
 
     action.permissions = isSettlementModule ? permissions : [];
     action.show = this.checkPermissions(action.permissions) && pipelines.some(
-      p => (p.name === 'energyTradingAmounts-generateTransactionReport' || p.name === 'reserveTradingAmounts-generateTransactionReport') && p.status === 'Completed'
+      p => (p.name === 'energyTradingAmounts-calculateTransAlloc' || p.name === 'reserveTradingAmounts-calculateTransAlloc') && p.status === 'Completed'
     );
 
     return action;
