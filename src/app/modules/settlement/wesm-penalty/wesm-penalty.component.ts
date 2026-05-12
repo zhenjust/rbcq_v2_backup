@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { PHASE_TWO_AUTHORITIES, WESM_PENALTY_STATUS, WESM_PENALTY_TYPE } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
-import { meterProcessBillingPeriod, TPL_TABLE_COLUMN, TableAction, meterProcessPipelineGroup, pipeline } from '@shared/interfaces';
+import { meterProcessBillingPeriod, TPL_TABLE_COLUMN, TableAction, meterProcessPipelineGroup } from '@shared/interfaces';
 import { MeterprocessService, SettlementService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
@@ -154,19 +154,6 @@ export class WesmPenaltyComponent implements OnInit {
     this.paginatedTable?.search();
   }
 
-  //   {
-  //     "pipelineName": "penalty-finalize",
-  //     "isGroup": true,
-  //     "refId": 168,
-  //     "parameters": {
-  //         "billingStartDate": "2025-11-26",
-  //         "billingEndDate": "2025-12-25",
-  //         "billingPeriodName": "December 2025",
-  //         "allocDate": "2026-04-30",
-  //         "dueDate": "2026-05-30",
-  //         "remarks": "Penalty Allocation for December 2025"
-  //     }
-  // }
   triggerAction(pipelineName: string, rowData: any): void {
     const payload = {
       pipelineName,
@@ -235,12 +222,12 @@ export class WesmPenaltyComponent implements OnInit {
       {
         label: LABELS.CALCULATE,
         value: 'calculate',
-        click: (rowData: meterProcessPipelineGroup) => {
-          const isPenalty = rowData.pipelines.some(p => p.name === 'penalty');
+        click: (rowData: any) => {
+          const isPenalty = rowData?.penaltyHeaders[0]?.type === 'PENALTY';
           this.triggerAction(`penalty-calculate${isPenalty ? '' : 'Refund'}`, rowData);
         },
-        hidden: (rowData: meterProcessPipelineGroup) => {
-          const isPenalty = rowData.pipelines.some(p => p.name === 'penalty');
+        hidden: (rowData: any) => {
+          const isPenalty = rowData?.penaltyHeaders[0]?.type === 'PENALTY';
           return this.hideAction(rowData, `penalty${isPenalty ? '' : 'Refund'}`);
         },
       },
@@ -248,11 +235,11 @@ export class WesmPenaltyComponent implements OnInit {
         label: LABELS.FINALIZE,
         value: 'finalize',
         click: (rowData: any) => {
-          const isRefund = rowData.pipelines.some((p: pipeline) => p.name === 'penalty-calculateRefund');
+          const isRefund = rowData?.penaltyHeaders[0]?.type === 'REFUND';
           this.calcTransactionAllocation(`penalty-finalize${isRefund ? 'Refund' : ''}`, rowData);
         },
         hidden: (rowData: any) => {
-          const isRefund = rowData.pipelines.some((p: pipeline) => p.name === 'penalty-calculateRefund');
+          const isRefund = rowData?.penaltyHeaders[0]?.type === 'REFUND';
           return this.hideAction(rowData, `penalty-calculate${isRefund ? 'Refund' : ''}`)
         },
       },
