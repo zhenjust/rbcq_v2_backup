@@ -8,7 +8,7 @@ import { MeterProcessTypes } from '@shared/enums';
 import { meterProcessBillingPeriod } from '@shared/interfaces';
 import { MeterprocessService, SettlementService } from '@shared/services/api';
 import { format } from 'date-fns';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription, distinctUntilChanged } from 'rxjs';
@@ -31,6 +31,7 @@ export class RunMarketFeeComponent implements OnInit {
   private readonly destroyRef$ = inject(DestroyRef);
   private readonly settlementService = inject(SettlementService);
   private readonly toaster = inject(ToastrService);
+  private readonly modalData = inject(NZ_MODAL_DATA);
 
   billingPeriods: meterProcessBillingPeriod[];
   billingPeriodOpts: NzSelectOptionInterface[] = [];
@@ -74,7 +75,7 @@ export class RunMarketFeeComponent implements OnInit {
     }
 
     const payload = {
-      pipelineName: 'energyMarketFee',
+      pipelineName: this.modalData?.isEnergy ? 'energyMarketFee' : 'reserveMarketFee',
       isGroup: true,
       parameters: {
         processType: this.form.getRawValue()?.processType,

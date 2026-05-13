@@ -166,6 +166,7 @@ export class MarketFeeComponent  implements OnInit {
       nzContent: RunMarketFeeComponent,
       nzCentered: true,
       nzMaskClosable: false,
+      nzData: { isEnergy: this.isEnergy() },
       nzFooter: [
         {
           label: LABELS.CLOSE,
