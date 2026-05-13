@@ -145,69 +145,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     });
   }
 
-  // for removal
-  onActionSelect(selectedValue: string | any, rowData: settlementPipeline): void {
-    const actionValue = typeof selectedValue === 'string' ? selectedValue : selectedValue?.toString();
-    const processType = rowData.processType;
-
-    if (!actionValue || actionValue === '') {
-      this.resetActionSelection(rowData);
-      return;
-    }
-
-    this.setActionSelection(rowData, actionValue);
-
-    const baseModalData = {
-      pipeline: rowData,
-      tradingDate: rowData.tradingDate,
-      billingPeriod: rowData.billingPeriod,
-      startDate: rowData.billingStartDate,
-      endDate: rowData.billingEndDate,
-      processType
-    };
-
-    switch (actionValue) {
-      case 'calculations':
-        this.handleModalAction(
-          rowData,
-          () => this.runSettlements.viewCalculations(rowData),
-          {
-            ...baseModalData,
-            actionMessage: 'View Calculations',
-            actionType: 'calculations'
-          }
-        );
-        break;
-
-      case 'validate_input':
-        this.handleModalAction(
-          rowData,
-          () => this.runSettlements.validateInput(rowData),
-          {
-            ...baseModalData,
-            actionMessage: 'Validate Input',
-            actionType: 'validate_input'
-          }
-        );
-        break;
-
-      case 'validations':
-        this.handleModalAction(
-          rowData,
-          () => this.runSettlements.viewValidations(rowData),
-          {
-            ...baseModalData,
-            actionMessage: 'View Validations',
-            actionType: 'validations'
-          }
-        );
-        break;
-
-      default:
-        this.clearDateRange();
-        this.resetActionSelection(rowData);
-    }
-  }
 
   // for handling of actions; new implementation of modal
   handleAction(label: string, rowData: settlementPipeline, msg: string | TemplateRef<HTMLElement>, action: string, api$?: () => any): void {
@@ -429,7 +366,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     const pipelineParams = finalizePipeline?.parameters || {};
 
     modal.updateConfig({
-      nzOnOk: () => this.runEtaStlJobs({...row, ...pipelineParams}, action)
+      nzOnOk: () => this.runEtaStlJobs({...row, parameters: pipelineParams}, action)
     });
   }
 
@@ -583,7 +520,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
 const expandedTableCols: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.NAME]: { label: LABELS.NAME, propName: 'description', type: 'template', width: '200px', hasRowSpan: true },
-  // [LABELS.RUN_ID]: { label: LABELS.RUN_ID, propName: 'runId', type: 'string', width: '100px' },
   [LABELS.RUN_START]: { label: LABELS.RUN_START, propName: 'runStart', type: 'date', width: '100px', align: 'center' },
   [LABELS.RUN_END]: { label: LABELS.RUN_END, propName: 'runEnd', type: 'date', width: '100px', align: 'center' },
   [LABELS.DURATION]: { label: LABELS.DURATION, propName: 'duration', type: 'string', width: '100px' },

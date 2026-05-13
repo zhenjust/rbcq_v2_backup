@@ -46,7 +46,7 @@ export class RunSettlementService {
   // helper functions
   private buildPayload(data: settlementPipeline, pipelineName: string ): EnergyTradingAmounts {
     const [start, end] = this.getDateRangeForProcessType(data);
-    const shouldIncludeDueDate = pipelineName.includes('calculateTransAlloc') && [MeterProcessTypes.DAILY, MeterProcessTypes.PRELIM].includes(data.processType);
+    const shouldIncludeDueDate = pipelineName.includes('calculateTransAlloc') && [MeterProcessTypes.ADJUSTED, MeterProcessTypes.FINAL].includes(data.processType);
 
     return {
       pipelineName,
