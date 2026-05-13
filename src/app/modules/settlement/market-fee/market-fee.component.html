@@ -41,7 +41,7 @@
     </nz-space>
 
     <nz-space>
-      <ng-container *ngxPermissionsOnly="[ AUTH.EMF_GENERATE_IW ]">
+      <ng-container *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_GENERATE_IW ] : [ AUTH.RMF_GENERATE_IW ]">
         <button nz-button *nzSpaceItem nzType="primary" (click)="runMarketFee()">
           {{ LABELS.RUN }} {{ isEnergy() ? LABELS.ENERGY_MARKET_FEE : LABEL.RESERVE_MARKET_FEE }}
         </button>
@@ -67,20 +67,25 @@
 
       <ng-template #actionsTpl let-subRowData="row">
         @if (subRowData.status !== 'Nullified') {
-          <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu">{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
+          @let isFinalized = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded');
+          @let isCalculated = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded');
+
+          @if (!isFinalized) {
+            <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu">{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
+          }
+
           <nz-dropdown-menu #menu="nzDropdownMenu">
               <ul nz-menu nzSelectable>
-                <!-- TODO: Available for any Status except any of the following: Completed Tagging, <Completed/Failed> Generate Energy Market Fee Files  or Published -->
-                @if (subRowData.status !== SettlementStatus.COMPLETED_TAGGING) {
-                  <li nz-menu-item *ngxPermissionsOnly="[ AUTH.EMF_GENERATE_IW ]" (click)="triggerJob('generateInputWorkspace', subRowData, tableComp, LABELS.GENERATE_INPUT_WORKSPACE)">{{ LABELS.GENERATE_INPUT_WORKSPACE }}</li>
+                @if (!isFinalized) {
+                  <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_GENERATE_IW ] : [ AUTH.RMF_GENERATE_IW ]" (click)="triggerJob('generateInputWorkspace', subRowData, tableComp, LABELS.GENERATE_INPUT_WORKSPACE)">{{ LABELS.GENERATE_INPUT_WORKSPACE }}</li>
                 }
 
-                @if (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateInputWorkspace')] : 'Succeeded') {
-                  <li nz-menu-item *ngxPermissionsOnly="[ AUTH.EMF_CALCULATE ]" (click)="triggerJob('calculateMarketFee', subRowData, tableComp, LABELS.CALCULATE + ' ' + LABELS.ENERGY_MARKET_FEE)">{{ LABELS.CALCULATE }}</li>
+                @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateInputWorkspace')] : 'Succeeded') && !isCalculated) {
+                  <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_CALCULATE ] : [ AUTH.RMF_CALCULATE ]" (click)="triggerJob('calculateMarketFee', subRowData, tableComp, LABELS.CALCULATE + ' ' + LABELS.ENERGY_MARKET_FEE)">{{ LABELS.CALCULATE }}</li>
                 }
 
-                @if (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded') {
-                  <li nz-menu-item *ngxPermissionsOnly="[ AUTH.EMF_FINALIZE ]" (click)="finalize('finalize', subRowData, tableComp)">{{ LABELS.FINALIZE }}</li>
+                @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded') && !isFinalized) {
+                  <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_FINALIZE ] : [ AUTH.RMF_FINALIZE ]" (click)="finalize('finalize', subRowData, tableComp)">{{ LABELS.FINALIZE }}</li>
                 }
               </ul>
           </nz-dropdown-menu>
