@@ -14,6 +14,7 @@ import {ActivatedRoute, Data} from '@angular/router';
 import {Observable, Subject, Subscription} from 'rxjs';
 import {
   JobSelect,
+  pipeline,
   PublishSettlement,
   settlementParams,
   settlementPipeline,
@@ -395,10 +396,12 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   }
 
   handlePublishAction(stlSource: string, rowData: any): void {
+    const finalizeData = rowData?.pipelines?.find((p: pipeline) => p.name?.includes('finalize') && p.status === 'Completed');
     const payload: PublishSettlement = {
       stlGroupId: +rowData.workspaceId,
       processType: rowData.processType,
-      stlSource: stlSource
+      stlSource: stlSource,
+      dueDate: finalizeData?.parameters?.dueDate
     };
 
     const api$ = () => {

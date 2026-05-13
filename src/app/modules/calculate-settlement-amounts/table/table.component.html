@@ -148,7 +148,7 @@
 
     @let processType = allData?.parameters?.processType?.textValue;
     @let isPrelimDaily = [processTypes.DAILY, processTypes.PRELIM].includes(processType);
-    @let showAllocDateInfo = allData?.name?.includes('calculateTransAlloc') || allData?.name?.includes('finalize');
+    @let showAllocDateInfo = allData?.name?.includes('finalize');
 
     @if (showAllocDateInfo && !isPrelimDaily) {
       <div class="cell-sub">
