@@ -146,7 +146,10 @@
       {{ data + (allData.partial ? " - Partial" : "")}}
     </div>
 
-    @if ([LABELS.FINALIZE].includes(data)) {
+    @let processType = allData?.parameters?.processType?.textValue;
+    @let isPrelimDaily = [processTypes.DAILY, processTypes.PRELIM].includes(processType);
+
+    @if ([LABELS.FINALIZE].includes(data) && !isPrelimDaily) {
       <div class="cell-sub">
         <span class="cell-sub-label">{{ LABELS.ALLOCATION_DATE }}: </span>
         <span class="cell-sub-value">{{ allData?.parameters?.allocDate?.dateValue || '-' }}</span>
