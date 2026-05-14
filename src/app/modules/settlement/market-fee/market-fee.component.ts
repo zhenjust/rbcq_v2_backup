@@ -216,14 +216,9 @@ export class MarketFeeComponent  implements OnInit {
       });
   }
 
-  finalize(action: string, row: any, component: TemplateTableComponent): void {
+  finalize(action: string, row: any): void {
     const rowData = {...row, ...row.parameters};
-
-    if (rowData.processType === MeterProcessTypes.DAILY || rowData?.processType === MeterProcessTypes.PRELIM) {
-      this.triggerJob('finalize', rowData, component, LABELS.FINALIZE + ' ' + LABELS.ENERGY_MARKET_FEE);
-    } else {
-      this.stlUtil.triggerAllocModal(action, rowData, () => this.reload$.next());
-    }
+    this.stlUtil.triggerAllocModal(`${this.pipelineName}-${action}`, rowData, () => this.reload$.next(), true);
   }
 
   get pipelineName(): string { return this.isEnergy() ? 'energyMarketFee' : 'reserveMarketFee'; }

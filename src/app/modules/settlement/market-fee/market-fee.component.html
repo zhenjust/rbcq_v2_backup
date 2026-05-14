@@ -69,9 +69,16 @@
         @if (subRowData.status !== 'Nullified') {
           @let isFinalized = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded');
           @let isCalculated = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded');
+          @let isInProgress = subRowData.status.includes('In-Progress');
 
-          @if (!isFinalized) {
+          @if (!isFinalized && !isInProgress) {
             <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu">{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
+          }
+
+          @if (isInProgress) {
+            <div class="px-3">
+              <nz-progress [nzStrokeWidth]="4" [nzPercent]="99.9" [nzShowInfo]="false" [nzStrokeColor]="{ '0%': '#108ee9', '100%': '#87d068' }" nzStatus="active" />
+            </div>
           }
 
           <nz-dropdown-menu #menu="nzDropdownMenu">
@@ -85,7 +92,7 @@
                 }
 
                 @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded') && !isFinalized) {
-                  <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_FINALIZE ] : [ AUTH.RMF_FINALIZE ]" (click)="finalize('finalize', subRowData, tableComp)">{{ LABELS.FINALIZE }}</li>
+                  <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_FINALIZE ] : [ AUTH.RMF_FINALIZE ]" (click)="finalize('finalize', subRowData)">{{ LABELS.FINALIZE }}</li>
                 }
               </ul>
           </nz-dropdown-menu>

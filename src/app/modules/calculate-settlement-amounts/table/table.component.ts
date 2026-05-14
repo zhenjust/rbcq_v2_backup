@@ -450,7 +450,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       descriptions: [
         {
           label: LABELS.DUE_DATE,
-          value
+          value: payload.dueDate
         },
         {
           label: `${LABELS.TRADING_DATE}/${LABELS.BILLING_PERIOD}`,

@@ -45,9 +45,9 @@ export class TransactionAllocComponent implements OnInit {
     this.endDate = addDays(this.rowData()?.billingEndDate, 1);
 
     this.form = this.formBuilder.group({
-      allocDate: [new Date(), RxwebValidators.required()],
-      allocDueDate: [!this.isPrelim ? addDays(new Date(), 1) : null, RxwebValidators.required({ conditionalExpression: () => !this.isPrelim })],
-      allocRemarks: [null],
+      allocDate: [new Date(), RxwebValidators.required({ conditionalExpression: () => !this.isMarketFee })],
+      allocDueDate: [!this.isPrelim ? addDays(new Date(), 1) : null, RxwebValidators.required({ conditionalExpression: () => !this.isPrelim && !this.isMarketFee })],
+      allocRemarks: [null, RxwebValidators.required({ conditionalExpression: () => this.isMarketFee })],
     });
 
     this.onAllocDateChange();
@@ -75,15 +75,24 @@ export class TransactionAllocComponent implements OnInit {
       pipelineName: this.modalData?.action,
       isGroup: true,
       refId: row?.id,
-      parameters: {
-        billingStartDate: row?.billingStartDate,
-        billingEndDate: row?.billingEndDate,
-        processType: row?.processType,
-        allocDate: form.allocDate ? format(form.allocDate, 'yyyy-MM-dd') : null,
-        billingPeriodName: row?.billingPeriod ? row?.billingPeriod : null,
-        remarks: form.allocRemarks,
-        dueDate: form.allocDueDate ? format(form.allocDueDate, 'yyyy-MM-dd') : null
-      }
+      ...(this.isMarketFee ?
+        {
+          parameters: {
+            remarks: form.allocRemarks
+          }
+        } :
+        {
+          parameters: {
+            billingStartDate: row?.billingStartDate,
+            billingEndDate: row?.billingEndDate,
+            processType: row?.processType,
+            allocDate: form.allocDate ? format(form.allocDate, 'yyyy-MM-dd') : null,
+            billingPeriodName: row?.billingPeriod ? row?.billingPeriod : null,
+            remarks: form.allocRemarks,
+            dueDate: form.allocDueDate ? format(form.allocDueDate, 'yyyy-MM-dd') : null
+          }
+        }
+      ),
     };
 
     this.busy$ = this.settlementService.etaJobs(payload)
@@ -103,5 +112,7 @@ export class TransactionAllocComponent implements OnInit {
   get isPrelim(): boolean { return this.rowData()?.processType === MeterProcessTypes.PRELIM; }
   get allocDate(): AbstractControl { return this.form.get('allocDate') as AbstractControl; }
   get allocDueDate(): AbstractControl { return this.form.get('allocDueDate') as AbstractControl; }
+
+  get isMarketFee(): boolean { return this.modalData.isMarketFee; }
 
 }

@@ -13,12 +13,12 @@ export class StlUtilitiesService {
 
   private readonly modal = inject(NzModalService);
 
-  triggerAllocModal(action: string, row: any, callback: () => void): void {
+  triggerAllocModal(action: string, row: any, callback: () => void, isMarketFee = false): void {
     const modal = this.modal.create({
       nzTitle: LABELS.RUN_JOB,
       nzContent: TransactionAllocComponent,
       nzCentered: true,
-      nzData: { rowData: row, action },
+      nzData: { rowData: row, action, isMarketFee },
       nzFooter: [
         {
           label: LABELS.CLOSE,
