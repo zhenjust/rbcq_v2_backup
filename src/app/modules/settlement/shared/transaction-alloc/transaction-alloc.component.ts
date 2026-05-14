@@ -45,8 +45,8 @@ export class TransactionAllocComponent implements OnInit {
     this.endDate = addDays(this.rowData()?.billingEndDate, 1);
 
     this.form = this.formBuilder.group({
-      allocDate: [!this.isPrelim ? new Date() : null, RxwebValidators.required({ conditionalExpression: () => !this.isPrelim })],
-      allocDueDate: [addDays(new Date(), 1)],
+      allocDate: [new Date()],
+      allocDueDate: [!this.isPrelim ? addDays(new Date(), 1) : null, RxwebValidators.required({ conditionalExpression: () => !this.isPrelim })],
       allocRemarks: [null],
     });
 
@@ -57,7 +57,6 @@ export class TransactionAllocComponent implements OnInit {
     this.allocDate.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef$))
       .subscribe(allocDate => {
-        console.log({allocDate})
         if (allocDate) {
           this.allocDueDate.enable();
           this.allocDueDate.setValue(addDays(allocDate, 1));
@@ -71,7 +70,6 @@ export class TransactionAllocComponent implements OnInit {
   submit(): void {
     const row = this.rowData();
     const form = this.form.getRawValue();
-    const isFinalize = this.action().includes('finalize');
 
     const payload = {
       pipelineName: this.modalData?.action,
@@ -82,9 +80,9 @@ export class TransactionAllocComponent implements OnInit {
         billingEndDate: row?.billingEndDate,
         processType: row?.processType,
         allocDate: form.allocDate ? format(form.allocDate, 'yyyy-MM-dd') : null,
-        ...(isFinalize ? { billingPeriodName: row.billingPeriod} : {}),
-        [isFinalize ? 'remarks' : 'allocRemarks']: form.allocRemarks,
-        [isFinalize ? 'dueDate' : 'allocDueDate']: format(form.allocDueDate, 'yyyy-MM-dd')
+        billingPeriodName: row?.billingPeriod ? row?.billingPeriod : null,
+        remarks: form.allocRemarks,
+        dueDate: form.allocDueDate ? format(form.allocDueDate, 'yyyy-MM-dd') : null
       }
     };
 

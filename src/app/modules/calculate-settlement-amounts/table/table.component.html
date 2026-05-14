@@ -4,7 +4,7 @@
     [nzPageSize]="tableParams.size"
     [nzPageIndex]="tableParams.page"
     [nzTotal]="tableParams.totalElements"
-    [nzLoading]="busy$ && !busy$.closed"
+    [nzLoading]="loadingTable()"
     [nzWidthConfig]="nzWidthConfig"
     nzSize="small"
     (nzQueryParams)="onQueryParamsChange($event)"
@@ -148,18 +148,20 @@
 
     @let processType = allData?.parameters?.processType?.textValue;
     @let isPrelimDaily = [processTypes.DAILY, processTypes.PRELIM].includes(processType);
-    @let showAllocDateInfo = allData?.name?.includes('finalize');
+    @let showAllocDateInfo = allData?.name?.includes('calculateTransAlloc');
 
-    @if (showAllocDateInfo && !isPrelimDaily) {
+    @if (showAllocDateInfo) {
       <div class="cell-sub">
         <span class="cell-sub-label">{{ LABELS.ALLOCATION_DATE }}: </span>
         <span class="cell-sub-value">{{ allData?.parameters?.allocDate?.dateValue || '-' }}</span>
       </div>
 
-      <div class="cell-sub">
-        <span class="cell-sub-label">{{ LABELS.ALLOCATION_DUE_DATE }}: </span>
-        <span class="cell-sub-value">{{ allData?.parameters?.dueDate?.dateValue || '-' }}</span>
-      </div>
+      @if (!isPrelimDaily) {
+        <div class="cell-sub">
+          <span class="cell-sub-label">{{ LABELS.ALLOCATION_DUE_DATE }}: </span>
+          <span class="cell-sub-value">{{ allData?.parameters?.dueDate?.dateValue || '-' }}</span>
+        </div>
+      }
 
       <div class="cell-sub">
         <span class="cell-sub-label">{{ LABELS.ALLOCATION_DATE }}: </span>

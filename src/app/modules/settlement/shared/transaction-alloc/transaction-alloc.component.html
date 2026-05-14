@@ -6,21 +6,21 @@
 
   <form nz-form [formGroup]="form" nzLayout="vertical" nzNoColon class="row">
 
-    @if (!isPrelim) {
       <nz-form-item class="col-sm-12">
         <nz-form-label nzRequired>{{ LABELS.ALLOCATION_DATE }}</nz-form-label>
         <nz-form-control>
           <nz-date-picker formControlName="allocDate" class="w-100" [nzDisabledDate]="disabledAllocDate"></nz-date-picker>
         </nz-form-control>
       </nz-form-item>
-    }
 
-    <nz-form-item class="col-sm-12">
-      <nz-form-label>{{ LABELS.ALLOCATION_DUE_DATE }}</nz-form-label>
-      <nz-form-control>
-        <nz-date-picker formControlName="allocDueDate" class="w-100" [nzDisabledDate]="disabledAllocDueDate"></nz-date-picker>
-      </nz-form-control>
-    </nz-form-item>
+    @if (!isPrelim) {
+      <nz-form-item class="col-sm-12">
+        <nz-form-label>{{ LABELS.ALLOCATION_DUE_DATE }}</nz-form-label>
+        <nz-form-control>
+          <nz-date-picker formControlName="allocDueDate" class="w-100" [nzDisabledDate]="disabledAllocDueDate"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    }
 
     <nz-form-item class="col-sm-12">
       <nz-form-label>{{ LABELS.ALLOCATION_REMARKS }}</nz-form-label>

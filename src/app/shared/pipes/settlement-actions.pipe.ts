@@ -28,7 +28,7 @@ export class SettlementActionsPipe implements PipeTransform {
         }
 
         const hasFinalized = pipelines.some(
-          p => (p.name === 'energyTradingAmounts-finalize' || p.name === 'reserveTradingAmounts-finalize') && p.status === 'Completed'
+          p => (p.name === 'energyTradingAmounts-finalize' || p.name === 'reserveTradingAmounts-finalize') && this.completedStatus.includes(p.status)
         );
         if (this.DISABLE_ON_FINALIZED.includes(value) && hasFinalized) {
           action.show = false;
@@ -56,7 +56,7 @@ export class SettlementActionsPipe implements PipeTransform {
 
         if (value === 'energyTradingAmounts-publish' || value === 'reserveTradingAmounts-publish') {
           const canPublished = pipelines.some(
-            p => (p.name === 'energyTradingAmounts-generateTransactionReport' || p.name === 'reserveTradingAmounts-generateTransactionReport') && p.status === 'Completed'
+            p => (p.name === 'energyTradingAmounts-generateTransactionReport' || p.name === 'reserveTradingAmounts-generateTransactionReport') && this.completedStatus.includes(p.status)
           );
           action.show = canPublished && !data.published;
         }
@@ -152,7 +152,7 @@ export class SettlementActionsPipe implements PipeTransform {
   handleCalculateTA(action: JobSelect, pipelines: any[], isSettlementModule = true): JobSelect {
     action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_CALCULATE_TA] : [];
     action.show = this.checkPermissions(action.permissions) && pipelines.some(
-      p => (p.name === 'energyTradingAmounts-generateInputWorkspace' || p.name === 'reserveTradingAmounts-generateInputWorkspace') && p.status === 'Completed'
+      p => (p.name === 'energyTradingAmounts-generateInputWorkspace' || p.name === 'reserveTradingAmounts-generateInputWorkspace') && this.completedStatus.includes(p.status)
     );
 
     return action;
@@ -161,7 +161,7 @@ export class SettlementActionsPipe implements PipeTransform {
   handleGenerateMonthlySummary(action: JobSelect, pipelines: any[], isSettlementModule = true): JobSelect {
     action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_GEN_MONTHLY_SUMMARY] : [];
     action.show = this.checkPermissions(action.permissions) && pipelines.some(
-      p => (p.name === 'energyTradingAmounts-calculateTradingAmount' || p.name === 'reserveTradingAmounts-calculateTradingAmount') && p.status === 'Completed'
+      p => (p.name === 'energyTradingAmounts-calculateTradingAmount' || p.name === 'reserveTradingAmounts-calculateTradingAmount') && this.completedStatus.includes(p.status)
     );
 
     return action;
@@ -170,7 +170,7 @@ export class SettlementActionsPipe implements PipeTransform {
   handleCalcGmrVat(action: JobSelect, pipelines: any[], isSettlementModule = true): JobSelect {
     action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_CALCULATE_GMRVAT] : [];
     action.show = this.checkPermissions(action.permissions) && pipelines.some(
-      p => (p.name === 'reserveTradingAmounts-calculateMSummary' || p.name === 'energyTradingAmounts-calculateMSummary') && p.status === 'Completed'
+      p => (p.name === 'reserveTradingAmounts-calculateMSummary' || p.name === 'energyTradingAmounts-calculateMSummary') && this.completedStatus.includes(p.status)
     );
 
     return action;
@@ -179,7 +179,7 @@ export class SettlementActionsPipe implements PipeTransform {
   handleFinalizeSettlement(action: JobSelect, pipelines: any[], isSettlementModule = true): JobSelect {
     action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_FINALIZE] : [];
     action.show = this.checkPermissions(action.permissions) && pipelines.some(
-      p => (p.name === 'reserveTradingAmounts-calculateGmrVat' || p.name === 'energyTradingAmounts-calculateGmrVat') && p.status === 'Completed'
+      p => (p.name === 'reserveTradingAmounts-calculateGmrVat' || p.name === 'energyTradingAmounts-calculateGmrVat') && this.completedStatus.includes(p.status)
     );
 
     return action;
@@ -188,7 +188,7 @@ export class SettlementActionsPipe implements PipeTransform {
   handleCalcTransAlloc(action: JobSelect, isSettlementModule = true, pipelines: any[]): JobSelect {
     action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_CALCULATE_GMRVAT] : [];
     action.show = this.checkPermissions(action.permissions) && pipelines.some(
-      p => (p.name === 'energyTradingAmounts-finalize' || p.name === 'reserveTradingAmounts-finalize') && p.status === 'Completed'
+      p => (p.name === 'energyTradingAmounts-finalize' || p.name === 'reserveTradingAmounts-finalize') && this.completedStatus.includes(p.status)
     );
 
     return action;
@@ -202,7 +202,7 @@ export class SettlementActionsPipe implements PipeTransform {
 
     action.permissions = isSettlementModule ? permissions : [];
     action.show = this.checkPermissions(action.permissions) && pipelines.some(
-      p => (p.name === 'energyTradingAmounts-calculateTransAlloc' || p.name === 'reserveTradingAmounts-calculateTransAlloc') && p.status === 'Completed'
+      p => (p.name === 'energyTradingAmounts-calculateTransAlloc' || p.name === 'reserveTradingAmounts-calculateTransAlloc') && this.completedStatus.includes(p.status)
     );
 
     return action;
@@ -216,7 +216,7 @@ export class SettlementActionsPipe implements PipeTransform {
 
     action.permissions = isSettlementModule ? permissions : [];
     action.show = this.checkPermissions(action.permissions) && pipelines.some(
-      p => (p.name === 'energyTradingAmounts-finalize' || p.name === 'reserveTradingAmounts-finalize') && p.status === 'Completed'
+      p => (p.name === 'energyTradingAmounts-finalize' || p.name === 'reserveTradingAmounts-finalize') && this.completedStatus.includes(p.status)
     );
 
     return action;
@@ -226,4 +226,6 @@ export class SettlementActionsPipe implements PipeTransform {
     const auths = this.ps.currentUser()?.principal?.privileges || [];
     return auths?.some(auth => permissions.includes(auth));
   }
+
+  get completedStatus(): string[] { return ['Completed', 'Succeeded']; }
 }

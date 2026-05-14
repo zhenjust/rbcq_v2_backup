@@ -11,7 +11,7 @@ import {
   ViewChild
 } from '@angular/core';
 import {ActivatedRoute, Data} from '@angular/router';
-import {Observable, Subject, Subscription} from 'rxjs';
+import {BehaviorSubject, finalize, merge, Observable, shareReplay, Subject, Subscription, switchMap, timer} from 'rxjs';
 import {
   JobSelect,
   pipeline,
@@ -92,8 +92,19 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   override resultsProp = 'pipelineGroup';
   filters: Partial<settlementParams>;
 
+  pollingTime = signal<number>(60000);
+  private reload$ = new Subject<void>();
+  private pollingTime$ = new BehaviorSubject<number>(this.pollingTime());
+  url$: Observable<any>;
+  loadingTable = signal<boolean>(false);
+
   constructor() {
     super();
+
+    this.pollingTime$.next(this.pollingTime());
+    effect(() => {
+      this.pollingTime$.next(this.pollingTime());
+    });
 
     effect(() => {
       const currentJobs = this.tableData || [];
@@ -113,11 +124,31 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
         }
       }
     });
+
+    this.url$ = this.getListUrl();
   }
 
   override getListUrl(): Observable<any> {
-    return this.ss.search(this.filters, this.searchName, this.tableParams);
+    const polling$ = this.pollingTime$.pipe(
+      switchMap(interval => {
+        return timer(0, interval)
+      })
+    );
+
+    return merge(polling$, this.reload$)
+      .pipe(switchMap(() => {
+        this.loadingTable.set(true);
+        return this.ss.search(this.filters, this.searchName, this.tableParams)
+          .pipe(
+            finalize(() => this.loadingTable.set(false)),
+            takeUntilDestroyed(this.destroyRef$)
+          )
+      }
+      ),
+      shareReplay(1)
+    );
   }
+
 
   ngOnInit(): void {
     this.router.data.subscribe((data: Data) => {
@@ -150,12 +181,14 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   // for handling of actions; new implementation of modal
   handleAction(label: string, rowData: settlementPipeline, msg: string | TemplateRef<HTMLElement>, action: string, api$?: () => any): void {
     const okAction$ = () => {
-      this.busy$ = this.runSettlements.etaStlJobs(rowData, action)
+      this.loadingTable.set(true);
+      this.runSettlements.etaStlJobs(rowData, action)
+        .pipe(finalize(() => this.loadingTable.set(false)))
         .subscribe(res => {
           const message = res?.message || MESSAGES.SUCCESS_JOB_TRIGGER;
           this.toast.success(message);
 
-          this.search();
+          this.reload$.next();
         });
 
       if (api$) {
@@ -220,7 +253,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
             serviceCall();
             this.resetActionSelection(rowData);
             this.clearDateRange();
-            this.search();
+            this.reload$.next();
             this.toast.success("Jobs Successfully Triggered!");
             resolve(true);
           } catch (error) {
@@ -274,11 +307,11 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       ['reserveTradingAmounts-calculateGmrVat']: () => this.runJobWithConfirmation(action, row),
       ['energyTradingAmounts-calculateGmrVat']: () => this.runJobWithConfirmation(action, row),
 
-      ['reserveTradingAmounts-finalize']: () => this.handleFinalize(action, row),
-      ['energyTradingAmounts-finalize']: () => this.handleFinalize(action, row),
+      ['reserveTradingAmounts-finalize']: () => this.runJobWithConfirmation(action, row),
+      ['energyTradingAmounts-finalize']: () => this.runJobWithConfirmation(action, row),
 
-      ['energyTradingAmounts-calculateTransAlloc']: () => this.runJobWithConfirmation(action, row),
-      ['reserveTradingAmounts-calculateTransAlloc']: () => this.runJobWithConfirmation(action, row),
+      ['energyTradingAmounts-calculateTransAlloc']: () => this.triggerAllocModal(action, row),
+      ['reserveTradingAmounts-calculateTransAlloc']: () => this.triggerAllocModal(action, row),
 
       ['energyTradingAmounts-generateTransactionReport']: () => this.generateFiles(action, row),
       ['reserveTradingAmounts-generateTransactionReport']: () => this.generateFiles(action, row),
@@ -291,14 +324,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     };
 
     actions[action]();
-  }
-
-  handleFinalize(action: string, row: any): void {
-    if (row.processType !== MeterProcessTypes.PRELIM && row.processType !== MeterProcessTypes.DAILY) {
-      this.triggerAllocModal(action, row);
-    } else {
-      this.runJobWithConfirmation(action, row);
-    }
   }
 
   confirmAction(action: string, message?: string): NzModalRef {
@@ -372,12 +397,13 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   }
 
   runEtaStlJobs(row: any, action: string): void {
-    this.busy$ = this.runSettlements.etaStlJobs(row, action)
-      .pipe(takeUntilDestroyed(this.destroyRef$))
+    this.loadingTable.set(true);
+    this.runSettlements.etaStlJobs(row, action)
+      .pipe(takeUntilDestroyed(this.destroyRef$), finalize(() => this.loadingTable.set(false)))
       .subscribe(res => {
         const message = res?.message || MESSAGES.SUCCESS_JOB_TRIGGER;
         this.toast.success(message);
-        this.search();
+        this.reload$.next();
       });
   }
 
@@ -386,9 +412,11 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
     modal.updateConfig({
       nzOnOk: () => {
-        this.busy$ = this.ss.cancelRun(id)
+        this.loadingTable.set(true);
+        this.ss.cancelRun(id)
+          .pipe(finalize(() => this.loadingTable.set(false)))
           .subscribe(() => {
-            this.search();
+            this.reload$.next();
             this.toast.success(MESSAGES.SUCCESS_CANCEL_ITEM('run'));
           });
       }
@@ -408,7 +436,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       this.ss.publish(payload)
         .subscribe((res => {
             this.toast.success(res.message);
-            this.search();
+            this.reload$.next();
           }
         ));
     };
@@ -514,7 +542,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
     modal.afterClose.subscribe(res => {
       if (res) {
-        this.search();
+        this.reload$.next();
       }
     })
   }
