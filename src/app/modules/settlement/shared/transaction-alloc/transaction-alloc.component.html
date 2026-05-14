@@ -15,7 +15,7 @@
 
     @if (!isPrelim) {
       <nz-form-item class="col-sm-12">
-        <nz-form-label>{{ LABELS.ALLOCATION_DUE_DATE }}</nz-form-label>
+        <nz-form-label nzRequired>{{ LABELS.ALLOCATION_DUE_DATE }}</nz-form-label>
         <nz-form-control>
           <nz-date-picker formControlName="allocDueDate" class="w-100" [nzDisabledDate]="disabledAllocDueDate"></nz-date-picker>
         </nz-form-control>

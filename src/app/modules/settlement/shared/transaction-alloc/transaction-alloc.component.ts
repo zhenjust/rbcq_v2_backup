@@ -45,7 +45,7 @@ export class TransactionAllocComponent implements OnInit {
     this.endDate = addDays(this.rowData()?.billingEndDate, 1);
 
     this.form = this.formBuilder.group({
-      allocDate: [new Date()],
+      allocDate: [new Date(), RxwebValidators.required()],
       allocDueDate: [!this.isPrelim ? addDays(new Date(), 1) : null, RxwebValidators.required({ conditionalExpression: () => !this.isPrelim })],
       allocRemarks: [null],
     });
