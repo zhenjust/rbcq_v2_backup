@@ -51,7 +51,7 @@ export abstract class SearchListBase {
   getList(): void {
     setTimeout(() => {
       this.loading = true;
-      this.busy$ = this.getListUrl()
+      this.getListUrl()
         .pipe(finalize(() => {this.loading = false}))
         .subscribe(itemDetails => {
           if (itemDetails) {
@@ -64,6 +64,6 @@ export abstract class SearchListBase {
     }, 1);
   }
 
-  get isLoading(): boolean { return this.busy$ && !this.busy$?.closed; }
+  get isLoading(): boolean { return (this.busy$ && !this.busy$?.closed) || this.loading; }
 
 }

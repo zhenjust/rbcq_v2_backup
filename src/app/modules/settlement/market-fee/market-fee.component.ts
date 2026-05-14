@@ -8,7 +8,7 @@ import { TPL_TABLE_COLUMN, meterProcessBillingPeriod } from '@shared/interfaces'
 import { SettlementService, MeterprocessService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
-import { Observable, forkJoin, timer, switchMap, Subject, merge, BehaviorSubject, finalize, shareReplay } from 'rxjs';
+import { Observable, forkJoin, timer, switchMap, Subject, merge, BehaviorSubject, finalize } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { MeterProcessTypes } from '@shared/enums';
 import { RunMarketFeeComponent } from './run-market-fee/run-market-fee.component';
@@ -128,10 +128,7 @@ export class MarketFeeComponent  implements OnInit {
             }
           })
         )
-
-      }
-      ),
-      shareReplay(1)
+      })
     );
   }
 
