@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, DestroyRef, effect, inject, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { PHASE_TWO_AUTHORITIES, WESM_PENALTY_STATUS, WESM_PENALTY_TYPE } from '@shared/constants';
@@ -7,7 +7,7 @@ import { meterProcessBillingPeriod, TPL_TABLE_COLUMN, TableAction, meterProcessP
 import { MeterprocessService, SettlementService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, exhaustMap, finalize, merge, Observable, of, Subject, switchMap, timer } from 'rxjs';
 import { PenaltyGenerateIwsComponent } from './penalty-generate-iws/penalty-generate-iws.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MESSAGES } from '@shared/constants/messages.const';
@@ -48,6 +48,15 @@ export class WesmPenaltyComponent implements OnInit {
   filters: any = {};
   hasCalcPerm: boolean;
 
+  // POLLING
+  pollingTime = signal<number>(60000);
+  private reload$ = new Subject<void>();
+  private pollingTime$ = new BehaviorSubject<number>(this.pollingTime());
+  url$: Observable<any>;
+  firstLoad = signal<boolean>(true);
+  // END OF POLLING
+
+
   pipelineRecords: Record<string, any> = {
     ['penalty-calculate']: {
       message: MESSAGES.CONFIRM_SETTLEMENT_MSG('Calculate Financial Penalty'),
@@ -67,6 +76,13 @@ export class WesmPenaltyComponent implements OnInit {
     },
   }
 
+  constructor() {
+    this.pollingTime$.next(this.pollingTime());
+    effect(() => {
+      this.pollingTime$.next(this.pollingTime());
+    });
+  }
+
   ngOnInit(): void {
     this.statusOptions = WESM_PENALTY_STATUS.map(opt => ({ label: opt, value: opt }));
     this.typeOptions = Object.keys(WESM_PENALTY_TYPE)
@@ -77,7 +93,9 @@ export class WesmPenaltyComponent implements OnInit {
     this.getOptions();
 
     this.permissionService.hasPermission(PHASE_TWO_AUTHORITIES.CALC_PENALTY)
-      .then(hasPerm => this.hasCalcPerm = hasPerm)
+      .then(hasPerm => this.hasCalcPerm = hasPerm);
+
+    this.url$ = this.getUrl();
   }
 
   buildForm(): void {
@@ -100,7 +118,33 @@ export class WesmPenaltyComponent implements OnInit {
       return of([]);
     }
 
-    return this.settlementService.search(this.filters, 'penalty', this.paginatedTable?.tableParams);
+    const polling$ = this.pollingTime$.pipe(
+      switchMap(interval => {
+        return timer(0, interval)
+      })
+    );
+
+    return merge(
+      polling$,
+      this.reload$
+    ).pipe(
+      exhaustMap(() => {
+        if (this.firstLoad()) {
+          this.paginatedTable.loading = true;
+        }
+
+        return this.settlementService.search(this.filters, 'penalty', this.paginatedTable?.tableParams)
+          .pipe(finalize(() => {
+            if (this.paginatedTable) {
+              this.paginatedTable.loading = false;
+            }
+
+            this.firstLoad.set(false);
+          })
+        )
+      })
+    );
+
   }
 
   generateIws(isRefund = false): void {
@@ -127,7 +171,8 @@ export class WesmPenaltyComponent implements OnInit {
 
     modal.afterClose.subscribe(res => {
       if (res) {
-        this.paginatedTable?.search();
+        this.paginatedTable.loading = false;
+        this.reload$.next();
       }
     })
   }
@@ -152,15 +197,17 @@ export class WesmPenaltyComponent implements OnInit {
 
   applyFilter(): void {
     this.filters = this.form.getRawValue();
-    this.paginatedTable?.search();
+    this.paginatedTable.loading = false;
+    this.reload$.next();
   }
 
   resetFilters(): void {
     this.form.reset();
     this.showForm = false;
     this.filters = null;
-    this.paginatedTable?.search();
-  }
+    this.paginatedTable.loading = false;
+    this.reload$.next();
+}
 
   triggerAction(pipelineName: string, rowData: any): void {
     const payload = {
@@ -188,7 +235,8 @@ export class WesmPenaltyComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef$))
       .subscribe(() => {
         this.toastrService.success(MESSAGES.SUCCESS_JOB_TRIGGER);
-        this.paginatedTable?.search();
+        this.paginatedTable.loading = false;
+        this.reload$.next();
       });
   }
 
@@ -215,7 +263,8 @@ export class WesmPenaltyComponent implements OnInit {
 
     modal.afterClose.subscribe(res => {
       if (res) {
-        this.paginatedTable?.search();
+        this.paginatedTable.loading = false;
+        this.reload$.next();
       }
     })
   }

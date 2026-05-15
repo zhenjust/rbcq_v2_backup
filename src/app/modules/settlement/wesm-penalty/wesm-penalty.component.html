@@ -41,6 +41,8 @@
       <button nz-button *nzSpaceItem nzType="primary" [disabled]="form.invalid" (click)="showForm ? applyFilter() : showForm =! showForm">
         {{ showForm ? LABELS.APPLY_FILTERS : LABELS.SET_FILTERS }}
       </button>
+
+      <app-polling-timer *nzSpaceItem (emitEvent)="pollingTime.set($event)" (emitReload)="paginatedTable.loading = true; reload$.next()"></app-polling-timer>
     </nz-space>
 
     <nz-space *ngxPermissionsOnly="[ AUTH.CALC_PENALTY ]">
