@@ -108,45 +108,6 @@
   ${allData?.billingEndDate}` }}
 </ng-template>
 
-<ng-template #rateTpl let-allData="allData">
-  @if (allData?.claims?.length) {
-  {{ allData?.claims[0]?.approveRate }}
-  } @else {
-  -
-  }
-</ng-template>
-
-<ng-template #mtnTpl let-allData="allData">
-  @if (allData?.claims?.length) {
-  {{ allData?.claims[0]?.mtn }}
-  } @else {
-  -
-  }
-</ng-template>
-
-<ng-template #billingIdTpl let-allData="allData">
-  @if (allData?.claims?.length) {
-  {{ allData?.claims[0]?.billingId }}
-  } @else {
-  -
-  }
-</ng-template>
-
-<ng-template #progressTpl let-allData="allData">
-  @if (allData?.status?.startsWith('In-Progress')) {
-    <div class="px-3">
-        <nz-progress [nzStrokeWidth]="4" [nzPercent]="99.9" [nzShowInfo]="false" [nzStrokeColor]="{ '0%': '#108ee9', '100%': '#87d068' }" nzStatus="active" />
-    </div>
-  }
-</ng-template>
-
-<ng-template #datetimeTpl let-allData="allData">
-  @for (range of allData?.customDateRanges; track $index) {
-    <div>{{ range?.startDate }} - {{ range?.endDate }}</div>
-  }
-</ng-template>
-
-
 <ng-template #tagTpl let-data="data">
   <nz-tag class="break-word-tag">
     {{ data }}

@@ -28,12 +28,7 @@ export class MarketFeeComponent  implements OnInit {
 
   @ViewChild('paginatedTable') paginatedTable!: PaginatedTableComponent<any>;
   @ViewChild('bpTpl', { static: true }) bpTpl!: TemplateRef<HTMLElement>;
-  @ViewChild('rateTpl', { static: true }) rateTpl!: TemplateRef<HTMLElement>;
-  @ViewChild('mtnTpl', { static: true }) mtnTpl!: TemplateRef<HTMLElement>;
-  @ViewChild('billingIdTpl', { static: true }) billingIdTpl!: TemplateRef<HTMLElement>;
-  @ViewChild('progressTpl', { static: true }) progressTpl!: TemplateRef<HTMLElement>;
   @ViewChild('tagTpl', { static: true }) tagTpl!: TemplateRef<HTMLElement>;
-  @ViewChild('datetimeTpl', { static: true }) datetimeTpl!: TemplateRef<HTMLElement>;
 
   private readonly formBuilder = inject(FormBuilder);
   private readonly settlementService = inject(SettlementService);
@@ -150,8 +145,7 @@ export class MarketFeeComponent  implements OnInit {
   }
 
   applyFilter(): void {
-    const values = this.form.getRawValue();
-    this.filters = values;
+    this.filters = this.form.getRawValue();
     this.paginatedTable.loading = true;
     this.reload$.next();
   }

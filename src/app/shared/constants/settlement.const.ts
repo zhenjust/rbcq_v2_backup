@@ -40,7 +40,7 @@ export const SettlementJobActions: JobSelect[] = [
    * Always arrange by order of process
    *
    * */
-  { label: LABELS.GENERATE_ENERGY_INPUT_WORKSPACE, value: 'energyTradingAmounts-generateInputWorkspace', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
+  { label: LABELS.GENERATE_INPUT_WORKSPACE, value: 'energyTradingAmounts-generateInputWorkspace', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
   { label: LABELS.GENERATE_RESERVE_INPUT_WORKSPACE, value: 'reserveTradingAmounts-generateInputWorkspace', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
   { label: LABELS.CALCULATE_ENERGY_TRADING_AMOUNT, value: 'energyTradingAmounts-calculateTradingAmount', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
   { label: LABELS.CALCULATE_RESERVE_TRADING_AMOUNT, value: 'reserveTradingAmounts-calculateTradingAmount', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },

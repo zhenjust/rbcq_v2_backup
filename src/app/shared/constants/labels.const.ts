@@ -61,7 +61,6 @@ export const LABELS = {
   RESERVE_SETTLEMENT_CALCULATION: 'Reserve Settlement Calculation',
   GENERATE_MONTHLY_SUMMARY: 'Generate Monthly Summary',
   GENERATE_INPUT_WORKSPACE: 'Generate Input Workspace',
-  GENERATE_ENERGY_INPUT_WORKSPACE: 'Generate Energy Input Workspace',
   GENERATE_RESERVE_INPUT_WORKSPACE: 'Generate Reserve Input Workspace',
   METERING_WORKSPACE_ID: 'Metering Workspace ID',
   NULLIFIED_WORKSPACE_ID: 'Nullified Workspace ID',
