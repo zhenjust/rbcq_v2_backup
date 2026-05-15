@@ -8,7 +8,7 @@ import { TPL_TABLE_COLUMN, meterProcessBillingPeriod } from '@shared/interfaces'
 import { SettlementService, MeterprocessService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
-import { Observable, forkJoin, timer, switchMap, Subject, merge, BehaviorSubject, finalize } from 'rxjs';
+import { Observable, forkJoin, timer, switchMap, Subject, merge, BehaviorSubject, finalize, exhaustMap } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { MeterProcessTypes } from '@shared/enums';
 import { RunMarketFeeComponent } from './run-market-fee/run-market-fee.component';
@@ -65,6 +65,7 @@ export class MarketFeeComponent  implements OnInit {
   private reload$ = new Subject<void>();
   private pollingTime$ = new BehaviorSubject<number>(this.pollingTime());
   url$: Observable<any>;
+  firstLoad = signal<boolean>(true);
   // END OF POLLING
 
   constructor() {
@@ -115,8 +116,11 @@ export class MarketFeeComponent  implements OnInit {
       polling$,
       this.reload$
     ).pipe(
-      switchMap(() => {
-        this.paginatedTable.loading = true
+      exhaustMap(() => {
+        if (this.firstLoad()) {
+          this.paginatedTable.loading = true;
+        }
+
         return this.settlementService.search(
           this.filters,
           groupName,
@@ -126,6 +130,7 @@ export class MarketFeeComponent  implements OnInit {
             if (this.paginatedTable) {
               this.paginatedTable.loading = false;
             }
+            this.firstLoad.set(false);
           })
         )
       })
@@ -147,6 +152,7 @@ export class MarketFeeComponent  implements OnInit {
   applyFilter(): void {
     const values = this.form.getRawValue();
     this.filters = values;
+    this.paginatedTable.loading = true;
     this.reload$.next();
   }
 
@@ -154,6 +160,7 @@ export class MarketFeeComponent  implements OnInit {
     this.form.reset();
     this.filters = null;
     this.showForm = false;
+    this.paginatedTable.loading = true;
     this.reload$.next();
   }
 
@@ -181,6 +188,7 @@ export class MarketFeeComponent  implements OnInit {
 
     modal.afterClose.subscribe(res => {
       if (res) {
+        this.paginatedTable.loading = true;
         this.reload$.next();
       }
     })
@@ -209,6 +217,7 @@ export class MarketFeeComponent  implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef$))
       .subscribe(() => {
         this.toastrService.success(MESSAGES.SUCCESS_JOB_TRIGGER);
+        this.paginatedTable.loading = true;
         this.reload$.next();
       });
   }

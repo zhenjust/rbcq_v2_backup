@@ -37,7 +37,7 @@
         {{ showForm ? LABELS.APPLY_FILTERS : LABELS.SET_FILTERS }}
       </button>
 
-      <app-polling-timer *nzSpaceItem (emitEvent)="pollingTime.set($event)" (emitReload)="reload$.next()"></app-polling-timer>
+      <app-polling-timer *nzSpaceItem (emitEvent)="pollingTime.set($event)" (emitReload)="paginatedTable.loading = true; reload$.next()"></app-polling-timer>
     </nz-space>
 
     <nz-space>
@@ -68,7 +68,7 @@
       <ng-template #actionsTpl let-subRowData="row">
         @if (subRowData.status !== 'Nullified') {
           @let isFinalized = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded');
-          @let isCalculated = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded');
+          <!-- @let isCalculated = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded'); -->
           @let isInProgress = subRowData.status.includes('In-Progress');
 
           @if (!isFinalized && !isInProgress) {
@@ -87,7 +87,7 @@
                   <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_GENERATE_IW ] : [ AUTH.RMF_GENERATE_IW ]" (click)="triggerJob('generateInputWorkspace', subRowData, tableComp, LABELS.GENERATE_INPUT_WORKSPACE)">{{ LABELS.GENERATE_INPUT_WORKSPACE }}</li>
                 }
 
-                @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateInputWorkspace')] : 'Succeeded') && !isCalculated) {
+                @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateInputWorkspace')] : 'Succeeded')) {
                   <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_CALCULATE ] : [ AUTH.RMF_CALCULATE ]" (click)="triggerJob('calculateMarketFee', subRowData, tableComp, LABELS.CALCULATE + ' ' + LABELS.ENERGY_MARKET_FEE)">{{ LABELS.CALCULATE }}</li>
                 }
 
