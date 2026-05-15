@@ -10,8 +10,8 @@ import {
   TemplateRef,
   ViewChild
 } from '@angular/core';
-import {ActivatedRoute, Data} from '@angular/router';
-import {BehaviorSubject, finalize, merge, Observable, shareReplay, Subject, Subscription, switchMap, timer} from 'rxjs';
+import { ActivatedRoute, Data } from '@angular/router';
+import { BehaviorSubject, finalize, exhaustMap, merge, Observable, Subject, Subscription, switchMap, timer } from 'rxjs';
 import {
   JobSelect,
   pipeline,
@@ -21,16 +21,16 @@ import {
   TableColumn,
   TPL_TABLE_COLUMN
 } from '@shared/interfaces';
-import {RunSettlementService} from '@shared/services/settlement';
-import {ToastrService} from 'ngx-toastr';
-import {MeterProcessTypes} from '@shared/enums';
-import {NzModalRef, NzModalService} from 'ng-zorro-antd/modal';
-import {isAfter, isBefore, setHours, startOfDay, subDays} from 'date-fns';
-import {SettlementService} from '@shared/services/api';
-import {LABELS} from '@shared/constants/labels.const';
-import {ConfirmWithDescComponent} from '@shared/components/confirm-with-desc/confirm-with-desc.component';
-import {MESSAGES} from '@shared/constants/messages.const';
-import {DatePipe} from '@angular/common';
+import { RunSettlementService } from '@shared/services/settlement';
+import { ToastrService } from 'ngx-toastr';
+import { MeterProcessTypes } from '@shared/enums';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { isAfter, isBefore, setHours, startOfDay, subDays } from 'date-fns';
+import { SettlementService } from '@shared/services/api';
+import { LABELS } from '@shared/constants/labels.const';
+import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
+import { MESSAGES } from '@shared/constants/messages.const';
+import { DatePipe } from '@angular/common';
 import {
   BaseTableItem,
   modalConfig,
@@ -38,10 +38,10 @@ import {
   SettlementJobSubActions,
   SettlementStatus
 } from '@shared/constants';
-import {SearchListBase} from '@shared/services/utils/list.util.service';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {ConfirmWithContentComponent} from '@shared/components/confirm-with-content/confirm-with-content.component';
-import {TransactionAllocComponent} from '@modules/settlement/shared/transaction-alloc/transaction-alloc.component';
+import { SearchListBase } from '@shared/services/utils/list.util.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ConfirmWithContentComponent } from '@shared/components/confirm-with-content/confirm-with-content.component';
+import { TransactionAllocComponent } from '@modules/settlement/shared/transaction-alloc/transaction-alloc.component';
 
 @Component({
   selector: 'app-table',
@@ -97,6 +97,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   private pollingTime$ = new BehaviorSubject<number>(this.pollingTime());
   url$: Observable<any>;
   loadingTable = signal<boolean>(false);
+  isFirstLoad = true;
 
   constructor() {
     super();
@@ -136,16 +137,22 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     );
 
     return merge(polling$, this.reload$)
-      .pipe(switchMap(() => {
-        this.loadingTable.set(true);
+      .pipe(exhaustMap(() => {
+        if (this.isFirstLoad) {
+          this.loadingTable.set(true);
+        }
+
         return this.ss.search(this.filters, this.searchName, this.tableParams)
           .pipe(
-            finalize(() => this.loadingTable.set(false)),
-            takeUntilDestroyed(this.destroyRef$)
+            takeUntilDestroyed(this.destroyRef$),
+            finalize(() => {
+              this.loadingTable.set(false);
+              this.isFirstLoad = false;
+            })
           )
       }
       ),
-      shareReplay(1)
+      // shareReplay(1)
     );
   }
 

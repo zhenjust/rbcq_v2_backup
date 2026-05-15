@@ -6,9 +6,9 @@
     }
 
     <app-filter-search
-      (filtersEvent)="table.filters = $event; table.reload$.next()"
+      (filtersEvent)="table.filters = $event; table.loadingTable.set(true); table.reload$.next()"
       (pollingEvent)="table.pollingTime.set($event)"
-      (reloadEvent)="table.reload$.next()">
+      (reloadEvent)="table.loadingTable.set(true); table.reload$.next()">
     </app-filter-search>
 
     <app-table #table></app-table>
