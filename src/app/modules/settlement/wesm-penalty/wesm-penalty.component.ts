@@ -226,10 +226,7 @@ export class WesmPenaltyComponent implements OnInit {
           const isPenalty = rowData?.penaltyHeaders[0]?.type === 'PENALTY';
           this.triggerAction(`penalty-calculate${isPenalty ? '' : 'Refund'}`, rowData);
         },
-        hidden: (rowData: any) => {
-          const isPenalty = rowData?.penaltyHeaders[0]?.type === 'PENALTY';
-          return this.hideAction(rowData, `penalty${isPenalty ? '' : 'Refund'}`);
-        },
+        hidden: (rowData: meterProcessPipelineGroup) => this.hideAction(rowData, 'penalty'),
       },
       {
         label: LABELS.FINALIZE,
