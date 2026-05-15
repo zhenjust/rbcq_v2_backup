@@ -57,6 +57,14 @@ export class WesmPenaltyComponent implements OnInit {
       message: MESSAGES.CONFIRM_SETTLEMENT_MSG('Finalize Financial Penalty'),
       modalTitle: `${LABELS.FINALIZE} ${LABELS.PENALTY}`
     },
+    ['penalty-calculateRefund']: {
+      message: MESSAGES.CONFIRM_SETTLEMENT_MSG('Calculate Financial Penalty - Refund'),
+      modalTitle: `${LABELS.CALCULATE} ${LABELS.REFUND}`
+    },
+    ['penalty-finalizeRefund']: {
+      message: MESSAGES.CONFIRM_SETTLEMENT_MSG('Finalize Financial Penalty - Refund'),
+      modalTitle: `${LABELS.FINALIZE} ${LABELS.REFUND}`
+    },
   }
 
   ngOnInit(): void {
