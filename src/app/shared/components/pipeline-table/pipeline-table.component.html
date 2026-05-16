@@ -1,9 +1,20 @@
 <app-template-table class="w-100" [tableColumns]="columns" [tableData]="useCustomTableData() || tableData"></app-template-table>
 
-<ng-template #tagTpl let-data="data">
-  <nz-tag class="break-word-tag">
+<ng-template #statusTpl let-data="data" let-allData="allData">
+  <nz-tag
+    nz-popover
+    [nzPopoverContent]="(allData.status === 'Failed' || allData.status === 'Partially Succeeded') ? errorTpl : undefined"
+    [nzPopoverTitle]="(allData.status === 'Failed' || allData.status === 'Partially Succeeded') ? 'Error' : undefined"
+    nzPopoverTrigger="hover"
+    class="break-word-tag">
     {{ data }}
   </nz-tag>
+
+  <ng-template #errorTpl>
+    <div style="max-width: 800px; max-height: 300px; overflow: auto;">
+      <pre>{{ allData.message }}</pre>
+    </div>
+  </ng-template>
 </ng-template>
 
 <ng-template #nameTpl let-data="data" let-allData="allData">

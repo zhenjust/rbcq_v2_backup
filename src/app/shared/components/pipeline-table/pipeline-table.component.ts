@@ -10,7 +10,7 @@ import { LABELS } from '@shared/constants/labels.const';
 })
 export class PipelineTableComponent implements AfterViewInit {
 
-  @ViewChild('tagTpl', { static: true }) tagTpl!: TemplateRef<HTMLElement>;
+  @ViewChild('statusTpl', { static: true }) statusTpl!: TemplateRef<HTMLElement>;
   @ViewChild('nameTpl', { static: true }) nameTpl!: TemplateRef<HTMLElement>;
 
   private readonly cdRef = inject(ChangeDetectorRef);
@@ -27,7 +27,7 @@ export class PipelineTableComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    PipelineTableColumns[LABELS.STATUS].template = this.tagTpl;
+    PipelineTableColumns[LABELS.STATUS].template = this.statusTpl;
     PipelineTableColumns[LABELS.NAME].template = this.nameTpl;
 
     this.columns = Object.values(PipelineTableColumns);
