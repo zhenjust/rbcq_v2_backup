@@ -226,13 +226,14 @@ export class MarketFeeComponent  implements OnInit {
 
 
 const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
-  [LABELS.WORKSPACE_ID]: { label: LABELS.WORKSPACE_ID, propName: 'id' },
+  // [LABELS.GROUP_ID]: { label: LABELS.GROUP_ID, propName: 'id' },
   [LABELS.RUN_DATE_AND_TIME]: { label: LABELS.RUN_DATE_AND_TIME, propName: 'runDatetime', type: 'date' },
   [LABELS.BILLING_PERIOD]: { label: LABELS.BILLING_PERIOD, propName: 'billingStartDate', type: 'template' },
   [LABELS.PROCESS_TYPE]: { label: LABELS.PROCESS_TYPE, propName: 'processType', type: 'enumLabel' },
 }
 
 const expandedTableColumns: Record<string, TPL_TABLE_COLUMN> = {
+  [LABELS.WORKSPACE_ID]: { label: LABELS.WORKSPACE_ID, propName: 'id' },
   [LABELS.TYPE]: { label: LABELS.TYPE, propName: 'parameters', secondPropName: 'marketFeeType' },
   [LABELS.MODE]: { label: LABELS.MODE, propName: 'parameters', secondPropName: 'marketFeeMode' },
   [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status' },
