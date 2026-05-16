@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { LABELS } from '@shared/constants/labels.const';
 import { PipelineTableColumns } from '@shared/constants/pipelines.const';
-import { TPL_TABLE_COLUMN, meterProcessBillingPeriod } from '@shared/interfaces';
+import { TPL_TABLE_COLUMN, meterProcessBillingPeriod, PublishSettlement } from '@shared/interfaces';
 import { SettlementService, MeterprocessService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
@@ -16,9 +16,9 @@ import { ToastrService } from 'ngx-toastr';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { TemplateTableComponent } from '@shared/components/template-table/template-table.component';
 import { PHASE_TWO_AUTHORITIES } from '@shared/constants';
-import { SettlementStatus } from '@shared/constants';
 import { effect } from '@angular/core';
 import { StlUtilitiesService } from '@shared/services/utils';
+import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
 @Component({
   selector: 'app-market-fee',
   standalone: false,
@@ -48,8 +48,6 @@ export class MarketFeeComponent  implements OnInit {
   form: FormGroup;
   showForm = false;
   expandedTableColumns: TPL_TABLE_COLUMN[];
-  SettlementStatus = SettlementStatus;
-
   billingPeriods: meterProcessBillingPeriod[] = [];
   billingPeriodOpts: NzSelectOptionInterface[] = [];
   processTypeOptions: NzSelectOptionInterface[] = [];
@@ -221,6 +219,42 @@ export class MarketFeeComponent  implements OnInit {
     this.stlUtil.triggerAllocModal(`${this.pipelineName}-${action}`, rowData, () => this.reload$.next(), true);
   }
 
+  publish(functionName: string, allData: any, rowData: any): void {
+    const payload: PublishSettlement = {
+      pipelineId: +rowData.id,
+      stlGroupId: +rowData.id,
+      functionName: functionName
+    };
+
+    const nzData = {
+      message: MESSAGES.CONFIRM_PUBLISH_ITEM(LABELS.TRANSACTION_REPORT.toLowerCase()),
+      okAction: LABELS.PUBLISH,
+      descriptions: [
+        {
+          label: LABELS.BILLING_PERIOD,
+          value: `${allData.billingStartDate} to ${allData.billingEndDate}`
+        },
+      ],
+      onOk: () => this.settlementService.publish(payload)
+    };
+
+    const modal = this.modalService.create({
+      nzTitle: LABELS.PUBLISH_TRANSACTION_REPORT,
+      nzContent: ConfirmWithDescComponent,
+      nzCentered: true,
+      nzFooter: null,
+      nzData,
+      nzWidth: '600px',
+    });
+
+    modal.afterClose.subscribe(res => {
+      if (res) {
+        this.toastrService.success(res.message);
+        this.reload$.next();
+      }
+    });
+  }
+
   get pipelineName(): string { return this.isEnergy() ? 'energyMarketFee' : 'reserveMarketFee'; }
 }
 
@@ -237,4 +271,5 @@ const expandedTableColumns: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.TYPE]: { label: LABELS.TYPE, propName: 'parameters', secondPropName: 'marketFeeType' },
   [LABELS.MODE]: { label: LABELS.MODE, propName: 'parameters', secondPropName: 'marketFeeMode' },
   [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status' },
+  [LABELS.PUBLISHED]: { label: LABELS.PUBLISHED, propName: 'published', type: 'boolean', align: 'center' }
 }

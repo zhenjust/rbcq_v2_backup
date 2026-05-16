@@ -51,6 +51,7 @@ export interface pipeline {
     lastModifiedBy: string;
     partial: boolean;
     consolidate: boolean;
+    published: boolean;
     pipelineRuns: PipelineRun[];
 }
 
@@ -87,10 +88,11 @@ export interface addtlCompensationRunDtos {
 }
 
 export interface PublishSettlement {
+    workspaceId?: number,
+    pipelineGroupId?: number,
+    pipelineId?: number,
     stlGroupId: number,
-    processType: string,
-    stlSource: string,
-    dueDate?: string
+    functionName: string
 }
 
 export interface EnergyTradingAmounts {

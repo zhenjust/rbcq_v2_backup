@@ -66,6 +66,11 @@
               </td>
             }
 
+            @case ('boolean') {
+              <td [nzAlign]="align" class="px-3">{{ (data === true ? 'Yes' : data === false ? 'No' : null) || '-' }}
+              </td>
+            }
+
             @default {
               <td [nzAlign]="align" class="px-3 text-nowrap">{{ data || '-' }}</td>
             }

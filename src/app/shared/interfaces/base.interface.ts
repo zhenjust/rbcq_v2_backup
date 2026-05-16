@@ -3,7 +3,7 @@ export interface TPL_TABLE_COLUMN {
   propName: string,
   secondPropName?: string,
   align?: 'center' | 'left' | 'right';
-  type?: 'string' | 'number' | 'date' | 'template' | 'enumLabel' | 'amount';
+  type?: 'string' | 'number' | 'date' | 'template' | 'enumLabel' | 'amount' | 'boolean';
   width?: string,
   template?: any,
   sort?: boolean;
@@ -21,6 +21,7 @@ export interface HttpResponseProgress {
 export interface TableColumn {
   name: string;
   key: string;
+  align?: 'center' | 'left' | 'right';
 }
 
 export class TableParams {

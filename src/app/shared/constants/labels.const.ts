@@ -217,5 +217,6 @@ export const LABELS = {
   CALCULATE_FINANCIAL_PENALTY: 'Calculate Financial Penalty',
   PENALTY: 'Penalty',
   REFUND: 'Refund',
+  PUBLISHED: 'Published',
 
 }

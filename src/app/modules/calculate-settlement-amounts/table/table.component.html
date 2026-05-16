@@ -15,7 +15,8 @@
         <tr>
             <th></th>
             @for (column of tableItem; track column.key) {
-                <th>{{column.name}}</th>
+                @let align = column?.align || 'left';
+                <th [nzAlign]="align">{{column.name}}</th>
             }
         </tr>
     </thead>
@@ -28,7 +29,8 @@
                 <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)" [nzShowExpand]="!!data.pipelines.length"></td>
 
                 @for (column of tableItem; track column.key) {
-                    <td>
+                    @let align = column?.align || 'left';
+                    <td [nzAlign]="align">
                         @if (column.key === 'actions') {
                             @let actions = settlementJobActions | stlActions: data : searchName;
                             @if (actions?.length) {
@@ -65,7 +67,7 @@
                         @let actions = (SettlementJobSubActions | stlActions: row : searchName);
                         @if (row.status && actions?.length) {
                             @for (action of actions; track action.value) {
-                            <a nz-button nzType="link" (click)="triggerAction(action.value, row)" nzSize="small" nzBlock>{{ action.label }}</a>
+                            <a nz-button nzType="link" (click)="triggerAction(action.value, row, data)" nzSize="small" nzBlock>{{ action.label }}</a>
                             }
                         }
                     </ng-template>

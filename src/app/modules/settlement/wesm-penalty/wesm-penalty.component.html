@@ -62,7 +62,7 @@
         <ul nz-menu nzSelectable>
           <li nz-menu-item>{{ LABELS.CALCULATE }}</li>
           <li nz-menu-item>{{ LABELS.FINALIZE }}</li>
-          <li nz-menu-item>{{ LABELS.PUBLISH }}</li>
+          <li nz-menu-item>{{ LABELS.PUBLISH_TRANSACTION_REPORT }}</li>
           <li nz-menu-item>{{ LABELS.GENERATE_FILES }}</li>
         </ul>
       </nz-dropdown-menu>
@@ -70,7 +70,7 @@
   </div>
 
   <!-- Table -->
-  <app-paginated-table #paginatedTable [enableCheckbox]="true" resultsProp="pipelineGroup" [tableColumns]="tableColumns" [url]="getUrl()" [showActions]="true" [tableConfig]="{ height: '60vh' }" [enableExpand]="true" [expandTpl]="expandTpl" [actionControls]="actionControls" [showActions]="hasCalcPerm"></app-paginated-table>
+  <app-paginated-table #paginatedTable [enableCheckbox]="true" resultsProp="pipelineGroup" [tableColumns]="tableColumns" [url]="getUrl()" [tableConfig]="{ height: '60vh' }" [enableExpand]="true" [expandTpl]="expandTpl" [actionControls]="actionControls" [showActions]="hasCalcPerm"></app-paginated-table>
 
   <ng-template #expandTpl let-row="row">
     <div class="d-flex flex-column w-100 my-2 pe-2">

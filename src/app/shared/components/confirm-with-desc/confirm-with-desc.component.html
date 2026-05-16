@@ -9,6 +9,6 @@
 }
 
 <div class="d-flex justify-content-end" *nzModalFooter>
-  <button nz-button (click)="onBtnClose()">{{ data.closeAction || LABELS.CLOSE  }}</button>
-  <button nz-button nzType="primary" (click)="onBtnClick()">{{ data.okAction || LABELS.YES }}</button>
+  <button nz-button [disabled]="isLoading" (click)="onBtnClose()">{{ data.closeAction || LABELS.CLOSE  }}</button>
+  <button nz-button nzType="primary" [nzLoading]="isLoading" (click)="onBtnClick()">{{ data.okAction || LABELS.YES }}</button>
 </div>

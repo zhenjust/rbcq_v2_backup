@@ -14,7 +14,6 @@ import { ActivatedRoute, Data } from '@angular/router';
 import { BehaviorSubject, finalize, exhaustMap, merge, Observable, Subject, Subscription, switchMap, timer } from 'rxjs';
 import {
   JobSelect,
-  pipeline,
   PublishSettlement,
   settlementParams,
   settlementPipeline,
@@ -63,8 +62,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   private readonly toast = inject(ToastrService);
   private readonly modal = inject(NzModalService);
   private readonly ss = inject(SettlementService);
-  private readonly dp = inject(DatePipe);
-
   destroyRef$ = inject(DestroyRef);
 
   isLineRentalStatus = false;
@@ -298,7 +295,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   /**
    * NEW IMPLEMENTATION FOR ACTIONS
    */
-  triggerAction(action: string, row: any): void {
+  triggerAction(action: string, row: any, data: any): void {
     const actions: Record<string, () => unknown> = {
       ['cancelRun']: () => this.cancelRun(action, row.id),
 
@@ -326,8 +323,8 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       ['energyTradingAmounts-generateFiles']: () => this.generateFiles(action, row),
       ['reserveTradingAmounts-generateFiles']: () => this.generateFiles(action, row),
 
-      ['energyTradingAmounts-publish']: () => this.handlePublishAction('ENERGY', row),
-      ['reserveTradingAmounts-publish']: () => this.handlePublishAction('RESERVE', row)
+      ['energyTradingAmounts-publish']: () => this.handlePublishAction('Energy Trading Amounts Calculation', data),
+      ['reserveTradingAmounts-publish']: () => this.handlePublishAction('Reserve Trading Amounts Calculation', data)
     };
 
     actions[action]();
@@ -395,11 +392,9 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
   runJobWithConfirmation(action: string, row: any): void {
     const modal = this.confirmAction(action);
-    const finalizePipeline = row.pipelines?.find((p: any) => p.name?.includes('finalize')) || {};
-    const pipelineParams = finalizePipeline?.parameters || {};
 
     modal.updateConfig({
-      nzOnOk: () => this.runEtaStlJobs({...row, parameters: pipelineParams}, action)
+      nzOnOk: () => this.runEtaStlJobs(row, action)
     });
   }
 
@@ -430,50 +425,42 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     });
   }
 
-  handlePublishAction(stlSource: string, rowData: any): void {
-    const finalizeData = rowData?.pipelines?.find((p: pipeline) => p.name?.includes('finalize') && p.status === 'Completed');
+  handlePublishAction(functionName: string, data: any): void {
     const payload: PublishSettlement = {
-      stlGroupId: +rowData.workspaceId,
-      processType: rowData.processType,
-      stlSource: stlSource,
-      dueDate: finalizeData?.parameters?.dueDate
+      workspaceId: +data.workspaceId,
+      pipelineGroupId: +data.id,
+      stlGroupId: +data.id,
+      functionName: functionName
     };
-
-    const api$ = () => {
-      this.ss.publish(payload)
-        .subscribe((res => {
-            this.toast.success(res.message);
-            this.reload$.next();
-          }
-        ));
-    };
-
-    // test data
-    const value = this.dp.transform(new Date(), 'yyyy-MM-dd');
 
     const nzData = {
       message: MESSAGES.CONFIRM_PUBLISH_ITEM(LABELS.TRANSACTION_REPORT.toLowerCase()),
       okAction: LABELS.PUBLISH,
       descriptions: [
         {
-          label: LABELS.DUE_DATE,
-          value: payload.dueDate
-        },
-        {
           label: `${LABELS.TRADING_DATE}/${LABELS.BILLING_PERIOD}`,
-          value: `${value} to ${value}`
+          value: data.tradingDate
+            ? data.tradingDate
+            : `${data.billingStartDate} to ${data.billingEndDate}`
         },
-      ]
+      ],
+      onOk: () => this.ss.publish(payload)
     };
 
-    this.modal.create({
-      nzTitle: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`,
+    const modal = this.modal.create({
+      nzTitle: LABELS.PUBLISH_TRANSACTION_REPORT,
       nzContent: ConfirmWithDescComponent,
       nzCentered: true,
       nzFooter: null,
       nzData,
       nzWidth: '600px',
-      nzOnOk: () => api$()
+    });
+
+    modal.afterClose.subscribe(res => {
+      if (res) {
+        this.toast.success(res.message);
+        this.reload$.next();
+      }
     });
   }
 

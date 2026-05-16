@@ -56,8 +56,8 @@ export const SettlementJobActions: JobSelect[] = [
   { label: LABELS.GENERATE_RESERVE_TRANSACTION_REPORT, value: 'reserveTradingAmounts-generateTransactionReport', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
   { label: LABELS.GENERATE_ENERGY_FILES, value: 'energyTradingAmounts-generateFiles', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
   { label: LABELS.GENERATE_RESERVE_FILES, value: 'reserveTradingAmounts-generateFiles', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
-  { label: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`, value: 'energyTradingAmounts-publish', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
-  { label: `${LABELS.PUBLISH} ${LABELS.TRANSACTION_REPORT}`, value: 'reserveTradingAmounts-publish', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
+  { label: LABELS.PUBLISH_TRANSACTION_REPORT, value: 'energyTradingAmounts-publish', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
+  { label: LABELS.PUBLISH_TRANSACTION_REPORT, value: 'reserveTradingAmounts-publish', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
   /**
    * IN_PROGRESS
    */
@@ -94,7 +94,7 @@ export const BaseTableItem: TableColumn[] = [
   { name: 'Trading Date', key: 'tradingDate' },
   { name: 'Status', key: 'status' },
   { name: 'Line Rental Status', key: 'lineRentalStatus' },
-  { name: 'Published', key: 'published' },
+  { name: 'Published', key: 'published', align: 'center' },
   { name: 'Actions', key: 'actions' }
 ];
 
