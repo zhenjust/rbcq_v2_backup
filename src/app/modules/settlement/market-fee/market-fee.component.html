@@ -71,7 +71,7 @@
           <!-- @let isCalculated = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded'); -->
           @let isInProgress = subRowData.status.includes('In-Progress');
 
-          @if (!isFinalized && !isInProgress) {
+          @if (!isInProgress) {
             <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu">{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
           }
 
@@ -87,12 +87,16 @@
                   <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_GENERATE_IW ] : [ AUTH.RMF_GENERATE_IW ]" (click)="triggerJob('generateInputWorkspace', subRowData, tableComp, LABELS.GENERATE_INPUT_WORKSPACE)">{{ LABELS.GENERATE_INPUT_WORKSPACE }}</li>
                 }
 
-                @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateInputWorkspace')] : 'Succeeded')) {
+                @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateInputWorkspace')] : 'Succeeded') && !isFinalized) {
                   <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_CALCULATE ] : [ AUTH.RMF_CALCULATE ]" (click)="triggerJob('calculateMarketFee', subRowData, tableComp, LABELS.CALCULATE + ' ' + LABELS.ENERGY_MARKET_FEE)">{{ LABELS.CALCULATE }}</li>
                 }
 
                 @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded') && !isFinalized) {
                   <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_FINALIZE ] : [ AUTH.RMF_FINALIZE ]" (click)="finalize('finalize', subRowData)">{{ LABELS.FINALIZE }}</li>
+                }
+
+                @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded')) {
+                  <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_GENERATE_EMF_FILE ] : [ AUTH.RMF_GENERATE_RMF_FILE ]" (click)="triggerJob('generateFiles', subRowData, tableComp, LABELS.GENERATE_FILES)">{{ LABELS.GENERATE_FILES }}</li>
                 }
               </ul>
           </nz-dropdown-menu>
