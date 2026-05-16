@@ -45,32 +45,29 @@
 
           @let data = (column.secondPropName ? row[column.propName][column.secondPropName] : row[column.propName]);
           @let align = column?.align || 'left';
-          @let showCell = !column?.hasRowSpan || !!row?.rowSpan;
-          @let rowspanValue = column?.hasRowSpan ? row?.rowSpan : null;
 
-          @if (showCell) {
-            @switch (column.type) {
-              @case ('template') {
-                <td [nzAlign]="align" class="px-3" [attr.rowspan]="rowspanValue">
-                  <ng-container *ngTemplateOutlet="column?.template; context: { data, allData: row }"></ng-container>
-                </td>
-              }
+          @switch (column.type) {
+            @case ('template') {
+              <td [nzAlign]="align" class="px-3">
+                <ng-container *ngTemplateOutlet="column?.template; context: { data, allData: row }"></ng-container>
+              </td>
+            }
 
-              @case ('date') {
-                <td [nzAlign]="align" class="px-3" [attr.rowspan]="rowspanValue">{{ (data | date: 'yyyy-MM-dd HH:mm') || '-'}}</td>
-              }
+            @case ('date') {
+              <td [nzAlign]="align" class="px-3">{{ (data | date: 'yyyy-MM-dd HH:mm') || '-' }}</td>
+            }
 
-              @case ('enumLabel') {
-                <td [nzAlign]="align" class="px-3" [attr.rowspan]="rowspanValue">{{ (data | enumToLabel) || '-'}}</td>
-              }
+            @case ('enumLabel') {
+              <td [nzAlign]="align" class="px-3">{{ (data | enumToLabel) || '-' }}</td>
+            }
 
-              @case ('amount') {
-                <td [nzAlign]="align" class="px-3" [attr.rowspan]="rowspanValue">{{ (data | number: '1.2-2') || '-'}}</td>
-              }
+            @case ('amount') {
+              <td [nzAlign]="align" class="px-3">{{ (data | number: '1.2-2') || '-' }}
+              </td>
+            }
 
-              @default {
-                <td [nzAlign]="align" class="px-3 text-nowrap" [attr.rowspan]="rowspanValue">{{ data || '-' }}</td>
-              }
+            @default {
+              <td [nzAlign]="align" class="px-3 text-nowrap">{{ data || '-' }}</td>
             }
           }
         }

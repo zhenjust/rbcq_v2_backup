@@ -6,7 +6,6 @@ export interface TPL_TABLE_COLUMN {
   type?: 'string' | 'number' | 'date' | 'template' | 'enumLabel' | 'amount';
   width?: string,
   template?: any,
-  hasRowSpan?: boolean,
   sort?: boolean;
 }
 

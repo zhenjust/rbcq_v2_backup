@@ -557,7 +557,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 }
 
 const expandedTableCols: Record<string, TPL_TABLE_COLUMN> = {
-  [LABELS.NAME]: { label: LABELS.NAME, propName: 'description', type: 'template', width: '200px', hasRowSpan: true },
+  [LABELS.NAME]: { label: LABELS.NAME, propName: 'description', type: 'template', width: '200px' },
   [LABELS.RUN_START]: { label: LABELS.RUN_START, propName: 'runStart', type: 'date', width: '100px', align: 'center' },
   [LABELS.RUN_END]: { label: LABELS.RUN_END, propName: 'runEnd', type: 'date', width: '100px', align: 'center' },
   [LABELS.DURATION]: { label: LABELS.DURATION, propName: 'duration', type: 'string', width: '100px' },
