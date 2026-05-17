@@ -214,12 +214,16 @@ export class MarketFeeComponent  implements OnInit {
       });
   }
 
-  finalize(action: string, row: any): void {
-    const rowData = {...row, ...row.parameters};
-    this.stlUtil.triggerAllocModal(`${this.pipelineName}-${action}`, rowData, () => this.reload$.next(), true);
+  finalize(action: string, row: any, component: TemplateTableComponent, label: string): void {
+    if (row.parameters.processType === MeterProcessTypes.PRELIM) {
+      this.triggerJob(action, row, component, label);
+    } else {
+      const rowData = {...row, ...row.parameters};
+      this.stlUtil.triggerAllocModal(`${this.pipelineName}-${action}`, rowData, () => this.reload$.next());
+    }
   }
 
-  publish(functionName: string, allData: any, rowData: any): void {
+  publish(functionName: string, rowData: any): void {
     const payload: PublishSettlement = {
       pipelineId: +rowData.id,
       stlGroupId: +rowData.id,
@@ -232,7 +236,7 @@ export class MarketFeeComponent  implements OnInit {
       descriptions: [
         {
           label: LABELS.BILLING_PERIOD,
-          value: `${allData.billingStartDate} to ${allData.billingEndDate}`
+          value: `${rowData.parameters.billingStartDate} to ${rowData.parameters.billingEndDate}`
         },
       ],
       onOk: () => this.settlementService.publish(payload)

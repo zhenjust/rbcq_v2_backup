@@ -34,13 +34,12 @@ import {
   BaseTableItem,
   modalConfig,
   SettlementJobActions,
-  SettlementJobSubActions,
-  SettlementStatus
+  SettlementJobSubActions
 } from '@shared/constants';
 import { SearchListBase } from '@shared/services/utils/list.util.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ConfirmWithContentComponent } from '@shared/components/confirm-with-content/confirm-with-content.component';
-import { TransactionAllocComponent } from '@modules/settlement/shared/transaction-alloc/transaction-alloc.component';
+import { StlUtilitiesService } from '@shared/services/utils/stl-actions.util.service';
 
 @Component({
   selector: 'app-table',
@@ -62,10 +61,10 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   private readonly toast = inject(ToastrService);
   private readonly modal = inject(NzModalService);
   private readonly ss = inject(SettlementService);
+  private readonly stlUtil = inject(StlUtilitiesService);
   destroyRef$ = inject(DestroyRef);
 
   isLineRentalStatus = false;
-  SettlementStatus = SettlementStatus;
   LABELS = LABELS;
   MESSAGES = MESSAGES;
   settlementJobActions = SettlementJobActions;
@@ -153,7 +152,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     );
   }
 
-
   ngOnInit(): void {
     this.router.data.subscribe((data: Data) => {
       this.isLineRentalStatus = data['isLineRentalStatus'] as boolean;
@@ -172,15 +170,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       return newActions;
     });
   }
-
-  setActionSelection(rowData: settlementPipeline, value: string): void {
-    this.selectedActionsSignal.update(actions => {
-      const newActions = new Map(actions);
-      newActions.set(rowData.id, value);
-      return newActions;
-    });
-  }
-
 
   // for handling of actions; new implementation of modal
   handleAction(label: string, rowData: settlementPipeline, msg: string | TemplateRef<HTMLElement>, action: string, api$?: () => any): void {
@@ -314,8 +303,8 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       ['reserveTradingAmounts-finalize']: () => this.runJobWithConfirmation(action, row),
       ['energyTradingAmounts-finalize']: () => this.runJobWithConfirmation(action, row),
 
-      ['energyTradingAmounts-calculateTransAlloc']: () => this.triggerAllocModal(action, row),
-      ['reserveTradingAmounts-calculateTransAlloc']: () => this.triggerAllocModal(action, row),
+      ['energyTradingAmounts-calculateTransAlloc']: () => row.processType === MeterProcessTypes.PRELIM ? this.runJobWithConfirmation(action, row) : this.stlUtil.triggerAllocModal(action, row, () => this.reload$.next()),
+      ['reserveTradingAmounts-calculateTransAlloc']: () => row.processType === MeterProcessTypes.PRELIM ? this.runJobWithConfirmation(action, row) : this.stlUtil.triggerAllocModal(action, row, () => this.reload$.next()),
 
       ['energyTradingAmounts-generateTransactionReport']: () => this.generateFiles(action, row),
       ['reserveTradingAmounts-generateTransactionReport']: () => this.generateFiles(action, row),
@@ -507,38 +496,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       const endDate = setHours(rowData?.billingEndDate, 23).setMinutes(59);
       return !(isBefore(current, endDate) && isAfter(current, subDays(rowData.billingStartDate, 1)))
     };
-  }
-
-  /**
-   * Calculate Transaction Allocation
-   */
-
-  triggerAllocModal(action: string, row: any): void {
-    const modal = this.modal.create({
-      nzTitle: LABELS.RUN_JOB,
-      nzContent: TransactionAllocComponent,
-      nzCentered: true,
-      nzData: { rowData: row, action },
-      nzFooter: [
-        {
-          label: LABELS.CLOSE,
-          onClick: (component) => component?.triggerClose(),
-          disabled: (component) => component ? (component?.busy$ && !component?.busy$?.closed) : true
-        },
-        {
-          label: LABELS.RUN_JOB,
-          type: 'primary',
-          onClick: (component) => component?.submit(),
-          disabled: (component) => component ? (component.form.invalid || (component?.busy$ && !component?.busy$?.closed)) : true
-        }
-      ],
-    });
-
-    modal.afterClose.subscribe(res => {
-      if (res) {
-        this.reload$.next();
-      }
-    })
   }
 
 }

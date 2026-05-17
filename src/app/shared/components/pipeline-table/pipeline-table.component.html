@@ -23,7 +23,8 @@
       {{ data + (allData.partial ? " - Partial" : "")}}
     </div>
 
-    @let isFinalize = allData?.name?.includes('finalize');
+    @let processType = allData?.parameters?.processType?.textValue;
+    @let showAmsInfo = ['penalty-finalize', 'energyMarketFee-finalize', 'reserveMarketFee-finalize', 'additionalCompensation-calculateTransAlloc'].includes(allData?.name);
 
     @if (allData.parameters?.meteringWorkspaceId && LABELS.GENERATE_INPUT_WORKSPACE  === data) {
       <div class="cell-sub">
@@ -32,10 +33,20 @@
       </div>
     }
 
-    @if (allData.parameters?.remarks?.textValue && isFinalize) {
+    @if ([processTypes.FINAL, processTypes.ADJUSTED].includes(processType) && showAmsInfo) {
+      <div class="cell-sub">
+        <span class="cell-sub-label">{{ LABELS.ALLOCATION_DATE }}: </span>
+        <span class="cell-sub-value">{{ allData.parameters?.allocDate?.dateValue || '-'  }}</span>
+      </div>
+
+      <div class="cell-sub">
+        <span class="cell-sub-label">{{ LABELS.ALLOCATION_DUE_DATE }}: </span>
+        <span class="cell-sub-value">{{ allData.parameters?.dueDate?.dateValue || '-'  }}</span>
+      </div>
+
       <div class="cell-sub">
         <span class="cell-sub-label">{{ LABELS.REMARKS }}: </span>
-        <span class="cell-sub-value">{{ allData.parameters?.remarks?.textValue }}</span>
+        <span class="cell-sub-value">{{ allData.parameters?.remarks?.textValue || '-'  }}</span>
       </div>
     }
 

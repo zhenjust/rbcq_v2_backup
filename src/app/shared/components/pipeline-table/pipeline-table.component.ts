@@ -2,6 +2,7 @@ import { pipeline, PipelineRun, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { AfterViewInit, ChangeDetectorRef, Component, input, TemplateRef, ViewChild, inject } from '@angular/core';
 import { PipelineTableColumns } from '@shared/constants/pipelines.const';
 import { LABELS } from '@shared/constants/labels.const';
+import { MeterProcessTypes } from '@shared/enums';
 
 @Component({
   selector: 'app-pipeline-table',
@@ -20,6 +21,7 @@ export class PipelineTableComponent implements AfterViewInit {
   rowData = input.required<pipeline[]>();
   useCustomTableData = input<any[] | null>();
   LABELS = LABELS;
+  processTypes = MeterProcessTypes;
 
   tableData: PipelineRun[];
 

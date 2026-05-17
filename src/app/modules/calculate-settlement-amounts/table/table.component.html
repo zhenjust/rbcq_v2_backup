@@ -149,21 +149,18 @@
     </div>
 
     @let processType = allData?.parameters?.processType?.textValue;
-    @let isPrelimDaily = [processTypes.DAILY, processTypes.PRELIM].includes(processType);
-    @let showAllocDateInfo = allData?.name?.includes('calculateTransAlloc');
+    @let showAmsInfo = allData?.name?.includes('calculateTransAlloc');
 
-    @if (showAllocDateInfo) {
+    @if ([processTypes.FINAL, processTypes.ADJUSTED].includes(processType) && showAmsInfo) {
       <div class="cell-sub">
         <span class="cell-sub-label">{{ LABELS.ALLOCATION_DATE }}: </span>
         <span class="cell-sub-value">{{ allData?.parameters?.allocDate?.dateValue || '-' }}</span>
       </div>
 
-      @if (!isPrelimDaily) {
-        <div class="cell-sub">
-          <span class="cell-sub-label">{{ LABELS.ALLOCATION_DUE_DATE }}: </span>
-          <span class="cell-sub-value">{{ allData?.parameters?.dueDate?.dateValue || '-' }}</span>
-        </div>
-      }
+      <div class="cell-sub">
+        <span class="cell-sub-label">{{ LABELS.ALLOCATION_DUE_DATE }}: </span>
+        <span class="cell-sub-value">{{ allData?.parameters?.dueDate?.dateValue || '-' }}</span>
+      </div>
 
       <div class="cell-sub">
         <span class="cell-sub-label">{{ LABELS.ALLOCATION_REMARKS }}: </span>

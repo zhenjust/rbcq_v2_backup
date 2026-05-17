@@ -12,7 +12,7 @@ import { PenaltyGenerateIwsComponent } from './penalty-generate-iws/penalty-gene
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { ToastrService } from 'ngx-toastr';
-import { TransactionAllocComponent } from '../shared/transaction-alloc/transaction-alloc.component';
+import { StlUtilitiesService } from '@shared/services/utils/stl-actions.util.service';
 import { NgxPermissionsService } from 'ngx-permissions';
 
 @Component({
@@ -32,6 +32,7 @@ export class WesmPenaltyComponent implements OnInit {
   private readonly destroyRef$ = inject(DestroyRef);
   private readonly toastrService = inject(ToastrService);
   private readonly permissionService = inject(NgxPermissionsService);
+  private readonly stlUtil = inject(StlUtilitiesService);
 
   LABELS = LABELS;
   AUTH = PHASE_TWO_AUTHORITIES;
@@ -240,36 +241,6 @@ export class WesmPenaltyComponent implements OnInit {
       });
   }
 
-  calcTransactionAllocation(action: string, row: any): void {
-    const modal = this.modalService.create({
-      nzTitle: `${LABELS.FINALIZE} ${LABELS.PENALTY}`,
-      nzContent: TransactionAllocComponent,
-      nzCentered: true,
-      nzData: { rowData: row, action },
-      nzFooter: [
-        {
-          label: LABELS.CLOSE,
-          onClick: (component) => component?.triggerClose(),
-          disabled: (component) => component ? (component?.busy$ && !component?.busy$?.closed) : true
-        },
-        {
-          label: LABELS.RUN_JOB,
-          type: 'primary',
-          onClick: (component) => component?.submit(),
-          disabled: (component) => component ? (component.form.invalid || (component?.busy$ && !component?.busy$?.closed)) : true
-        }
-      ],
-    });
-
-    modal.afterClose.subscribe(res => {
-      if (res) {
-        this.paginatedTable.loading = false;
-        this.reload$.next();
-      }
-    })
-  }
-
-
   hideAction(rowData: meterProcessPipelineGroup, labelName: string): boolean {
     return !rowData.pipelines?.some(p => p.name === labelName && p.status === 'Completed') || !this.hasCalcPerm;
   }
@@ -290,7 +261,7 @@ export class WesmPenaltyComponent implements OnInit {
         value: 'finalize',
         click: (rowData: any) => {
           const isRefund = rowData?.penaltyHeaders[0]?.type === 'REFUND';
-          this.calcTransactionAllocation(`penalty-finalize${isRefund ? 'Refund' : ''}`, rowData);
+          this.stlUtil.triggerAllocModal(`penalty-finalize${isRefund ? 'Refund' : ''}`, rowData, () => { this.paginatedTable.loading = false; this.reload$.next(); });
         },
         hidden: (rowData: any) => {
           const isRefund = rowData?.penaltyHeaders[0]?.type === 'REFUND';

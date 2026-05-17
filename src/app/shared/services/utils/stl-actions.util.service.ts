@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { TransactionAllocComponent } from '@modules/settlement/shared/transaction-alloc/transaction-alloc.component';
+import { AmsComponent } from '@modules/settlement/shared/ams/ams.component';
 import { LABELS } from '@shared/constants/labels.const';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
@@ -13,12 +13,12 @@ export class StlUtilitiesService {
 
   private readonly modal = inject(NzModalService);
 
-  triggerAllocModal(action: string, row: any, callback: () => void, isMarketFee = false): void {
+  triggerAllocModal(action: string, row: any, callback: () => void): void {
     const modal = this.modal.create({
       nzTitle: LABELS.RUN_JOB,
-      nzContent: TransactionAllocComponent,
+      nzContent: AmsComponent,
       nzCentered: true,
-      nzData: { rowData: row, action, isMarketFee },
+      nzData: { rowData: row, action },
       nzFooter: [
         {
           label: LABELS.CLOSE,
