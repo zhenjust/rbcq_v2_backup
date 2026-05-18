@@ -82,7 +82,9 @@
 
         @if (showActions()) {
           <td nzAlign="center">
-            @if (actionControls()?.length) {
+            @let actionLength = actionControls()?.length;
+
+            @if (actionLength > 1) {
               <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu">{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
               <nz-dropdown-menu #menu="nzDropdownMenu">
                 <ul nz-menu nzSelectable>
@@ -93,6 +95,11 @@
                     }
                 </ul>
               </nz-dropdown-menu>
+            }
+
+            @if (actionLength === 1) {
+              @let action = actionControls()![0];
+              <button *ngIf="!action.hidden || !action.hidden(row)" nz-button nzType="text" (click)="action.click(row)" [nzDanger]="action?.danger">{{ action.label }}</button>
             }
           </td>
         }
