@@ -43,7 +43,7 @@
     <nz-space>
       <ng-container *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_GENERATE_IW ] : [ AUTH.RMF_GENERATE_IW ]">
         <button nz-button *nzSpaceItem nzType="primary" (click)="runMarketFee()">
-          {{ LABELS.RUN }} {{ isEnergy() ? LABELS.ENERGY_MARKET_FEE : LABEL.RESERVE_MARKET_FEE }}
+          {{ LABELS.RUN }} {{ isEnergy() ? LABELS.ENERGY_MARKET_FEE : LABELS.RESERVE_MARKET_FEE }}
         </button>
       </ng-container>
     </nz-space>

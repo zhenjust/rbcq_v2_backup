@@ -40,6 +40,8 @@ export class UploadBillingStatementComponent implements OnInit {
     this.formGroup = this.formBuilder.group({
       billingPeriod: [null, RxwebValidators.required()],
       // billingPeriodId: [null, RxwebValidators.required()],
+      startDate: [null, RxwebValidators.required()],
+      endDate: [null, RxwebValidators.required()],
       marketFeeType: [null, RxwebValidators.required()],
       type: [null, RxwebValidators.required()],
       category: ['MARKET_FEE', RxwebValidators.required()],
@@ -53,6 +55,8 @@ export class UploadBillingStatementComponent implements OnInit {
       billingPeriodId: params?.billingPeriodId,
       type: params?.processType,
       marketFeeType: params?.marketFeeType,
+      startDate: params?.billingStartDate,
+      endDate: params?.billingEndDate
     });
   }
 
