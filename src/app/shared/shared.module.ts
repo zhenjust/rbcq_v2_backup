@@ -46,6 +46,7 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { PipelineTableComponent } from './components/pipeline-table/pipeline-table.component';
 import { PollingTimerComponent } from './components/polling-timer/polling-timer.component';
 import { ReloadOutline } from '@ant-design/icons-angular/icons';
+import { UploadBillingStatementComponent } from './components/upload-billing-statement/upload-billing-statement.component';
 
 const ngZorroConfig: NzConfig = {
   notification: { nzDuration: 300, nzMaxStack: 3, nzTop: '150px' }
@@ -106,7 +107,8 @@ const Pipes = [
     ReloginComponent,
     DateTimePickerComponent,
     PipelineTableComponent,
-    PollingTimerComponent
+    PollingTimerComponent,
+    UploadBillingStatementComponent
   ],
   imports: [
     CommonModule,

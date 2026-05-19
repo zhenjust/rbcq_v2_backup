@@ -32,17 +32,19 @@
         </button>
       }
 
-      <button nz-button *nzSpaceItem nzType="primary" [disabled]="form.invalid" (click)="showForm ? paginatedTable?.search() : showForm =! showForm">
+      <button nz-button *nzSpaceItem nzType="primary" [disabled]="form.invalid" (click)="showForm ? reload$.next() : showForm =! showForm">
         {{ showForm ? LABELS.APPLY_FILTERS : LABELS.SET_FILTERS }}
       </button>
+
+      <app-polling-timer *nzSpaceItem (emitEvent)="pollingTime.set($event)" (emitReload)="paginatedTable.loading = true; reload$.next()"></app-polling-timer>
     </nz-space>
 
     <button nz-button nzType="primary" (click)="generate()">{{ LABELS.GENERATE }}</button>
   </div>
 
   <!-- Table -->
-  <app-paginated-table #paginatedTable [tableColumns]="tableColumns" [url]="listUrl()" [showActions]="true"
-    [actionControls]="actionControls" [tableConfig]="{ height: '60vh' }"></app-paginated-table>
+  <app-paginated-table #paginatedTable [tableColumns]="tableColumns" [url]="url$" [showActions]="true"
+    [actionControls]="actionControls" [tableConfig]="{ height: '60vh' }" [showCustomLoading]="true"></app-paginated-table>
 </nz-card>
 
 <!-- Column Templates -->

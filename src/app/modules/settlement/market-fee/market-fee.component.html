@@ -66,7 +66,7 @@
       </div>
 
       <ng-template #actionsTpl let-subRowData="row">
-        @if (!subRowData.published && subRowData.status !== 'Nullified') {
+        @if (subRowData.status !== 'Nullified') {
           @let isFinalized = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded');
           <!-- @let isCalculated = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded'); -->
           @let isInProgress = subRowData.status.includes('In-Progress');
@@ -102,6 +102,11 @@
                 @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateFiles')] : 'Succeeded')) {
                   <li nz-menu-item (click)="publish('Energy Market Fee Calculation', subRowData)">{{ LABELS.PUBLISH_TRANSACTION_REPORT }}</li>
                 }
+
+                @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded')) {
+                  <li nz-menu-item (click)="uploadBillingStatement(subRowData)">{{ LABELS.UPLOAD_BILLING_STATEMENT }}</li>
+                }
+
               </ul>
           </nz-dropdown-menu>
         }

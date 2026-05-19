@@ -19,6 +19,7 @@ import { PHASE_TWO_AUTHORITIES } from '@shared/constants';
 import { effect } from '@angular/core';
 import { StlUtilitiesService } from '@shared/services/utils';
 import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
+import { UploadBillingStatementComponent } from '@shared/components/upload-billing-statement/upload-billing-statement.component';
 @Component({
   selector: 'app-market-fee',
   standalone: false,
@@ -119,6 +120,7 @@ export class MarketFeeComponent  implements OnInit {
           groupName,
           this.paginatedTable?.tableParams
         ).pipe(
+          takeUntilDestroyed(this.destroyRef$),
           finalize(() => {
             if (this.paginatedTable) {
               this.paginatedTable.loading = false;
@@ -257,6 +259,40 @@ export class MarketFeeComponent  implements OnInit {
         this.reload$.next();
       }
     });
+  }
+
+
+
+
+  uploadBillingStatement(subRowData: any): void {
+    const modal = this.modalService.create({
+      nzTitle: LABELS.UPLOAD_BILLING_STATEMENT,
+      nzContent: UploadBillingStatementComponent,
+      nzCentered: true,
+      nzFooter: [
+        {
+          label: LABELS.CLOSE,
+          onClick: (component) => component?.triggerClose(),
+          disabled: (component) => component ? (component?.busy$ && !component?.busy$?.closed) : true
+        },
+        {
+          label: LABELS.UPLOAD,
+          type: 'primary',
+          onClick: (component) => component?.triggerOk(),
+          disabled: (component) => component ? ((component.formGroup.invalid || !component.fileList?.length) || (component?.busy$ && !component?.busy$?.closed)) : true
+        }
+      ],
+      nzData: subRowData,
+      nzWidth: '600px',
+    });
+
+    modal.afterClose.subscribe(res => {
+      if (res) {
+        this.toastrService.success(res.message);
+        this.reload$.next();
+      }
+    });
+
   }
 
   get pipelineName(): string { return this.isEnergy() ? 'energyMarketFee' : 'reserveMarketFee'; }

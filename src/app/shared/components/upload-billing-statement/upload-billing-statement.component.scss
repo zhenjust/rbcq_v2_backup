@@ -1,0 +1,9 @@
+tr {
+  border: none !important;
+}
+
+.borderless-descriptions {
+  td, .ant-descriptions-bordered .ant-descriptions-row {
+    border-bottom: 0px !important;
+  }
+}

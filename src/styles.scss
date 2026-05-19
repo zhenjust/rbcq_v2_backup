@@ -173,3 +173,10 @@ td {
   word-break: break-word;
   max-width: 100%;
 }
+
+.borderless-descriptions {
+  .ant-descriptions-bordered .ant-descriptions-row {
+    border: none !important;
+  }
+}
+

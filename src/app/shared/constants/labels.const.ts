@@ -218,5 +218,8 @@ export const LABELS = {
   PENALTY: 'Penalty',
   REFUND: 'Refund',
   PUBLISHED: 'Published',
+  MARKET_FEE_TYPE: 'Market Fee Type',
+  MARKET_FEE_MODE: 'Market Fee Mode',
+  UPLOAD_BILLING_STATEMENT: 'Upload Billing Statement',
 
 }

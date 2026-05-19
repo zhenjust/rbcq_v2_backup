@@ -135,12 +135,14 @@ export class WesmPenaltyComponent implements OnInit {
         }
 
         return this.settlementService.search(this.filters, 'penalty', this.paginatedTable?.tableParams)
-          .pipe(finalize(() => {
-            if (this.paginatedTable) {
-              this.paginatedTable.loading = false;
-            }
+          .pipe(
+            takeUntilDestroyed(this.destroyRef$),
+            finalize(() => {
+              if (this.paginatedTable) {
+                this.paginatedTable.loading = false;
+              }
 
-            this.firstLoad.set(false);
+              this.firstLoad.set(false);
           })
         )
       })

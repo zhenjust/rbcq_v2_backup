@@ -91,4 +91,9 @@ export class SettlementService {
     return this.http.get<ReferenceOption1[]>(`/stl-data-pipeline/penalty/status`);
   }
 
+  public uploadBillingStatement(formData: FormData): Observable<any> {
+    return this.http.post<any>(`/settlement/billing-statement/upload`, formData);
+  }
+
+
 }
