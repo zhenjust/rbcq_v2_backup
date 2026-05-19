@@ -92,6 +92,7 @@ export interface PublishSettlement {
     pipelineGroupId?: number,
     pipelineId?: number,
     stlGroupId: number,
+    jobExecutionId?: number,
     functionName: string
 }
 

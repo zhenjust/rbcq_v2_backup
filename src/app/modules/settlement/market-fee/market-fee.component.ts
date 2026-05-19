@@ -225,10 +225,11 @@ export class MarketFeeComponent  implements OnInit {
     }
   }
 
-  publish(functionName: string, rowData: any): void {
+  publish(functionName: string, allData: any, rowData: any): void {
     const payload: PublishSettlement = {
       pipelineId: +rowData.id,
-      stlGroupId: +rowData.id,
+      stlGroupId: +allData.id,
+      jobExecutionId: +rowData.id,
       functionName: functionName
     };
 
