@@ -43,17 +43,19 @@
         </button>
       }
 
-      <button nz-button *nzSpaceItem nzType="primary" [disabled]="form.invalid" (click)="showForm ? paginatedTable?.search() : showForm =! showForm">
+      <button nz-button *nzSpaceItem nzType="primary" [disabled]="form.invalid" (click)="showForm ? reload$.next() : showForm =! showForm">
         {{ showForm ? LABELS.APPLY_FILTERS : LABELS.SET_FILTERS }}
       </button>
+
+      <app-polling-timer *nzSpaceItem (emitEvent)="pollingTime.set($event)" (emitReload)="paginatedTable.loading = true; reload$.next()"></app-polling-timer>
     </nz-space>
 
     <button nz-button nzType="primary" (click)="generate()">{{ LABELS.GENERATE }}</button>
   </div>
 
   <!-- Table -->
-  <app-paginated-table #paginatedTable [tableColumns]="tableColumns" [url]="listUrl()" [showActions]="true"
-    [actionControls]="actionControls" [tableConfig]="{ height: '60vh' }" [enableExpand]="true" [expandTpl]="expandTpl"></app-paginated-table>
+  <app-paginated-table #paginatedTable [tableColumns]="tableColumns" [url]="url$" [showActions]="true"
+    [actionControls]="actionControls" [tableConfig]="{ height: '60vh' }" [enableExpand]="true" [expandTpl]="expandTpl" [showCustomLoading]="true"></app-paginated-table>
 
   <ng-template #expandTpl let-row="row">
     <div class="d-flex w-100 my-2 pe-2">
