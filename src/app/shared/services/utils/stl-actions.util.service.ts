@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { AmsComponent } from '@modules/settlement/shared/ams/ams.component';
+import { SendNotificationComponent } from '@shared/components/send-notification/send-notification.component';
 import { LABELS } from '@shared/constants/labels.const';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
@@ -39,6 +40,21 @@ export class StlUtilitiesService {
         callback();
       }
     })
+  }
+
+  sendNotification(): void {
+    this.modal.create({
+      nzTitle: LABELS.SEND_NOTIFICATION,
+      nzContent: SendNotificationComponent,
+      nzWidth: '1000px',
+      nzCentered: true,
+      // nzFooter: [
+      //   {
+      //     label: LABELS.CLOSE,
+      //     onClick: (component) => component?.triggerClose(),
+      //   }
+      // ],
+    });
   }
 
 

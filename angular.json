@@ -61,9 +61,19 @@
               "./node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
               "src/assets/css/bootstrap.min.css",
               "src/styles.scss",
-              "node_modules/ngx-toastr/toastr.css"
+              "node_modules/ngx-toastr/toastr.css",
+              "node_modules/froala-editor/css/froala_editor.pkgd.min.css",
+              "node_modules/froala-editor/css/froala_style.min.css",
+              "node_modules/froala-editor/css/plugins/image.min.css",
+              "node_modules/froala-editor/css/plugins/table.min.css",
+              "node_modules/froala-editor/css/plugins/colors.min.css"
             ],
             "scripts": [
+              "node_modules/froala-editor/js/froala_editor.min.js",
+              "node_modules/froala-editor/js/plugins/link.min.js",
+              "node_modules/froala-editor/js/plugins/image.min.js",
+              "node_modules/froala-editor/js/plugins/table.min.js",
+              "node_modules/froala-editor/js/plugins/colors.min.js"
             ]
           },
           "configurations": {
@@ -74,7 +84,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "2.1MB",
-                  "maximumError": "4MB"
+                  "maximumError": "4.5MB"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -148,7 +158,12 @@
               "src/styles.scss",
               "node_modules/ngx-toastr/toastr.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/froala-editor/js/froala_editor.min.js",
+              "node_modules/froala-editor/js/plugins/link.min.js",
+              "node_modules/froala-editor/js/plugins/image.min.js",
+              "node_modules/froala-editor/js/plugins/table.min.js"
+            ]
           }
         },
         "lint": {

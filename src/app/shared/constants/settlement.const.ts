@@ -58,6 +58,9 @@ export const SettlementJobActions: JobSelect[] = [
   { label: LABELS.GENERATE_RESERVE_FILES, value: 'reserveTradingAmounts-generateFiles', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
   { label: LABELS.PUBLISH_TRANSACTION_REPORT, value: 'energyTradingAmounts-publish', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
   { label: LABELS.PUBLISH_TRANSACTION_REPORT, value: 'reserveTradingAmounts-publish', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
+
+  { label: LABELS.SEND_NOTIFICATION, value: 'sendNotification', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
+
   /**
    * IN_PROGRESS
    */

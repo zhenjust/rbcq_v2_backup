@@ -22,6 +22,7 @@ import { PaginatedTableComponent } from './components/paginated-table/paginated-
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
@@ -47,6 +48,7 @@ import { PipelineTableComponent } from './components/pipeline-table/pipeline-tab
 import { PollingTimerComponent } from './components/polling-timer/polling-timer.component';
 import { ReloadOutline } from '@ant-design/icons-angular/icons';
 import { UploadBillingStatementComponent } from './components/upload-billing-statement/upload-billing-statement.component';
+import { SendNotificationComponent } from './components/send-notification/send-notification.component';
 
 const ngZorroConfig: NzConfig = {
   notification: { nzDuration: 300, nzMaxStack: 3, nzTop: '150px' }
@@ -108,7 +110,8 @@ const Pipes = [
     DateTimePickerComponent,
     PipelineTableComponent,
     PollingTimerComponent,
-    UploadBillingStatementComponent
+    UploadBillingStatementComponent,
+    SendNotificationComponent
   ],
   imports: [
     CommonModule,
@@ -118,6 +121,8 @@ const Pipes = [
     ReactiveFormsModule,
     RxReactiveFormsModule,
     FormsModule,
+    FroalaEditorModule,
+    FroalaViewModule,
 ],
   exports: [
     ...Pipes,
@@ -129,6 +134,8 @@ const Pipes = [
     RxReactiveFormsModule,
     NgxPermissionsModule,
     FormsModule,
+    FroalaEditorModule,
+    FroalaViewModule,
     DateRangePickerComponent,
     DateTimePickerComponent,
     PipelineTableComponent,

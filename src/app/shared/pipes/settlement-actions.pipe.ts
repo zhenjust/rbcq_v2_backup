@@ -54,6 +54,11 @@ export class SettlementActionsPipe implements PipeTransform {
           return action;
         }
 
+        if (value === 'sendNotification') {
+          action.show = true;
+          return action;
+        }
+
         if (value === 'energyTradingAmounts-publish' || value === 'reserveTradingAmounts-publish') {
           const canPublished = pipelines.some(
             p => (p.name === 'energyTradingAmounts-generateTransactionReport' || p.name === 'reserveTradingAmounts-generateTransactionReport') && this.completedStatus.includes(p.status)
