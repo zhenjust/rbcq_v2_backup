@@ -3,7 +3,7 @@
     <nz-form-item>
       <nz-form-label nzRequired>{{ LABELS.CATEGORY }}</nz-form-label>
       <nz-form-control>
-        <nz-select formControlName="category" [nzOptions]="categoryOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
+        <nz-select formControlName="category" [nzOptions]="categoryOpts || []" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
           [nzAllowClear]="true" nzShowSearch></nz-select>
       </nz-form-control>
     </nz-form-item>
@@ -33,7 +33,7 @@
         <nz-form-label nzRequired>{{ LABELS.INTERVAL }}</nz-form-label>
         <nz-form-control>
           <nz-range-picker [nzInputReadOnly]="true" formControlName="interval" nzFormat="yyyy-MM-dd HH:mm"
-            [nzShowTime]="{ nzFormat: 'HH:mm', nzMinuteStep: 5 }" [nzDisabledDate]="disabledInterval"
+            [nzShowTime]="{ nzFormat: 'HH:mm', nzMinuteStep: 5 }" [nzDisabledDate]="disabledInterval" [nzDisabledTime]="disabledTime"
             class="w-100"></nz-range-picker>
         </nz-form-control>
       </nz-form-item>
@@ -51,9 +51,9 @@
 
     @if (isCorrectedDaily || isCorrectedMonthly) {
       <nz-form-item>
-        <nz-form-label nzRequired>{{ LABELS.REMARKS }}</nz-form-label>
+        <nz-form-label>{{ LABELS.REMARKS }}</nz-form-label>
         <nz-form-control>
-          <input nz-input formControlName="correctedRemarks" [maxLength]="50" />
+          <input nz-input formControlName="correctedRemarks" [placeholder]="LABELS.REASON_FOR_CORRECTION" [maxLength]="50" />
         </nz-form-control>
       </nz-form-item>
     }

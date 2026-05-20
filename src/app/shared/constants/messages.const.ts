@@ -4,6 +4,7 @@ export const MESSAGES = {
   CLEAR_ALL_FILES: 'Are you sure you want to clear all selected files?',
   CANCEL_RUN: `Are you sure you want to cancel this run?`,
   INVALID_FILE_TYPE: `Invalid file type. Please try again.`,
+  INVALID_FILE_TYPE_MQ: 'Invalid File Type. Only CSV, MDE, MDEF files are allowed.',
   LONG_FILE_NAME: `Invalid file. Maximum filename should be 100 characters.`,
   ALL_FILES_ERROR: 'All files encountered an error while importing.',
   SINGLE_FILE_ERROR: 'An error occured during import.',
