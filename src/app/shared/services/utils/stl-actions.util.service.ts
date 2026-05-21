@@ -55,7 +55,7 @@ export class StlUtilitiesService {
       nzCentered: true,
       nzOkText: LABELS.SEND_NOTICE,
       nzData: {
-
+        dueDateTable
       }
       // nzFooter: [
       //   {

@@ -83,24 +83,26 @@
 
           <nz-dropdown-menu #menu="nzDropdownMenu">
               <ul nz-menu nzSelectable>
-                @if (!isFinalized) {
-                  <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_GENERATE_IW ] : [ AUTH.RMF_GENERATE_IW ]" (click)="triggerJob('generateInputWorkspace', subRowData, tableComp, LABELS.GENERATE_INPUT_WORKSPACE)">{{ LABELS.GENERATE_INPUT_WORKSPACE }}</li>
-                }
+                @if (!subRowData?.published) {
+                  @if (!isFinalized) {
+                    <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_GENERATE_IW ] : [ AUTH.RMF_GENERATE_IW ]" (click)="triggerJob('generateInputWorkspace', subRowData, tableComp, LABELS.GENERATE_INPUT_WORKSPACE)">{{ LABELS.GENERATE_INPUT_WORKSPACE }}</li>
+                  }
 
-                @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateInputWorkspace')] : 'Succeeded') && !isFinalized) {
-                  <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_CALCULATE ] : [ AUTH.RMF_CALCULATE ]" (click)="triggerJob('calculateMarketFee', subRowData, tableComp, LABELS.CALCULATE + ' ' + LABELS.ENERGY_MARKET_FEE)">{{ LABELS.CALCULATE }}</li>
-                }
+                  @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateInputWorkspace')] : 'Succeeded') && !isFinalized) {
+                    <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_CALCULATE ] : [ AUTH.RMF_CALCULATE ]" (click)="triggerJob('calculateMarketFee', subRowData, tableComp, LABELS.CALCULATE + ' ' + LABELS.ENERGY_MARKET_FEE)">{{ LABELS.CALCULATE }}</li>
+                  }
 
-                @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded') && !isFinalized) {
-                  <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_FINALIZE ] : [ AUTH.RMF_FINALIZE ]" (click)="finalize('finalize', subRowData, tableComp, LABELS.FINALIZE)">{{ LABELS.FINALIZE }}</li>
-                }
+                  @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded') && !isFinalized) {
+                    <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_FINALIZE ] : [ AUTH.RMF_FINALIZE ]" (click)="finalize('finalize', subRowData, tableComp, LABELS.FINALIZE)">{{ LABELS.FINALIZE }}</li>
+                  }
 
-                @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded')) {
-                  <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_GENERATE_EMF_FILE ] : [ AUTH.RMF_GENERATE_RMF_FILE ]" (click)="triggerJob('generateFiles', subRowData, tableComp, LABELS.GENERATE_FILES)">{{ LABELS.GENERATE_FILES }}</li>
-                }
+                  @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded')) {
+                    <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_GENERATE_EMF_FILE ] : [ AUTH.RMF_GENERATE_RMF_FILE ]" (click)="triggerJob('generateFiles', subRowData, tableComp, LABELS.GENERATE_FILES)">{{ LABELS.GENERATE_FILES }}</li>
+                  }
 
-                @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateFiles')] : 'Succeeded')) {
-                  <li nz-menu-item (click)="publish('Energy Market Fee Calculation', row, subRowData)">{{ LABELS.PUBLISH_TRANSACTION_REPORT }}</li>
+                  @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateFiles')] : 'Succeeded')) {
+                    <li nz-menu-item (click)="publish('Energy Market Fee Calculation', row, subRowData)">{{ LABELS.PUBLISH_TRANSACTION_REPORT }}</li>
+                  }
                 }
 
                 @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded')) {
