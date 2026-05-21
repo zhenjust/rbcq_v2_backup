@@ -1129,17 +1129,32 @@ export class NavbarComponent implements OnInit {
         externalLink: externalRoutes.JOB_QUEUE
       },
       //Admin External Routes
+      // ADM_MANAGE_MARKET_OPERATORS',
+      //                                           'ADM_ROL_VIEW_ROLE','ADM_PRI_VIEW_PRIVILEGES','ADM_AUD_MANAGE_AUDIT_LOGS',
+      //                                           'ADM_SYS_MANAGE_SYSTEM_CONFIG','ADM_JOB_MANAGE_JOB_SCHEDULER',
+      //                                           'VIEW_IMPORT_SUMMARY','ADM_MANAGE_DATA_EXTRACTION','SET_TOD_GEN_CONFIG',
+      //                                           'MP_MANAGE_WESM_MARKET_PRODUCTS','MP_MANAGE_WESM_MARKET_PRODUCTS', 'MANAGE_SEC'
       {
         title: 'Admin',
         show: true,
         icon: faUserLarge,
         permission: [
+          PHASE_ONE_AUTHORITIES.MANAGE_MARKET_OPERATORS,
+          PHASE_ONE_AUTHORITIES.VIEW_ROLE,
+          PHASE_ONE_AUTHORITIES.VIEW_PRIVILEGES,
+          PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS,
+          PHASE_ONE_AUTHORITIES.MANAGE_SYS_CONFIG,
+          PHASE_ONE_AUTHORITIES.MANAGE_JOB_SCHEDULER,
+          PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY,
+          PHASE_ONE_AUTHORITIES.ADM_MANAGE_DATA_EXTRACTION,
+          PHASE_TWO_AUTHORITIES.SET_TOD_GEN_CONFIG,
+          PHASE_ONE_AUTHORITIES.MANAGE_WESM_MARKET_PRODUCTS,
           PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS,
           PHASE_ONE_AUTHORITIES.MANAGE_SYS_CONFIG,
           PHASE_ONE_AUTHORITIES.MANAGE_JOB_SCHEDULER,
           PHASE_ONE_AUTHORITIES.MANAGE_WESM_MARKET_PRODUCTS,
           PHASE_ONE_AUTHORITIES.MANAGE_FIELD_SETTINGS,
-          PHASE_ONE_AUTHORITIES.MANAGE_SEC
+          PHASE_ONE_AUTHORITIES.MANAGE_SEC,
         ],
         children: [
           {
