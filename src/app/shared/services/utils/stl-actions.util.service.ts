@@ -42,12 +42,21 @@ export class StlUtilitiesService {
     })
   }
 
-  sendNotification(): void {
+  sendNotification(rowData: any): void {
+    console.log('Sending notification with data:', rowData);
+    const dueDateTable = [
+      { dueDate: new Date(), status: 'PUBLISHED' }
+    ];
+
     this.modal.create({
       nzTitle: LABELS.SEND_NOTIFICATION,
       nzContent: SendNotificationComponent,
       nzWidth: '1000px',
       nzCentered: true,
+      nzOkText: LABELS.SEND_NOTICE,
+      nzData: {
+
+      }
       // nzFooter: [
       //   {
       //     label: LABELS.CLOSE,

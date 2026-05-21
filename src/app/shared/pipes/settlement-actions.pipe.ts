@@ -55,7 +55,7 @@ export class SettlementActionsPipe implements PipeTransform {
         }
 
         if (value === 'sendNotification') {
-          action.show = true;
+          action.show = data.published;
           return action;
         }
 

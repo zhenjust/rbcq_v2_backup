@@ -314,7 +314,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
       ['energyTradingAmounts-publish']: () => this.handlePublishAction('Energy Trading Amounts Calculation', data),
       ['reserveTradingAmounts-publish']: () => this.handlePublishAction('Reserve Trading Amounts Calculation', data),
-      ['sendNotification']: () => this.stlUtil.sendNotification()
+      ['sendNotification']: () => this.stlUtil.sendNotification(row)
 
     };
 
