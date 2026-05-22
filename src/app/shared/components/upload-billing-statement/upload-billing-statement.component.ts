@@ -101,8 +101,6 @@ export class UploadBillingStatementComponent implements OnInit {
       formData.append(key, value as string);
     });
 
-    formData.append('billingPeriodId', '0');
-
     this.busy$ = this.settlementService.uploadBillingStatement(formData)
       .pipe(takeUntilDestroyed(this.destroyRef$))
       .subscribe(res => {
