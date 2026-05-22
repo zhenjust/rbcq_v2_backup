@@ -270,11 +270,38 @@ export class WesmPenaltyComponent implements OnInit {
           return this.hideAction(rowData, `penalty-calculate${isRefund ? 'Refund' : ''}`)
         },
       },
+      {
+        label: LABELS.PUBLISH,
+        value: 'publish',
+        click: (rowData: any) => this.handlePublish(rowData),
+        hidden: (rowData: any) => {
+          const isRefund = rowData?.penaltyHeaders[0]?.type === 'REFUND';
+          return this.hideAction(rowData, `penalty-finalize${isRefund ? 'Refund' : ''}`)
+        },
+      },
     ];
   }
 
+  handlePublish(rowData: any): void {
+    const modal = this.stlUtil.publish('Financial Penalty Calculation', {
+      pipelineId: rowData.id,
+      stlGroupId: rowData.id,
+      jobExecutionId: rowData.id,
+      functionName: 'Financial Penalty Calculation',
+      startDate: rowData.billingStartDate,
+      endDate: rowData.billingEndDate,
+    });
+
+    modal.afterClose.subscribe(res => {
+        if (res) {
+          this.toastrService.success(res.message);
+          this.reload$.next();
+        }
+      });
+  }
 
 }
+
 
 const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.BILLING_PERIOD_TRADING_DATE]: { label: LABELS.BILLING_PERIOD_TRADING_DATE, propName: 'parameters', type: 'template' },

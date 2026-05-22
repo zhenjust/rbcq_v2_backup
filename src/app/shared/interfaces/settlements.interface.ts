@@ -93,7 +93,9 @@ export interface PublishSettlement {
     pipelineId?: number,
     stlGroupId: number,
     jobExecutionId?: number,
-    functionName: string
+    functionName: string,
+    startDate?: string,
+    endDate?: string
 }
 
 export interface EnergyTradingAmounts {
