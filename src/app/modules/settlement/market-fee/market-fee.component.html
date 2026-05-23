@@ -73,7 +73,7 @@
           @let isFinalAdj = row.processType === processTypes.FINAL || row.processType === processTypes.ADJUSTED;
           @let isPrelim = row.processType === processTypes.PRELIM;
 
-          @if (!isInProgress && (!subRowData?.published || (subRowData.published && isFinalAdj))) {
+          @if (!isInProgress) {
             <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu">{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
           }
 
