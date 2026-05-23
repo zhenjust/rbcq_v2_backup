@@ -1,0 +1,20 @@
+<nz-table #summaryTable [nzData]="results" nzSize="small" [nzShowPagination]="false" [nzFrontPagination]="false">
+  <thead>
+    <tr>
+      <th>{{ LABELS.FILE_NAME }}</th>
+      <th>{{ LABELS.STATUS }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (data of summaryTable.data; track $index) {
+      <tr>
+        <td>{{ data.fileName }}</td>
+        <td>{{ data.message || LABELS.SUCCESS }}</td>
+      </tr>
+    }
+  </tbody>
+</nz-table>
+
+<div *nzModalFooter>
+  <button nz-button nzType="primary" (click)="modalRef.destroy()">{{ LABELS.OK }}</button>
+</div>
