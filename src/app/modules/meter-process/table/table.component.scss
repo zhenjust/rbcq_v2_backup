@@ -109,15 +109,6 @@
   max-width: 100%;
 }
 
-.progress-bar {
-  background: linear-gradient(to right, #c1e8bd);
-  background-size: calc(var(--percent) * 1%) 100%;
-  background-repeat: no-repeat;
-  background-color: #f6fff5;
-  transition: background-size 0.3s ease;
-  padding: 24px;
-  justify-content: space-between;
-}
 
 .rowspan-top-align {
   vertical-align: top;

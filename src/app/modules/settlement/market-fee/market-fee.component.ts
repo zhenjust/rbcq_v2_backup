@@ -302,7 +302,7 @@ export class MarketFeeComponent  implements OnInit {
     const pipelineName = this.pipelineName;
     const filename = `${pipelineName}-${subRowData.id}-${this.dfs.formatDate(subRowData.lastModifiedDatetime, 'yyyyMMddHHmmss')}.zip`;
 
-    this.du.addDownloading(subRowData.id);
+    this.du.startDownload(subRowData, this.downloadTpl);
 
     this.settlementService.downloadBillingStatementZip(allData.id, subRowData.id, allData.processType)
       .pipe(takeUntilDestroyed(this.destroyRef$))

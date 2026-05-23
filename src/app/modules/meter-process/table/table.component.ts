@@ -250,7 +250,7 @@ export class TableComponent implements OnInit {
     const user = this.as.currentUser()?.principal.username ?? '';
     const filename = `${processType}_MeteringData_${formattedTradingDate}_${runDate}.zip`;
 
-    this.du.addDownloading(id);
+    this.du.startDownload(pipeline, this.downloadTpl);
 
     const params = {
       version: String(id),

@@ -125,8 +125,11 @@
 
 <!-- Column Templates -->
 <ng-template #downloadTpl let-data="data">
-  <div class="d-flex progress-bar flex-row" [style.--percent]="data.percentage">
-    <p class="mb-0">Downloading report for: {{ data.id }} ({{ data.percentage }}%)</p>
+  <div class="d-flex progress-bar flex-row" [style.--percent]="data.percentage || 0">
+    <p class="mb-0">
+      {{ (data.percentage !== undefined || data.size !== 'Preparing...') ? 'Downloading report for workspace id: ' : 'Preparing download for workspace id: ' }} {{ data.id }}
+      {{ data.percentage !== undefined ? '(' + data.percentage + '%)' : '' }}
+    </p>
     <span><p class="mb-0 text-right text-muted">{{ data.size }}</p></span>
   </div>
 </ng-template>

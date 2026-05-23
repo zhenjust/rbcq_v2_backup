@@ -140,4 +140,25 @@ export class DownloadUtilService {
     this.downloadingReports.add(id);
   }
 
+  startDownload(pipeline: any, downloadTpl: TemplateRef<void>): void {
+    this.addDownloading(pipeline.id);
+
+    const config: NzNotificationDataOptions = {
+      nzPlacement: 'bottomRight',
+      nzDuration: 0,
+      nzKey: pipeline.id.toString(),
+      nzCloseIcon: '',
+      nzClass: 'notif-progress',
+      nzData: {
+        size: 'Preparing...',
+        percentage: undefined,
+        id: pipeline.id
+      },
+      nzStyle: {
+        padding: '0px'
+      }
+    };
+
+    this.ns.blank('', downloadTpl, config);
+  }
 }
