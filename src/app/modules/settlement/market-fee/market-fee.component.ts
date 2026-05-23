@@ -45,6 +45,7 @@ export class MarketFeeComponent  implements OnInit {
   isEnergy = signal<boolean>(false);
 
   LABELS = LABELS;
+  processTypes = MeterProcessTypes;
   tableColumns: TPL_TABLE_COLUMN[] = [];
   form: FormGroup;
   showForm = false;
@@ -262,10 +263,7 @@ export class MarketFeeComponent  implements OnInit {
     });
   }
 
-
-
-
-  uploadBillingStatement(subRowData: any): void {
+  uploadBillingStatement(allData: any, subRowData: any): void {
     const modal = this.modalService.create({
       nzTitle: LABELS.UPLOAD_BILLING_STATEMENT,
       nzContent: UploadBillingStatementComponent,
@@ -283,7 +281,7 @@ export class MarketFeeComponent  implements OnInit {
           disabled: (component) => component ? ((component.formGroup.invalid || !component.fileList?.length) || (component?.busy$ && !component?.busy$?.closed)) : true
         }
       ],
-      nzData: subRowData,
+      nzData: { allData, subRowData },
       nzWidth: '600px',
     });
 
@@ -293,7 +291,6 @@ export class MarketFeeComponent  implements OnInit {
         this.reload$.next();
       }
     });
-
   }
 
   get pipelineName(): string { return this.isEnergy() ? 'energyMarketFee' : 'reserveMarketFee'; }

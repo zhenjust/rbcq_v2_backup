@@ -1,11 +1,12 @@
-@let data = modalData?.parameters;
+@let allData = modalData?.allData;
+@let data = modalData?.subRowData;
 
 <nz-spin [nzSpinning]="busy$ && !busy$?.closed">
   <nz-descriptions [nzColumn]="1" nzBordered nzSize="small" class="borderless-descriptions">
-    <nz-descriptions-item [nzTitle]="LABELS.BILLING_PERIOD">{{ data?.billingPeriodName }}</nz-descriptions-item>
-    <nz-descriptions-item [nzTitle]="LABELS.TYPE">{{ data?.processType | titlecase}}</nz-descriptions-item>
-    <nz-descriptions-item [nzTitle]="LABELS.MARKET_FEE_TYPE">{{ data?.marketFeeType | titlecase }}</nz-descriptions-item>
-    <nz-descriptions-item [nzTitle]="LABELS.MARKET_FEE_MODE">{{ data?.marketFeeMode | titlecase }}</nz-descriptions-item>
+    <nz-descriptions-item [nzTitle]="LABELS.BILLING_PERIOD">{{ allData?.billingPeriod }}</nz-descriptions-item>
+    <nz-descriptions-item [nzTitle]="LABELS.TYPE">{{ allData?.processType | titlecase}}</nz-descriptions-item>
+    <nz-descriptions-item [nzTitle]="LABELS.MARKET_FEE_TYPE">{{ data?.parameters.marketFeeType }}</nz-descriptions-item>
+    <nz-descriptions-item [nzTitle]="LABELS.MARKET_FEE_MODE">{{ data?.parameters.marketFeeMode }}</nz-descriptions-item>
 
     <nz-descriptions-item [nzTitle]="LABELS.DUE_DATE">
       <form nz-form [formGroup]="formGroup">

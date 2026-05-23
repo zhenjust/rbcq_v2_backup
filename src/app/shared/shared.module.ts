@@ -48,6 +48,7 @@ import { PipelineTableComponent } from './components/pipeline-table/pipeline-tab
 import { PollingTimerComponent } from './components/polling-timer/polling-timer.component';
 import { ReloadOutline } from '@ant-design/icons-angular/icons';
 import { UploadBillingStatementComponent } from './components/upload-billing-statement/upload-billing-statement.component';
+import { UploadSummaryComponent } from './components/upload-billing-statement/upload-summary.component';
 import { SendNotificationComponent } from './components/send-notification/send-notification.component';
 
 const ngZorroConfig: NzConfig = {
@@ -111,6 +112,7 @@ const Pipes = [
     PipelineTableComponent,
     PollingTimerComponent,
     UploadBillingStatementComponent,
+    UploadSummaryComponent,
     SendNotificationComponent
   ],
   imports: [

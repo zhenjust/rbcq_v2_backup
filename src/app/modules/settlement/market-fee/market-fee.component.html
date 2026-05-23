@@ -70,7 +70,7 @@
           @let isFinalized = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded');
           <!-- @let isCalculated = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded'); -->
           @let isInProgress = subRowData.status.includes('In-Progress');
-          @let isFinalAdj = row.parameters?.processType === 'FINAL' || row.parameters?.processType === 'ADJUSTMENT';
+          @let isFinalAdj = row.processType === processTypes.FINAL || row.processType === processTypes.ADJUSTED;
 
           @if (!isInProgress && (!subRowData?.published || (subRowData.published && isFinalAdj))) {
             <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu">{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
@@ -107,7 +107,7 @@
                 }
 
                 @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded') && isFinalAdj) {
-                  <li nz-menu-item (click)="uploadBillingStatement(subRowData)">{{ LABELS.UPLOAD_BILLING_STATEMENT }}</li>
+                  <li nz-menu-item (click)="uploadBillingStatement(row, subRowData)">{{ LABELS.UPLOAD_BILLING_STATEMENT }}</li>
                 }
 
               </ul>

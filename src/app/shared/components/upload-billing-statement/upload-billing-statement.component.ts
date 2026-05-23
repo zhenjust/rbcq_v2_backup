@@ -1,6 +1,6 @@
 import { LABELS } from '@shared/constants/labels.const';
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
+import { NZ_MODAL_DATA, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { RxwebValidators } from '@rxweb/reactive-form-validators';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { SettlementService } from '@shared/services/api';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { format } from 'date-fns';
+import { UploadSummaryComponent } from './upload-summary.component';
 
 @Component({
   selector: 'app-upload-billing-statement',
@@ -23,6 +24,7 @@ export class UploadBillingStatementComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly toaster = inject(ToastrService);
   private readonly modalRef = inject(NzModalRef);
+  private readonly modalService = inject(NzModalService);
   private readonly settlementService = inject(SettlementService);
   private readonly destroyRef$ = inject(DestroyRef);
 
@@ -36,27 +38,13 @@ export class UploadBillingStatementComponent implements OnInit {
   }
 
   private initForm(): void {
-    console.log(this.modalData)
+    const allData = this.modalData.allData;
     this.formGroup = this.formBuilder.group({
-      billingPeriod: [null, RxwebValidators.required()],
-      // billingPeriodId: [null, RxwebValidators.required()],
-      startDate: [null, RxwebValidators.required()],
-      endDate: [null, RxwebValidators.required()],
-      marketFeeType: [null, RxwebValidators.required()],
-      type: [null, RxwebValidators.required()],
+      groupId: [allData.id, RxwebValidators.required()],
+      billingPeriod: [allData.billingPeriod, RxwebValidators.required()],
+      type: [allData.processType, RxwebValidators.required()],
       category: ['MARKET_FEE', RxwebValidators.required()],
       dueDate: [null, RxwebValidators.required()],
-    });
-
-    const params = this.modalData?.parameters;
-
-    this.formGroup.patchValue({
-      billingPeriod: params?.billingPeriodName,
-      billingPeriodId: params?.billingPeriodId,
-      type: params?.processType,
-      marketFeeType: params?.marketFeeType,
-      startDate: params?.billingStartDate,
-      endDate: params?.billingEndDate
     });
   }
 
@@ -104,7 +92,15 @@ export class UploadBillingStatementComponent implements OnInit {
     this.busy$ = this.settlementService.uploadBillingStatement(formData)
       .pipe(takeUntilDestroyed(this.destroyRef$))
       .subscribe(res => {
-        console.log({res});
+        this.modalService.create({
+          nzTitle: 'Upload Summary',
+          nzContent: UploadSummaryComponent,
+          nzData: {
+            results: res
+          },
+          nzCentered: true,
+          nzFooter: null
+        });
         this.triggerClose();
       });
   }
