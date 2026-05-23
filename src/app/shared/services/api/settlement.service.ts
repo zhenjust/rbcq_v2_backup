@@ -97,8 +97,8 @@ export class SettlementService {
     return this.http.post<any>(`${this.BILLING_STATEMENT}/upload`, formData);
   }
 
-  public downloadBillingStatementZip(type: MeterProcessTypes, workspaceId: any): Observable<HttpEvent<Blob>> {
-    return this.http.post(`${this.BILLING_STATEMENT}/zip/download`, { workspaceId, type }, { responseType: 'blob', observe: 'events', reportProgress: true });
+  public downloadBillingStatementZip(groupId: any, workspaceId: any, type: MeterProcessTypes): Observable<HttpEvent<Blob>> {
+    return this.http.post(`${this.BILLING_STATEMENT}/zip/download`, { groupId, workspaceId, type }, { responseType: 'blob', observe: 'events', reportProgress: true });
   }
 
 }

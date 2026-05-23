@@ -1,25 +1,27 @@
-import { Component, DestroyRef, inject, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
-import { LABELS } from '@shared/constants/labels.const';
-import { PipelineTableColumns } from '@shared/constants/pipelines.const';
-import { TPL_TABLE_COLUMN, meterProcessBillingPeriod, PublishSettlement } from '@shared/interfaces';
-import { SettlementService, MeterprocessService } from '@shared/services/api';
-import { NzModalService } from 'ng-zorro-antd/modal';
-import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
-import { Observable, forkJoin, timer, switchMap, Subject, merge, BehaviorSubject, finalize, exhaustMap } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
-import { MeterProcessTypes } from '@shared/enums';
-import { RunMarketFeeComponent } from './run-market-fee/run-market-fee.component';
-import { ToastrService } from 'ngx-toastr';
-import { MESSAGES } from '@shared/constants/messages.const';
-import { TemplateTableComponent } from '@shared/components/template-table/template-table.component';
-import { PHASE_TWO_AUTHORITIES } from '@shared/constants';
-import { effect } from '@angular/core';
-import { StlUtilitiesService, DownloadUtilService, DateFormatterUtilService } from '@shared/services/utils';
-import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
-import { UploadBillingStatementComponent } from '@shared/components/upload-billing-statement/upload-billing-statement.component';
+import {Component, DestroyRef, effect, inject, OnInit, signal, TemplateRef, ViewChild} from '@angular/core';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {FormBuilder, FormGroup} from '@angular/forms';
+import {PaginatedTableComponent} from '@shared/components/paginated-table/paginated-table.component';
+import {LABELS} from '@shared/constants/labels.const';
+import {PipelineTableColumns} from '@shared/constants/pipelines.const';
+import {meterProcessBillingPeriod, PublishSettlement, TPL_TABLE_COLUMN} from '@shared/interfaces';
+import {MeterprocessService, SettlementService} from '@shared/services/api';
+import {NzModalService} from 'ng-zorro-antd/modal';
+import {NzSelectOptionInterface} from 'ng-zorro-antd/select';
+import {BehaviorSubject, exhaustMap, finalize, forkJoin, merge, Observable, Subject, switchMap, timer} from 'rxjs';
+import {ActivatedRoute} from '@angular/router';
+import {MeterProcessTypes} from '@shared/enums';
+import {RunMarketFeeComponent} from './run-market-fee/run-market-fee.component';
+import {ToastrService} from 'ngx-toastr';
+import {MESSAGES} from '@shared/constants/messages.const';
+import {TemplateTableComponent} from '@shared/components/template-table/template-table.component';
+import {PHASE_TWO_AUTHORITIES} from '@shared/constants';
+import {DateFormatterUtilService, DownloadUtilService, StlUtilitiesService} from '@shared/services/utils';
+import {ConfirmWithDescComponent} from '@shared/components/confirm-with-desc/confirm-with-desc.component';
+import {
+  UploadBillingStatementComponent
+} from '@shared/components/upload-billing-statement/upload-billing-statement.component';
+
 @Component({
   selector: 'app-market-fee',
   standalone: false,
@@ -296,13 +298,13 @@ export class MarketFeeComponent  implements OnInit {
     });
   }
 
-  downloadBillingStatement(type: MeterProcessTypes, subRowData: any) {
+  downloadBillingStatement(allData: any, subRowData: any) {
     const pipelineName = this.pipelineName;
     const filename = `${pipelineName}-${subRowData.id}-${this.dfs.formatDate(subRowData.lastModifiedDatetime, 'yyyyMMddHHmmss')}.zip`;
 
     this.du.addDownloading(subRowData.id);
 
-    this.settlementService.downloadBillingStatementZip(type, subRowData.id)
+    this.settlementService.downloadBillingStatementZip(allData.id, subRowData.id, allData.processType)
       .pipe(takeUntilDestroyed(this.destroyRef$))
       .subscribe({
         next: (response) => {
