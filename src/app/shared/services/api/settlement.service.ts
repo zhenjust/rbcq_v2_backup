@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { ParamsUtilService } from '../utils';
 import { BaseResponse, EnergyTradingAmounts, PublishSettlement, ReferenceOption1, SettlementJob, SettlementJobParams, settlementParams, settlementTableDate, TableParams } from '@shared/interfaces';
 import { Observable } from 'rxjs';
+import { MeterProcessTypes } from '@shared/enums';
 
 @Injectable({
   providedIn: 'root'
@@ -96,8 +97,8 @@ export class SettlementService {
     return this.http.post<any>(`${this.BILLING_STATEMENT}/upload`, formData);
   }
 
-  public downloadBillingStatementZip(groupId: any): Observable<HttpEvent<Blob>> {
-    return this.http.post(`${this.BILLING_STATEMENT}/zip/download`, { groupId }, { responseType: 'blob', observe: 'events', reportProgress: true });
+  public downloadBillingStatementZip(type: MeterProcessTypes, workspaceId: any): Observable<HttpEvent<Blob>> {
+    return this.http.post(`${this.BILLING_STATEMENT}/zip/download`, { workspaceId, type }, { responseType: 'blob', observe: 'events', reportProgress: true });
   }
 
 }

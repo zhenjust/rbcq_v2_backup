@@ -296,13 +296,13 @@ export class MarketFeeComponent  implements OnInit {
     });
   }
 
-  downloadBillingStatement(subRowData: any) {
+  downloadBillingStatement(type: MeterProcessTypes, subRowData: any) {
     const pipelineName = this.pipelineName;
     const filename = `${pipelineName}-${subRowData.id}-${this.dfs.formatDate(subRowData.lastModifiedDatetime, 'yyyyMMddHHmmss')}.zip`;
 
     this.du.addDownloading(subRowData.id);
 
-    this.settlementService.downloadBillingStatementZip(subRowData.id)
+    this.settlementService.downloadBillingStatementZip(type, subRowData.id)
       .pipe(takeUntilDestroyed(this.destroyRef$))
       .subscribe({
         next: (response) => {

@@ -112,7 +112,7 @@
                 }
 
                 @if (((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded') && isFinalAdj) || ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateFiles')] : 'Succeeded') && isPrelim)) {
-                  <li nz-menu-item [nzDisabled]="isDownloadingReport(subRowData.id)" (click)="downloadBillingStatement(subRowData)">{{ LABELS.DOWNLOAD_BILLING_STATEMENT }}</li>
+                  <li nz-menu-item [nzDisabled]="isDownloadingReport(subRowData.id)" (click)="downloadBillingStatement(row.processType, subRowData)">{{ LABELS.DOWNLOAD_BILLING_STATEMENT }}</li>
                 }
 
               </ul>
