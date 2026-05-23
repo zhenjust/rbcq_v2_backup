@@ -229,7 +229,7 @@
 </ng-template>
 
 <ng-template #downloadTpl let-data="data">
-  <div class="d-flex progress-bar flex-row" style="--percent: {{ data.percentage }}">
+  <div class="d-flex progress-bar flex-row" [style.--percent]="data.percentage">
     <p class="mb-0">Downloading report for: {{ data.id }} ({{ data.percentage }}%)</p>
     <span><p class="mb-0 text-right text-muted">{{ data.size }}</p></span>
   </div>

@@ -53,6 +53,8 @@ export interface pipeline {
     consolidate: boolean;
     published: boolean;
     pipelineRuns: PipelineRun[];
+    currentDownloadedFile?: string | null;
+    currentDownloadedPercentage?: number | null;
 }
 
 export interface settlementTableDate {

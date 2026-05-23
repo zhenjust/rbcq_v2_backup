@@ -221,6 +221,7 @@ export const LABELS = {
   MARKET_FEE_TYPE: 'Market Fee Type',
   MARKET_FEE_MODE: 'Market Fee Mode',
   UPLOAD_BILLING_STATEMENT: 'Upload Billing Statement',
+  DOWNLOAD_BILLING_STATEMENT: 'Download Billing Statement',
   SEND_NOTIFICATION: 'Send Notification',
   SEND_NOTICE: 'Send Notice',
   REASON_FOR_CORRECTION: 'Reason for correction',

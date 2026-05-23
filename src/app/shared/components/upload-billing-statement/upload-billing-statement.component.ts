@@ -39,8 +39,10 @@ export class UploadBillingStatementComponent implements OnInit {
 
   private initForm(): void {
     const allData = this.modalData.allData;
+    const subRowData = this.modalData.subRowData;
     this.formGroup = this.formBuilder.group({
       groupId: [allData.id, RxwebValidators.required()],
+      workspaceId: [subRowData.id, RxwebValidators.required()],
       billingPeriod: [allData.billingPeriod, RxwebValidators.required()],
       type: [allData.processType, RxwebValidators.required()],
       category: ['MARKET_FEE', RxwebValidators.required()],

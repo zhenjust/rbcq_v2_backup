@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEvent } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ParamsUtilService } from '../utils';
 import { BaseResponse, EnergyTradingAmounts, PublishSettlement, ReferenceOption1, SettlementJob, SettlementJobParams, settlementParams, settlementTableDate, TableParams } from '@shared/interfaces';
@@ -15,6 +15,7 @@ export class SettlementService {
   private REG = `/reg/stl-meter-file`;
   private GRP_API_URL: string = '/stl-data-pipeline/job/group';
   private ADDTL_COMP: string = '/settlement/addtl-comp';
+  private BILLING_STATEMENT: string = '/settlement/billing-statement';
 
   private paramUtil = inject(ParamsUtilService);
   private http = inject(HttpClient);
@@ -92,8 +93,11 @@ export class SettlementService {
   }
 
   public uploadBillingStatement(formData: FormData): Observable<any> {
-    return this.http.post<any>(`/settlement/billing-statement/upload`, formData);
+    return this.http.post<any>(`${this.BILLING_STATEMENT}/upload`, formData);
   }
 
+  public downloadBillingStatementZip(groupId: any): Observable<HttpEvent<Blob>> {
+    return this.http.post(`${this.BILLING_STATEMENT}/zip/download`, { groupId }, { responseType: 'blob', observe: 'events', reportProgress: true });
+  }
 
 }

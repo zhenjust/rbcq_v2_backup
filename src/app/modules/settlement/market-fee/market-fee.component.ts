@@ -17,7 +17,7 @@ import { MESSAGES } from '@shared/constants/messages.const';
 import { TemplateTableComponent } from '@shared/components/template-table/template-table.component';
 import { PHASE_TWO_AUTHORITIES } from '@shared/constants';
 import { effect } from '@angular/core';
-import { StlUtilitiesService } from '@shared/services/utils';
+import { StlUtilitiesService, DownloadUtilService, DateFormatterUtilService } from '@shared/services/utils';
 import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
 import { UploadBillingStatementComponent } from '@shared/components/upload-billing-statement/upload-billing-statement.component';
 @Component({
@@ -30,6 +30,7 @@ export class MarketFeeComponent  implements OnInit {
   @ViewChild('paginatedTable') paginatedTable!: PaginatedTableComponent<any>;
   @ViewChild('bpTpl', { static: true }) bpTpl!: TemplateRef<HTMLElement>;
   @ViewChild('tagTpl', { static: true }) tagTpl!: TemplateRef<HTMLElement>;
+  @ViewChild('downloadTpl', { static: false }) downloadTpl!: TemplateRef<void>;
 
   private readonly formBuilder = inject(FormBuilder);
   private readonly settlementService = inject(SettlementService);
@@ -39,6 +40,8 @@ export class MarketFeeComponent  implements OnInit {
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly toastrService = inject(ToastrService);
   private readonly stlUtil = inject(StlUtilitiesService);
+  private readonly du = inject(DownloadUtilService);
+  private readonly dfs = inject(DateFormatterUtilService);
 
   AUTH = PHASE_TWO_AUTHORITIES;
 
@@ -291,6 +294,28 @@ export class MarketFeeComponent  implements OnInit {
         this.reload$.next();
       }
     });
+  }
+
+  downloadBillingStatement(subRowData: any) {
+    const pipelineName = this.pipelineName;
+    const filename = `${pipelineName}-${subRowData.id}-${this.dfs.formatDate(subRowData.lastModifiedDatetime, 'yyyyMMddHHmmss')}.zip`;
+
+    this.du.addDownloading(subRowData.id);
+
+    this.settlementService.downloadBillingStatementZip(subRowData.id)
+      .pipe(takeUntilDestroyed(this.destroyRef$))
+      .subscribe({
+        next: (response) => {
+          this.du.processDownloadEvent(response, subRowData, this.downloadTpl, filename, MESSAGES.SUCCESS_DOWNLOAD_ITEM(`billing statement for ${subRowData.id}`));
+        },
+        error: () => {
+          this.du.clearProgress(subRowData.id);
+        }
+      });
+  }
+
+  isDownloadingReport(pipelineId: number): boolean {
+    return this.du.isDownloading(pipelineId);
   }
 
   get pipelineName(): string { return this.isEnergy() ? 'energyMarketFee' : 'reserveMarketFee'; }

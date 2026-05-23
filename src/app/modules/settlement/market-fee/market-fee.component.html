@@ -71,6 +71,7 @@
           <!-- @let isCalculated = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded'); -->
           @let isInProgress = subRowData.status.includes('In-Progress');
           @let isFinalAdj = row.processType === processTypes.FINAL || row.processType === processTypes.ADJUSTED;
+          @let isPrelim = row.processType === processTypes.PRELIM;
 
           @if (!isInProgress && (!subRowData?.published || (subRowData.published && isFinalAdj))) {
             <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu">{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
@@ -110,6 +111,10 @@
                   <li nz-menu-item (click)="uploadBillingStatement(row, subRowData)">{{ LABELS.UPLOAD_BILLING_STATEMENT }}</li>
                 }
 
+                @if (((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded') && isFinalAdj) || ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateFiles')] : 'Succeeded') && isPrelim)) {
+                  <li nz-menu-item [nzDisabled]="isDownloadingReport(subRowData.id)" (click)="downloadBillingStatement(subRowData)">{{ LABELS.DOWNLOAD_BILLING_STATEMENT }}</li>
+                }
+
               </ul>
           </nz-dropdown-menu>
         }
@@ -119,6 +124,13 @@
 </nz-card>
 
 <!-- Column Templates -->
+<ng-template #downloadTpl let-data="data">
+  <div class="d-flex progress-bar flex-row" [style.--percent]="data.percentage">
+    <p class="mb-0">Downloading report for: {{ data.id }} ({{ data.percentage }}%)</p>
+    <span><p class="mb-0 text-right text-muted">{{ data.size }}</p></span>
+  </div>
+</ng-template>
+
 <ng-template #bpTpl let-allData="allData">
   {{ allData?.processType === 'DAILY' ? allData?.billingStartDate : `${allData?.billingStartDate} -
   ${allData?.billingEndDate}` }}
