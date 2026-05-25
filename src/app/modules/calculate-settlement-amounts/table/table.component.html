@@ -67,7 +67,7 @@
                         @let actions = (SettlementJobSubActions | stlActions: row : searchName);
                         @if (row.status && actions?.length) {
                             @for (action of actions; track action.value) {
-                            <a nz-button nzType="link" (click)="triggerAction(action.value, row, data)" nzSize="small" nzBlock>{{ action.label }}</a>
+                            <a nz-button nzType="link" (click)="triggerAction(action.value, row)" nzSize="small" nzBlock>{{ action.label }}</a>
                             }
                         }
                     </ng-template>

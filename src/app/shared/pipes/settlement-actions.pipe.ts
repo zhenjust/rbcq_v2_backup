@@ -90,10 +90,12 @@ export class SettlementActionsPipe implements PipeTransform {
 
         if (value === 'energyTradingAmounts-calculateTransAlloc' || value === 'reserveTradingAmounts-calculateTransAlloc') {
           action = this.handleCalcTransAlloc(action, isSettlementModules, pipelines);
+          action.show = action.show && !data.published;
         }
 
         if (value === 'energyTradingAmounts-generateTransactionReport' || value === 'reserveTradingAmounts-generateTransactionReport') {
           action = this.handleGenerateTransactionReport(action, pipelines, isSettlementModules);
+          action.show = action.show && !data.published;
         }
 
         if (value === 'energyTradingAmounts-generateFiles' || value === 'reserveTradingAmounts-generateFiles') {

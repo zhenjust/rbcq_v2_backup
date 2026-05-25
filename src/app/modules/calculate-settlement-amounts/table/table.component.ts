@@ -226,50 +226,6 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
     this.selectedRange.set(value);
   }
 
-  clearDateRange(): void {
-    this.minDate.set(null);
-    this.maxDate.set(null);
-    this.selectedRange.set(null);
-  }
-
-  handleModalAction(rowData: settlementPipeline, serviceCall: () => void, modalData: any): void {
-    this.currentModalData = modalData;
-
-    const modalRef = this.modal.create({
-      nzContent: this.runSettlementJobs,
-      nzCentered: true,
-      nzOkText: 'Proceed',
-      nzCancelText: 'Cancel',
-      nzOnOk: () => {
-        return new Promise((resolve, reject) => {
-          try {
-            serviceCall();
-            this.resetActionSelection(rowData);
-            this.clearDateRange();
-            this.reload$.next();
-            this.toast.success("Jobs Successfully Triggered!");
-            resolve(true);
-          } catch (error) {
-            this.resetActionSelection(rowData);
-            this.clearDateRange();
-            reject(error);
-          }
-        });
-      },
-      nzOnCancel: () => {
-        this.currentModalData = null;
-        this.resetActionSelection(rowData);
-      },
-      nzMaskClosable: false
-    });
-
-    modalRef.afterClose.subscribe(() => {
-      this.currentModalData = null;
-      this.resetActionSelection(rowData);
-      this.clearDateRange();
-    });
-  }
-
   onExpandChange(id: number, value: boolean): void {
     if (value) {
       this.expandSet.clear();
@@ -284,7 +240,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   /**
    * NEW IMPLEMENTATION FOR ACTIONS
    */
-  triggerAction(action: string, row: any, data: any): void {
+  triggerAction(action: string, row: any): void {
     const actions: Record<string, () => unknown> = {
       ['cancelRun']: () => this.cancelRun(action, row.id),
 
@@ -312,8 +268,8 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       ['energyTradingAmounts-generateFiles']: () => this.generateFiles(action, row),
       ['reserveTradingAmounts-generateFiles']: () => this.generateFiles(action, row),
 
-      ['energyTradingAmounts-publish']: () => this.handlePublishAction('Energy Trading Amounts Calculation', data),
-      ['reserveTradingAmounts-publish']: () => this.handlePublishAction('Reserve Trading Amounts Calculation', data),
+      ['energyTradingAmounts-publish']: () => this.handlePublishAction('Energy Trading Amounts Calculation', row),
+      ['reserveTradingAmounts-publish']: () => this.handlePublishAction('Reserve Trading Amounts Calculation', row),
       ['sendNotification']: () => this.stlUtil.sendNotification(row)
 
     };
