@@ -321,6 +321,7 @@ export class MarketFeeComponent  implements OnInit {
   }
 
   get pipelineName(): string { return this.isEnergy() ? 'energyMarketFee' : 'reserveMarketFee'; }
+  get label(): string { return this.isEnergy() ? LABELS.ENERGY_MARKET_FEE : LABELS.RESERVE_MARKET_FEE; }
 }
 
 

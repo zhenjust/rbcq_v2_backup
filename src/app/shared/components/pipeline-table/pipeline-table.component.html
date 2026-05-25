@@ -25,6 +25,7 @@
 
     @let processType = allData?.parameters?.processType?.textValue;
     @let showAmsInfo = ['penalty-finalize', 'energyMarketFee-finalize', 'reserveMarketFee-finalize', 'additionalCompensation-calculateTransAlloc'].includes(allData?.name);
+    @let isMarketFee = ['energyMarketFee-finalize', 'reserveMarketFee-finalize'].includes(allData?.name);
 
     @if (allData.parameters?.meteringWorkspaceId && LABELS.GENERATE_INPUT_WORKSPACE  === data) {
       <div class="cell-sub">
@@ -35,12 +36,12 @@
 
     @if ([processTypes.FINAL, processTypes.ADJUSTED].includes(processType) && showAmsInfo) {
       <div class="cell-sub">
-        <span class="cell-sub-label">{{ LABELS.ALLOCATION_DATE }}: </span>
+        <span class="cell-sub-label">{{ isMarketFee ? LABELS.ISSUED_DATE : LABELS.ALLOCATION_DATE }}: </span>
         <span class="cell-sub-value">{{ allData.parameters?.allocDate?.dateValue || '-'  }}</span>
       </div>
 
       <div class="cell-sub">
-        <span class="cell-sub-label">{{ LABELS.ALLOCATION_DUE_DATE }}: </span>
+        <span class="cell-sub-label">{{ isMarketFee ? LABELS.DUE_DATE : LABELS.ALLOCATION_DUE_DATE }}: </span>
         <span class="cell-sub-value">{{ allData.parameters?.dueDate?.dateValue || '-'  }}</span>
       </div>
 

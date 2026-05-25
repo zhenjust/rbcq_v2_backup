@@ -226,5 +226,6 @@ export const LABELS = {
   SEND_NOTICE: 'Send Notice',
   REASON_FOR_CORRECTION: 'Reason for correction',
   NOTIFICATION_MESSAGE: 'Notification Message',
+  ISSUED_DATE: 'Issued Date',
 
 }
