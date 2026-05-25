@@ -11,6 +11,7 @@ import { SettlementService } from '@shared/services/api';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { format } from 'date-fns';
 import { UploadSummaryComponent } from './upload-summary.component';
+import { PipelineRun } from '@shared/interfaces';
 
 @Component({
   selector: 'app-upload-billing-statement',
@@ -40,13 +41,17 @@ export class UploadBillingStatementComponent implements OnInit {
   private initForm(): void {
     const allData = this.modalData.allData;
     const subRowData = this.modalData.subRowData;
+
+    const finalizeRunData = subRowData.pipelineRuns?.find((run: PipelineRun) => run.name?.includes('finalize'));
+    const dueDate = finalizeRunData ? new Date(finalizeRunData.parameters?.dueDate?.dateValue) : null;
+
     this.formGroup = this.formBuilder.group({
       groupId: [allData.id, RxwebValidators.required()],
       workspaceId: [subRowData.id, RxwebValidators.required()],
       billingPeriod: [allData.billingPeriod, RxwebValidators.required()],
       type: [allData.processType, RxwebValidators.required()],
       category: ['MARKET_FEE', RxwebValidators.required()],
-      dueDate: [null, RxwebValidators.required()],
+      dueDate: [dueDate, RxwebValidators.required()],
     });
   }
 

@@ -8,11 +8,11 @@
     <nz-descriptions-item [nzTitle]="LABELS.MARKET_FEE_TYPE">{{ data?.parameters.marketFeeType }}</nz-descriptions-item>
     <nz-descriptions-item [nzTitle]="LABELS.MARKET_FEE_MODE">{{ data?.parameters.marketFeeMode }}</nz-descriptions-item>
 
-    <nz-descriptions-item [nzTitle]="LABELS.DUE_DATE">
+    <!-- <nz-descriptions-item [nzTitle]="LABELS.DUE_DATE">
       <form nz-form [formGroup]="formGroup">
         <nz-date-picker nzFormat="yyyy-MM-dd" nzStyle="width: 100%" formControlName="dueDate"></nz-date-picker>
       </form>
-    </nz-descriptions-item>
+    </nz-descriptions-item> -->
 
     <nz-descriptions-item [nzTitle]="LABELS.FILE">
       <nz-upload [nzBeforeUpload]="beforeUpload" [nzMultiple]="true" [nzAccept]="'.pdf'" [nzShowUploadList]="true">
