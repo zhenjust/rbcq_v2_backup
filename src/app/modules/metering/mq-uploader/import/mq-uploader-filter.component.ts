@@ -63,7 +63,7 @@ export class MqUploaderFilterComponent implements OnInit {
       convertToFiveMin: [false],
       tradingDay: [null, RxwebValidators.required({ conditionalExpression: () => this.isDaily || this.isCorrectedDaily })],
       tradingMonth: [null, RxwebValidators.required({ conditionalExpression: () => this.isMonthly || this.isCorrectedMonthly })],
-      interval: [null, [required, RxwebValidators.minLength({ value: 1 })]],
+      interval: [{value: null, disabled: true}, [required, RxwebValidators.minLength({ value: 1 })]],
       correctedRemarks: [null]
     });
 
@@ -122,12 +122,14 @@ export class MqUploaderFilterComponent implements OnInit {
     this.tradingDay?.valueChanges
       .subscribe(day => {
         if (!day) {
+          this.interval?.disable();
           return;
         }
 
         const startInterval = startOfDay(day).setMinutes(5);
         const endInterval = startOfDay(addDays(day, 1)).setMinutes(0);
         this.interval?.setValue([startInterval, endInterval]);
+        this.interval?.enable();
       });
   }
 
@@ -135,12 +137,14 @@ export class MqUploaderFilterComponent implements OnInit {
     this.tradingMonth?.valueChanges
       .subscribe((month: Date) => {
         if (!month) {
+          this.interval?.disable();
           return;
         }
 
         const startInterval = set(subMonths(month, 1), { date: 26, hours: 0, minutes: 5 });
         const endInterval = set(month, { date: 26, hours: 0, minutes: 0 });
         this.interval?.setValue([startInterval, endInterval]);
+        this.interval?.enable();
       });
 
   }
@@ -283,7 +287,7 @@ export class MqUploaderFilterComponent implements OnInit {
   get isMonthly(): boolean { return this.category?.value === MQ_UPLOAD_CATEGORY.MONTHLY; }
   get isCorrectedMonthly(): boolean { return this.category?.value === MQ_UPLOAD_CATEGORY.CORRECTED_MONTHLY; }
 
-  get acceptedFile(): string { return (this.isDaily || this.isMonthly) ? '.mdef, .mde, .mdf, .csv, .MDE, .MDF' : '.csv, .MDE, .MDF, .mdef, .mde, .mdf'; }
+  get acceptedFile(): string { return '.mdef, .mde, .mdf, .csv, .MDE, .MDF'; }
   get isMspUser(): boolean { return this.currentUser?.principal?.department === 'MSP' || this.regCategory === 'MSP'; }
 
 }
