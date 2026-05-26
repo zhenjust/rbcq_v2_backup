@@ -193,7 +193,7 @@ export class SettlementActionsPipe implements PipeTransform {
   }
 
   handleCalcTransAlloc(action: JobSelect, isSettlementModule = true, pipelines: any[]): JobSelect {
-    action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.TA_CALCULATE_GMRVAT] : [];
+    action.permissions = isSettlementModule ? [PHASE_TWO_AUTHORITIES.PROCESS_TRANSACTION_ALLOCATION] : [];
     action.show = this.checkPermissions(action.permissions) && pipelines.some(
       p => (p.name === 'energyTradingAmounts-finalize' || p.name === 'reserveTradingAmounts-finalize') && this.completedStatus.includes(p.status)
     );
