@@ -180,7 +180,10 @@ export class TableComponent implements OnInit {
     ).pipe(
       takeUntilDestroyed(this.destroyRef$),
       exhaustMap(() => {
-        this.loadingTable.set(true);
+        if (this.isFirstLoad) {
+          this.loadingTable.set(true);
+        }
+
         this.sfs.refreshJobs(this.sfs.params() ?? {});
 
         return EMPTY.pipe(
