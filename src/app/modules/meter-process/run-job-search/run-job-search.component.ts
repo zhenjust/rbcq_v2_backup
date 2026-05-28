@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild, effect, output } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild, effect, output, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { METER_PROCESS_TYPE_OPTION, MeterDataPipelineName } from '@shared/constants';
 import { MESSAGES } from '@shared/constants/messages.const';
@@ -18,6 +18,10 @@ import { Subject, takeUntil } from 'rxjs';
   styleUrl: './run-job-search.component.scss'
 })
 export class RunJobSearchComponent implements OnInit, OnDestroy {
+
+  @Output() pollingEvent = new EventEmitter<number>();
+  @Output() reloadEvent = new EventEmitter<boolean>();
+
   filterForm!: FormGroup;
 
   isFormValid: boolean = false;

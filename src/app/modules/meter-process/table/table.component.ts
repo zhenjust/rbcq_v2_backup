@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild, computed, effect, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, TemplateRef, ViewChild, computed, effect, inject, signal } from '@angular/core';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { MeterDataPipelineName, MeterProcessStatus, MeterDataPipelineProcess, PipelineStatus, MeterDataPipelineNameLabel } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
@@ -12,6 +12,8 @@ import { ToastrService } from 'ngx-toastr';
 import { ConsolidateComponent } from '../consolidate/consolidate.component';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subject, BehaviorSubject, Observable, EMPTY, merge, timer } from 'rxjs';
+import { exhaustMap, finalize, switchMap } from 'rxjs/operators';
 interface tableColumn {
   name: string;
 }
@@ -103,8 +105,25 @@ export class TableComponent implements OnInit {
   private as = inject(AuthorizationService);
   private readonly du = inject(DownloadUtilService);
   private readonly untilDestroy$ = takeUntilDestroyed();
+  private readonly destroyRef$ = inject(DestroyRef);
+
+  pollingTime = signal<number>(60000);
+  public reload$ = new Subject<void>();
+  private pollingTime$ = new BehaviorSubject<number>(this.pollingTime());
+  url$: Observable<any>;
+  loadingTable = signal<boolean>(false);
+  isFirstLoad = true;
 
   constructor() {
+    this.pollingTime$.next(this.pollingTime());
+    effect(() => {
+      this.pollingTime$.next(this.pollingTime());
+    });
+
+    effect(() => {
+      this.loadingTable.set(this.sfs.isLoading());
+    });
+
     effect(() => {
       this.sfs.jobs();
       const error = this.sfs.error();
@@ -116,7 +135,8 @@ export class TableComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.sfs.refreshJobs({});
+    this.url$ = this.getListUrl();
+    this.url$.subscribe();
   }
 
   onExpandChange(checked: boolean, index: number): void {
@@ -127,9 +147,14 @@ export class TableComponent implements OnInit {
     }
   }
 
+  private refreshTable(params: Partial<meterProcessJobSearchGroupParams>): void {
+    this.sfs.refreshJobs(params);
+    this.reload$.next();
+  }
+
   onPageChange(newPageIndex: number): void {
     const currentSize = this.tableData().size || 10;
-    this.sfs.refreshJobs({
+    this.refreshTable({
       ...this.filters,
       page: newPageIndex - 1,
       size: currentSize
@@ -137,11 +162,34 @@ export class TableComponent implements OnInit {
   }
 
   onPageSizeChange(newSize: number): void {
-    this.sfs.refreshJobs({
+    this.refreshTable({
       ...this.filters,
       page: 0,
       size: newSize
     });
+  }
+
+  getListUrl(): Observable<void> {
+    const polling$ = this.pollingTime$.pipe(
+      switchMap(interval => timer(0, interval))
+    );
+
+    return merge(
+      polling$,
+      this.reload$
+    ).pipe(
+      takeUntilDestroyed(this.destroyRef$),
+      exhaustMap(() => {
+        this.loadingTable.set(true);
+        this.sfs.refreshJobs(this.sfs.params() ?? {});
+
+        return EMPTY.pipe(
+          finalize(() => {
+            this.loadingTable.set(false);
+          })
+        );
+      })
+    );
   }
 
   onPipelineExpandChange(checked: boolean, parentIndex: number, pipelineIndex: number): void {
@@ -209,7 +257,7 @@ export class TableComponent implements OnInit {
                   nzCentered: true,
                   nzTitle: 'Jobs Successfully Triggered!'
                 });
-                this.sfs.refreshJobs(this.sfs.params()!);
+                this.refreshTable(this.sfs.params()!);
                 resolve();
               },
               error: (err) => {
@@ -292,7 +340,7 @@ export class TableComponent implements OnInit {
 
     modal.afterClose.subscribe(res => {
       if (res) {
-        this.sfs.refreshJobs(this.sfs.params()!);
+        this.refreshTable(this.sfs.params()!);
       }
     });
   }
@@ -306,7 +354,7 @@ export class TableComponent implements OnInit {
         this.mpa.cancelRun(baseTableData.id)
           .pipe(this.untilDestroy$)
           .subscribe(() => {
-            this.sfs.refreshJobs(this.sfs.params()!);
+            this.refreshTable(this.sfs.params()!);
             this.toast.success(MESSAGES.SUCCESS_CANCEL_ITEM('run'));
           });
       }

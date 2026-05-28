@@ -20,8 +20,18 @@ export class PollingTimerComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     setTimeout(() => {
-      this.emitReload.emit(true);
+      this.emitEvent.emit(this.getCurrentPollingValue());
+      // this.emitReload.emit(true);
     }, 100);
+  }
+
+  onPollingChange(time: { label: string; value: number }): void {
+    this.selectedPollingTime.set(time.label);
+    this.emitEvent.emit(time.value);
+  }
+
+  private getCurrentPollingValue(): number {
+    return this.pollingOpts.find(option => option.label === this.selectedPollingTime())?.value ?? 60000;
   }
 
 }

@@ -11,7 +11,7 @@
 <nz-dropdown-menu #menu="nzDropdownMenu">
   <ul nz-menu>
     @for (time of pollingOpts; track $index) {
-      <li nz-menu-item (click)="emitEvent.emit(time.value); selectedPollingTime.set(time.label)">{{ time.label }}</li>
+      <li nz-menu-item (click)="onPollingChange(time)">{{ time.label }}</li>
     }
   </ul>
 </nz-dropdown-menu>

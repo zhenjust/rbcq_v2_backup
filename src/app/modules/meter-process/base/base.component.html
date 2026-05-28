@@ -1,5 +1,11 @@
 <nz-card nzTitle="Meter Process version 2">
     <app-meter-process-config></app-meter-process-config>
-    <app-run-job-search (filtersEvent)="table.filters = $event"></app-run-job-search>
+
+    <app-run-job-search
+      (filtersEvent)="table.filters = $event"
+      (pollingEvent)="table.pollingTime.set($event)"
+      (reloadEvent)="table.loadingTable.set(true); table.reload$.next()">
+    </app-run-job-search>
+
     <app-table #table></app-table>
 </nz-card>

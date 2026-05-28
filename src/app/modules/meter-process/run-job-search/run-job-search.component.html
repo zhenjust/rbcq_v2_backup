@@ -1,9 +1,12 @@
 <nz-flex nzJustify="space-between" nzAlign="start" class="toolbar-container">
     <!-- Left side: Filter form -->
     <nz-flex nzDirection="column" nzAlign="start" class="form-section">
-        <button nz-button [nzType]="hasFilter ? 'default' : 'primary'" (click)=" !hasFilter ? toggleFilter() : resetFilter()">
-        {{ hasFilter ? 'Clear Filter' : 'Set Filter' }}
-        </button>
+      <nz-space>
+        <button *nzSpaceItem nz-button [nzType]="hasFilter ? 'default' : 'primary'" (click)=" !hasFilter ? toggleFilter() : resetFilter()">
+          {{ hasFilter ? 'Clear Filter' : 'Set Filter' }}
+          </button>
+          <app-polling-timer *nzSpaceItem (emitEvent)="pollingEvent.emit($event)" (emitReload)="reloadEvent.emit(true)"></app-polling-timer>
+      </nz-space>
 
     @if (hasFilter) {
         <form [formGroup]="filterForm" class="form-container">
