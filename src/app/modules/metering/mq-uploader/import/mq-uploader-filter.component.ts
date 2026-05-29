@@ -84,7 +84,8 @@ export class MqUploaderFilterComponent implements OnInit {
           const disableDaily = !this.isAllowedImport && this.isMspUser;
 
           const currentDay = +format(new Date(), 'd');
-          const disableMonthly = currentDay === 28 && this.isMspUser;
+          const currentTime = +format(new Date(), 'HHmm');
+          const disableMonthly = this.isMspUser && (currentDay > 28 || (currentDay === 1 && currentTime < 5));
 
           this.categoryOpts = this.sysUtil.nzOptionsFormatter(MQ_UPLOAD_CATEGORY, true)
             .map(option => ({

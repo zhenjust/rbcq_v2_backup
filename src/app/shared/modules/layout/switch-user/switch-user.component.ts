@@ -55,6 +55,7 @@ export class SwitchUserComponent implements OnInit {
           this.modalRef.destroy();
           this.toast.success(MESSAGES.SUCCESS_SWITCH('Super'));
           window.location.href = externalRoutes.HOME;
+          location.reload();
         },
     });
   }
