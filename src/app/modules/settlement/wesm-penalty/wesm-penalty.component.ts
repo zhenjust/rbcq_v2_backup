@@ -56,6 +56,8 @@ export class WesmPenaltyComponent implements OnInit {
   filters: any = {};
   hasCalcPerm: boolean;
 
+  toggledSections = new Set<string>();
+
   // POLLING
   pollingTime = signal<number>(60000);
   private reload$ = new Subject<void>();
@@ -122,10 +124,6 @@ export class WesmPenaltyComponent implements OnInit {
   }
 
   getUrl(): Observable<any> {
-    if (!this.paginatedTable) {
-      return of([]);
-    }
-
     const polling$ = this.pollingTime$.pipe(
       switchMap(interval => {
         return timer(0, interval)
@@ -137,13 +135,16 @@ export class WesmPenaltyComponent implements OnInit {
       this.reload$
     ).pipe(
       exhaustMap(() => {
+        if (!this.paginatedTable) {
+          return of([]);
+        }
+
         if (this.firstLoad()) {
           this.paginatedTable.loading = true;
         }
 
-        return this.settlementService.search(this.filters, 'penalty', this.paginatedTable?.tableParams)
+        return this.settlementService.search(this.filters, 'penalty', this.paginatedTable.tableParams)
           .pipe(
-            takeUntilDestroyed(this.destroyRef$),
             finalize(() => {
               if (this.paginatedTable) {
                 this.paginatedTable.loading = false;
@@ -152,7 +153,8 @@ export class WesmPenaltyComponent implements OnInit {
               this.firstLoad.set(false);
           })
         )
-      })
+      }),
+      takeUntilDestroyed(this.destroyRef$)
     );
 
   }
@@ -316,6 +318,20 @@ export class WesmPenaltyComponent implements OnInit {
     ];
 
     this.stlUtil.publish(payload, title, message, descriptions, () => this.reload$.next());
+  }
+
+  toggleSection(rowId: string, section: string): void {
+    const key = `${rowId}-${section}`;
+    if (this.toggledSections.has(key)) {
+      this.toggledSections.delete(key);
+    } else {
+      this.toggledSections.add(key);
+    }
+  }
+
+  isSectionExpanded(rowId: string, section: string): boolean {
+    const isToggled = this.toggledSections.has(`${rowId}-${section}`);
+    return section === 'runs' ? !isToggled : isToggled;
   }
 
 }

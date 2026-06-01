@@ -1,5 +1,5 @@
-import { pipeline, PipelineRun, TPL_TABLE_COLUMN } from '@shared/interfaces';
-import { AfterViewInit, ChangeDetectorRef, Component, input, TemplateRef, ViewChild, inject } from '@angular/core';
+import { pipeline, TPL_TABLE_COLUMN } from '@shared/interfaces';
+import { AfterViewInit, ChangeDetectorRef, Component, input, TemplateRef, ViewChild, inject, computed } from '@angular/core';
 import { PipelineTableColumns } from '@shared/constants/pipelines.const';
 import { LABELS } from '@shared/constants/labels.const';
 import { MeterProcessTypes } from '@shared/enums';
@@ -23,7 +23,11 @@ export class PipelineTableComponent implements AfterViewInit {
   LABELS = LABELS;
   processTypes = MeterProcessTypes;
 
-  tableData: PipelineRun[];
+  tableData = computed(() => {
+    return (this.rowData() || [])
+      .filter(row => row.pipelineRuns?.length)
+      .map(row => row?.pipelineRuns[0]);
+  });
 
   constructor() {
   }
@@ -33,10 +37,6 @@ export class PipelineTableComponent implements AfterViewInit {
     PipelineTableColumns[LABELS.NAME].template = this.nameTpl;
 
     this.columns = Object.values(PipelineTableColumns);
-
-    this.tableData = this.rowData()
-      .filter(row => row.pipelineRuns?.length)
-      .map(row => row?.pipelineRuns[0]);
 
     this.cdRef.detectChanges();
   }

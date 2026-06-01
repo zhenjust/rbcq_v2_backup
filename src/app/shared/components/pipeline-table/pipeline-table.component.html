@@ -1,4 +1,4 @@
-<app-template-table class="w-100" [tableColumns]="columns" [tableData]="useCustomTableData() || tableData"></app-template-table>
+<app-template-table class="w-100" [tableColumns]="columns" [tableData]="useCustomTableData() || tableData()"></app-template-table>
 
 <ng-template #statusTpl let-data="data" let-allData="allData">
   <nz-tag

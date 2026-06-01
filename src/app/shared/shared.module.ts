@@ -46,7 +46,19 @@ import { DateTimePickerComponent } from './components/date-time-picker/date-time
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { PipelineTableComponent } from './components/pipeline-table/pipeline-table.component';
 import { PollingTimerComponent } from './components/polling-timer/polling-timer.component';
-import { ReloadOutline } from '@ant-design/icons-angular/icons';
+import {
+  ReloadOutline,
+  PlusSquareOutline,
+  MinusSquareOutline,
+  DownOutline,
+  DeleteOutline,
+  CalendarOutline,
+  ClockCircleOutline,
+  CloseCircleOutline,
+  EyeInvisibleOutline,
+  EyeOutline,
+  UploadOutline
+} from '@ant-design/icons-angular/icons';
 import { UploadBillingStatementComponent } from './components/upload-billing-statement/upload-billing-statement.component';
 import { UploadSummaryComponent } from './components/upload-billing-statement/upload-summary.component';
 import { SendNotificationComponent } from './components/send-notification/send-notification.component';
@@ -65,7 +77,19 @@ const NgZorroModules = [
   NzProgressModule,
   NzFormModule,
   NzDropDownModule,
-  NzIconModule.forChild([ ReloadOutline ]),
+  NzIconModule.forChild([
+    ReloadOutline,
+    PlusSquareOutline,
+    MinusSquareOutline,
+    DownOutline,
+    DeleteOutline,
+    CalendarOutline,
+    ClockCircleOutline,
+    CloseCircleOutline,
+    EyeInvisibleOutline,
+    EyeOutline,
+    UploadOutline
+  ]),
   NzCardModule,
   NzTagModule,
   NzTabsModule,

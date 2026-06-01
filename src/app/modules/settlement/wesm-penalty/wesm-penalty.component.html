@@ -71,21 +71,36 @@
   </div>
 
   <!-- Table -->
-  <app-paginated-table #paginatedTable resultsProp="pipelineGroup" [tableColumns]="tableColumns" [url]="getUrl()" [tableConfig]="{ height: '60vh' }" [enableExpand]="true" [expandTpl]="expandTpl" [actionControls]="actionControls" [showActions]="hasCalcPerm"></app-paginated-table>
+  <app-paginated-table #paginatedTable resultsProp="pipelineGroup" [tableColumns]="tableColumns" [url]="url$" [tableConfig]="{ height: '60vh' }" [enableExpand]="true" [expandTpl]="expandTpl" [actionControls]="actionControls" [showActions]="hasCalcPerm"></app-paginated-table>
 
   <ng-template #expandTpl let-row="row">
     <div class="d-flex flex-column w-100 my-2 pe-2">
 
-      <p class="fw-bold">{{ LABELS.DETAILS }}</p>
-      <app-template-table class="w-100 mb-3" [tableColumns]="billingColumns" [tableData]="row?.penaltyHeaders" [enableExpand]="true" [expandTpl]="billingExpandTpl" expandProp="headerId" [useDarkBg]="true"></app-template-table>
+      <p class="fw-bold d-flex align-items-center">
+        <button nz-button nzType="text" nzSize="small" (click)="toggleSection(row.id, 'details')" class="ps-0">
+          <nz-icon [nzType]="isSectionExpanded(row.id, 'details') ? 'minus-square' : 'plus-square'"></nz-icon>
+        </button>
+        {{ LABELS.DETAILS }}
+      </p>
+
+      @if (isSectionExpanded(row.id, 'details')) {
+        <app-template-table class="w-100 mb-3" [tableColumns]="billingColumns" [tableData]="row?.penaltyHeaders" [enableExpand]="true" [expandTpl]="billingExpandTpl" expandProp="headerId" [useDarkBg]="true"></app-template-table>
+      }
 
       <ng-template #billingExpandTpl let-billingRow="row">
         <app-template-table class="w-100" [tableColumns]="expandedTableCols" [tableData]="billingRow?.penaltyDetails"></app-template-table>
       </ng-template>
 
       @if (row?.pipelines?.length) {
-        <p class="fw-bold mt-3">{{ LABELS.RUNS }}</p>
-        <app-pipeline-table class="w-100" [rowData]="row?.pipelines"></app-pipeline-table>
+        <p class="fw-bold mt-3 d-flex align-items-center">
+          <button nz-button nzType="text" nzSize="small" (click)="toggleSection(row.id, 'runs')" class="ps-0">
+            <nz-icon [nzType]="isSectionExpanded(row.id, 'runs') ? 'minus-square' : 'plus-square'"></nz-icon>
+          </button>
+          {{ LABELS.RUNS }}
+        </p>
+        @if (isSectionExpanded(row.id, 'runs')) {
+          <app-pipeline-table class="w-100" [rowData]="row?.pipelines"></app-pipeline-table>
+        }
       }
     </div>
   </ng-template>
