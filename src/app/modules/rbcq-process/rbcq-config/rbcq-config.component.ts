@@ -67,16 +67,66 @@ export class RbcqConfigComponent implements OnInit {
     return this.rbcqProcessForm.get('processType')?.value === RbcqProcessType.AP_FLAG;
   }
 
-   dateRangeValidator(group: FormGroup): ValidationErrors | null {
-      const start = group.get('startDatetime')?.value;
-      const end = group.get('endDatetime')?.value;
+dateRangeValidator(group: FormGroup): ValidationErrors | null {
+  const startValue = group.get('startDatetime')?.value;
+  const endValue = group.get('endDatetime')?.value;
 
-      if (start && end && end < start) {
-        return { invalidDateRange: true };
-      }
-
+  const toTimestamp = (value: any): number | null => {
+    if (value == null) {
       return null;
+    }
+
+    // Already a Date object
+    if (value instanceof Date) {
+      return value.getTime();
+    }
+
+    // String datetime
+    if (typeof value === 'string') {
+      // Convert to ISO-safe format
+      const parsed = new Date(value.replace(' ', 'T'));
+      return isNaN(parsed.getTime()) ? null : parsed.getTime();
+    }
+
+    // Numeric timestamp
+    if (typeof value === 'number') {
+      return value;
+    }
+
+    return null;
+  };
+
+  // Normalize seconds/milliseconds
+  const normalize = (value: any): number | null => {
+    const ts = toTimestamp(value);
+
+    if (ts == null) {
+      return null;
+    }
+
+    const d = new Date(ts);
+
+    d.setSeconds(0);
+    d.setMilliseconds(0);
+
+    return d.getTime();
+  };
+
+  const start = normalize(startValue);
+  const end = normalize(endValue);
+
+  console.log('startValue:', startValue);
+  console.log('endValue:', endValue);
+  console.log('normalized start:', start);
+  console.log('normalized end:', end);
+
+  // Allow same datetime, only reject if end is earlier
+  if (start != null && end != null && end < start) {
+    return { invalidDateRange: true };
   }
+
+  return null;
+}
 
   // Ensure minutes are multiples of 5 for both start and end
   minuteIntervalValidator = (group: FormGroup): ValidationErrors | null => {
@@ -106,9 +156,10 @@ export class RbcqConfigComponent implements OnInit {
     this.isProcessing = true;
 
     this.rbcqService.submitRbcqProcess(
-      processType,
+      processType,          
       this.dateFormatter.formatDateTime(startDatetime),
-      this.dateFormatter.formatDateTime(endDatetime)
+      this.dateFormatter.formatDateTime(endDatetime),
+      region
     ).subscribe({
       next: (_response: string) => {
         // Request completed successfully (backend may return job id or message)

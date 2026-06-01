@@ -29,7 +29,8 @@ export class RbcqService {
   submitRbcqProcess(
   processType: string,
   startDatetime: string,
-  endDatetime: string
+  endDatetime: string,
+  region?: string
 ): Observable<string> {
   const current = (this.auth as any).currentUser ? (this.auth as any).currentUser() : this.auth.identity();
   const payload: any = {
@@ -37,6 +38,10 @@ export class RbcqService {
     startDatetime,
     endDatetime
   };
+
+  if (region != null) {
+    payload.region = region;
+  }
 
   if (current?.principal?.username) {
     payload.requestedBy = current.principal.username;
