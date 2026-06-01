@@ -3,7 +3,14 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { PHASE_TWO_AUTHORITIES, WESM_PENALTY_STATUS, WESM_PENALTY_TYPE } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
-import { meterProcessBillingPeriod, TPL_TABLE_COLUMN, TableAction, meterProcessPipelineGroup } from '@shared/interfaces';
+import {
+  meterProcessBillingPeriod,
+  TPL_TABLE_COLUMN,
+  TableAction,
+  meterProcessPipelineGroup,
+  meterProcessPipeline,
+  PublishSettlement
+} from '@shared/interfaces';
 import { MeterprocessService, SettlementService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
@@ -212,7 +219,7 @@ export class WesmPenaltyComponent implements OnInit {
     this.reload$.next();
 }
 
-  triggerAction(pipelineName: string, rowData: any): void {
+  triggerAction(pipelineName: string, rowData: meterProcessPipelineGroup): void {
     const payload = {
       pipelineName,
       isGroup: true,
@@ -243,61 +250,72 @@ export class WesmPenaltyComponent implements OnInit {
       });
   }
 
-  hideAction(rowData: meterProcessPipelineGroup, labelName: string): boolean {
-    return !rowData.pipelines?.some(p => p.name === labelName && p.status === 'Completed') || !this.hasCalcPerm;
+  isFinalized(rowData: meterProcessPipelineGroup): boolean {
+    const isRefund = rowData.penaltyHeaders?.[0]?.type === 'REFUND';
+    return rowData.pipelines?.some((p: meterProcessPipeline) => p.name === `penalty-finalize${isRefund ? 'Refund' : ''}` && p.status === 'Completed');
   }
 
-  get actionControls(): TableAction <any> [] {
-    return [
+  hideAction(rowData: meterProcessPipelineGroup, labelName: string): boolean {
+    return !rowData.pipelines?.some((p: meterProcessPipeline) => p.name === labelName && p.status === 'Completed') || !this.hasCalcPerm;
+  }
+
+  actionControls = (row: meterProcessPipelineGroup): TableAction<any> [] => {
+    return row.published ? [] : [
       {
         label: LABELS.CALCULATE,
         value: 'calculate',
-        click: (rowData: any) => {
-          const isPenalty = rowData?.penaltyHeaders[0]?.type === 'PENALTY';
-          this.triggerAction(`penalty-calculate${isPenalty ? '' : 'Refund'}`, rowData);
+        click: () => {
+          const isPenalty = row.penaltyHeaders?.[0]?.type === 'PENALTY';
+          this.triggerAction(`penalty-calculate${isPenalty ? '' : 'Refund'}`, row);
         },
-        hidden: (rowData: meterProcessPipelineGroup) => this.hideAction(rowData, 'penalty'),
+        hidden: () => this.isFinalized(row) || this.hideAction(row, 'penalty'),
       },
       {
         label: LABELS.FINALIZE,
         value: 'finalize',
-        click: (rowData: any) => {
-          const isRefund = rowData?.penaltyHeaders[0]?.type === 'REFUND';
-          this.stlUtil.triggerAllocModal(`penalty-finalize${isRefund ? 'Refund' : ''}`, rowData, () => { this.paginatedTable.loading = false; this.reload$.next(); });
+        click: () => {
+          const isRefund = row.penaltyHeaders?.[0]?.type === 'REFUND';
+          this.stlUtil.triggerAllocModal(`penalty-finalize${isRefund ? 'Refund' : ''}`, row, () => {
+            this.paginatedTable.loading = false;
+            this.reload$.next();
+          });
         },
-        hidden: (rowData: any) => {
-          const isRefund = rowData?.penaltyHeaders[0]?.type === 'REFUND';
-          return this.hideAction(rowData, `penalty-calculate${isRefund ? 'Refund' : ''}`)
+        hidden: () => {
+          const isRefund = row.penaltyHeaders?.[0]?.type === 'REFUND';
+          return this.isFinalized(row) || this.hideAction(row, `penalty-calculate${isRefund ? 'Refund' : ''}`)
         },
       },
       {
         label: LABELS.PUBLISH,
         value: 'publish',
-        click: (rowData: any) => this.handlePublish(rowData),
-        hidden: (rowData: any) => {
-          const isRefund = rowData?.penaltyHeaders[0]?.type === 'REFUND';
-          return this.hideAction(rowData, `penalty-finalize${isRefund ? 'Refund' : ''}`)
+        click: () => this.handlePublish(row),
+        hidden: () => {
+          const isRefund = row.penaltyHeaders?.[0]?.type === 'REFUND';
+          return this.hideAction(row, `penalty-finalize${isRefund ? 'Refund' : ''}`)
         },
       },
     ];
   }
 
-  handlePublish(rowData: any): void {
-    const modal = this.stlUtil.publish('Financial Penalty Calculation', {
-      pipelineId: rowData.id,
+  handlePublish(rowData: meterProcessPipelineGroup): void {
+    const payload: PublishSettlement = {
+      pipelineGroupId: rowData.id,
       stlGroupId: rowData.id,
       jobExecutionId: rowData.id,
       functionName: 'Financial Penalty Calculation',
-      startDate: rowData.billingStartDate,
-      endDate: rowData.billingEndDate,
-    });
+      billingPeriod: rowData.billingPeriod
+    };
 
-    modal.afterClose.subscribe(res => {
-        if (res) {
-          this.toastrService.success(res.message);
-          this.reload$.next();
-        }
-      });
+    const title = LABELS.PUBLISH_PENALTY_REPORT;
+    const message = MESSAGES.CONFIRM_PUBLISH_ITEM(LABELS.PENALTY_REPORT.toLowerCase());
+    const descriptions = [
+      {
+        label: LABELS.BILLING_PERIOD,
+        value: `${rowData.billingStartDate} to ${rowData.billingEndDate}`
+      },
+    ];
+
+    this.stlUtil.publish(payload, title, message, descriptions, () => this.reload$.next());
   }
 
 }
@@ -307,6 +325,7 @@ const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.BILLING_PERIOD_TRADING_DATE]: { label: LABELS.BILLING_PERIOD_TRADING_DATE, propName: 'parameters', type: 'template' },
   [LABELS.WORKSPACE_ID]: { label: LABELS.WORKSPACE_ID, propName: 'id', width: '120px', align: 'center' },
   [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', width: '250px', align: 'center' },
+  [LABELS.PUBLISHED]: { label: LABELS.PUBLISHED, propName: 'published', type: 'boolean', align: 'center' }
 }
 
 const billingColumns: Record<string, TPL_TABLE_COLUMN> = {

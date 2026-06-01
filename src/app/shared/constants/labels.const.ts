@@ -55,6 +55,7 @@ export const LABELS = {
   STATUS: 'Status',
   ALL: 'All',
   TRANSACTION_REPORT: 'Transaction Report',
+  PENALTY_REPORT: 'Penalty Report',
   DUE_DATE: 'Due Date',
   CALCULATE_ENERGY_TRADING_AMOUNT: 'Calculate Energy Trading Amount',
   CALCULATE_RESERVE_TRADING_AMOUNT: 'Calculate Reserve Trading Amount',
@@ -143,6 +144,7 @@ export const LABELS = {
   GENERATE_ENERGY_TRANSACTION_REPORT: 'Generate Energy Transaction Report',
 
   PUBLISH_TRANSACTION_REPORT: 'Publish Transaction Report',
+  PUBLISH_PENALTY_REPORT: 'Publish Penalty Report',
 
   VALIDATE_INPUT: 'Validate Input',
   VIEW_CALCULATIONS: 'View Calculations',
@@ -197,7 +199,7 @@ export const LABELS = {
   CLAIMANT: 'Claimant',
 
   CREATED_DATE: 'Created Date',
-  PIPELINES: 'Pipelines',
+  RUNS: 'Runs',
   DETAILS: 'Details',
 
   ALLOCATION_DATE: 'Allocation Date',

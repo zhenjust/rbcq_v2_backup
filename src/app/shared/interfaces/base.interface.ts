@@ -46,9 +46,9 @@ export interface TableDataResult<T> {
 export interface TableAction<T> {
   label: string;
   value: string;
-  danger?: true;
-  click: (rowData: T) => void;
-  hidden?: (rowData: T) => boolean;
+  danger?: boolean;
+  click: (rowData?: T) => void;
+  hidden?: (rowData?: T) => boolean;
 }
 
 export interface ReferenceOption1 {

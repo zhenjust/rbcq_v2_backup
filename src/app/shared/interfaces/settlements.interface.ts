@@ -97,7 +97,9 @@ export interface PublishSettlement {
     jobExecutionId?: number,
     functionName: string,
     startDate?: string,
-    endDate?: string
+    endDate?: string,
+    processType?: string,
+    billingPeriod?: string
 }
 
 export interface EnergyTradingAmounts {

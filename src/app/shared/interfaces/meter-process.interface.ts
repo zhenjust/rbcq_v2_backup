@@ -106,7 +106,12 @@ export interface meterProcessPipeline {
     currentDownloadedPercentage?: number | null;
 }
 
+export interface meterProcessPenaltyHeader {
+    type?: string
+}
+
 export interface meterProcessPipelineGroup {
+    id: number
     processType: MeterProcessTypes
     billingPeriod?: string
     tradingDate?: string
@@ -114,7 +119,8 @@ export interface meterProcessPipelineGroup {
     billingEndDate: string
     adjNo?: number
     pipelines: meterProcessPipeline[]
-    published?: boolean;
+    penaltyHeaders?: meterProcessPenaltyHeader[]
+    published?: boolean
 }
 
 export interface meterProcessTable {

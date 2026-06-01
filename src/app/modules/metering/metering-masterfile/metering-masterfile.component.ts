@@ -191,12 +191,10 @@ export class MeteringMasterfileComponent implements OnInit {
   }
 
 
-  get actionControls(): TableAction<any>[] {
-    return [
-      { label: LABELS.DOWNLOAD, value: 'download', click: (rowData: any) => this.download(rowData)},
-      { label: LABELS.DELETE, value: 'generate', click: (rowData: any) => this.delete(rowData), danger: true},
-    ];
-  }
+  actionControls = (rowData: any): TableAction<any>[] => [
+    { label: LABELS.DOWNLOAD, value: 'download', click: () => this.download(rowData)},
+    { label: LABELS.DELETE, value: 'generate', click: () => this.delete(rowData), danger: true},
+  ];
 
 }
 

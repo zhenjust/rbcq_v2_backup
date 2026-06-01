@@ -17,7 +17,6 @@ import {MESSAGES} from '@shared/constants/messages.const';
 import {TemplateTableComponent} from '@shared/components/template-table/template-table.component';
 import {PHASE_TWO_AUTHORITIES} from '@shared/constants';
 import {DateFormatterUtilService, DownloadUtilService, StlUtilitiesService} from '@shared/services/utils';
-import {ConfirmWithDescComponent} from '@shared/components/confirm-with-desc/confirm-with-desc.component';
 import {
   UploadBillingStatementComponent
 } from '@shared/components/upload-billing-statement/upload-billing-statement.component';
@@ -236,36 +235,21 @@ export class MarketFeeComponent  implements OnInit {
       pipelineId: +rowData.id,
       stlGroupId: +allData.id,
       jobExecutionId: +rowData.id,
-      functionName: functionName
+      functionName: functionName,
+      processType: allData.processType,
+      billingPeriod: allData.billingPeriod
     };
 
-    const nzData = {
-      message: MESSAGES.CONFIRM_PUBLISH_ITEM(LABELS.TRANSACTION_REPORT.toLowerCase()),
-      okAction: LABELS.PUBLISH,
-      descriptions: [
-        {
-          label: LABELS.BILLING_PERIOD,
-          value: `${rowData.parameters.billingStartDate} to ${rowData.parameters.billingEndDate}`
-        },
-      ],
-      onOk: () => this.settlementService.publish(payload)
-    };
+    const title = LABELS.PUBLISH_TRANSACTION_REPORT;
+    const message = MESSAGES.CONFIRM_PUBLISH_ITEM(LABELS.TRANSACTION_REPORT.toLowerCase());
+    const descriptions = [
+      {
+        label: LABELS.BILLING_PERIOD,
+        value: `${rowData.parameters.billingStartDate} to ${rowData.parameters.billingEndDate}`
+      },
+    ];
 
-    const modal = this.modalService.create({
-      nzTitle: LABELS.PUBLISH_TRANSACTION_REPORT,
-      nzContent: ConfirmWithDescComponent,
-      nzCentered: true,
-      nzFooter: null,
-      nzData,
-      nzWidth: '600px',
-    });
-
-    modal.afterClose.subscribe(res => {
-      if (res) {
-        this.toastrService.success(res.message);
-        this.reload$.next();
-      }
-    });
+    this.stlUtil.publish(payload, title, message, descriptions, () => this.reload$.next());
   }
 
   uploadBillingStatement(allData: any, subRowData: any): void {

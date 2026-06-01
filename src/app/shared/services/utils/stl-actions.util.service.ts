@@ -2,11 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { AmsComponent } from '@modules/settlement/shared/ams/ams.component';
 import { SendNotificationComponent } from '@shared/components/send-notification/send-notification.component';
 import { LABELS } from '@shared/constants/labels.const';
-import { MESSAGES } from '@shared/constants/messages.const';
 import { PublishSettlement } from '@shared/interfaces';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { SettlementService } from '../api';
 import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Injectable({
@@ -18,6 +18,7 @@ export class StlUtilitiesService {
 
   private readonly modal = inject(NzModalService);
   private readonly stlService = inject(SettlementService);
+  private readonly toastr = inject(ToastrService);
 
   triggerAllocModal(action: string, row: any, callback: () => void): void {
     const modal = this.modal.create({
@@ -65,33 +66,30 @@ export class StlUtilitiesService {
     });
   }
 
-  publish(functionName: string, params: PublishSettlement): NzModalRef<ConfirmWithDescComponent> {
-    const payload: PublishSettlement = {
-      pipelineId: params.pipelineId,
-      stlGroupId: params.stlGroupId,
-      jobExecutionId: params.jobExecutionId,
-      functionName: functionName
-    };
-
+  publish(payload: PublishSettlement, title: string, message: string, descriptions: any[], callback?: () => void): void {
     const nzData = {
-      message: MESSAGES.CONFIRM_PUBLISH_ITEM(LABELS.TRANSACTION_REPORT.toLowerCase()),
+      message,
       okAction: LABELS.PUBLISH,
-      descriptions: [
-        {
-          label: LABELS.BILLING_PERIOD,
-          value: `${params.startDate} to ${params.endDate}`
-        },
-      ],
+      descriptions,
       onOk: () => this.stlService.publish(payload)
     };
 
-    return this.modal.create({
-      nzTitle: LABELS.PUBLISH_TRANSACTION_REPORT,
+    const modal = this.modal.create({
+      nzTitle: title,
       nzContent: ConfirmWithDescComponent,
       nzCentered: true,
       nzFooter: null,
       nzData,
       nzWidth: '600px',
+    });
+
+    modal.afterClose.subscribe(res => {
+      if (res) {
+        this.toastr.success(res.message);
+        if (callback) {
+          callback();
+        }
+      }
     });
   }
 

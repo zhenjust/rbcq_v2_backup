@@ -27,7 +27,6 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { isAfter, isBefore, setHours, startOfDay, subDays } from 'date-fns';
 import { SettlementService } from '@shared/services/api';
 import { LABELS } from '@shared/constants/labels.const';
-import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { DatePipe } from '@angular/common';
 import {
@@ -377,38 +376,23 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       workspaceId: +data.workspaceId,
       pipelineGroupId: +data.id,
       stlGroupId: +data.id,
-      functionName: functionName
+      functionName: functionName,
+      processType: data.processType,
+      billingPeriod: data.billingPeriod,
     };
 
-    const nzData = {
-      message: MESSAGES.CONFIRM_PUBLISH_ITEM(LABELS.TRANSACTION_REPORT.toLowerCase()),
-      okAction: LABELS.PUBLISH,
-      descriptions: [
-        {
-          label: `${LABELS.TRADING_DATE}/${LABELS.BILLING_PERIOD}`,
-          value: data.tradingDate
-            ? data.tradingDate
-            : `${data.billingStartDate} to ${data.billingEndDate}`
-        },
-      ],
-      onOk: () => this.ss.publish(payload)
-    };
+    const title = LABELS.PUBLISH_TRANSACTION_REPORT;
+    const message = MESSAGES.CONFIRM_PUBLISH_ITEM(LABELS.TRANSACTION_REPORT.toLowerCase());
+    const descriptions = [
+      {
+        label: `${LABELS.TRADING_DATE}/${LABELS.BILLING_PERIOD}`,
+        value: data.tradingDate
+          ? data.tradingDate
+          : `${data.billingStartDate} to ${data.billingEndDate}`
+      },
+    ];
 
-    const modal = this.modal.create({
-      nzTitle: LABELS.PUBLISH_TRANSACTION_REPORT,
-      nzContent: ConfirmWithDescComponent,
-      nzCentered: true,
-      nzFooter: null,
-      nzData,
-      nzWidth: '600px',
-    });
-
-    modal.afterClose.subscribe(res => {
-      if (res) {
-        this.toast.success(res.message);
-        this.reload$.next();
-      }
-    });
+    this.stlUtil.publish(payload, title, message, descriptions, () => this.reload$.next());
   }
 
   getActionDetails(action: string): JobSelect {

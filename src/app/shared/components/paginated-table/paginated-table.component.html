@@ -69,6 +69,9 @@
               <td [nzAlign]="align" class="px-3">{{ (data | date: 'yyyy-MM-dd HH:mm') || '-'}}</td>
             }
 
+            @case ('boolean') {
+              <td [nzAlign]="align" class="px-3">{{ (data === true ? 'Yes' : data === false ? 'No' : null) || '-'}}</td>
+            }
 
             @case ('enumLabel') {
               <td [nzAlign]="align" class="px-3">{{ (data | enumToLabel) || '-'}}</td>
@@ -82,24 +85,23 @@
 
         @if (showActions()) {
           <td nzAlign="center">
-            @let actionLength = actionControls()?.length;
+            @let actions = getActions(row);
+            @let actionLength = actions?.length || 0;
 
             @if (actionLength > 1) {
               <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu">{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
               <nz-dropdown-menu #menu="nzDropdownMenu">
                 <ul nz-menu nzSelectable>
-                    @for (action of actionControls(); track action.label) {
-                      @if (!action.hidden || !action.hidden(row)) {
-                        <li nz-menu-item (click)="action.click(row)" [nzDanger]="action?.danger">{{ action.label }}</li>
-                      }
+                    @for (action of actions; track action.label) {
+                      <li nz-menu-item (click)="action.click()" [nzDanger]="action?.danger">{{ action.label }}</li>
                     }
                 </ul>
               </nz-dropdown-menu>
             }
 
             @if (actionLength === 1) {
-              @let action = actionControls()![0];
-              <button *ngIf="!action.hidden || !action.hidden(row)" nz-button nzType="text" (click)="action.click(row)" [nzDanger]="action?.danger">{{ action.label }}</button>
+              @let action = actions[0];
+              <button nz-button nzType="link" (click)="action.click()" [nzDanger]="action?.danger">{{ action.label }}</button>
             }
           </td>
         }

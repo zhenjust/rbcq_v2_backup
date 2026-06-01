@@ -209,11 +209,9 @@ export class MeterDataValidationComponent implements OnInit {
 
   get isDaily(): boolean { return this.form.get('processType')?.value === MeterProcessTypes.DAILY; }
 
-  get actionControls(): TableAction<any>[] {
-    return [
-      { label: LABELS.DELETE, value: 'generate', click: (rowData: any) => this.delete(rowData), danger: true},
-    ];
-  }
+  actionControls = (rowData: any): TableAction<any>[] => [
+    { label: LABELS.DELETE, value: 'generate', click: () => this.delete(rowData), danger: true},
+  ];
 
 }
 
