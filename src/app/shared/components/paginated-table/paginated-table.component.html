@@ -88,20 +88,28 @@
             @let actions = getActions(row);
             @let actionLength = actions?.length || 0;
 
-            @if (actionLength > 1) {
-              <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu">{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
-              <nz-dropdown-menu #menu="nzDropdownMenu">
-                <ul nz-menu nzSelectable>
+            @if (progressBarCondition?.(row)) {
+              <div class="w-100">
+                <div style="max-width: 150px" class="mx-auto">
+                  <app-progress-bar></app-progress-bar>
+                </div>
+              </div>
+            } @else {
+              @if (actionLength > 1) {
+                <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu">{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
+                <nz-dropdown-menu #menu="nzDropdownMenu">
+                  <ul nz-menu nzSelectable>
                     @for (action of actions; track action.label) {
                       <li nz-menu-item (click)="action.click()" [nzDanger]="action?.danger">{{ action.label }}</li>
                     }
-                </ul>
-              </nz-dropdown-menu>
-            }
+                  </ul>
+                </nz-dropdown-menu>
+              }
 
-            @if (actionLength === 1) {
-              @let action = actions[0];
-              <button nz-button nzType="link" (click)="action.click()" [nzDanger]="action?.danger">{{ action.label }}</button>
+              @if (actionLength === 1) {
+                @let action = actionControls()![0];
+                <button *ngIf="!action.hidden || !action.hidden(row)" nz-button nzType="text" (click)="action.click(row)" [nzDanger]="action?.danger">{{ action.label }}</button>
+              }
             }
           </td>
         }

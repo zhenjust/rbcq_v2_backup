@@ -45,7 +45,7 @@
                             } @else {
                                 @if (data?.status?.startsWith('In-Progress')) {
                                     <div class="px-3">
-                                        <nz-progress [nzStrokeWidth]="4" [nzPercent]="99.9" [nzShowInfo]="false" [nzStrokeColor]="{ '0%': '#108ee9', '100%': '#87d068' }" nzStatus="active" />
+                                      <app-progress-bar></app-progress-bar>
                                     </div>
                                 }
                             }
@@ -64,12 +64,12 @@
                     </app-template-table>
 
                     <ng-template #actionsTpl let-row="row">
-                        @let actions = (SettlementJobSubActions | stlActions: row : searchName);
-                        @if (row.status && actions?.length) {
-                            @for (action of actions; track action.value) {
-                            <a nz-button nzType="link" (click)="triggerAction(action.value, row)" nzSize="small" nzBlock>{{ action.label }}</a>
-                            }
+                      @let actions = (SettlementJobSubActions | stlActions: row : searchName);
+                      @if (row.status && actions?.length) {
+                        @for (action of actions; track action.value) {
+                        <a nz-button nzType="link" (click)="triggerAction(action.value, row)" nzSize="small" nzBlock>{{ action.label }}</a>
                         }
+                      }
                     </ng-template>
                 </div>
             </tr>

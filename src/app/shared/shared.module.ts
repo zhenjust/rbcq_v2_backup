@@ -62,6 +62,7 @@ import {
 import { UploadBillingStatementComponent } from './components/upload-billing-statement/upload-billing-statement.component';
 import { UploadSummaryComponent } from './components/upload-billing-statement/upload-summary.component';
 import { SendNotificationComponent } from './components/send-notification/send-notification.component';
+import { ProgressBarComponent } from './components/progress-bar/progress-bar.component';
 
 const ngZorroConfig: NzConfig = {
   notification: { nzDuration: 300, nzMaxStack: 3, nzTop: '150px' }
@@ -137,7 +138,8 @@ const Pipes = [
     PollingTimerComponent,
     UploadBillingStatementComponent,
     UploadSummaryComponent,
-    SendNotificationComponent
+    SendNotificationComponent,
+    ProgressBarComponent
   ],
   imports: [
     CommonModule,
@@ -165,7 +167,8 @@ const Pipes = [
     DateRangePickerComponent,
     DateTimePickerComponent,
     PipelineTableComponent,
-    PollingTimerComponent
+    PollingTimerComponent,
+    ProgressBarComponent
   ],
   providers: [
     { provide: NZ_CONFIG, useValue: ngZorroConfig }

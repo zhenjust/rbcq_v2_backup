@@ -9,7 +9,8 @@ import {
   TableAction,
   meterProcessPipelineGroup,
   meterProcessPipeline,
-  PublishSettlement
+  PublishSettlement,
+  settlementPipeline
 } from '@shared/interfaces';
 import { MeterprocessService, SettlementService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -248,6 +249,7 @@ export class WesmPenaltyComponent implements OnInit {
       .subscribe(() => {
         this.toastrService.success(MESSAGES.SUCCESS_JOB_TRIGGER);
         this.paginatedTable.loading = false;
+        this.paginatedTable.expandSet.clear();
         this.reload$.next();
       });
   }
@@ -275,9 +277,10 @@ export class WesmPenaltyComponent implements OnInit {
       {
         label: LABELS.FINALIZE,
         value: 'finalize',
-        click: () => {
-          const isRefund = row.penaltyHeaders?.[0]?.type === 'REFUND';
-          this.stlUtil.triggerAllocModal(`penalty-finalize${isRefund ? 'Refund' : ''}`, row, () => {
+        click: (rowData: any) => {
+          const isRefund = rowData?.penaltyHeaders[0]?.type === 'REFUND';
+          this.stlUtil.triggerAllocModal(`penalty-finalize${isRefund ? 'Refund' : ''}`, rowData, () => {
+            this.paginatedTable.expandSet.clear();
             this.paginatedTable.loading = false;
             this.reload$.next();
           });
@@ -332,6 +335,17 @@ export class WesmPenaltyComponent implements OnInit {
   isSectionExpanded(rowId: string, section: string): boolean {
     const isToggled = this.toggledSections.has(`${rowId}-${section}`);
     return section === 'runs' ? !isToggled : isToggled;
+  }
+
+  onCancel(): void {
+    this.paginatedTable.loading = true;
+    this.toastrService.success(MESSAGES.SUCCESS_CANCEL_ITEM('run'));
+    this.paginatedTable.expandSet.clear();
+    this.reload$.next();
+  }
+
+  progressBarCondition = (rowData: settlementPipeline): boolean => {
+    return rowData.status?.startsWith('In-Progress');
   }
 
 }

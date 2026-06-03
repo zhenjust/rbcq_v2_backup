@@ -71,7 +71,7 @@
   </div>
 
   <!-- Table -->
-  <app-paginated-table #paginatedTable resultsProp="pipelineGroup" [tableColumns]="tableColumns" [url]="url$" [tableConfig]="{ height: '60vh' }" [enableExpand]="true" [expandTpl]="expandTpl" [actionControls]="actionControls" [showActions]="hasCalcPerm"></app-paginated-table>
+  <app-paginated-table #paginatedTable resultsProp="pipelineGroup" [tableColumns]="tableColumns" [url]="url$" [tableConfig]="{ height: '60vh' }" [enableExpand]="true" [expandTpl]="expandTpl" [actionControls]="actionControls" [showActions]="hasCalcPerm"  [progressBarCondition]="progressBarCondition"></app-paginated-table>
 
   <ng-template #expandTpl let-row="row">
     <div class="d-flex flex-column w-100 my-2 pe-2">
@@ -99,7 +99,7 @@
           {{ LABELS.RUNS }}
         </p>
         @if (isSectionExpanded(row.id, 'runs')) {
-          <app-pipeline-table class="w-100" [rowData]="row?.pipelines"></app-pipeline-table>
+          <app-pipeline-table class="w-100" [rowData]="row?.pipelines" (cancelEmit)="onCancel()"></app-pipeline-table>
         }
       }
     </div>
