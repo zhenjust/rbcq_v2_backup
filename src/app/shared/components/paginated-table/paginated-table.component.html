@@ -107,8 +107,8 @@
               }
 
               @if (actionLength === 1) {
-                @let action = actionControls()![0];
-                <button *ngIf="!action.hidden || !action.hidden(row)" nz-button nzType="text" (click)="action.click(row)" [nzDanger]="action?.danger">{{ action.label }}</button>
+                @let action = actions[0];
+                <button nz-button nzType="text" (click)="action.click(row)" [nzDanger]="action?.danger">{{ action.label }}</button>
               }
             }
           </td>
