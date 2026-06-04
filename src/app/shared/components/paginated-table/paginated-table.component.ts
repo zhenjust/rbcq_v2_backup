@@ -107,6 +107,7 @@ export class PaginatedTableComponent<T> extends SearchListBase {
   getActions(row: T): TableAction<T>[] {
     const actionsOrFn = this.actionControls();
     let actions: TableAction<T>[];
+
     if (typeof actionsOrFn === 'function') {
       actions = actionsOrFn(row);
     } else {

@@ -100,7 +100,7 @@
                 <nz-dropdown-menu #menu="nzDropdownMenu">
                   <ul nz-menu nzSelectable>
                     @for (action of actions; track action.label) {
-                      <li nz-menu-item (click)="action.click()" [nzDanger]="action?.danger">{{ action.label }}</li>
+                      <li nz-menu-item (click)="action.click(row)" [nzDanger]="action?.danger">{{ action.label }}</li>
                     }
                   </ul>
                 </nz-dropdown-menu>
