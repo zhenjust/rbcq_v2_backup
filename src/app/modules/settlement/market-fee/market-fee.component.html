@@ -85,14 +85,13 @@
 
           <nz-dropdown-menu #menu="nzDropdownMenu">
               <ul nz-menu nzSelectable>
-                @let calcPipelineName = isEnergy() ? 'calculateMarketFee' : 'calculateReserveMarketFee';
                 @if (!subRowData?.published) {
                   @if (!isFinalized) {
                     <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_GENERATE_IW ] : [ AUTH.RMF_GENERATE_IW ]" (click)="triggerJob('generateInputWorkspace', subRowData, tableComp, LABELS.GENERATE_INPUT_WORKSPACE)">{{ LABELS.GENERATE_INPUT_WORKSPACE }}</li>
                   }
 
                   @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateInputWorkspace')] : 'Succeeded') && !isFinalized) {
-                    <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_CALCULATE ] : [ AUTH.RMF_CALCULATE ]" (click)="triggerJob(calcPipelineName, subRowData, tableComp, LABELS.CALCULATE + ' ' + label)">{{ LABELS.CALCULATE }}</li>
+                    <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_CALCULATE ] : [ AUTH.RMF_CALCULATE ]" (click)="triggerJob('calculateMarketFee', subRowData, tableComp, LABELS.CALCULATE + ' ' + label)">{{ LABELS.CALCULATE }}</li>
                   }
 
                   @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded') && !isFinalized) {
