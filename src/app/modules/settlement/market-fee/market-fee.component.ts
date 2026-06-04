@@ -282,6 +282,20 @@ export class MarketFeeComponent  implements OnInit {
     });
   }
 
+  getExpandedColumns(row: any): TPL_TABLE_COLUMN[] {
+    const columns = { ...expandedTableColumns };
+
+    if (row?.processType === MeterProcessTypes.ADJUSTED) {
+      columns[LABELS.ADJUSTMENT_NO] = {
+        label: LABELS.ADJUSTMENT_NO,
+        propName: 'parameters',
+        secondPropName: 'adjNo'
+      };
+    }
+
+    return Object.values(columns);
+  }
+
   downloadBillingStatement(allData: any, subRowData: any) {
     const pipelineName = this.pipelineName;
     const filename = `${pipelineName}-${subRowData.id}-${this.dfs.formatDate(subRowData.lastModifiedDatetime, 'yyyyMMddHHmmss')}.zip`;

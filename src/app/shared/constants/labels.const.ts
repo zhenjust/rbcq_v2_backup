@@ -67,6 +67,7 @@ export const LABELS = {
   METERING_WORKSPACE_ID: 'Metering Workspace ID',
   NULLIFIED_WORKSPACE_ID: 'Nullified Workspace ID',
   ADJUSTMENT_WORKSPACE_ID: 'Adjustment Workspace ID',
+  ADJUSTMENT_NO: 'Adjustment No.',
 
   PROFILE: 'Profile',
   CHANGE_PASSWORD: 'Change Password',

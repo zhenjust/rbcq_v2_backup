@@ -57,7 +57,7 @@
   <ng-template #expandTpl let-row="row">
     <div class="d-flex w-100 my-2 pe-2">
       <div class="d-flex flex-column w-100">
-        <app-template-table #tableComp class="w-100 mb-3" [tableColumns]="expandedTableColumns"
+        <app-template-table #tableComp class="w-100 mb-3" [tableColumns]="getExpandedColumns(row)"
         [tableData]="row?.pipelines" [enableExpand]="true" [expandTpl]="pipelineTpl" [actionsTpl]="actionsTpl" [useDarkBg]="true" ></app-template-table>
 
         <ng-template #pipelineTpl let-pipelineRow="row">
