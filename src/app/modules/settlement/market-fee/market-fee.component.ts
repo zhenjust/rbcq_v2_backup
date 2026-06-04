@@ -286,11 +286,15 @@ export class MarketFeeComponent  implements OnInit {
     const columns = { ...expandedTableColumns };
 
     if (row?.processType === MeterProcessTypes.ADJUSTED) {
-      columns[LABELS.ADJUSTMENT_NO] = {
-        label: LABELS.ADJUSTMENT_NO,
-        propName: 'parameters',
-        secondPropName: 'adjNo'
-      };
+      const entries = Object.entries(columns);
+      const publishedIndex = entries.findIndex(([key]) => key === LABELS.PUBLISHED);
+      
+      entries.splice(publishedIndex, 0, [
+        LABELS.ADJUSTMENT_NO,
+        { label: LABELS.ADJUSTMENT_NO, propName: 'parameters', secondPropName: 'adjNo', width: '150px', align: 'center' }
+      ]);
+
+      return entries.map(([, col]) => col);
     }
 
     return Object.values(columns);
