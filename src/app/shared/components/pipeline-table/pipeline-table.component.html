@@ -1,4 +1,4 @@
-<app-template-table class="w-100" [tableColumns]="columns" [tableData]="useCustomTableData() || tableData()" [actionsTpl]="actionsTpl"></app-template-table>
+<app-template-table class="w-100" [tableColumns]="columns" [tableData]="useCustomTableData() || tableData()" [actionsTpl]="showActions() ? actionsTpl : undefined" [maxTblHeight]="'400px'"></app-template-table>
 
 <ng-template #actionsTpl let-row="row">
   @if (row.status === 'In-Progress') {

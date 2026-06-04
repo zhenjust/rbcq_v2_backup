@@ -57,8 +57,6 @@ export class WesmPenaltyComponent implements OnInit {
   filters: any = {};
   hasCalcPerm: boolean;
 
-  toggledSections = new Set<string>();
-
   // POLLING
   pollingTime = signal<number>(60000);
   private reload$ = new Subject<void>();
@@ -321,20 +319,6 @@ export class WesmPenaltyComponent implements OnInit {
     ];
 
     this.stlUtil.publish(payload, title, message, descriptions, () => this.reload$.next());
-  }
-
-  toggleSection(rowId: string, section: string): void {
-    const key = `${rowId}-${section}`;
-    if (this.toggledSections.has(key)) {
-      this.toggledSections.delete(key);
-    } else {
-      this.toggledSections.add(key);
-    }
-  }
-
-  isSectionExpanded(rowId: string, section: string): boolean {
-    const isToggled = this.toggledSections.has(`${rowId}-${section}`);
-    return section === 'runs' ? !isToggled : isToggled;
   }
 
   onCancel(): void {

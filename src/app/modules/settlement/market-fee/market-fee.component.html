@@ -104,7 +104,7 @@
                   }
 
                   @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateFiles')] : 'Succeeded')) {
-                    <li nz-menu-item (click)="publish('Energy Market Fee Calculation', row, subRowData)">{{ LABELS.PUBLISH_TRANSACTION_REPORT }}</li>
+                    <li nz-menu-item (click)="publish('Energy Market Fee Calculation', row, subRowData)">{{ LABELS.PUBLISH }}</li>
                   }
                 }
 

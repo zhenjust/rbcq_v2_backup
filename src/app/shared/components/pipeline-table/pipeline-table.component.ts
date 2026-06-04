@@ -39,6 +39,10 @@ export class PipelineTableComponent implements AfterViewInit {
       .map(row => ({...row?.pipelineRuns[0], id: row.id}));
   });
 
+  showActions = computed(() => {
+    return this.tableData().some(row => row.status.startsWith('In-Progress'));
+  });
+
   constructor() {
   }
 

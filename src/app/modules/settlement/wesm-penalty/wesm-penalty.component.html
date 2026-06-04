@@ -53,20 +53,6 @@
       <button *nzSpaceItem nz-button (click)="generateIws(true)" nzType="primary">
         {{ LABELS.GENERATE_REFUND_IWS }}
       </button>
-
-      <!-- COMMENT: Removed bulk processing based from UC -->
-      <!-- <button *nzSpaceItem nz-button nzType="primary" nz-dropdown [nzDropdownMenu]="menu">
-        {{ LABELS.MORE_ACTIONS }} <nz-icon nzType="down" />
-      </button>
-
-      <nz-dropdown-menu #menu="nzDropdownMenu">
-        <ul nz-menu nzSelectable>
-          <li nz-menu-item>{{ LABELS.CALCULATE }}</li>
-          <li nz-menu-item>{{ LABELS.FINALIZE }}</li>
-          <li nz-menu-item>{{ LABELS.PUBLISH_TRANSACTION_REPORT }}</li>
-          <li nz-menu-item>{{ LABELS.GENERATE_FILES }}</li>
-        </ul>
-      </nz-dropdown-menu> -->
     </nz-space>
   </div>
 
@@ -76,32 +62,19 @@
   <ng-template #expandTpl let-row="row">
     <div class="d-flex flex-column w-100 my-2 pe-2">
 
-      <p class="fw-bold d-flex align-items-center">
-        <button nz-button nzType="text" nzSize="small" (click)="toggleSection(row.id, 'details')" class="ps-0">
-          <nz-icon [nzType]="isSectionExpanded(row.id, 'details') ? 'minus-square' : 'plus-square'"></nz-icon>
-        </button>
-        {{ LABELS.DETAILS }}
-      </p>
-
-      @if (isSectionExpanded(row.id, 'details')) {
-        <app-template-table class="w-100 mb-3" [tableColumns]="billingColumns" [tableData]="row?.penaltyHeaders" [enableExpand]="true" [expandTpl]="billingExpandTpl" expandProp="headerId" [useDarkBg]="true"></app-template-table>
-      }
-
-      <ng-template #billingExpandTpl let-billingRow="row">
-        <app-template-table class="w-100" [tableColumns]="expandedTableCols" [tableData]="billingRow?.penaltyDetails"></app-template-table>
-      </ng-template>
-
-      @if (row?.pipelines?.length) {
-        <p class="fw-bold mt-3 d-flex align-items-center">
-          <button nz-button nzType="text" nzSize="small" (click)="toggleSection(row.id, 'runs')" class="ps-0">
-            <nz-icon [nzType]="isSectionExpanded(row.id, 'runs') ? 'minus-square' : 'plus-square'"></nz-icon>
-          </button>
-          {{ LABELS.RUNS }}
-        </p>
-        @if (isSectionExpanded(row.id, 'runs')) {
+      <nz-tabset>
+        <nz-tab [nzTitle]="LABELS.RUN">
           <app-pipeline-table class="w-100" [rowData]="row?.pipelines" (cancelEmit)="onCancel()"></app-pipeline-table>
-        }
-      }
+        </nz-tab>
+        <nz-tab [nzTitle]="LABELS.DETAILS">
+          <app-template-table class="w-100 mb-3" [tableColumns]="billingColumns" [tableData]="row?.penaltyHeaders" [enableExpand]="true" [expandTpl]="billingExpandTpl" expandProp="headerId" [useDarkBg]="true" [maxTblHeight]="'400px'"></app-template-table>
+
+          <ng-template #billingExpandTpl let-billingRow="row">
+            <app-template-table class="w-100" [tableColumns]="expandedTableCols" [tableData]="billingRow?.penaltyDetails"></app-template-table>
+          </ng-template>
+        </nz-tab>
+      </nz-tabset>
+
     </div>
   </ng-template>
 </nz-card>
