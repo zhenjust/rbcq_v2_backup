@@ -4,13 +4,13 @@ import { FormGroup, FormBuilder, AbstractControl } from '@angular/forms';
 import { RxwebValidators } from '@rxweb/reactive-form-validators';
 import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
-import { meterProcessBillingPeriod } from '@shared/interfaces';
+import { meterProcessBillingPeriod, PublishedBillingPeriods } from '@shared/interfaces';
 import { MeterprocessService, SettlementService } from '@shared/services/api';
 import { format } from 'date-fns';
 import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
 import { ToastrService } from 'ngx-toastr';
-import { Subscription, distinctUntilChanged } from 'rxjs';
+import { Observable, Subscription, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-penalty-generate-iws',
@@ -30,7 +30,7 @@ export class PenaltyGenerateIwsComponent implements OnInit {
   private readonly destroyRef$ = inject(DestroyRef);
   private readonly settlementService = inject(SettlementService);
   private readonly toaster = inject(ToastrService);
-  private modalData = inject(NZ_MODAL_DATA);
+  private readonly modalData = inject(NZ_MODAL_DATA);
 
   billingPeriods: meterProcessBillingPeriod[];
   billingPeriodOpts: NzSelectOptionInterface[] = [];
@@ -57,7 +57,7 @@ export class PenaltyGenerateIwsComponent implements OnInit {
     this.billingPeriod?.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef$), distinctUntilChanged())
       .subscribe(res => {
-        this.selectedBp = res ? this.billingPeriods.find(bp => bp.billingPeriod === res) : null;
+        this.selectedBp = res ? this.billingPeriods.find(bp => bp.supplyMonth === res) : null;
       });
   }
 
@@ -95,16 +95,29 @@ export class PenaltyGenerateIwsComponent implements OnInit {
   }
 
   getReferences(): void {
-    this.mps.getBillingPeriod()
+    const api$: Observable<meterProcessBillingPeriod[] | PublishedBillingPeriods[]> = this.isRefund ? this.settlementService.getPenaltyBillingPeriods() : this.mps.getBillingPeriod();
+
+    api$
+      .pipe(takeUntilDestroyed(this.destroyRef$))
       .subscribe({
-        next: options => {
+        next: (options) => {
           this.billingPeriods = options as meterProcessBillingPeriod[];
-          this.billingPeriodOpts = (options as meterProcessBillingPeriod[])
-            .map(bp => ({ label: bp.supplyMonth, value: bp.billingPeriod }));
+
+          if (this.isRefund) {
+            this.billingPeriods = this.billingPeriods.map(bp => ({
+              supplyMonth: bp.name,
+              startDate: bp.startDate,
+              endDate: bp.endDate,
+            })) as Partial<meterProcessBillingPeriod>[] as meterProcessBillingPeriod[];
+          }
+
+          this.billingPeriodOpts = (this.billingPeriods as meterProcessBillingPeriod[])
+            .map(bp => ({ label: bp.supplyMonth, value: bp.supplyMonth }));
         }
       });
   }
 
   get billingPeriod(): AbstractControl | null { return this.form?.get('billingPeriod'); }
+  get isRefund(): boolean { return this.modalData?.isRefund; }
 
 }

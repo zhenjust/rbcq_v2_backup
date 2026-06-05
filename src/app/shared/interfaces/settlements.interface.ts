@@ -159,3 +159,9 @@ export interface SettlementJobParams {
     startDateTime?: string;
     endDateTime?: string;
 }
+
+export interface PublishedBillingPeriods {
+  name: string;
+  startDate: Date;
+  endDate: Date;
+}

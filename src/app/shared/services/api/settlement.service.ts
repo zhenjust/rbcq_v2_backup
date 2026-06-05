@@ -1,7 +1,7 @@
 import { HttpClient, HttpEvent } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ParamsUtilService } from '../utils';
-import { BaseResponse, EnergyTradingAmounts, PublishSettlement, ReferenceOption1, SettlementJob, SettlementJobParams, settlementParams, settlementTableDate, TableParams } from '@shared/interfaces';
+import { BaseResponse, EnergyTradingAmounts, PublishedBillingPeriods, PublishSettlement, ReferenceOption1, SettlementJob, SettlementJobParams, settlementParams, settlementTableDate, TableParams } from '@shared/interfaces';
 import { Observable } from 'rxjs';
 import { MeterProcessTypes } from '@shared/enums';
 
@@ -17,6 +17,7 @@ export class SettlementService {
   private GRP_API_URL: string = '/stl-data-pipeline/job/group';
   private ADDTL_COMP: string = '/settlement/addtl-comp';
   private BILLING_STATEMENT: string = '/settlement/billing-statement';
+  private STL: string = '/stl-data-pipeline';
 
   private paramUtil = inject(ParamsUtilService);
   private http = inject(HttpClient);
@@ -99,6 +100,10 @@ export class SettlementService {
 
   public downloadBillingStatementZip(groupId: any, workspaceId: any, type: MeterProcessTypes): Observable<HttpEvent<Blob>> {
     return this.http.post(`${this.BILLING_STATEMENT}/zip/download`, { groupId, workspaceId, type }, { responseType: 'blob', observe: 'events', reportProgress: true });
+  }
+
+  public getPenaltyBillingPeriods(): Observable<PublishedBillingPeriods[]> {
+    return this.http.get<PublishedBillingPeriods[]>(`${this.STL}/penalty/published-billing-period`);
   }
 
 }
