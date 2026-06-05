@@ -73,7 +73,21 @@
           @let isFinalAdj = row.processType === processTypes.FINAL || row.processType === processTypes.ADJUSTED;
           @let isPrelim = row.processType === processTypes.PRELIM;
 
-          @if (!isInProgress) {
+          <!-- Btn Conditions -->
+          @let showUploadBillingStatement = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded') && isFinalAdj;
+          @let showDownloadBillingStatement = ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded') && isFinalAdj) || ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateFiles')] : 'Succeeded') && isPrelim);
+          @let showPublish = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateFiles')] : 'Succeeded');
+          @let showGenerateFile = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded');
+          @let showFinalize = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded') && !isFinalized;
+          @let showCalc = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateInputWorkspace')] : 'Succeeded') && !isFinalized;
+          @let canGenerateInputWorkspace = !isFinalized && (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateInputWorkspace')] : 'Succeeded') && hasGenerateInputWorkspacePermission;
+          @let canCalc = showCalc && hasCalculatePermission;
+          @let canFinalize = showFinalize && hasFinalizePermission;
+          @let canGenerateFile = showGenerateFile && hasGenerateFilePermission;
+          @let canPublish = showPublish;
+          @let isPublished = subRowData?.published;
+
+          @if (!isInProgress && (showUploadBillingStatement || showDownloadBillingStatement || (!isPublished && (canGenerateInputWorkspace || canCalc || canFinalize || canGenerateFile || canPublish)))) {
             <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu">{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
           }
 
@@ -90,28 +104,28 @@
                     <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_GENERATE_IW ] : [ AUTH.RMF_GENERATE_IW ]" (click)="triggerJob('generateInputWorkspace', subRowData, tableComp, LABELS.GENERATE_INPUT_WORKSPACE)">{{ LABELS.GENERATE_INPUT_WORKSPACE }}</li>
                   }
 
-                  @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateInputWorkspace')] : 'Succeeded') && !isFinalized) {
+                  @if (showCalc) {
                     <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_CALCULATE ] : [ AUTH.RMF_CALCULATE ]" (click)="triggerJob('calculateMarketFee', subRowData, tableComp, LABELS.CALCULATE + ' ' + label)">{{ LABELS.CALCULATE }}</li>
                   }
 
-                  @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded') && !isFinalized) {
+                  @if (showFinalize) {
                     <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_FINALIZE ] : [ AUTH.RMF_FINALIZE ]" (click)="finalize('finalize', subRowData, tableComp, LABELS.FINALIZE)">{{ LABELS.FINALIZE }}</li>
                   }
 
-                  @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded')) {
+                  @if (showGenerateFile) {
                     <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_GENERATE_EMF_FILE ] : [ AUTH.RMF_GENERATE_RMF_FILE ]" (click)="triggerJob('generateFiles', subRowData, tableComp, LABELS.GENERATE_FILES)">{{ LABELS.GENERATE_FILES }}</li>
                   }
 
-                  @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateFiles')] : 'Succeeded')) {
+                  @if (showPublish) {
                     <li nz-menu-item (click)="publish('Energy Market Fee Calculation', row, subRowData)">{{ LABELS.PUBLISH }}</li>
                   }
                 }
 
-                @if ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded') && isFinalAdj) {
+                @if (showUploadBillingStatement) {
                   <li nz-menu-item (click)="uploadBillingStatement(row, subRowData)">{{ LABELS.UPLOAD_BILLING_STATEMENT }}</li>
                 }
 
-                @if (((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded') && isFinalAdj) || ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateFiles')] : 'Succeeded') && isPrelim)) {
+                @if (showDownloadBillingStatement) {
                   <li nz-menu-item [nzDisabled]="isDownloadingReport(subRowData.id)" (click)="downloadBillingStatement(row, subRowData)">{{ LABELS.DOWNLOAD_BILLING_STATEMENT }}</li>
                 }
 

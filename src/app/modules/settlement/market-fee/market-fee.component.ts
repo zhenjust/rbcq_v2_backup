@@ -20,6 +20,7 @@ import {DateFormatterUtilService, DownloadUtilService, StlUtilitiesService} from
 import {
   UploadBillingStatementComponent
 } from '@shared/components/upload-billing-statement/upload-billing-statement.component';
+import { NgxPermissionsService } from 'ngx-permissions';
 
 @Component({
   selector: 'app-market-fee',
@@ -43,6 +44,7 @@ export class MarketFeeComponent  implements OnInit {
   private readonly stlUtil = inject(StlUtilitiesService);
   private readonly du = inject(DownloadUtilService);
   private readonly dfs = inject(DateFormatterUtilService);
+  private readonly ngxPermissionsService = inject(NgxPermissionsService);
 
   AUTH = PHASE_TWO_AUTHORITIES;
 
@@ -53,11 +55,16 @@ export class MarketFeeComponent  implements OnInit {
   tableColumns: TPL_TABLE_COLUMN[] = [];
   form: FormGroup;
   showForm = false;
-  expandedTableColumns: TPL_TABLE_COLUMN[];
+  expandedTableColumns: TPL_TABLE_COLUMN[] = [];
   billingPeriods: meterProcessBillingPeriod[] = [];
   billingPeriodOpts: NzSelectOptionInterface[] = [];
   processTypeOptions: NzSelectOptionInterface[] = [];
   filters: any = {};
+  hasPermission = false;
+  hasGenerateInputWorkspacePermission = false;
+  hasCalculatePermission = false;
+  hasFinalizePermission = false;
+  hasGenerateFilePermission = false;
 
   // POLLING
   pollingTime = signal<number>(60000);
@@ -85,6 +92,28 @@ export class MarketFeeComponent  implements OnInit {
     this.formatTableColumns();
     this.getReferences();
     this.url$ = this.getUrl();
+    this.setPermissionFlags();
+  }
+
+  private setPermissionFlags(): void {
+    const generateInputWorkspacePermission = this.isEnergy() ? PHASE_TWO_AUTHORITIES.EMF_GENERATE_IW : PHASE_TWO_AUTHORITIES.RMF_GENERATE_IW;
+    const calculatePermission = this.isEnergy() ? PHASE_TWO_AUTHORITIES.EMF_CALCULATE : PHASE_TWO_AUTHORITIES.RMF_CALCULATE;
+    const finalizePermission = this.isEnergy() ? PHASE_TWO_AUTHORITIES.EMF_FINALIZE : PHASE_TWO_AUTHORITIES.RMF_FINALIZE;
+    const generateFilePermission = this.isEnergy() ? PHASE_TWO_AUTHORITIES.EMF_GENERATE_EMF_FILE : PHASE_TWO_AUTHORITIES.RMF_GENERATE_RMF_FILE;
+
+    Promise.all([
+      this.ngxPermissionsService.hasPermission([generateInputWorkspacePermission]),
+      this.ngxPermissionsService.hasPermission([calculatePermission]),
+      this.ngxPermissionsService.hasPermission([finalizePermission]),
+      this.ngxPermissionsService.hasPermission([generateFilePermission]),
+      this.ngxPermissionsService.hasPermission([PHASE_TWO_AUTHORITIES.UPLOAD_BILLING_STATEMENT])
+    ]).then(([generateInputWorkspace, calculate, finalize, generateFile, uploadBilling]) => {
+      this.hasGenerateInputWorkspacePermission = generateInputWorkspace;
+      this.hasCalculatePermission = calculate;
+      this.hasFinalizePermission = finalize;
+      this.hasGenerateFilePermission = generateFile;
+      this.hasPermission = generateInputWorkspace || calculate || finalize || generateFile || uploadBilling;
+    });
   }
 
   buildForm(): void {
@@ -288,7 +317,7 @@ export class MarketFeeComponent  implements OnInit {
     if (row?.processType === MeterProcessTypes.ADJUSTED) {
       const entries = Object.entries(columns);
       const publishedIndex = entries.findIndex(([key]) => key === LABELS.PUBLISHED);
-      
+
       entries.splice(publishedIndex, 0, [
         LABELS.ADJUSTMENT_NO,
         { label: LABELS.ADJUSTMENT_NO, propName: 'parameters', secondPropName: 'adjNo', width: '150px', align: 'center' }
