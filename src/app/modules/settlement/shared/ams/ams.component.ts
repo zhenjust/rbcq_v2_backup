@@ -29,12 +29,14 @@ export class AmsComponent implements OnInit {
 
   rowData = signal<any | null>(null);
   action = signal<string>('');
+  isPenaltyMarketFee = signal<boolean>(false);
   startDate: Date;
   endDate: Date;
 
   ngOnInit(): void {
     this.rowData.set(this.modalData?.rowData);
     this.action.set(this.modalData?.action);
+    this.isPenaltyMarketFee.set(this.modalData?.isPenaltyMarketFee);
 
     this.buildForm();
   }

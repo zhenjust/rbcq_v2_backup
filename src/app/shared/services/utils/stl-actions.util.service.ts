@@ -25,7 +25,7 @@ export class StlUtilitiesService {
       nzTitle: LABELS.RUN_JOB,
       nzContent: AmsComponent,
       nzCentered: true,
-      nzData: { rowData: row, action },
+      nzData: { rowData: row, action, isPenaltyMarketFee: action.includes('MarketFee') || action?.includes('penalty') },
       nzFooter: [
         {
           label: LABELS.CLOSE,
