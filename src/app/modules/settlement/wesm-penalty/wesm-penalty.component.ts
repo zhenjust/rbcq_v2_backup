@@ -276,7 +276,7 @@ export class WesmPenaltyComponent implements OnInit {
         label: LABELS.FINALIZE,
         value: 'finalize',
         click: (rowData: any) => {
-          const isRefund = rowData?.penaltyHeaders[0]?.type === 'REFUND';
+          const isRefund = row.pipelines?.find(p => p.name === 'penalty-calculateRefund');
           this.stlUtil.triggerAllocModal(`penalty-finalize${isRefund ? 'Refund' : ''}`, rowData, () => {
             this.paginatedTable.expandSet.clear();
             this.paginatedTable.loading = false;
@@ -284,7 +284,7 @@ export class WesmPenaltyComponent implements OnInit {
           });
         },
         hidden: () => {
-          const isRefund = row.penaltyHeaders?.[0]?.type === 'REFUND';
+          const isRefund = row.pipelines?.find(p => p.name === 'penalty-calculateRefund');
           return this.isFinalized(row) || this.hideAction(row, `penalty-calculate${isRefund ? 'Refund' : ''}`)
         },
       },
@@ -293,7 +293,7 @@ export class WesmPenaltyComponent implements OnInit {
         value: 'publish',
         click: () => this.handlePublish(row),
         hidden: () => {
-          const isRefund = row.penaltyHeaders?.[0]?.type === 'REFUND';
+          const isRefund = row.pipelines?.find(p => p.name === 'penalty-calculateRefund');
           return this.hideAction(row, `penalty-finalize${isRefund ? 'Refund' : ''}`)
         },
       },
