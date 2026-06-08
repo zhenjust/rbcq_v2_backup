@@ -54,9 +54,6 @@ deploy:
     project: exist-software-labs/iemop/crss/gitops
     branch: main
     strategy: depend
-  environment:
-    name: dev
-    url: https://crss-dev.exist.com.ph
   rules:
     - if: $CI_DEPLOY_FREEZE == null && $CI_PIPELINE_SOURCE != "web" && ($CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH =~ /RC[0-9]+$/)
     - if: $CI_DEPLOY_FREEZE && $CI_PIPELINE_SOURCE != "web" && ($CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH =~ /RC[0-9]+$/)
