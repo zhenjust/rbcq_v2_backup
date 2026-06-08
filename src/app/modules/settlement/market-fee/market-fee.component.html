@@ -125,9 +125,9 @@
                   <li nz-menu-item (click)="uploadBillingStatement(row, subRowData)">{{ LABELS.UPLOAD_BILLING_STATEMENT }}</li>
                 }
 
-                @if (showDownloadBillingStatement) {
+                <!-- @if (showDownloadBillingStatement) {
                   <li nz-menu-item [nzDisabled]="isDownloadingReport(subRowData.id)" (click)="downloadBillingStatement(row, subRowData)">{{ LABELS.DOWNLOAD_BILLING_STATEMENT }}</li>
-                }
+                } -->
 
               </ul>
           </nz-dropdown-menu>
