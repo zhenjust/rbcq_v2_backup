@@ -80,7 +80,7 @@
           @let showGenerateFile = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded');
           @let showFinalize = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded') && !isFinalized;
           @let showCalc = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateInputWorkspace')] : 'Succeeded') && !isFinalized;
-          @let canGenerateInputWorkspace = !isFinalized && (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateInputWorkspace')] : 'Succeeded') && hasGenerateInputWorkspacePermission;
+          @let canGenerateInputWorkspace = !isFinalized && hasGenerateInputWorkspacePermission;
           @let canCalc = showCalc && hasCalculatePermission;
           @let canFinalize = showFinalize && hasFinalizePermission;
           @let canGenerateFile = showGenerateFile && hasGenerateFilePermission;

@@ -108,6 +108,7 @@ export class MarketFeeComponent  implements OnInit {
       this.ngxPermissionsService.hasPermission([generateFilePermission]),
       this.ngxPermissionsService.hasPermission([PHASE_TWO_AUTHORITIES.UPLOAD_BILLING_STATEMENT])
     ]).then(([generateInputWorkspace, calculate, finalize, generateFile, uploadBilling]) => {
+      console.log({generateInputWorkspace, calculate, finalize, generateFile, uploadBilling})
       this.hasGenerateInputWorkspacePermission = generateInputWorkspace;
       this.hasCalculatePermission = calculate;
       this.hasFinalizePermission = finalize;
