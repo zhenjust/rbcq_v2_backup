@@ -106,4 +106,7 @@ export class SettlementService {
     return this.http.get<PublishedBillingPeriods[]>(`${this.STL}/penalty/published-billing-period`);
   }
 
+  public runAdjustedMf(payload: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/run-adjusted-mf`, payload)
+  }
 }

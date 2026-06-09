@@ -230,5 +230,6 @@ export const LABELS = {
   REASON_FOR_CORRECTION: 'Reason for correction',
   NOTIFICATION_MESSAGE: 'Notification Message',
   ISSUED_DATE: 'Issued Date',
+  RUN_ADJUSTMENT: 'Run Adjustment',
 
 }

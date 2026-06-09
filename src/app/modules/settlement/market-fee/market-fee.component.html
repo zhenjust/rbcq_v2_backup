@@ -70,6 +70,7 @@
           @let isFinalized = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded');
           <!-- @let isCalculated = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded'); -->
           @let isInProgress = subRowData.status.includes('In-Progress');
+          @let isFinal = row.processType === processTypes.FINAL;
           @let isFinalAdj = row.processType === processTypes.FINAL || row.processType === processTypes.ADJUSTED;
           @let isPrelim = row.processType === processTypes.PRELIM;
 
@@ -87,7 +88,7 @@
           @let canPublish = showPublish;
           @let isPublished = subRowData?.published;
 
-          @if (!isInProgress && (showUploadBillingStatement || showDownloadBillingStatement || (!isPublished && (canGenerateInputWorkspace || canCalc || canFinalize || canGenerateFile || canPublish)))) {
+          @if (!isInProgress && (showDownloadBillingStatement || (!isPublished && (canGenerateInputWorkspace || canCalc || canFinalize || canGenerateFile || canPublish)))) {
             <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu">{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
           }
 
@@ -123,6 +124,10 @@
 
                 @if (showUploadBillingStatement) {
                   <li nz-menu-item (click)="uploadBillingStatement(row, subRowData)">{{ LABELS.UPLOAD_BILLING_STATEMENT }}</li>
+                }
+
+                @if (isFinalized && isFinal) {
+                  <li nz-menu-item (click)="runAdjusted(subRowData, tableComp)">{{ LABELS.RUN_ADJUSTMENT }}</li>
                 }
 
                 <!-- @if (showDownloadBillingStatement) {

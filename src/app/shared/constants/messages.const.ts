@@ -19,6 +19,7 @@ export const MESSAGES = {
   SESSION_TIMEOUT_MSG_2: 'Move your cursor to continue with your session',
   MIN_DATE: 'End date should be after the start date.',
   MMF_DUPLICATE: 'Metering Masterfile for the Billing Period and Billing Run Type already exists.',
+  SUCCESS_RUN_ADJUSTED: `Successfully triggered Run Adjustment.`,
 
   // DYNAMIC MESSAGES
   ITEMS_REQUIRED: (item: string) => `${item} are required.`,

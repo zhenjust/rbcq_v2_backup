@@ -348,6 +348,32 @@ export class MarketFeeComponent  implements OnInit {
       });
   }
 
+  runAdjusted(subRowData: any, component: TemplateTableComponent): void {
+    const payload = {
+      pipelineName: this.pipelineName,
+      parameters: {...subRowData.parameters},
+      refId: subRowData.id
+    }
+
+    const msg = MESSAGES.CONFIRM_SETTLEMENT_MSG(`trigger ${LABELS.RUN_ADJUSTMENT}`);
+
+    this.modalService.confirm({
+      nzTitle: LABELS.RUN_ADJUSTMENT,
+      nzCentered: true,
+      nzContent: msg,
+      nzOnOk: () => {
+        component.loading$ = this.settlementService.runAdjustedMf(payload)
+          .pipe(takeUntilDestroyed(this.destroyRef$))
+          .subscribe(() => {
+            this.toastrService.success(MESSAGES.SUCCESS_RUN_ADJUSTED);
+            this.reload$.next();
+          });
+      }
+    });
+
+
+  }
+
   isDownloadingReport(pipelineId: number): boolean {
     return this.du.isDownloading(pipelineId);
   }
