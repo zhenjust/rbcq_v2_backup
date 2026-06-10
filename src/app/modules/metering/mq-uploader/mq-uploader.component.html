@@ -1,7 +1,7 @@
 <nz-card [nzTitle]="LABELS.MQ_UPLOADER">
   <div class="d-flex {{tabIndex ? 'justify-content-between': 'justify-content-end'}}">
     <button nz-button *ngIf="tabIndex" class="mb-3" nzType="default"  (click)="resetFilters()">{{ LABELS.CLEAR_FILTERS }}</button>
-    <button nz-button *ngIf="!tabIndex" nzType="primary" (click)="import()" [disabled]="!disableImport" nz-tooltip [nzTooltipTitle]="isAllowedImport ? '' : MESSAGES.INVALID_MQ_TIME(timeLimit)">{{ LABELS.START_IMPORT }}</button>
+    <button nz-button *ngIf="!tabIndex" nzType="primary" (click)="import()" [disabled]="!disableImport">{{ LABELS.START_IMPORT }}</button>
   </div>
 
   @if (tabIndex) {
