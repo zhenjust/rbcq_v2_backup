@@ -256,7 +256,10 @@ export class MqUploaderFilterComponent implements OnInit {
   }
 
   disabledTime: DisabledTimeFn = (_value, type?: DisabledTimePartial) => {
-    if (type === 'start') {
+    const isEnd = type === 'end';
+    const isStart = type === 'start';
+
+    if (isStart) {
       const time = +format(getTime(_value as Date), 'H');
       return {
         nzDisabledHours: () => [],
@@ -264,9 +267,12 @@ export class MqUploaderFilterComponent implements OnInit {
         nzDisabledSeconds: () => []
       };
     }
+
+    const isIntervalSameDay = (isEnd && this.interval?.value) ? isSameDay(this.interval?.value[0], _value as Date) : false;
+
     return {
-      nzDisabledHours: () => Array.from({ length: 23 }, (_, i) => i + 1),
-      nzDisabledMinutes: () => Array.from({ length: 11 }, (_, i) => (i + 1) * 5),
+      nzDisabledHours: () => isIntervalSameDay && isEnd ? [] : Array.from({ length: 23 }, (_, i) => i + 1),
+      nzDisabledMinutes: () => isIntervalSameDay && isEnd ? [0, 5] : Array.from({ length: 11 }, (_, i) => (i + 1) * 5),
       nzDisabledSeconds: () => []
     };
   };
