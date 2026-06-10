@@ -12,6 +12,8 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzPaginationModule } from 'ng-zorro-antd/pagination';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RbcqUploadingComponent } from './rbcq-uploading/rbcq-uploading.component';
 import { ViewRbcqComponent } from './view-rbcq/view-rbcq.component';
@@ -33,6 +35,8 @@ import { ViewRbcqComponent } from './view-rbcq/view-rbcq.component';
     NzButtonModule,
     NzIconModule,
     NzUploadModule,
+    NzPaginationModule,
+    NzSelectModule,
     FontAwesomeModule
   ],
   providers: [

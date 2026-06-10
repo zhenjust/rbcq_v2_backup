@@ -19,7 +19,14 @@ interface FinalizedRow {
 })
 export class ViewRbcqComponent implements OnInit {
   rows: FinalizedRow[] = [];
+  allRows: FinalizedRow[] = [];
   loading = false;
+
+  // Pagination properties
+  currentPage = 1;
+  pageSize = 10;
+  pageSizeOptions = [10, 20, 50, 100];
+  totalItems = 0;
 
   // default dates: today start/end
   startDate: Date;
@@ -50,7 +57,10 @@ export class ViewRbcqComponent implements OnInit {
 
     this.rbcqService.getFinalized(s, e).subscribe({
       next: data => {
-        this.rows = data || [];
+        this.allRows = data || [];
+        this.totalItems = this.allRows.length;
+        this.currentPage = 1;
+        this.updatePaginatedRows();
         this.loading = false;
       },
       error: () => this.loading = false
@@ -65,7 +75,27 @@ export class ViewRbcqComponent implements OnInit {
 
   clear(): void {
     this.setDefaults();
+    this.allRows = [];
     this.rows = [];
+    this.currentPage = 1;
+    this.totalItems = 0;
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.updatePaginatedRows();
+  }
+
+  onPageSizeChange(size: number): void {
+    this.pageSize = size;
+    this.currentPage = 1;
+    this.updatePaginatedRows();
+  }
+
+  private updatePaginatedRows(): void {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.rows = this.allRows.slice(startIndex, endIndex);
   }
 
   private setDefaults(): void {
