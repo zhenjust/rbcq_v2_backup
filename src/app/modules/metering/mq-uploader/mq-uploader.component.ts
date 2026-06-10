@@ -152,7 +152,7 @@ export class MqUploaderComponent implements OnInit {
             }),
             catchError(err => {
               const errors = err?.error?.error;
-              const compiledErrs = (errors?.length && errors instanceof Array) ? errors?.map((e: any) => e.defaultMessage).join('. ') : err.error;
+              const compiledErrs = (errors?.length && errors instanceof Array) ? errors?.map((e: any) => e.defaultMessage).join(' ') : err.error;
               const message = compiledErrs.error ? compiledErrs.error : compiledErrs;
 
               this.ongoingTableData[index].status = Status.REJECTED;
@@ -170,7 +170,7 @@ export class MqUploaderComponent implements OnInit {
 
   handleUploadComplete(hasError: OngoingTableList[], dataLength: number, headerId: number): void {
     if (hasError.length && (dataLength === hasError?.length)) {
-      this.ts.error(dataLength > 1 ? MESSAGES.ALL_FILES_ERROR : MESSAGES.SINGLE_FILE_ERROR);
+      this.ts.error(hasError[0].errorMessage);
     } else if (hasError.length && (dataLength !== hasError.length)) {
       this.ts.warning(MESSAGES.SOME_FILES_ERROR);
     } else {
