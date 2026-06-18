@@ -271,37 +271,6 @@ export class MqUploaderFilterComponent implements OnInit {
       });
   }
 
-  // disabledTime: DisabledTimeFn = (_value, type?: DisabledTimePartial) => {
-  //   const isEnd = type === 'end';
-  //   const isStart = type === 'start';
-
-  //   if (isStart) {
-  //     const time = +format(getTime(_value as Date), 'H');
-  //     return {
-  //       nzDisabledHours: () => [],
-  //       nzDisabledMinutes: () => !time ? [0] : [],
-  //       nzDisabledSeconds: () => []
-  //     };
-  //   }
-
-  //   // day 05:05, day 00:00
-
-
-  //   this.interval?.setValue([isStart ? _value : this.interval?.value[0], isEnd ? _value : this.interval?.value[1]]);
-  //   const isIntervalSameDay = (isEnd && this.interval?.value) ? isSameDay(this.interval?.value[0], _value as Date) : false;
-  //   console.log(new Date(this.interval?.value[0]), _value)
-  //   const isEndHourGreaterThanStartHour = isEnd && isBefore(this.interval?.value[0], _value as Date);
-  //   const startHour = getHours(this.interval?.value[0]);
-  //   const endHourArr = Array.from({ length: startHour }, (_, i) => (i * 1));
-
-  //   console.log(this.interval?.value, {startHour, endHourArr})
-  //   return {
-  //     nzDisabledHours: () => isIntervalSameDay && isEnd ? endHourArr : Array.from({ length: 23 }, (_, i) => i + 1),
-  //     nzDisabledMinutes: () => isIntervalSameDay && isEnd && isEndHourGreaterThanStartHour ? [0, 5] : Array.from({ length: 11 }, (_, i) => (i + 1) * 5),
-  //     nzDisabledSeconds: () => []
-  //   };
-  // };
-
   disabledStartTime: DisabledTimeFn = (_value) => {
     const time = +format(getTime(_value as Date), 'H');
     return {
@@ -316,13 +285,15 @@ export class MqUploaderFilterComponent implements OnInit {
     const startHour = getHours(this.intervalFrom?.value);
     const endHourArr = Array.from({ length: startHour }, (_, i) => (i * 1));
     const _isSameHour = isSameHour(this.intervalFrom?.value, _value as Date);
+    const isAfterHour = isAfter(_value as Date, this.intervalFrom?.value);
     const startMin = getMinutes(this.intervalFrom?.value);
     const minsArr = Array.from({ length: 12 }, (_, i) => (i) * 5);
     const indexStartMin = minsArr.indexOf(startMin);
+    const allHours = Array.from({ length: 12 }, (_, i) => (i + 1) * 5);
 
     return {
       nzDisabledHours: () => _isSameDay ? endHourArr : Array.from({ length: 23 }, (_, i) => i + 1),
-      nzDisabledMinutes: () => _isSameDay && _isSameHour ? minsArr.slice(0, indexStartMin + 1) : Array.from({ length: 11 }, (_, i) => (i + 1) * 5),
+      nzDisabledMinutes: () => _isSameDay ? (_isSameHour ? minsArr.slice(0, indexStartMin + 1) : (isAfterHour ? [] : allHours)) : Array.from({ length: 11 }, (_, i) => (i + 1) * 5),
       nzDisabledSeconds: () => [] as number[]
     }
   }
