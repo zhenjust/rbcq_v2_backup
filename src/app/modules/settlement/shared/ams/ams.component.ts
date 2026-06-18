@@ -8,6 +8,7 @@ import { SettlementService } from '@shared/services/api';
 import { addDays, format, isBefore, subDays } from 'date-fns';
 import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { Subscription } from 'rxjs';
+import { MeterProcessTypes } from '@shared/enums';
 
 @Component({
   selector: 'app-ams',
@@ -47,7 +48,7 @@ export class AmsComponent implements OnInit {
 
     this.form = this.formBuilder.group({
       allocDate: [new Date(), RxwebValidators.required()],
-      dueDate: [addDays(new Date(), 1), RxwebValidators.required()],
+      dueDate: [addDays(new Date(), 1), RxwebValidators.required({ conditionalExpression: () => !this.isPrelim })],
       remarks: [null],
     });
 
@@ -83,7 +84,7 @@ export class AmsComponent implements OnInit {
         allocDate: form.allocDate ? format(form.allocDate, 'yyyy-MM-dd') : null,
         billingPeriodName: row?.billingPeriod ? row?.billingPeriod : null,
         remarks: form.remarks,
-        dueDate: form.dueDate ? format(form.dueDate, 'yyyy-MM-dd') : null
+        dueDate: form.dueDate && !this.isPrelim ? format(form.dueDate, 'yyyy-MM-dd') : null
       },
     };
 
@@ -103,5 +104,6 @@ export class AmsComponent implements OnInit {
 
   get allocDate(): AbstractControl { return this.form.get('allocDate') as AbstractControl; }
   get dueDate(): AbstractControl { return this.form.get('dueDate') as AbstractControl; }
+  get isPrelim(): boolean { return this.rowData()?.processType === MeterProcessTypes.PRELIM; }
 
 }

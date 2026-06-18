@@ -13,12 +13,14 @@
       </nz-form-control>
     </nz-form-item>
 
-    <nz-form-item class="col-sm-12">
-      <nz-form-label nzRequired>{{ isPenaltyMarketFee() ? LABELS.DUE_DATE : LABELS.ALLOCATION_DUE_DATE }}</nz-form-label>
-      <nz-form-control>
-        <nz-date-picker formControlName="dueDate" class="w-100" [nzDisabledDate]="disabledDueDate"></nz-date-picker>
-      </nz-form-control>
-    </nz-form-item>
+    @if (!isPrelim) {
+      <nz-form-item class="col-sm-12">
+        <nz-form-label nzRequired>{{ isPenaltyMarketFee() ? LABELS.DUE_DATE : LABELS.ALLOCATION_DUE_DATE }}</nz-form-label>
+        <nz-form-control>
+          <nz-date-picker formControlName="dueDate" class="w-100" [nzDisabledDate]="disabledDueDate"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    }
 
     <nz-form-item class="col-sm-12">
       <nz-form-label>{{ isPenaltyMarketFee() ? LABELS.REMARKS : LABELS.ALLOCATION_REMARKS }}</nz-form-label>
@@ -26,7 +28,6 @@
         <textarea nz-input formControlName="remarks" rows="2"></textarea>
       </nz-form-control>
     </nz-form-item>
-
   </form>
 </nz-spin>
 
