@@ -20,6 +20,7 @@ export const MESSAGES = {
   MIN_DATE: 'End date should be after the start date.',
   MMF_DUPLICATE: 'Metering Masterfile for the Billing Period and Billing Run Type already exists.',
   SUCCESS_RUN_ADJUSTED: `Successfully triggered Run Adjustment.`,
+  SUCCESS_SEND_NOTICE: `Successfully sent notification.`,
 
   // DYNAMIC MESSAGES
   ITEMS_REQUIRED: (item: string) => `${item} are required.`,

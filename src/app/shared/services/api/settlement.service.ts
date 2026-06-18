@@ -1,9 +1,11 @@
 import { HttpClient, HttpEvent } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ParamsUtilService } from '../utils';
-import { BaseResponse, EnergyTradingAmounts, PublishedBillingPeriods, PublishSettlement, ReferenceOption1, SettlementJob, SettlementJobParams, settlementParams, settlementTableDate, TableParams } from '@shared/interfaces';
+import { BaseResponse, EnergyTradingAmounts, PublishedBillingPeriods, PublishSettlement, ReferenceOption1, SendNotice, SettlementJob, SettlementJobParams, settlementParams, settlementTableDate, TableParams } from '@shared/interfaces';
 import { Observable } from 'rxjs';
 import { MeterProcessTypes } from '@shared/enums';
+import { apiPath } from '@shared/constants';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +20,9 @@ export class SettlementService {
   private ADDTL_COMP: string = '/settlement/addtl-comp';
   private BILLING_STATEMENT: string = '/settlement/billing-statement';
   private STL: string = '/stl-data-pipeline';
+  private ADMIN: string = '/admin';
 
+  protected baseEndpoint = environment.__API_URL__ + apiPath.__ADMIN_PATH__;
   private paramUtil = inject(ParamsUtilService);
   private http = inject(HttpClient);
 
@@ -109,4 +113,10 @@ export class SettlementService {
   public runAdjustedMf(payload: any): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/run-adjusted-mf`, payload)
   }
+
+  public sendNotice(payload: SendNotice): Observable<any> {
+    return this.http.post<any>(`${this.baseEndpoint}/admin/send-notice`, payload)
+  }
+
 }
+

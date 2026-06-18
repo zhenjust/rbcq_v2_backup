@@ -48,22 +48,27 @@ export class StlUtilitiesService {
     })
   }
 
-  sendNotification(rowData: any): void {
-    console.log('Sending notification with data:', rowData);
+  sendNotification(rowData: any, callback: () => void): void {
     const dueDateTable = [
       { dueDate: new Date(), status: 'PUBLISHED' }
     ];
 
-    this.modal.create({
+    const modal = this.modal.create({
       nzTitle: LABELS.SEND_NOTIFICATION,
       nzContent: SendNotificationComponent,
       nzWidth: '1000px',
       nzCentered: true,
       nzOkText: LABELS.SEND_NOTICE,
       nzData: {
-        dueDateTable
+        dueDateTable, rowData
       }
     });
+
+    modal.afterClose.subscribe(_reload => {
+      if (_reload) {
+        callback();
+      }
+    })
   }
 
   publish(payload: PublishSettlement, title: string, message: string, descriptions: any[], callback?: () => void): void {
