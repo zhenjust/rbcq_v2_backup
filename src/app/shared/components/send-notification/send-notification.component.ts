@@ -11,6 +11,7 @@ import { SettlementModuleName } from '@shared/constants';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
 import { MESSAGES } from '@shared/constants/messages.const';
+import { StlUtilitiesService } from '@shared/services/utils';
 
 @Component({
   selector: 'app-send-notification',
@@ -24,6 +25,7 @@ export class SendNotificationComponent{
   private readonly settlementService = inject(SettlementService);
   private readonly toastrService = inject(ToastrService);
   private readonly destroyRef$ = inject(DestroyRef);
+  private readonly stlUtil = inject(StlUtilitiesService);
 
   private readonly modalRef = inject(NzModalRef);
 
@@ -77,8 +79,9 @@ export class SendNotificationComponent{
     this.settlementService.sendNotice(payload)
       .pipe(takeUntilDestroyed(this.destroyRef$))
       .subscribe(() => {
+        this.stlUtil.isSendingDone.set(true);
         this.toastrService.success(MESSAGES.SUCCESS_SEND_NOTICE);
-        this.modalRef.destroy(true);
+        this.modalRef.close(true);
       });
   }
 

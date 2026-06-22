@@ -135,6 +135,7 @@ export const WESM_PENALTY_TYPE = {
 
 export const SettlementModuleName: Record<string, string> = {
   ['reserveTradingAmounts']: 'Reserve',
-  ['energyTradingAmounts']: 'Energy'
+  ['energyTradingAmounts']: 'Energy',
+  ['penalty']: 'Penalty'
 
 }
