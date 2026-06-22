@@ -12,10 +12,12 @@ export class SearchFilterService {
   isLoading = signal<boolean>(false);
   jobs = signal<meterProcessTable | null>(null);
   error = signal<string | null>(null);
+  params = signal<Partial<meterProcessJobSearchGroupParams> | null>(null);
 
   refreshJobs(params: Partial<meterProcessJobSearchGroupParams>): void {
     this.isLoading.set(true);
     this.error.set(null); // Clear any previous errors
+    this.params.set(params);
 
     this.mpa.search(params).subscribe({
       next: (data) => {

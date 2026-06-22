@@ -16,6 +16,7 @@ import { CoreModule } from '@core/core.module';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
 import { NgIdleKeepaliveModule, provideNgIdleKeepalive } from '@ng-idle/keepalive';
+import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
 
 registerLocaleData(en);
 
@@ -35,6 +36,8 @@ registerLocaleData(en);
     NgxPermissionsModule.forRoot(),
     NgIdleKeepaliveModule.forRoot(),
     RxReactiveFormsModule,
+    FroalaEditorModule.forRoot(),
+    FroalaViewModule.forRoot()
   ],
   providers: [
     provideNzI18n(en_US),

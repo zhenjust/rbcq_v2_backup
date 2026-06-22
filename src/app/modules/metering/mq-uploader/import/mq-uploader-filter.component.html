@@ -3,7 +3,7 @@
     <nz-form-item>
       <nz-form-label nzRequired>{{ LABELS.CATEGORY }}</nz-form-label>
       <nz-form-control>
-        <nz-select formControlName="category" [nzOptions]="categoryOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
+        <nz-select formControlName="category" [nzOptions]="categoryOpts || []" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
           [nzAllowClear]="true" nzShowSearch></nz-select>
       </nz-form-control>
     </nz-form-item>
@@ -31,11 +31,19 @@
     @if (category?.value) {
       <nz-form-item>
         <nz-form-label nzRequired>{{ LABELS.INTERVAL }}</nz-form-label>
-        <nz-form-control>
+        <div class="d-flex col-gap-10">
+          <nz-form-control>
+            <nz-date-picker [nzInputReadOnly]="true" [nzAllowClear]="false" formControlName="intervalFrom" nzFormat="yyyy-MM-dd HH:mm" [nzDisabledDate]="disabledInterval" [nzDisabledTime]="disabledStartTime" [nzShowTime]="{ nzFormat: 'HH:mm', nzMinuteStep: 5 }"></nz-date-picker>
+          </nz-form-control>
+          <nz-form-control>
+            <nz-date-picker [nzInputReadOnly]="true" [nzAllowClear]="false" formControlName="intervalTo" nzFormat="yyyy-MM-dd HH:mm" [nzDisabledDate]="disabledInterval" [nzDisabledTime]="disabledEndTime" [nzShowTime]="{ nzFormat: 'HH:mm', nzMinuteStep: 5 }"></nz-date-picker>
+          </nz-form-control>
+        </div>
+        <!-- <nz-form-control>
           <nz-range-picker [nzInputReadOnly]="true" formControlName="interval" nzFormat="yyyy-MM-dd HH:mm"
-            [nzShowTime]="{ nzFormat: 'HH:mm', nzMinuteStep: 5 }" [nzDisabledDate]="disabledInterval"
-            class="w-100"></nz-range-picker>
-        </nz-form-control>
+            [nzShowTime]="{ nzFormat: 'HH:mm', nzMinuteStep: 5 }" [nzDisabledDate]="disabledInterval" [nzDisabledTime]="disabledTime"
+            class="w-100" [nzAllowClear]="false"></nz-range-picker>
+        </nz-form-control> -->
       </nz-form-item>
     }
 
@@ -51,9 +59,9 @@
 
     @if (isCorrectedDaily || isCorrectedMonthly) {
       <nz-form-item>
-        <nz-form-label nzRequired>{{ LABELS.REMARKS }}</nz-form-label>
+        <nz-form-label>{{ LABELS.REMARKS }}</nz-form-label>
         <nz-form-control>
-          <input nz-input formControlName="correctedRemarks" [maxLength]="50" />
+          <input nz-input formControlName="correctedRemarks" [placeholder]="LABELS.REASON_FOR_CORRECTION" [maxLength]="50" />
         </nz-form-control>
       </nz-form-item>
     }

@@ -82,17 +82,13 @@ export class GenerateMdvComponent implements OnInit {
         this.reportCodes?.reset();
         this.checked.set(false);
         this.options = this.options.map(option => {
-          if ([MDV.MDV7, MDV.MDV8, MDV.MDV9].includes(option.value as MDV)) {
-            if (this.isDaily || this.isPrelim) {
-              option.disabled = true;
-              return option;
-            }
+          const value = option.value as MDV;
+          option.disabled = (
+            [MDV.MDV7, MDV.MDV9].includes(value) && (this.isDaily || this.isPrelim)
+          ) || (
+            value === MDV.MDV8 && this.isDaily
+          );
 
-            option.disabled = false;
-            return option;
-          }
-
-          option.disabled = false;
           return option;
         });
 

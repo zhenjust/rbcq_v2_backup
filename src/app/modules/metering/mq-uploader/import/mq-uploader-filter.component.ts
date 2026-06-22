@@ -9,12 +9,14 @@ import { CurrentUser } from '@shared/interfaces';
 import { MqUploaderService } from '@shared/services/api';
 import { AdminService } from '@shared/services/api/admin.service';
 import { SystemUtilService } from '@shared/services/utils';
-import { addDays, addMonths, differenceInCalendarMonths, format, isAfter, isSameDay, isToday, isWithinInterval, set, startOfDay } from 'date-fns';
+import { addDays, differenceInCalendarMonths, format, getHours, getMinutes, getTime, isAfter, isSameDay, isSameHour, isToday, isWithinInterval, set, setHours, setMinutes, startOfDay, subMonths } from 'date-fns';
 import { differenceInCalendarDays } from 'date-fns';
+import { DisabledTimeFn } from 'ng-zorro-antd/date-picker';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { ToastrService } from 'ngx-toastr';
+
 import { distinctUntilChanged, Subscription } from 'rxjs';
 
 @Component({
@@ -44,13 +46,14 @@ export class MqUploaderFilterComponent implements OnInit {
   busy$: Subscription;
   dateDeduction: number;
   regCategory: string;
+  timeLimit: string;
+  isAllowedImport: boolean;
 
   ngOnInit(): void {
     this.currentUser = this.as.currentUser();
-    this.buildForm();
-    this.getReferences();
-    this.getMqList();
     this.getNavbarInfo();
+    this.buildForm();
+    this.getMqList();
   }
 
   buildForm(): void {
@@ -61,13 +64,39 @@ export class MqUploaderFilterComponent implements OnInit {
       convertToFiveMin: [false],
       tradingDay: [null, RxwebValidators.required({ conditionalExpression: () => this.isDaily || this.isCorrectedDaily })],
       tradingMonth: [null, RxwebValidators.required({ conditionalExpression: () => this.isMonthly || this.isCorrectedMonthly })],
-      interval: [null, [required, RxwebValidators.minLength({ value: 1 })]],
-      correctedRemarks: [null, RxwebValidators.required({ conditionalExpression: () => this.isCorrectedDaily || this.isCorrectedMonthly })]
+      // interval: [{value: null, disabled: true}, [required, RxwebValidators.minLength({ value: 1 })]],
+      correctedRemarks: [null],
+      intervalFrom: [{value: null, disabled: true}, RxwebValidators.required()],
+      intervalTo: [{value: null, disabled: true}, RxwebValidators.required()],
     });
 
     this.handleCategoryChange();
     this.handleTradingDayChange();
     this.handleTradingMonthChange();
+  }
+
+  getTime(): void {
+    this.admin.getConfigurations('MQ_GATE_CLOSURE_TIME')
+      .subscribe(value => {
+        const timeSplit = value?.split(':');
+        if (timeSplit?.length) {
+          const newHour = setHours(new Date(), +timeSplit[0]);
+          const newMins = setMinutes(newHour, +timeSplit[1]);
+          this.timeLimit = format(newMins, 'p');
+          this.isAllowedImport = (new Date()) < newMins;
+          const disableDaily = !this.isAllowedImport && this.isMspUser;
+
+          const currentDay = +format(new Date(), 'd');
+          const currentTime = +format(new Date(), 'HHmm');
+          const disableMonthly = this.isMspUser && (currentDay > 28 || (currentDay === 1 && currentTime < 5));
+
+          this.categoryOpts = this.sysUtil.nzOptionsFormatter(MQ_UPLOAD_CATEGORY, true)
+            .map(option => ({
+              ...option,
+              disabled: (option.value === 'DAILY' && disableDaily) || (option.value === 'MONTHLY' && disableMonthly)
+            }));
+        }
+      });
   }
 
   getNavbarInfo(): void {
@@ -77,6 +106,8 @@ export class MqUploaderFilterComponent implements OnInit {
           this.regCategory = res?.registrationCategory;
           this.mspShortName?.updateValueAndValidity();
         }
+
+        this.getReferences();
       });
   }
 
@@ -87,7 +118,8 @@ export class MqUploaderFilterComponent implements OnInit {
       .subscribe(() => {
         this.tradingDay?.reset();
         this.tradingMonth?.reset();
-        this.interval?.reset();
+        this.intervalFrom?.reset();
+        this.intervalTo?.reset();
       });
   }
 
@@ -95,12 +127,20 @@ export class MqUploaderFilterComponent implements OnInit {
     this.tradingDay?.valueChanges
       .subscribe(day => {
         if (!day) {
+          this.intervalFrom?.disable();
+          this.intervalTo?.disable();
           return;
         }
 
         const startInterval = startOfDay(day).setMinutes(5);
         const endInterval = startOfDay(addDays(day, 1)).setMinutes(0);
-        this.interval?.setValue([startInterval, endInterval]);
+
+        this.intervalFrom?.setValue(new Date(startInterval));
+        this.intervalTo?.setValue(new Date(endInterval));
+        this.intervalFrom?.enable();
+        this.intervalTo?.enable();
+        // this.interval?.setValue([startInterval, endInterval]);
+        // this.interval?.enable();
       });
   }
 
@@ -108,19 +148,27 @@ export class MqUploaderFilterComponent implements OnInit {
     this.tradingMonth?.valueChanges
       .subscribe((month: Date) => {
         if (!month) {
+          this.intervalFrom?.disable();
+          this.intervalTo?.disable();
           return;
         }
 
-        const startInterval = set(month, { date: 26, hours: 0, minutes: 5 });
-        const endInterval = set(addMonths(month, 1), { date: 26, hours: 0, minutes: 0 });
-        this.interval?.setValue([startInterval, endInterval]);
+        const startInterval = set(subMonths(month, 1), { date: 26, hours: 0, minutes: 5 });
+        const endInterval = set(month, { date: 26, hours: 0, minutes: 0 });
+        this.intervalFrom?.setValue(startInterval);
+        this.intervalTo?.setValue(endInterval);
+        this.intervalFrom?.enable();
+        this.intervalTo?.enable();
+
+        // this.interval?.setValue([startInterval, endInterval]);
+        // this.interval?.enable();
       });
 
   }
 
   getReferences(): void {
+    this.getTime();
     this.getMqDays();
-    this.categoryOpts = this.sysUtil.nzOptionsFormatter(MQ_UPLOAD_CATEGORY, true);
 
     this.conversionOpts = [
       { label: LABELS.UPLOAD_DATA_AS_IS, value: false },
@@ -153,7 +201,7 @@ export class MqUploaderFilterComponent implements OnInit {
     }
 
     if (!acceptedTypesArr.includes(`.${fileType}`)) {
-      this.ts.error(MESSAGES.INVALID_FILE_TYPE);
+      this.ts.error(MESSAGES.INVALID_FILE_TYPE_MQ);
       return false;
     }
 
@@ -189,11 +237,11 @@ export class MqUploaderFilterComponent implements OnInit {
       convertToFiveMin: formValue.convertToFiveMin.toString(),
       tradingDate: isDaily ? (formValue?.tradingDay && format(formValue.tradingDay, 'yyyy-MM-dd')) : '',
       tradingMonth: isMonthly ? (formValue?.tradingMonth && format(formValue.tradingMonth, 'MM yyyy')) : '',
-      startInterval: format(formValue.interval[0], 'yyyy-MM-dd HH:mm'),
-      endInterval: format(formValue.interval[1], 'yyyy-MM-dd HH:mm'),
+      startInterval: format(formValue.intervalFrom, 'yyyy-MM-dd HH:mm'),
+      endInterval: format(formValue.intervalTo, 'yyyy-MM-dd HH:mm'),
       correctedRemarks: formValue.correctedRemarks ?? '',
-      tradingDateFrom: format(formValue.interval[0], 'yyyy-MM-dd'),
-      tradingDateTo: format(formValue.interval[1], 'yyyy-MM-dd'),
+      tradingDateFrom: format(formValue.intervalFrom, 'yyyy-MM-dd'),
+      tradingDateTo: format(formValue.intervalTo, 'yyyy-MM-dd'),
     }
 
     delete payload.interval;
@@ -223,16 +271,45 @@ export class MqUploaderFilterComponent implements OnInit {
       });
   }
 
-  disabledPrevDay = (currentDate: Date) => (this.isDaily || this.isCorrectedDaily) ? (differenceInCalendarDays(currentDate, new Date()) <= -this.dateDeduction || isAfter(currentDate, new Date()) ||  isToday(currentDate)) : differenceInCalendarDays(currentDate, new Date()) > -1;
+  disabledStartTime: DisabledTimeFn = (_value) => {
+    const time = +format(getTime(_value as Date), 'H');
+    return {
+      nzDisabledHours: () => [],
+      nzDisabledMinutes: () => !time ? [0] : [],
+      nzDisabledSeconds: () => []
+    };
+  }
+
+  disabledEndTime: DisabledTimeFn = (_value) => {
+    const _isSameDay = isSameDay(_value as Date, this.intervalFrom?.value);
+    const startHour = getHours(this.intervalFrom?.value);
+    const endHourArr = Array.from({ length: startHour }, (_, i) => (i * 1));
+    const _isSameHour = isSameHour(this.intervalFrom?.value, _value as Date);
+    const isAfterHour = isAfter(_value as Date, this.intervalFrom?.value);
+    const startMin = getMinutes(this.intervalFrom?.value);
+    const minsArr = Array.from({ length: 12 }, (_, i) => (i) * 5);
+    const indexStartMin = minsArr.indexOf(startMin);
+    const allHours = Array.from({ length: 12 }, (_, i) => (i + 1) * 5);
+
+    return {
+      nzDisabledHours: () => _isSameDay ? endHourArr : Array.from({ length: 23 }, (_, i) => i + 1),
+      nzDisabledMinutes: () => _isSameDay ? (_isSameHour ? minsArr.slice(0, indexStartMin + 1) : (isAfterHour ? [] : allHours)) : Array.from({ length: 11 }, (_, i) => (i + 1) * 5),
+      nzDisabledSeconds: () => [] as number[]
+    }
+  }
+
+  disabledPrevDay = (currentDate: Date) => this.isDaily ? (differenceInCalendarDays(currentDate, new Date()) <= -this.dateDeduction || isAfter(currentDate, new Date()) ||  isToday(currentDate)) : differenceInCalendarDays(currentDate, new Date()) > -1;
   disabledPrevMonth = (currentDate: Date) => differenceInCalendarMonths(currentDate, new Date()) > 0;
-  disabledMonthlyInterval = (currentDate: Date) => this.interval?.value?.length && !isWithinInterval(currentDate, { start: this.interval?.value[0], end: this.interval?.value[1]});
+  disabledMonthlyInterval = (currentDate: Date) => this.intervalFrom?.value && this.intervalTo?.value && !isWithinInterval(currentDate, { start: this.intervalFrom?.value, end: this.intervalTo?.value});
   disabledDailyInterval = (currentDate: Date) => !isSameDay(this.tradingDay?.value, currentDate) && !isSameDay(addDays(this.tradingDay?.value, 1), currentDate);
   disabledInterval = (currentDate: Date) => this.isMonthly ? this.disabledMonthlyInterval(currentDate) : this.disabledDailyInterval(currentDate);
 
   get category(): AbstractControl | null { return this.form.get('category'); }
   get tradingDay(): AbstractControl | null { return this.form.get('tradingDay'); }
   get tradingMonth(): AbstractControl | null { return this.form.get('tradingMonth'); }
-  get interval(): AbstractControl | null { return this.form.get('interval'); }
+  // get interval(): AbstractControl | null { return this.form.get('interval'); }
+  get intervalFrom(): AbstractControl | null { return this.form.get('intervalFrom'); }
+  get intervalTo(): AbstractControl | null { return this.form.get('intervalTo'); }
   get mspShortName(): AbstractControl | null { return this.form.get('mspShortName'); }
 
   get isDaily(): boolean { return this.category?.value === MQ_UPLOAD_CATEGORY.DAILY; }
@@ -240,7 +317,7 @@ export class MqUploaderFilterComponent implements OnInit {
   get isMonthly(): boolean { return this.category?.value === MQ_UPLOAD_CATEGORY.MONTHLY; }
   get isCorrectedMonthly(): boolean { return this.category?.value === MQ_UPLOAD_CATEGORY.CORRECTED_MONTHLY; }
 
-  get acceptedFile(): string { return (this.isDaily || this.isMonthly) ? '.mdef, .mde, .mdf, .csv, .MDE, .MDF' : '.csv'; }
+  get acceptedFile(): string { return '.mdef, .mde, .mdf, .csv, .MDE, .MDF'; }
   get isMspUser(): boolean { return this.currentUser?.principal?.department === 'MSP' || this.regCategory === 'MSP'; }
 
 }

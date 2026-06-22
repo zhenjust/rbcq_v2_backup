@@ -124,5 +124,5 @@ const baseTableColumns: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.PROCESS_TYPE]: { label: LABELS.PROCESS_TYPE, propName: 'parameters', secondPropName: 'processType', width: '130px', type: 'template' },
   [LABELS.DATE_TIME_RANGE]: { label: LABELS.DATE_TIME_RANGE, propName: 'id', type: 'template', width: '320px' },
   [LABELS.MTN]: { label: LABELS.MTN, propName: 'parameters', secondPropName: 'mtn', type: 'template' },
-  [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', width: '120px', type: 'template' }
+  [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', width: '250px', type: 'template' }
 }

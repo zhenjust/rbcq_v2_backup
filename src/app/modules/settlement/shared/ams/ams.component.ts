@@ -1,21 +1,21 @@
-import { MESSAGES } from './../../../../shared/constants/messages.const';
+import { MESSAGES } from '@shared/constants/messages.const';
 import { Component, signal, inject, OnInit, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { RxwebValidators } from '@rxweb/reactive-form-validators';
 import { LABELS } from '@shared/constants/labels.const';
-import { MeterProcessTypes } from '@shared/enums';
 import { SettlementService } from '@shared/services/api';
-import { addDays, format, isAfter, isBefore, subDays } from 'date-fns';
+import { addDays, format, isBefore, subDays } from 'date-fns';
 import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { Subscription } from 'rxjs';
+import { MeterProcessTypes } from '@shared/enums';
 
 @Component({
-  selector: 'app-transaction-alloc',
+  selector: 'app-ams',
   standalone: false,
-  templateUrl: './transaction-alloc.component.html'
+  templateUrl: './ams.component.html'
 })
-export class TransactionAllocComponent implements OnInit {
+export class AmsComponent implements OnInit {
 
   private readonly formBuilder = inject(FormBuilder);
   private readonly modalData = inject(NZ_MODAL_DATA);
@@ -30,12 +30,14 @@ export class TransactionAllocComponent implements OnInit {
 
   rowData = signal<any | null>(null);
   action = signal<string>('');
+  isPenaltyMarketFee = signal<boolean>(false);
   startDate: Date;
   endDate: Date;
 
   ngOnInit(): void {
     this.rowData.set(this.modalData?.rowData);
     this.action.set(this.modalData?.action);
+    this.isPenaltyMarketFee.set(this.modalData?.isPenaltyMarketFee);
 
     this.buildForm();
   }
@@ -45,10 +47,26 @@ export class TransactionAllocComponent implements OnInit {
     this.endDate = addDays(this.rowData()?.billingEndDate, 1);
 
     this.form = this.formBuilder.group({
-      allocDate: [null, RxwebValidators.required({ conditionalExpression: () => !this.isPrelim })],
-      allocDueDate: [null],
-      allocRemarks: [null],
+      allocDate: [new Date(), RxwebValidators.required()],
+      dueDate: [addDays(new Date(), 1), RxwebValidators.required({ conditionalExpression: () => !this.isPrelim })],
+      remarks: [null],
     });
+
+    this.onAllocDateChange();
+  }
+
+  onAllocDateChange(): void {
+    this.allocDate.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef$))
+      .subscribe(allocDate => {
+        if (allocDate) {
+          this.dueDate.enable();
+          this.dueDate.setValue(addDays(allocDate, 1));
+        } else {
+          this.dueDate.disable();
+          this.dueDate.reset();
+        }
+      });
   }
 
   submit(): void {
@@ -63,13 +81,14 @@ export class TransactionAllocComponent implements OnInit {
         billingStartDate: row?.billingStartDate,
         billingEndDate: row?.billingEndDate,
         processType: row?.processType,
-        allocRemarks: form.allocRemarks,
-        allocDate: format(form.allocDate, 'yyyy-MM-dd'),
-        allocDueDate: format(form.allocDueDate, 'yyyy-MM-dd')
-      }
+        allocDate: form.allocDate ? format(form.allocDate, 'yyyy-MM-dd') : null,
+        billingPeriodName: row?.billingPeriod ? row?.billingPeriod : null,
+        remarks: form.remarks,
+        dueDate: form.dueDate && !this.isPrelim ? format(form.dueDate, 'yyyy-MM-dd') : null
+      },
     };
 
-    this.busy$ = this.settlementService.etaJobs(payload, true)
+    this.busy$ = this.settlementService.etaJobs(payload)
       .pipe(takeUntilDestroyed(this.destroyRef$))
       .subscribe(() => {
         this.modalRef$?.destroy(true);
@@ -80,6 +99,11 @@ export class TransactionAllocComponent implements OnInit {
     this.modalRef$.destroy();
   }
 
-  nzDisabledDate = (current: Date) => isBefore(current, this.startDate)  || isAfter(current, this.endDate);
+  disabledAllocDate = (current: Date) => isBefore(current, new Date());
+  disabledDueDate = (current: Date) => isBefore(current, this.allocDate?.value);
+
+  get allocDate(): AbstractControl { return this.form.get('allocDate') as AbstractControl; }
+  get dueDate(): AbstractControl { return this.form.get('dueDate') as AbstractControl; }
   get isPrelim(): boolean { return this.rowData()?.processType === MeterProcessTypes.PRELIM; }
+
 }

@@ -1,10 +1,10 @@
-import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, DestroyRef, effect, inject, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { LABELS } from '@shared/constants/labels.const';
-import { DownloadMmfParams, meterProcessBillingPeriod, meterProcessOptions, TableAction, TableDataResult, TPL_TABLE_COLUMN } from '@shared/interfaces';
+import { DownloadMmfParams, meterProcessBillingPeriod, meterProcessOptions, TableAction, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, exhaustMap, finalize, merge, Observable, Subject, switchMap, timer } from 'rxjs';
 import { GenerateMmfComponent } from './generate-mmf/generate-mmf.component';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
@@ -13,6 +13,7 @@ import { DownloadUtilService } from '@shared/services/utils';
 import { ToastrService } from 'ngx-toastr';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { format } from 'date-fns';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-metering-masterfile',
@@ -34,6 +35,7 @@ export class MeteringMasterfileComponent implements OnInit {
   readonly modalService = inject(NzModalService);
   readonly downloadService = inject(DownloadUtilService);
   readonly toastrService = inject(ToastrService);
+  readonly destroyRef$ = inject(DestroyRef);
 
   formBuilder = inject(FormBuilder);
 
@@ -42,6 +44,21 @@ export class MeteringMasterfileComponent implements OnInit {
   processTypeOpts: meterProcessOptions[];
   billingPeriodOpts: { label: string; value: { startDate: string, endDate: string }; }[];
 
+  // POLLING
+  pollingTime = signal<number>(60000);
+  private reload$ = new Subject<void>();
+  private pollingTime$ = new BehaviorSubject<number>(this.pollingTime());
+  url$: Observable<any>;
+  firstLoad = signal<boolean>(true);
+  // END OF POLLING
+
+  constructor() {
+    this.pollingTime$.next(this.pollingTime());
+    effect(() => {
+      this.pollingTime$.next(this.pollingTime());
+    });
+  }
+
   ngOnInit(): void {
     this.formatTableColumns();
     this.buildForm();
@@ -49,6 +66,8 @@ export class MeteringMasterfileComponent implements OnInit {
 
     this.processTypeOpts = METER_PROCESS_TYPE_OPTION
       .filter(opt => opt.id !== MeterProcessTypes.DAILY);
+
+    this.url$ = this.getUrl();
   }
 
   buildForm(): void {
@@ -61,7 +80,7 @@ export class MeteringMasterfileComponent implements OnInit {
   resetFilters(): void {
     this.showForm =! this.showForm;
     this.form.reset();
-    this.paginatedTable.search();
+    this.reload$?.next();
   }
 
   getBillingPeriods(): void {
@@ -96,26 +115,48 @@ export class MeteringMasterfileComponent implements OnInit {
 
     modal.afterClose.subscribe(val => {
       if (val) {
-        this.paginatedTable.search();
+        this.reload$?.next();
       }
     });
   }
 
-  listUrl(): Observable<TableDataResult<any[]> | null> {
-    if (!this.paginatedTable) {
-      return of();
-    }
+  getUrl(): Observable<any> {
+    const polling$ = this.pollingTime$.pipe(
+      switchMap(interval => {
+        return timer(0, interval)
+      })
+    );
 
-    const formValues = this.form.getRawValue();
-    const filters = {
-      ...formValues,
-      ...formValues.billingPeriod,
-      name: 'runMMFReport'
-    };
+    return merge(
+      polling$,
+      this.reload$
+    ).pipe(
+      exhaustMap(() => {
+        if (this.firstLoad()) {
+          this.paginatedTable.loading = true;
+        }
 
-    delete filters?.billingPeriod;
+        const formValues = this.form.getRawValue();
+        const filters = {
+          ...formValues,
+          ...formValues.billingPeriod,
+          name: 'runMMFReport'
+        };
 
-    return this.meterService.searchByNameParams(filters, this.paginatedTable?.tableParams);
+        delete filters?.billingPeriod;
+
+        return this.meterService.searchByNameParams(filters, this.paginatedTable?.tableParams)
+          .pipe(
+            takeUntilDestroyed(this.destroyRef$),
+            finalize(() => {
+              if (this.paginatedTable) {
+                this.paginatedTable.loading = false;
+              }
+              this.firstLoad.set(false);
+          })
+        )
+      })
+    );
   }
 
   download(data: any): void {
@@ -136,23 +177,24 @@ export class MeteringMasterfileComponent implements OnInit {
       nzContent: MESSAGES.CONFIRM_DELETE_ITEM(LABELS.METERING_MASTERFILE),
       nzOnOk: () => {
         const id = data.pipelineRuns[0].workspaceId;
-        this.paginatedTable.busy$ = this.meterService.deleteMeteringReport(id, 'mmf-delete')
+        const processType = data.parameters?.processType;
+
+        this.paginatedTable.busy$ = this.meterService.deleteMeteringReport(id, 'mmf-delete', processType)
+          .pipe(takeUntilDestroyed(this.destroyRef$))
           .subscribe(() => {
             const message = MESSAGES.SUCCESS_DELETE_ITEM(LABELS.METERING_MASTERFILE);
             this.toastrService.success(message);
-            this.paginatedTable.search();
+            this.reload$?.next();
           });
       }
     });
   }
 
 
-  get actionControls(): TableAction<any>[] {
-    return [
-      { label: LABELS.DOWNLOAD, value: 'download', click: (rowData: any) => this.download(rowData)},
-      { label: LABELS.DELETE, value: 'generate', click: (rowData: any) => this.delete(rowData), danger: true},
-    ];
-  }
+  actionControls = (rowData: any): TableAction<any>[] => [
+    { label: LABELS.DOWNLOAD, value: 'download', click: () => this.download(rowData)},
+    { label: LABELS.DELETE, value: 'generate', click: () => this.delete(rowData), danger: true},
+  ];
 
 }
 

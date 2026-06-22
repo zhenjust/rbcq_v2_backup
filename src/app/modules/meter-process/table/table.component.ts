@@ -1,21 +1,19 @@
-import { Component, OnInit, TemplateRef, ViewChild, computed, effect, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, TemplateRef, ViewChild, computed, effect, inject, signal } from '@angular/core';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { MeterDataPipelineName, MeterProcessStatus, MeterDataPipelineProcess, PipelineStatus, MeterDataPipelineNameLabel } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { MeterProcessTypes } from '@shared/enums';
-import { HttpResponseProgress, meterProcessPipeline, meterProcessPipelineGroup, meterProcessTable } from '@shared/interfaces';
+import { meterProcessJobSearchGroupParams, meterProcessPipeline, meterProcessPipelineGroup, meterProcessTable } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { SearchFilterService } from '@shared/services/meterProcess';
-import { DateFormatterUtilService } from '@shared/services/utils';
-import { saveAs } from 'file-saver';
+import { DateFormatterUtilService, DownloadUtilService } from '@shared/services/utils';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { ToastrService } from 'ngx-toastr';
 import { ConsolidateComponent } from '../consolidate/consolidate.component';
-import { HttpEventType } from '@angular/common/http';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzNotificationDataOptions, NzNotificationService } from 'ng-zorro-antd/notification';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subject, BehaviorSubject, Observable, EMPTY, merge, timer } from 'rxjs';
+import { exhaustMap, finalize, switchMap } from 'rxjs/operators';
 interface tableColumn {
   name: string;
 }
@@ -54,16 +52,15 @@ export class TableComponent implements OnInit {
   @ViewChild('runJobs', { static: true }) runJobs!: TemplateRef<void>;
   @ViewChild('downloadTpl', { static: false }) downloadTpl!: TemplateRef<void>;
 
-  downloadingReports = new Set<number>();
-
   meterProcessStatus = MeterProcessStatus;
   meterDataPipelines = MeterDataPipelineName;
-  meterDataPipelineProcess = MeterDataPipelineProcess;
   processTypes = MeterProcessTypes;
   pipelineStatus = PipelineStatus;
   labels = LABELS;
   tableData = computed(() => this.sfs.jobs() || this.defaultTableData);
   isLoading = computed(() => this.sfs.isLoading());
+
+  filters: Partial<meterProcessJobSearchGroupParams>;
 
   // Add property to store current modal data
   currentModalData: ModalData | null = null;
@@ -106,11 +103,27 @@ export class TableComponent implements OnInit {
 
   private mpa = inject(MeterprocessService);
   private as = inject(AuthorizationService);
-  private readonly ms = inject(NzMessageService);
-  private readonly ns = inject(NzNotificationService);
+  private readonly du = inject(DownloadUtilService);
   private readonly untilDestroy$ = takeUntilDestroyed();
+  private readonly destroyRef$ = inject(DestroyRef);
+
+  pollingTime = signal<number>(60000);
+  public reload$ = new Subject<void>();
+  private pollingTime$ = new BehaviorSubject<number>(this.pollingTime());
+  url$: Observable<any>;
+  loadingTable = signal<boolean>(false);
+  isFirstLoad = true;
 
   constructor() {
+    this.pollingTime$.next(this.pollingTime());
+    effect(() => {
+      this.pollingTime$.next(this.pollingTime());
+    });
+
+    effect(() => {
+      this.loadingTable.set(this.sfs.isLoading());
+    });
+
     effect(() => {
       this.sfs.jobs();
       const error = this.sfs.error();
@@ -122,7 +135,8 @@ export class TableComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.sfs.refreshJobs({});
+    this.url$ = this.getListUrl();
+    this.url$.subscribe();
   }
 
   onExpandChange(checked: boolean, index: number): void {
@@ -133,19 +147,52 @@ export class TableComponent implements OnInit {
     }
   }
 
+  private refreshTable(params: Partial<meterProcessJobSearchGroupParams>): void {
+    this.sfs.refreshJobs(params);
+    this.reload$.next();
+  }
+
   onPageChange(newPageIndex: number): void {
     const currentSize = this.tableData().size || 10;
-    this.sfs.refreshJobs({
+    this.refreshTable({
+      ...this.filters,
       page: newPageIndex - 1,
       size: currentSize
     });
   }
 
   onPageSizeChange(newSize: number): void {
-    this.sfs.refreshJobs({
+    this.refreshTable({
+      ...this.filters,
       page: 0,
       size: newSize
     });
+  }
+
+  getListUrl(): Observable<void> {
+    const polling$ = this.pollingTime$.pipe(
+      switchMap(interval => timer(0, interval))
+    );
+
+    return merge(
+      polling$,
+      this.reload$
+    ).pipe(
+      takeUntilDestroyed(this.destroyRef$),
+      exhaustMap(() => {
+        if (this.isFirstLoad) {
+          this.loadingTable.set(true);
+        }
+
+        this.sfs.refreshJobs(this.sfs.params() ?? {});
+
+        return EMPTY.pipe(
+          finalize(() => {
+            this.loadingTable.set(false);
+          })
+        );
+      })
+    );
   }
 
   onPipelineExpandChange(checked: boolean, parentIndex: number, pipelineIndex: number): void {
@@ -160,6 +207,10 @@ export class TableComponent implements OnInit {
   isPipelineExpanded(parentIndex: number, pipelineIndex: number): boolean {
     const uniqueKey = `${parentIndex}-${pipelineIndex}`;
     return this.pipelineExpandSet.has(uniqueKey);
+  }
+
+  isDownloadingReport(pipelineId: number): boolean {
+    return this.du.isDownloading(pipelineId);
   }
 
   //for row color functions
@@ -209,7 +260,7 @@ export class TableComponent implements OnInit {
                   nzCentered: true,
                   nzTitle: 'Jobs Successfully Triggered!'
                 });
-                this.sfs.refreshJobs({});
+                this.refreshTable(this.sfs.params()!);
                 resolve();
               },
               error: (err) => {
@@ -237,53 +288,6 @@ export class TableComponent implements OnInit {
     return 'Unknown';
   }
 
-  handleProgress(response: HttpResponseProgress, pipeline: meterProcessPipeline): void {
-    const currentDownloaded = response.loaded ?? 0;
-    const currentTotal = response.total ? this.formatFileSize(response.total) : 0;
-    const currentSize = this.formatFileSize(currentDownloaded);
-
-    pipeline.currentDownloadedFile = currentDownloaded ? `${currentSize} / ${currentTotal}` : null;
-    pipeline.currentDownloadedPercentage = response.total && +((response.loaded / response.total) * 100).toFixed(0);
-
-    const config: NzNotificationDataOptions = {
-      nzPlacement: 'bottomRight',
-      nzDuration: 0,
-      nzKey: pipeline.id.toString(),
-      nzCloseIcon: '',
-      nzClass: 'notif-progress',
-      nzData: {
-        size: pipeline.currentDownloadedFile,
-        percentage: pipeline.currentDownloadedPercentage,
-        id: pipeline.id
-      },
-      nzStyle: {
-        padding: '0px'
-      }
-    };
-
-    this.ns.blank('', this.downloadTpl, config);
-  }
-
-  handleDownloadReport(response: any, pipeline: meterProcessPipeline, fileName: string): void {
-    this.ns.remove(pipeline.id.toString());
-    pipeline.currentDownloadedFile = null;
-    pipeline.currentDownloadedPercentage = null;
-
-    const blob = response.body as Blob;
-    const contentDisposition = response.headers.get('Content-Disposition');
-    if (contentDisposition) {
-      const match = /filename="?([^"]+)"?/.exec(contentDisposition);
-      if (match?.[1]) {
-        fileName = match[1];
-      }
-    }
-
-    saveAs(blob, fileName);
-    this.downloadingReports.delete(pipeline.id);
-
-    this.toast.success(MESSAGES.SUCCESS_DOWNLOAD_ITEM(`report for ${pipeline.id}`));
-  }
-
   hasSuccessfulReportGeneration(pipeline: meterProcessPipeline): boolean {
     return pipeline.pipelineRuns.some(p => p.name === "runMeterData-zipReport" && p.status === "Succeeded");
   }
@@ -297,7 +301,7 @@ export class TableComponent implements OnInit {
     const user = this.as.currentUser()?.principal.username ?? '';
     const filename = `${processType}_MeteringData_${formattedTradingDate}_${runDate}.zip`;
 
-    this.downloadingReports.add(id);
+    this.du.startDownload(pipeline, this.downloadTpl);
 
     const params = {
       version: String(id),
@@ -312,32 +316,12 @@ export class TableComponent implements OnInit {
     this.mpa.downloadReport(params)
       .subscribe({
         next: (response) => {
-          if (response.type === HttpEventType.DownloadProgress) {
-            this.handleProgress(response, pipeline);
-          } else if (response.type === HttpEventType.Response) {
-            this.handleDownloadReport(response, pipeline, filename)
-          }
+          this.du.processDownloadEvent(response, pipeline, this.downloadTpl, filename, MESSAGES.SUCCESS_DOWNLOAD_ITEM(`report for ${pipeline.id}`));
         },
         error: () => {
-          this.downloadingReports.delete(id);
+          this.du.clearProgress(id);
         }
     });
-  }
-
-  formatFileSize(bytes: number): string {
-    if (bytes === 0) {
-      return '0 Bytes'
-    }
-
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  }
-
-  isDownloadingReport(pipelineId: number): boolean {
-    return this.downloadingReports.has(pipelineId);
   }
 
   consolidate(baseTableData: meterProcessPipeline, pipeline: meterProcessPipelineGroup): void {
@@ -359,7 +343,7 @@ export class TableComponent implements OnInit {
 
     modal.afterClose.subscribe(res => {
       if (res) {
-        this.sfs.refreshJobs({});
+        this.refreshTable(this.sfs.params()!);
       }
     });
   }
@@ -373,7 +357,7 @@ export class TableComponent implements OnInit {
         this.mpa.cancelRun(baseTableData.id)
           .pipe(this.untilDestroy$)
           .subscribe(() => {
-            this.sfs.refreshJobs({});
+            this.refreshTable(this.sfs.params()!);
             this.toast.success(MESSAGES.SUCCESS_CANCEL_ITEM('run'));
           });
       }

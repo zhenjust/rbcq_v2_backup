@@ -10,6 +10,7 @@ import { MeterprocessService } from '@shared/services/api';
 import { format } from 'date-fns';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
+import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -27,10 +28,12 @@ export class GenerateMmfComponent implements OnInit {
   readonly formBuilder = inject(FormBuilder);
   readonly mps = inject(MeterprocessService);
   readonly modalRef = inject(NzModalRef);
+  readonly toastr = inject(ToastrService);
 
   billingPeriods: meterProcessBillingPeriod[];
   billingPeriodOpts: NzSelectOptionInterface[] = [];
   processTypeOpts: NzSelectOptionInterface[] = [];
+  showError: boolean;
 
   constructor() { }
 
@@ -55,9 +58,13 @@ export class GenerateMmfComponent implements OnInit {
 
   triggerOk(): void {
     if (this.form.invalid) {
+      this.showError = true;
       this.form.markAllAsTouched();
       return;
     }
+
+    this.showError = false;
+
     const formValue = this.form.getRawValue();
     const selectedBp = this.billingPeriods.find(bp => bp.billingPeriod === formValue.billingPeriod);
 
@@ -71,7 +78,14 @@ export class GenerateMmfComponent implements OnInit {
     };
 
     this.busy$ = this.mps.generateMeteringList(payload, 'mmf-generate')
-      .subscribe(() => this.modalRef.destroy(true));
+      .subscribe({
+        next: () => this.modalRef.destroy(true),
+        error: (error) => {
+          if (error.status === 422) {
+            this.toastr.error(MESSAGES.MMF_DUPLICATE);
+          }
+        }
+      });
   }
 
   getBillingPeriods(): void {

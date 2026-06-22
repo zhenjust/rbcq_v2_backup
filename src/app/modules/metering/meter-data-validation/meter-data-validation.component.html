@@ -43,17 +43,19 @@
         </button>
       }
 
-      <button nz-button *nzSpaceItem nzType="primary" [disabled]="form.invalid" (click)="showForm ? paginatedTable?.search() : showForm =! showForm">
+      <button nz-button *nzSpaceItem nzType="primary" [disabled]="form.invalid" (click)="showForm ? reload$.next() : showForm =! showForm">
         {{ showForm ? LABELS.APPLY_FILTERS : LABELS.SET_FILTERS }}
       </button>
+
+      <app-polling-timer *nzSpaceItem (emitEvent)="pollingTime.set($event)" (emitReload)="paginatedTable.loading = true; reload$.next()"></app-polling-timer>
     </nz-space>
 
     <button nz-button nzType="primary" (click)="generate()">{{ LABELS.GENERATE }}</button>
   </div>
 
   <!-- Table -->
-  <app-paginated-table #paginatedTable [tableColumns]="tableColumns" [url]="listUrl()" [showActions]="true"
-    [actionControls]="actionControls" [tableConfig]="{ height: '60vh' }" [enableExpand]="true" [expandTpl]="expandTpl"></app-paginated-table>
+  <app-paginated-table #paginatedTable [tableColumns]="tableColumns" [url]="url$" [showActions]="true"
+    [actionControls]="actionControls" [tableConfig]="{ height: '60vh' }" [enableExpand]="true" [expandTpl]="expandTpl" [showCustomLoading]="true"></app-paginated-table>
 
   <ng-template #expandTpl let-row="row">
     <div class="d-flex w-100 my-2 pe-2">
@@ -84,6 +86,22 @@
   <nz-tag class="break-word-tag">
     {{ data }}
   </nz-tag>
+</ng-template>
+
+<ng-template #tagPopoverTpl let-allData="allData">
+  <nz-tag
+    nz-popover
+    [nzPopoverContent]="allData.status === 'Failed' ? errorTpl : undefined"
+    [nzPopoverTitle]="allData.status === 'Failed' ? 'Error' : undefined"
+    nzPopoverTrigger="hover"
+    class="break-word-tag">
+    {{ allData.status }}
+  </nz-tag>
+  <ng-template #errorTpl>
+    <div style="max-width: 800px; max-height: 300px; overflow: auto;">
+      <pre>{{ allData.message }}</pre>
+    </div>
+  </ng-template>
 </ng-template>
 
 

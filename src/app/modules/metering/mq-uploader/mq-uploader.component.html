@@ -1,7 +1,7 @@
 <nz-card [nzTitle]="LABELS.MQ_UPLOADER">
   <div class="d-flex {{tabIndex ? 'justify-content-between': 'justify-content-end'}}">
     <button nz-button *ngIf="tabIndex" class="mb-3" nzType="default"  (click)="resetFilters()">{{ LABELS.CLEAR_FILTERS }}</button>
-    <button nz-button *ngIf="!tabIndex" nzType="primary" (click)="import()" [disabled]="!disableImport || !isAllowedImport" nz-tooltip [nzTooltipTitle]="isAllowedImport ? '' : MESSAGES.INVALID_MQ_TIME(timeLimit)">{{ LABELS.START_IMPORT }}</button>
+    <button nz-button *ngIf="!tabIndex" nzType="primary" (click)="import()" [disabled]="!disableImport">{{ LABELS.START_IMPORT }}</button>
   </div>
 
   @if (tabIndex) {
@@ -27,7 +27,6 @@
   </div>
 </ng-template>
 
-
 <!-- Column Templates -->
 <ng-template #sizeTpl let-data="data">
   {{ (data | fileSize) || '-' }}
@@ -40,7 +39,7 @@
     <div class="d-flex flex-column">
       <p class="mb-0">{{ LABELS.UPLOADING_DATE_AND_TIME }}: <span class="fw-bold">{{ allData?.uploadDate }}</span></p>
       <p class="mb-0">{{ LABELS.TOTAL_NUMBER_OF_FILES_UPLOADED }}: <span class="fw-bold">{{ allData?.fileCount }}</span></p>
-      <p class="mb-0">{{ LABELS.NO_OF_FILES_SUCCESSFULLY_UPLOADED }}: <span class="fw-bold">{{ allData?.rejected }}</span></p>
+      <p class="mb-0">{{ LABELS.NO_OF_FILES_SUCCESSFULLY_UPLOADED }}: <span class="fw-bold">{{ allData?.accepted }}</span></p>
       <p class="mb-0">{{ LABELS.NO_OF_FILES_REJECTED }}: <span class="fw-bold">{{ allData?.rejected }}</span></p>
     </div>
   </ng-template>

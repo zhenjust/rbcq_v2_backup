@@ -18,6 +18,8 @@ import { Subject, takeUntil } from 'rxjs';
 export class FilterSearchComponent implements OnInit, OnDestroy {
 
   @Output() filtersEvent = new EventEmitter<Partial<settlementParams>>();
+  @Output() pollingEvent = new EventEmitter<number>();
+  @Output() reloadEvent = new EventEmitter<boolean>();
 
   private readonly destroy$ = new Subject<void>();
   private readonly fb = inject(FormBuilder);

@@ -1,7 +1,8 @@
 <nz-flex nzVertical="true" nzJustify="center" nzAlign="start" class="form-container" nzWrap="wrap">
-    <button nz-button [nzType]="hasFilter ? 'default' : 'primary'"
-        (click)=" !hasFilter ? toggleFilter() : resetFilter()">{{ hasFilter ? LABELS.CLEAR_FILTERS : LABELS.SET_FILTERS
-        }}</button>
+  <nz-space>
+    <button *nzSpaceItem nz-button [nzType]="hasFilter ? 'default' : 'primary'" (click)=" !hasFilter ? toggleFilter() : resetFilter()">{{ hasFilter ? LABELS.CLEAR_FILTERS : LABELS.SET_FILTERS }}</button>
+    <app-polling-timer *nzSpaceItem (emitEvent)="pollingEvent.emit($event)" (emitReload)="reloadEvent.emit(true)"></app-polling-timer>
+  </nz-space>
 
     @if (hasFilter) {
     <form [formGroup]="filterSettlementForm" class="form-container">
@@ -33,9 +34,9 @@
         }
 
         @if (filterSettlementForm.dirty) {
-        <nz-flex nzGap="large" class="form-item">
-            <button nz-button nzType="primary" (click)="applyFilter()">{{ LABELS.APPLY_FILTERS }}</button>
-        </nz-flex>
+          <nz-flex nzGap="large" class="form-item">
+              <button nz-button nzType="primary" (click)="applyFilter()">{{ LABELS.APPLY_FILTERS }}</button>
+          </nz-flex>
         }
     </form>
     }

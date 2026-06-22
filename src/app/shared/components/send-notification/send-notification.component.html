@@ -1,0 +1,8 @@
+<app-template-table [tableColumns]="columns" [tableData]="tableData()"></app-template-table>
+<label class="mt-3 mb-1">{{ LABELS.NOTIFICATION_MESSAGE }} <span class="text-danger">*</span></label>
+<div [froalaEditor]="froalaOptions" [(ngModel)]="notificationMessage"></div>
+
+@if (!notificationMessage && showError()) {
+  <p class="mb-0 text-danger">{{ MESSAGES.REQUIRED_FIELD }}</p>
+}
+

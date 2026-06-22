@@ -18,6 +18,9 @@ export const NEW_ROUTES = {
     RBCQ_PROCESS: 'rbcq-v2/process',
     WESM_PENALTY: 'settlement/wesm-penalty',
     ADDITIONAL_COMPENSATION_LIST: 'settlement/additional-compensation',
+    ENERGY_MF: 'settlement/energy-market-fee',
+    RESERVE_MF: 'settlement/reserve-market-fee',
+
 }
 
 export const HEADER_ROUTES = {

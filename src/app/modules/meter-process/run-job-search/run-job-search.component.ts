@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild, effect } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild, effect, output, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { METER_PROCESS_TYPE_OPTION, MeterDataPipelineName } from '@shared/constants';
 import { MESSAGES } from '@shared/constants/messages.const';
@@ -18,12 +18,18 @@ import { Subject, takeUntil } from 'rxjs';
   styleUrl: './run-job-search.component.scss'
 })
 export class RunJobSearchComponent implements OnInit, OnDestroy {
+
+  @Output() pollingEvent = new EventEmitter<number>();
+  @Output() reloadEvent = new EventEmitter<boolean>();
+
   filterForm!: FormGroup;
 
   isFormValid: boolean = false;
   hasFilter: boolean = false;
   meterProcessTypeOptions: meterProcessOptions[] = METER_PROCESS_TYPE_OPTION;
   meterProcessBillingPeriod: meterProcessBillingPeriod[] = [];
+
+  filtersEvent = output<Partial<meterProcessJobSearchGroupParams>>();
 
   @ViewChild('runMeterDataModal', { static: true }) runMeterDataModal!: TemplateRef<void>;
 
@@ -142,6 +148,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
       };
 
       this.sfs.refreshJobs(formattedValues);
+      this.filtersEvent.emit(formattedValues);
     }
   }
 
@@ -152,6 +159,7 @@ export class RunJobSearchComponent implements OnInit, OnDestroy {
     this.hasFilter = false;
     this.meterProcessParams = null;
     this.sfs.refreshJobs({});
+    this.filtersEvent.emit({});
   }
 
   openRunWesmModal(): void {

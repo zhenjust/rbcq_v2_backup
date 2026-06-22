@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { LABELS } from '@shared/constants/labels.const';
 import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-confirm-with-desc',
@@ -15,8 +16,20 @@ export class ConfirmWithDescComponent {
   readonly data = inject(NZ_MODAL_DATA);
   readonly modalRef = inject(NzModalRef);
 
+  isLoading = false;
+
   onBtnClick(): void {
-    this.modalRef.triggerOk();
+    if (this.data.onOk) {
+      this.isLoading = true;
+      this.data.onOk().pipe(
+        finalize(() => this.isLoading = false)
+      ).subscribe({
+        next: (result: any) => this.modalRef.close(result ?? true),
+        error: () => {}
+      });
+    } else {
+      this.modalRef.triggerOk();
+    }
   }
 
   onBtnClose(): void {

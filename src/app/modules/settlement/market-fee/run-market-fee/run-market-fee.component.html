@@ -1,0 +1,40 @@
+<nz-spin [nzSpinning]="busy$ && !busy$.closed">
+  @if (form.invalid && form.touched) {
+  <nz-alert nzBanner nzType="error" [nzMessage]="MESSAGE.REQUIRED_FIELDS" class="mb-3"></nz-alert>
+  }
+
+  <form nz-form [formGroup]="form" nzLayout="vertical" nzNoColon class="row">
+    <nz-form-item class="col-sm-12">
+      <nz-form-label nzRequired>{{ LABELS.PROCESS_TYPE }}</nz-form-label>
+      <nz-form-control>
+        <nz-select formControlName="processType" [nzOptions]="processTypeOptions" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
+          [nzAllowClear]="true" nzShowSearch></nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item class="col-sm-12">
+      <nz-form-label nzRequired>{{ LABELS.BILLING_PERIOD }}</nz-form-label>
+      <nz-form-control>
+        <nz-select formControlName="billingPeriod" [nzOptions]="billingPeriodOpts" [nzPlaceHolder]="LABELS.CHOOSE_HERE"
+          [nzAllowClear]="true" nzShowSearch></nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item class="col-sm-12 col-md-6 mb-0">
+      <nz-form-label nzRequired>{{ LABELS.START_DATE }}</nz-form-label>
+      <nz-form-control>
+        <input nz-input [disabled]="true" [ngModel]="selectedBp?.startDate | date: 'yyyy-MM-dd'"
+          [ngModelOptions]="{ standalone: true }" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item class="col-sm-12 col-md-6 mb-0">
+      <nz-form-label nzRequired>{{ LABELS.END_DATE }}</nz-form-label>
+      <nz-form-control>
+        <input nz-input [disabled]="true" [ngModel]="selectedBp?.endDate | date: 'yyyy-MM-dd'"
+          [ngModelOptions]="{ standalone: true }" />
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</nz-spin>
+

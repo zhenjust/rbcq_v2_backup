@@ -28,6 +28,7 @@ export class TemplateTableComponent {
 
   enableExpand = input<boolean>();
   expandProp = input<string>('id');
+  maxTblHeight = input<string>('auto');
   expandTpl = input<TemplateRef<any>>();
   expandSet = new Set<number>();
 

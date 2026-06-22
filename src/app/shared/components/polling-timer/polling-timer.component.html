@@ -1,0 +1,17 @@
+<nz-space-compact>
+  <button nz-button (click)="emitReload.emit(true)">
+    <nz-icon nzType="reload" nzTheme="outline"></nz-icon>
+  </button>
+  <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzPlacement="bottomRight" class="px-2">
+    {{ selectedPollingTime() }}
+    <nz-icon nzType="down" nzTheme="outline" class="ml-0"  style="margin-left: 2px;"/>
+  </button>
+</nz-space-compact>
+
+<nz-dropdown-menu #menu="nzDropdownMenu">
+  <ul nz-menu>
+    @for (time of pollingOpts; track $index) {
+      <li nz-menu-item (click)="onPollingChange(time)">{{ time.label }}</li>
+    }
+  </ul>
+</nz-dropdown-menu>

@@ -21,7 +21,10 @@ export class PaginatedTableComponent<T> extends SearchListBase {
   @Input() checkboxProperty = 'id';
   @Input() disableSelectAll = false;
   @Input() checkboxCondition!: (rowData: any) => boolean;
+  @Input() progressBarCondition!: (rowData: any) => boolean;
   @Input() url: Observable<any>;
+  @Input() showCustomLoading: boolean;
+
 
   enableExpand = input<boolean>();
   expandTpl = input<TemplateRef<any>>();
@@ -36,7 +39,7 @@ export class PaginatedTableComponent<T> extends SearchListBase {
 
   showActions = input<boolean>(false);
 
-  actionControls = input<TableAction<T>[]>();
+  actionControls = input<TableAction<T>[] | ((rowData: T) => TableAction<T>[])>([]);
 
   selectedItems = new Set<number>();
   LABELS = LABELS;
@@ -98,6 +101,20 @@ export class PaginatedTableComponent<T> extends SearchListBase {
       ...(this.tableColumns ? this.tableColumns.map(col => col?.width ? col?.width : '150px') : []),
       ...(this.showActions() ? ['100px'] : [])
     ];
+  }
+
+
+  getActions(row: T): TableAction<T>[] {
+    const actionsOrFn = this.actionControls();
+    let actions: TableAction<T>[];
+
+    if (typeof actionsOrFn === 'function') {
+      actions = actionsOrFn(row);
+    } else {
+      actions = actionsOrFn || [];
+    }
+
+    return actions.filter(action => !action.hidden || !action.hidden());
   }
 
 

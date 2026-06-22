@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { TableParams } from '@shared/interfaces';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { finalize, Observable, Subject, Subscription } from 'rxjs';
 
 
 @Component({
@@ -17,12 +17,14 @@ export abstract class SearchListBase {
 
   listComplete$ = new Subject<any>();
   tableData: any[] = [];
+  loading = false;
 
   tableParams = new TableParams();
 
   protected constructor() { }
 
   search(): void {
+    this.loading = true;
     this.tableParams.page = 0;
     this.getList();
   }
@@ -48,7 +50,9 @@ export abstract class SearchListBase {
 
   getList(): void {
     setTimeout(() => {
-      this.busy$ = this.getListUrl()
+      this.loading = true;
+      this.getListUrl()
+        .pipe(finalize(() => {this.loading = false}))
         .subscribe(itemDetails => {
           if (itemDetails) {
             this.tableData = itemDetails[this.resultsProp || 'content'];
@@ -60,6 +64,6 @@ export abstract class SearchListBase {
     }, 1);
   }
 
-  get isLoading(): boolean { return this.busy$ && !this.busy$?.closed; }
+  get isLoading(): boolean { return (this.busy$ && !this.busy$?.closed) || this.loading; }
 
 }

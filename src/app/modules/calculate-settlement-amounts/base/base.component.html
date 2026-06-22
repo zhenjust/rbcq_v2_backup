@@ -1,10 +1,15 @@
 <nz-card [nzTitle]="pageTitle">
     @if (showRunProcess) {
         <ng-container *ngxPermissionsOnly="[perm.RUN_RESERVE_SETTLEMENT_READY]">
-            <app-run-process-form [module]="module" (emitJob)="table.search()"></app-run-process-form>
+            <app-run-process-form [module]="module" (emitJob)="table.reload$.next()"></app-run-process-form>
         </ng-container>
     }
 
-    <app-filter-search (filtersEvent)="table.filters = $event; table.search()"></app-filter-search>
+    <app-filter-search
+      (filtersEvent)="table.filters = $event; table.loadingTable.set(true); table.reload$.next()"
+      (pollingEvent)="table.pollingTime.set($event)"
+      (reloadEvent)="table.loadingTable.set(true); table.reload$.next()">
+    </app-filter-search>
+
     <app-table #table></app-table>
 </nz-card>

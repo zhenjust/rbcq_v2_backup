@@ -4,6 +4,7 @@ export const MESSAGES = {
   CLEAR_ALL_FILES: 'Are you sure you want to clear all selected files?',
   CANCEL_RUN: `Are you sure you want to cancel this run?`,
   INVALID_FILE_TYPE: `Invalid file type. Please try again.`,
+  INVALID_FILE_TYPE_MQ: 'Invalid File Type. Only CSV, MDE, MDEF files are allowed.',
   LONG_FILE_NAME: `Invalid file. Maximum filename should be 100 characters.`,
   ALL_FILES_ERROR: 'All files encountered an error while importing.',
   SINGLE_FILE_ERROR: 'An error occured during import.',
@@ -17,6 +18,9 @@ export const MESSAGES = {
   SESSION_TIMEOUT_MSG_1: 'You have been inactive for a while. For your security, you will be logged out in',
   SESSION_TIMEOUT_MSG_2: 'Move your cursor to continue with your session',
   MIN_DATE: 'End date should be after the start date.',
+  MMF_DUPLICATE: 'Metering Masterfile for the Billing Period and Billing Run Type already exists.',
+  SUCCESS_RUN_ADJUSTED: `Successfully triggered Run Adjustment.`,
+  SUCCESS_SEND_NOTICE: `Successfully sent notification.`,
 
   // DYNAMIC MESSAGES
   ITEMS_REQUIRED: (item: string) => `${item} are required.`,

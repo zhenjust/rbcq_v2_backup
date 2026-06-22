@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, DestroyRef, effect, inject, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { LABELS } from '@shared/constants/labels.const';
@@ -6,7 +6,7 @@ import { meterProcessBillingPeriod, Reference, TPL_TABLE_COLUMN } from '@shared/
 import { AdminService, MeterprocessService, SettlementService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
-import { forkJoin, Observable, of } from 'rxjs';
+import { BehaviorSubject, exhaustMap, finalize, forkJoin, merge, Observable, Subject, switchMap, timer } from 'rxjs';
 import { FileAClaimComponent } from './file-a-claim/file-a-claim.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PipelineTableColumns } from '@shared/constants/pipelines.const';
@@ -48,10 +48,28 @@ export class AdditionalCompensationComponent implements OnInit {
 
   filters: any = {};
 
+  // POLLING
+  pollingTime = signal<number>(60000);
+  private reload$ = new Subject<void>();
+  private pollingTime$ = new BehaviorSubject<number>(this.pollingTime());
+  url$: Observable<any>;
+  firstLoad = signal<boolean>(true);
+  // END OF POLLING
+
+  constructor() {
+    this.pollingTime$.next(this.pollingTime());
+    effect(() => {
+      this.pollingTime$.next(this.pollingTime());
+    });
+  }
+
+
   ngOnInit(): void {
     this.buildForm();
     this.formatTableColumns();
     this.getReferences();
+
+    this.url$ = this.getUrl();
   }
 
   buildForm(): void {
@@ -80,12 +98,49 @@ export class AdditionalCompensationComponent implements OnInit {
 
   }
 
-  getUrl(): Observable<any> {
-    if (!this.paginatedTable) {
-      return of([]);
-    }
 
-    return this.settlementService.search(this.filters, 'additionalCompensation', this.paginatedTable?.tableParams);
+  getUrl(): Observable<any> {
+
+    const polling$ = this.pollingTime$.pipe(
+      switchMap(interval => {
+        return timer(0, interval)
+      })
+    );
+
+    return merge(
+      polling$,
+      this.reload$
+    ).pipe(
+      exhaustMap(() => {
+        if (this.firstLoad()) {
+          this.paginatedTable.loading = true;
+        }
+
+        return this.settlementService.search(this.filters, 'additionalCompensation', this.paginatedTable?.tableParams)
+        .pipe(
+          takeUntilDestroyed(this.destroyRef$),
+          finalize(() => {
+            if (this.paginatedTable) {
+              this.paginatedTable.loading = false;
+            }
+            this.firstLoad.set(false);
+          })
+        )
+        // return this.settlementService.search(
+        //   this.filters,
+        //   groupName,
+        //   this.paginatedTable?.tableParams
+        // ).pipe(
+        //   takeUntilDestroyed(this.destroyRef$),
+        //   finalize(() => {
+        //     if (this.paginatedTable) {
+        //       this.paginatedTable.loading = false;
+        //     }
+        //     this.firstLoad.set(false);
+        //   })
+        // )
+      })
+    );
   }
 
   getReferences(): void {
@@ -110,7 +165,9 @@ export class AdditionalCompensationComponent implements OnInit {
   applyFilter(): void {
     const values = this.form.getRawValue();
     this.filters = values;
-    this.paginatedTable.search();
+
+    this.paginatedTable.loading = true;
+    this.reload$.next();
   }
 
   triggerFileClaim(): void {
@@ -130,7 +187,7 @@ export class AdditionalCompensationComponent implements OnInit {
           label: LABELS.FILE_A_CLAIM,
           type: 'primary',
           onClick: (component: FileAClaimComponent) => component.triggerOk(),
-          disabled: (component?: FileAClaimComponent) => component ? (component.form.invalid || (component?.busy$ && !component?.busy$?.closed)) : true
+          disabled: (component?: FileAClaimComponent) => component ? (component?.busy$ && !component?.busy$?.closed) : true
         }
       ],
       nzBodyStyle: {
@@ -141,7 +198,8 @@ export class AdditionalCompensationComponent implements OnInit {
 
     modal.afterClose.subscribe(res => {
       if (res) {
-        this.paginatedTable?.search();
+        this.paginatedTable.loading = true;
+        this.reload$.next();
       }
     })
   }
@@ -150,7 +208,9 @@ export class AdditionalCompensationComponent implements OnInit {
     this.form.reset();
     this.filters = null;
     this.showForm = false;
-    this.paginatedTable?.search();
+
+    this.paginatedTable.loading = true;
+    this.reload$.next();
   }
 
 }

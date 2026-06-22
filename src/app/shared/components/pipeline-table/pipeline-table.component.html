@@ -1,7 +1,65 @@
-<app-template-table class="w-100" [tableColumns]="columns" [tableData]="rowData()"></app-template-table>
+<app-template-table class="w-100" [tableColumns]="columns" [tableData]="useCustomTableData() || tableData()" [actionsTpl]="showActions() ? actionsTpl : undefined" [maxTblHeight]="'400px'"></app-template-table>
 
-<ng-template #tagTpl let-data="data">
-  <nz-tag class="break-word-tag">
+<ng-template #actionsTpl let-row="row">
+  @if (row.status === 'In-Progress') {
+    <a nz-button nzType="link" nzBlock class="break-word-button" (click)="cancelRun(row.id)">
+      {{ LABELS.CANCEL_RUN }}
+    </a>
+  }
+</ng-template>
+
+<ng-template #statusTpl let-data="data" let-allData="allData">
+  <nz-tag
+    nz-popover
+    [nzPopoverContent]="(allData.status === 'Failed' || allData.status === 'Partially Succeeded') ? errorTpl : undefined"
+    [nzPopoverTitle]="(allData.status === 'Failed' || allData.status === 'Partially Succeeded') ? 'Error' : undefined"
+    nzPopoverTrigger="hover"
+    class="break-word-tag">
     {{ data }}
   </nz-tag>
+
+  <ng-template #errorTpl>
+    <div style="max-width: 800px; max-height: 300px; overflow: auto;">
+      <pre>{{ allData.message }}</pre>
+    </div>
+  </ng-template>
 </ng-template>
+
+<ng-template #nameTpl let-data="data" let-allData="allData">
+  <div class="cell-lines">
+    <div class="cell-main">
+      {{ data + (allData.partial ? " - Partial" : "")}}
+    </div>
+
+    @let processType = allData?.parameters?.processType?.textValue;
+    @let showAmsInfo = ['penalty-finalize', 'energyMarketFee-finalize', 'reserveMarketFee-finalize', 'additionalCompensation-calculateTransAlloc'].includes(allData?.name);
+    @let isMarketFee = ['energyMarketFee-finalize', 'reserveMarketFee-finalize'].includes(allData?.name);
+    @let isPenalty = allData?.name === 'penalty-finalize';
+
+    @if (allData.parameters?.meteringWorkspaceId && LABELS.GENERATE_INPUT_WORKSPACE  === data) {
+      <div class="cell-sub">
+        <span class="cell-sub-label">{{ LABELS.METERING_WORKSPACE_ID }}: </span>
+        <span class="cell-sub-value">{{ allData.parameters.meteringWorkspaceId?.numericValue }}</span>
+      </div>
+    }
+
+    @if (([processTypes.FINAL, processTypes.ADJUSTED].includes(processType) && showAmsInfo) || isPenalty) {
+      <div class="cell-sub">
+        <span class="cell-sub-label">{{ (isMarketFee || isPenalty)  ? LABELS.ISSUED_DATE : LABELS.ALLOCATION_DATE }}: </span>
+        <span class="cell-sub-value">{{ allData.parameters?.allocDate?.dateValue || '-'  }}</span>
+      </div>
+
+      <div class="cell-sub">
+        <span class="cell-sub-label">{{ (isMarketFee || isPenalty) ? LABELS.DUE_DATE : LABELS.ALLOCATION_DUE_DATE }}: </span>
+        <span class="cell-sub-value">{{ allData.parameters?.dueDate?.dateValue || '-'  }}</span>
+      </div>
+
+      <div class="cell-sub">
+        <span class="cell-sub-label">{{ LABELS.REMARKS }}: </span>
+        <span class="cell-sub-value">{{ allData.parameters?.remarks?.textValue || '-'  }}</span>
+      </div>
+    }
+
+  </div>
+</ng-template>
+

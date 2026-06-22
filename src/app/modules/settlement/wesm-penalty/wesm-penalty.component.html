@@ -1,4 +1,4 @@
-<nz-card [nzTitle]="LABELS.WESM_PENALTY">
+<nz-card [nzTitle]="LABELS.CALCULATE_FINANCIAL_PENALTY">
   <!-- Filters -->
   @if (showForm) {
     <form nz-form [formGroup]="form" nzLayout="horizontal" class="column">
@@ -12,19 +12,19 @@
             </nz-form-control>
           </nz-form-item>
 
-            <nz-form-item>
-              <nz-form-label nzSpan="8">{{ LABELS.STATUS }}</nz-form-label>
-              <nz-form-control nzSpan="16">
-                <nz-select formControlName="status" [nzOptions]="statusOptions" [nzPlaceHolder]="LABELS.ALL" [nzAllowClear]="true" nzShowSearch></nz-select>
-              </nz-form-control>
-            </nz-form-item>
+          <nz-form-item class="mb-3">
+            <nz-form-label nzSpan="8">{{ LABELS.STATUS }}</nz-form-label>
+            <nz-form-control nzSpan="16">
+              <nz-select formControlName="status" [nzOptions]="statusOptions" [nzPlaceHolder]="LABELS.ALL" [nzAllowClear]="true" nzShowSearch></nz-select>
+            </nz-form-control>
+          </nz-form-item>
 
-            <nz-form-item class="mb-3">
-              <nz-form-label nzSpan="8">{{ LABELS.TYPE }}</nz-form-label>
-              <nz-form-control nzSpan="16">
-                <nz-select formControlName="penaltyType" [nzOptions]="typeOptions" [nzPlaceHolder]="LABELS.ALL" [nzAllowClear]="true" nzShowSearch></nz-select>
-              </nz-form-control>
-            </nz-form-item>
+          <nz-form-item class="mb-3">
+            <nz-form-label nzSpan="8">{{ LABELS.TYPE }}</nz-form-label>
+            <nz-form-control nzSpan="16">
+              <nz-select formControlName="penaltyType" [nzOptions]="typeOptions" [nzPlaceHolder]="LABELS.ALL" [nzAllowClear]="true" nzShowSearch></nz-select>
+            </nz-form-control>
+          </nz-form-item>
         </div>
       </div>
     </form>
@@ -41,56 +41,40 @@
       <button nz-button *nzSpaceItem nzType="primary" [disabled]="form.invalid" (click)="showForm ? applyFilter() : showForm =! showForm">
         {{ showForm ? LABELS.APPLY_FILTERS : LABELS.SET_FILTERS }}
       </button>
+
+      <app-polling-timer *nzSpaceItem (emitEvent)="pollingTime.set($event)" (emitReload)="paginatedTable.loading = true; reload$.next()"></app-polling-timer>
     </nz-space>
 
-    <nz-space>
-      <button *nzSpaceItem nz-button (click)="generateIws()">
+    <nz-space *ngxPermissionsOnly="[ AUTH.CALC_PENALTY ]">
+      <button *nzSpaceItem nz-button (click)="generateIws()" nzType="primary">
         {{ LABELS.GENERATE_PENALTY_IWS }}
       </button>
 
-      <button *nzSpaceItem nz-button>
+      <button *nzSpaceItem nz-button (click)="generateIws(true)" nzType="primary">
         {{ LABELS.GENERATE_REFUND_IWS }}
       </button>
-
-      <button *nzSpaceItem nz-button nzType="primary" nz-dropdown [nzDropdownMenu]="menu">
-        {{ LABELS.MORE_ACTIONS }} <nz-icon nzType="down" />
-      </button>
-
-      <nz-dropdown-menu #menu="nzDropdownMenu">
-        <ul nz-menu nzSelectable>
-          <li nz-menu-item>{{ LABELS.CALCULATE }}</li>
-          <li nz-menu-item>{{ LABELS.FINALIZE }}</li>
-          <li nz-menu-item>{{ LABELS.PUBLISH }}</li>
-          <li nz-menu-item>{{ LABELS.GENERATE_FILES }}</li>
-        </ul>
-      </nz-dropdown-menu>
     </nz-space>
   </div>
 
   <!-- Table -->
-  <app-paginated-table #paginatedTable [enableCheckbox]="true" resultsProp="pipelineGroup" [tableColumns]="tableColumns" [url]="getUrl()" [showActions]="true" [tableConfig]="{ height: '60vh' }" [enableExpand]="true" [expandTpl]="expandTpl"></app-paginated-table>
+  <app-paginated-table #paginatedTable resultsProp="pipelineGroup" [tableColumns]="tableColumns" [url]="url$" [tableConfig]="{ height: '60vh' }" [enableExpand]="true" [expandTpl]="expandTpl" [actionControls]="actionControls" [showActions]="hasCalcPerm"  [progressBarCondition]="progressBarCondition"></app-paginated-table>
 
   <ng-template #expandTpl let-row="row">
     <div class="d-flex flex-column w-100 my-2 pe-2">
 
-      <p class="fw-bold">{{ LABELS.DETAILS }}</p>
-      <app-template-table class="w-100 mb-3" [tableColumns]="billingColumns" [tableData]="row?.penaltyHeaders" [enableExpand]="true" [expandTpl]="billingExpandTpl" expandProp="headerId" [useDarkBg]="true"></app-template-table>
+      <nz-tabset>
+        <nz-tab [nzTitle]="LABELS.RUN">
+          <app-pipeline-table class="w-100" [rowData]="row?.pipelines" (cancelEmit)="onCancel()"></app-pipeline-table>
+        </nz-tab>
+        <nz-tab [nzTitle]="LABELS.DETAILS">
+          <app-template-table class="w-100 mb-3" [tableColumns]="billingColumns" [tableData]="row?.penaltyHeaders" [enableExpand]="true" [expandTpl]="billingExpandTpl" expandProp="headerId" [useDarkBg]="true" [maxTblHeight]="'400px'"></app-template-table>
 
-      <ng-template #billingExpandTpl let-billingRow="row">
-        <app-template-table class="w-100" [tableColumns]="expandedTableCols" [tableData]="billingRow?.penaltyDetails"></app-template-table>
-      </ng-template>
+          <ng-template #billingExpandTpl let-billingRow="row">
+            <app-template-table class="w-100" [tableColumns]="expandedTableCols" [tableData]="billingRow?.penaltyDetails"></app-template-table>
+          </ng-template>
+        </nz-tab>
+      </nz-tabset>
 
-      @if (row?.pipelines?.length) {
-        <p class="fw-bold">{{ LABELS.PIPELINES }}</p>
-        <app-pipeline-table class="w-100" [rowData]="row?.pipelines[0]?.pipelineRuns"></app-pipeline-table>
-      }
-
-      <!-- [actionsTpl]="expandTplActions" -->
-      <!-- <ng-template #expandTplActions let-subRowData="row">
-        @if (subRowData.fileName) {
-          <a nz-button nzType="link" nzSize="small" (click)="download(subRowData)" nzBlock>{{ LABELS.DOWNLOAD }}</a>
-        }
-      </ng-template> -->
     </div>
   </ng-template>
 </nz-card>

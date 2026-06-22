@@ -101,12 +101,6 @@ export class RunProcessFormComponent implements OnInit {
       billingPeriodName: filteredBp.supplyMonth,
     };
 
-    const api$ = () => this.ss.runJob(data, pipelineName, false, true)
-      .subscribe(() => {
-        this.ts.success(MESSAGES.SUCCESS_JOB_TRIGGER);
-        this.emitJob.emit(true);
-      });
-
     const nzData = {
       message: MESSAGES.CONFIRM_RUN_JOB('Settlement Job'),
       okAction: LABELS.RUN_JOB,
@@ -127,17 +121,24 @@ export class RunProcessFormComponent implements OnInit {
           label: LABELS.END_DATE,
           value: data.billingEndDate
         },
-      ]
+      ],
+      onOk: () => this.ss.runJob(data, pipelineName, false, true)
     };
 
-    this.ms.create({
+    const modal = this.ms.create({
       nzTitle: `${LABELS.RUN_JOB}`,
       nzContent: ConfirmWithDescComponent,
       nzCentered: true,
       nzFooter: null,
       nzData,
       nzWidth: '600px',
-      nzOnOk: () => api$()
+    });
+
+    modal.afterClose.subscribe(res => {
+      if (res) {
+        this.ts.success(MESSAGES.SUCCESS_JOB_TRIGGER);
+        this.emitJob.emit(true);
+      }
     });
   }
 

@@ -3,10 +3,9 @@ export interface TPL_TABLE_COLUMN {
   propName: string,
   secondPropName?: string,
   align?: 'center' | 'left' | 'right';
-  type?: 'string' | 'number' | 'date' | 'template' | 'enumLabel';
+  type?: 'string' | 'number' | 'date' | 'template' | 'enumLabel' | 'amount' | 'boolean';
   width?: string,
   template?: any,
-  hasRowSpan?: boolean,
   sort?: boolean;
 }
 
@@ -22,6 +21,7 @@ export interface HttpResponseProgress {
 export interface TableColumn {
   name: string;
   key: string;
+  align?: 'center' | 'left' | 'right';
 }
 
 export class TableParams {
@@ -46,9 +46,9 @@ export interface TableDataResult<T> {
 export interface TableAction<T> {
   label: string;
   value: string;
-  danger?: true;
-  click: (rowData: T) => void;
-  hidden?: (rowData: T) => boolean;
+  danger?: boolean;
+  click: (rowData?: T) => void;
+  hidden?: (rowData?: T) => boolean;
 }
 
 export interface ReferenceOption1 {

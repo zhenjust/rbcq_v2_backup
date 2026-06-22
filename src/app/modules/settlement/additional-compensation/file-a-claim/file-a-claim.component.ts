@@ -44,6 +44,8 @@ export class FileAClaimComponent implements OnInit {
   CLAIM_MSG = MESSAGES.MIN_REQUIRED_LENGTH(1, 'claim');
   startOfSelectedDate: Date;
 
+  showError = signal<boolean>(false);
+
   constructor() { }
 
   ngOnInit(): void {
@@ -180,12 +182,17 @@ export class FileAClaimComponent implements OnInit {
     this.form.updateValueAndValidity();
 
     if (this.form.invalid) {
+      this.showError.set(true);
       this.form.markAllAsTouched();
       return;
     }
 
+    this.showError.set(false);
+
     const formValue = this.form.getRawValue();
     const selectedBp = this.billingPeriods.find(bp => bp.billingPeriod === formValue.billingPeriod);
+    const startDate = format(new Date(selectedBp!.startDate), 'yyyy-MM-dd');
+    const endDate = format(new Date(selectedBp!.endDate), 'yyyy-MM-dd');
 
     const payload = {
       pipelineName: 'additionalCompensation-calculateAdditionalCompensation',
@@ -193,13 +200,13 @@ export class FileAClaimComponent implements OnInit {
       parameters: {
         pricingCondition: formValue.pricingCondition,
         billingPeriodName: selectedBp!.supplyMonth,
-        billingStartDate: format(new Date(selectedBp!.startDate), 'yyyy-MM-dd'),
-        billingEndDate: format(new Date(selectedBp!.endDate), 'yyyy-MM-dd')
+        billingStartDate: startDate,
+        billingEndDate: endDate
       },
-      startEndDateRanges: this.dateRanges?.value.map((d: any) => ({
+      startEndDateRanges: this.dateRanges?.length ? this.dateRanges?.value.map((d: any) => ({
         startDate: format(set(new Date(d.startDate), { seconds: 0}), 'yyyy-MM-dd HH:mm:ss'),
         endDate: format(set(new Date(d.endDate), { seconds: 0}), 'yyyy-MM-dd HH:mm:ss'),
-      })),
+      })) : [{ startDate: startDate + ' 00:00:00', endDate: endDate + ' 00:00:00' }],
       claims: this.claims?.value
     };
 

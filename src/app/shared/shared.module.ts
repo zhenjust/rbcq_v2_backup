@@ -15,13 +15,14 @@ import { NgxPermissionsModule } from 'ngx-permissions';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { SettlementTableFormatterPipe } from './pipes/table-data-formatter.pipe';
-import { EnumsToLabelsPipe, FileSizeFormatterPipe, HasInprogressPipe, SettlementActionsPipe, SettlementPipelineFormatterPipe } from './pipes';
+import { EnumsToLabelsPipe, FileSizeFormatterPipe, FormErrorHandler, HasCompletedStatusPipe, HasInprogressPipe, SettlementActionsPipe, SettlementPipelineFormatterPipe } from './pipes';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { PaginatedTableComponent } from './components/paginated-table/paginated-table.component';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
@@ -44,6 +45,25 @@ import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { DateTimePickerComponent } from './components/date-time-picker/date-time-picker.component';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { PipelineTableComponent } from './components/pipeline-table/pipeline-table.component';
+import { PollingTimerComponent } from './components/polling-timer/polling-timer.component';
+import {
+  ReloadOutline,
+  PlusSquareOutline,
+  MinusSquareOutline,
+  DownOutline,
+  DeleteOutline,
+  CalendarOutline,
+  ClockCircleOutline,
+  CloseCircleOutline,
+  EyeInvisibleOutline,
+  EyeOutline,
+  UploadOutline
+} from '@ant-design/icons-angular/icons';
+import { UploadBillingStatementComponent } from './components/upload-billing-statement/upload-billing-statement.component';
+import { UploadSummaryComponent } from './components/upload-billing-statement/upload-summary.component';
+import { SendNotificationComponent } from './components/send-notification/send-notification.component';
+import { ProgressBarComponent } from './components/progress-bar/progress-bar.component';
+
 const ngZorroConfig: NzConfig = {
   notification: { nzDuration: 300, nzMaxStack: 3, nzTop: '150px' }
 };
@@ -58,7 +78,19 @@ const NgZorroModules = [
   NzProgressModule,
   NzFormModule,
   NzDropDownModule,
-  NzIconModule,
+  NzIconModule.forChild([
+    ReloadOutline,
+    PlusSquareOutline,
+    MinusSquareOutline,
+    DownOutline,
+    DeleteOutline,
+    CalendarOutline,
+    ClockCircleOutline,
+    CloseCircleOutline,
+    EyeInvisibleOutline,
+    EyeOutline,
+    UploadOutline
+  ]),
   NzCardModule,
   NzTagModule,
   NzTabsModule,
@@ -72,7 +104,6 @@ const NgZorroModules = [
   NzToolTipModule,
   NzPopoverModule,
   NzFloatButtonModule,
-  NzIconModule,
   NzBadgeModule,
   NzSpinModule,
   NzInputModule,
@@ -89,6 +120,8 @@ const Pipes = [
   FileSizeFormatterPipe,
   EnumsToLabelsPipe,
   HasInprogressPipe,
+  FormErrorHandler,
+  HasCompletedStatusPipe,
 ];
 
 @NgModule({
@@ -101,7 +134,12 @@ const Pipes = [
     DateRangePickerComponent,
     ReloginComponent,
     DateTimePickerComponent,
-    PipelineTableComponent
+    PipelineTableComponent,
+    PollingTimerComponent,
+    UploadBillingStatementComponent,
+    UploadSummaryComponent,
+    SendNotificationComponent,
+    ProgressBarComponent
   ],
   imports: [
     CommonModule,
@@ -111,6 +149,8 @@ const Pipes = [
     ReactiveFormsModule,
     RxReactiveFormsModule,
     FormsModule,
+    FroalaEditorModule,
+    FroalaViewModule,
 ],
   exports: [
     ...Pipes,
@@ -122,9 +162,13 @@ const Pipes = [
     RxReactiveFormsModule,
     NgxPermissionsModule,
     FormsModule,
+    FroalaEditorModule,
+    FroalaViewModule,
     DateRangePickerComponent,
     DateTimePickerComponent,
-    PipelineTableComponent
+    PipelineTableComponent,
+    PollingTimerComponent,
+    ProgressBarComponent
   ],
   providers: [
     { provide: NZ_CONFIG, useValue: ngZorroConfig }

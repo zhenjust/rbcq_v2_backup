@@ -1,6 +1,6 @@
 <nz-spin [nzSpinning]="busy$ && !busy$.closed">
-  @if (form.invalid && form.touched) {
-  <nz-alert nzBanner nzType="error" [nzMessage]="MESSAGE.REQUIRED_FIELDS" class="mb-3"></nz-alert>
+  @if ((form.invalid && form.touched) && showError()) {
+    <nz-alert nzBanner nzType="error" [nzMessage]="MESSAGE.REQUIRED_FIELDS" class="mb-3"></nz-alert>
   }
 
   <form nz-form [formGroup]="form" nzLayout="vertical" nzNoColon class="row">

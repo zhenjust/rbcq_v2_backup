@@ -12,11 +12,10 @@
 }
 
 .ant-menu, .ant-menu-submenu-title {
-  padding-top: 0px;
-  padding-bottom: 0px;
+  padding-bottom: 0;
   line-height: 1.2;
-  margin-bottom: 0px !important;
-  margin-top: 0px !important;
+  margin-bottom: 0 !important;
+  margin-top: 0 !important;
 
   .nav-text.subChildColor:hover {
         color: #00b1f8 !important;
@@ -39,7 +38,7 @@
   width: 500px;
 
   .ant-notification-notice-message {
-    margin-bottom: 0px !important;
+    margin-bottom: 0 !important;
   }
 
   .ant-notification-notice-close {
@@ -49,6 +48,16 @@
   .text-muted {
     color: #b1b1b1 !important
   }
+
+  .progress-bar {
+    background: linear-gradient(to right, #c1e8bd);
+    background-size: calc(var(--percent) * 1%) 100%;
+    background-repeat: no-repeat;
+    background-color: #f6fff5;
+    transition: background-size 0.3s ease;
+    padding: 24px;
+    justify-content: space-between;
+  }
 }
 
 .user-options {
@@ -56,7 +65,7 @@
     border-radius: 15px     !important;
 
     .ant-popover-inner-content {
-      padding: 8px 0px;
+      padding: 8px 0;
 
       .ant-btn-text {
         font-size: 14px;
@@ -92,7 +101,7 @@ th {
 }
 
 .ant-modal-confirm-body > .anticon + .ant-modal-confirm-title + .ant-modal-confirm-content {
-  margin-left: 0px;
+  margin-left: 0;
 }
 
 td {
@@ -101,20 +110,20 @@ td {
 
 // .template-table {
   .ant-table.ant-table-small .ant-table-tbody .ant-table-wrapper:only-child .ant-table {
-    margin: 0px !important;
+    margin: 0 !important;
   }
 // }
 
 
 .popover-calendar {
   .ant-popover-inner-content {
-    padding: 0px !important;
+    padding: 0 !important;
   }
 
   .ant-picker-footer-extra {
     display: flex;
     justify-content: center;
-    padding: 0.2rem 0rem;
+    padding: 0.2rem 0;
   }
 
   .ant-btn-link, .btn-link {
@@ -135,6 +144,55 @@ td {
   border-right: none;
   border-left: none;
   border-bottom: none;
-  border-radius: 0px;
+  border-radius: 0;
 }
 
+
+.cell-lines {
+  line-height: 1.2;
+
+  .cell-sub {
+    margin-top: 2px;
+    font-size: 12px;
+    color: #8c8c8c;
+
+    .cell-sub-label {
+      font-weight: 600;
+      margin-right: 4px;
+    }
+
+    .cell-sub-value {
+      color: #595959;
+    }
+  }
+}
+
+.highlight-row {
+  background-color: lightyellow !important;
+
+  &:hover,
+  &:hover td {
+    background-color: lightyellow !important;
+  }
+}
+
+.break-word-tag {
+  display: inline-block;
+  white-space: normal;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.borderless-descriptions {
+  .ant-descriptions-bordered .ant-descriptions-row {
+    border: none !important;
+  }
+}
+
+.fr-toolbar, .fr-second-toolbar {
+  border-radius: 0 !important;
+}
+
+.col-gap-10 {
+  column-gap: 10px;
+}

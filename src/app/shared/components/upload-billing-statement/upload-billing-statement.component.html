@@ -1,0 +1,32 @@
+@let allData = modalData?.allData;
+@let data = modalData?.subRowData;
+
+<nz-spin [nzSpinning]="busy$ && !busy$?.closed">
+  <nz-descriptions [nzColumn]="1" nzBordered nzSize="small" class="borderless-descriptions">
+    <nz-descriptions-item [nzTitle]="LABELS.BILLING_PERIOD">{{ allData?.billingPeriod }}</nz-descriptions-item>
+    <nz-descriptions-item [nzTitle]="LABELS.TYPE">{{ allData?.processType | titlecase}}</nz-descriptions-item>
+    <nz-descriptions-item [nzTitle]="LABELS.MARKET_FEE_TYPE">{{ data?.parameters.marketFeeType }}</nz-descriptions-item>
+    <nz-descriptions-item [nzTitle]="LABELS.MARKET_FEE_MODE">{{ data?.parameters.marketFeeMode }}</nz-descriptions-item>
+
+    <!-- <nz-descriptions-item [nzTitle]="LABELS.DUE_DATE">
+      <form nz-form [formGroup]="formGroup">
+        <nz-date-picker nzFormat="yyyy-MM-dd" nzStyle="width: 100%" formControlName="dueDate"></nz-date-picker>
+      </form>
+    </nz-descriptions-item> -->
+
+    <nz-descriptions-item [nzTitle]="LABELS.FILE">
+      <nz-upload [nzBeforeUpload]="beforeUpload" [nzMultiple]="true" [nzAccept]="'.pdf'" [nzShowUploadList]="true">
+        <nz-space>
+          <button *nzSpaceItem nzSize="small" class="me-2" nz-button>{{ LABELS.CHOOSE_FILE }}</button>
+        </nz-space>
+      </nz-upload>
+
+      @for (file of fileList; track $index) {
+        <div class="d-flex justify-content-between mt-2">
+          <div>{{ file.name }}</div>
+          <nz-icon nzType="delete" role="button" nzTheme="outline" class="text-danger" nz-tooltip [nzTooltipTitle]="LABELS.DELETE" (click)="deleteFile($index)"/>
+        </div>
+      }
+    </nz-descriptions-item>
+  </nz-descriptions>
+</nz-spin>

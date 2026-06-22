@@ -1,21 +1,4 @@
-import { ETA_JOBS, MeterProcessTypes, pricingConditions, settlementPageTitles, settlementProcessTypes, settlementSearchNames } from "@shared/enums";
-
-export interface settlementPageData {
-    pageTitle: settlementPageTitles | string,
-    isLineRentalStatus: boolean
-}
-
-export interface settlementJobInstanceParams {
-    mapParams: {
-        endDate: string | null,
-        processType: settlementProcessTypes | null,
-        startDate: string | null,
-        tradingDateEnd: string | null,
-        tradingDateStart: string | null
-    },
-    pageNo: number,
-    pagsize: number
-}
+import { MeterProcessTypes, pricingConditions, settlementProcessTypes, settlementSearchNames } from "@shared/enums";
 
 export interface settlementJobInstanceOptions {
     id: string,
@@ -38,19 +21,6 @@ export interface settlementParams {
     tradingEndDate: string
 }
 
-export interface settlementPipelineParameters {
-    billingPeriod: string
-    startDatetime: string
-    endDatetime: string
-    billingPeriodName: string
-    adjNo?: number
-    regionGroup: string
-    mtn: string
-    processType: MeterProcessTypes,
-    tradingDate?: string,
-    pricingCondition?: string
-}
-
 export interface settlementPipeline {
     id: number;
     name: string
@@ -66,6 +36,11 @@ export interface settlementPipeline {
     workspaceId: string
     published?: boolean;
     pipelines: pipeline[];
+    parameters?: {
+      dueDate?: string;
+      allocDate?: string;
+      remarks?: string;
+    }
 }
 
 export interface pipeline {
@@ -76,7 +51,10 @@ export interface pipeline {
     lastModifiedBy: string;
     partial: boolean;
     consolidate: boolean;
+    published: boolean;
     pipelineRuns: PipelineRun[];
+    currentDownloadedFile?: string | null;
+    currentDownloadedPercentage?: number | null;
 }
 
 export interface settlementTableDate {
@@ -112,13 +90,20 @@ export interface addtlCompensationRunDtos {
 }
 
 export interface PublishSettlement {
+    workspaceId?: number,
+    pipelineGroupId?: number,
+    pipelineId?: number,
     stlGroupId: number,
-    processType: string,
-    stlSource: string
+    jobExecutionId?: number,
+    functionName: string,
+    startDate?: string,
+    endDate?: string,
+    processType?: string,
+    billingPeriod?: string
 }
 
 export interface EnergyTradingAmounts {
-    pipelineName: ETA_JOBS,
+    pipelineName: string,
     refId?: number | string,
     isGroup: boolean,
     // workspaceId: number | string
@@ -173,4 +158,22 @@ export interface SettlementJobParams {
     processType: string;
     startDateTime?: string;
     endDateTime?: string;
+}
+
+export interface PublishedBillingPeriods {
+  name: string;
+  startDate: Date;
+  endDate: Date;
+}
+
+export interface SendNotice {
+  notificationMessage: string;
+  type: string;
+  parameters: {
+    workspaceId: number;
+    processType: MeterProcessTypes;
+    billingPeriodName: string;
+    billingStartDate: string;
+    billingEndDate: string;
+  }
 }

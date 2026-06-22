@@ -24,8 +24,8 @@ export class SettlementTableFormatterPipe implements PipeTransform {
         return data.status;
       case 'lineRentalStatus':
         return data?.lineRentalStatus || '';
-      case 'progress':
-        return '';
+      case 'published':
+        return data.published ? 'Yes' : 'No';
       case 'actions':
         return '';
       default:

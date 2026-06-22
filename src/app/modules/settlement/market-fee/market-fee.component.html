@@ -1,0 +1,165 @@
+<nz-card [nzTitle]="(isEnergy() ? LABELS.ENERGY : LABELS.RESERVE) + ' ' +LABELS.MARKET_FEE">
+  <!-- Filters -->
+  @if (showForm) {
+  <form nz-form [formGroup]="form" nzLayout="horizontal" class="column">
+    <div class="row">
+      <div class="col-sm-12 col-md-4 col-lg-4">
+        <nz-form-item class="mb-3">
+          <nz-form-label nzSpan="8">{{ LABELS.BILLING_PERIOD }}</nz-form-label>
+          <nz-form-control nzSpan="16">
+            <nz-select formControlName="billingPeriod" [nzOptions]="billingPeriodOpts" [nzPlaceHolder]="LABELS.ALL"
+              [nzAllowClear]="true" nzShowSearch></nz-select>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label nzSpan="8">{{ LABELS.PROCESS_TYPE }}</nz-form-label>
+          <nz-form-control nzSpan="16">
+            <nz-select formControlName="processType" [nzOptions]="processTypeOptions" [nzPlaceHolder]="LABELS.ALL"
+              [nzAllowClear]="true" nzShowSearch></nz-select>
+          </nz-form-control>
+      </nz-form-item>
+      </div>
+    </div>
+  </form>
+  }
+
+  <div class="d-flex justify-content-between mb-3">
+    <nz-space>
+      @if (showForm) {
+      <button nz-button *nzSpaceItem [disabled]="form.invalid" (click)="resetFilters()">
+        {{ LABELS.CLEAR_FILTERS }}
+      </button>
+      }
+
+      <button nz-button *nzSpaceItem nzType="primary" [disabled]="form.invalid"
+        (click)="showForm ? applyFilter() : (showForm =! showForm)">
+        {{ showForm ? LABELS.APPLY_FILTERS : LABELS.SET_FILTERS }}
+      </button>
+
+      <app-polling-timer *nzSpaceItem (emitEvent)="pollingTime.set($event)" (emitReload)="paginatedTable.loading = true; reload$.next()"></app-polling-timer>
+    </nz-space>
+
+    <nz-space>
+      <ng-container *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_GENERATE_IW ] : [ AUTH.RMF_GENERATE_IW ]">
+        <button nz-button *nzSpaceItem nzType="primary" (click)="runMarketFee()">
+          {{ LABELS.RUN }} {{ isEnergy() ? LABELS.ENERGY_MARKET_FEE : LABELS.RESERVE_MARKET_FEE }}
+        </button>
+      </ng-container>
+    </nz-space>
+  </div>
+
+  <!-- Table -->
+  <app-paginated-table #paginatedTable resultsProp="pipelineGroup" [tableColumns]="tableColumns"
+    [url]="url$" [showActions]="false" [tableConfig]="{ height: '60vh' }" [enableExpand]="true"
+    [expandTpl]="expandTpl" [showCustomLoading]="true"></app-paginated-table>
+
+  <ng-template #expandTpl let-row="row">
+    <div class="d-flex w-100 my-2 pe-2">
+      <div class="d-flex flex-column w-100">
+        <app-template-table #tableComp class="w-100 mb-3" [tableColumns]="getExpandedColumns(row)"
+        [tableData]="row?.pipelines" [enableExpand]="true" [expandTpl]="pipelineTpl" [actionsTpl]="actionsTpl" [useDarkBg]="true" ></app-template-table>
+
+        <ng-template #pipelineTpl let-pipelineRow="row">
+          <app-pipeline-table [rowData]="[]" [useCustomTableData]="pipelineRow?.pipelineRuns"></app-pipeline-table>
+        </ng-template>
+      </div>
+
+      <ng-template #actionsTpl let-subRowData="row">
+        @if (subRowData.status !== 'Nullified') {
+          @let isFinalized = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded');
+          <!-- @let isCalculated = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded'); -->
+          @let isInProgress = subRowData.status.includes('In-Progress');
+          @let isFinal = row.processType === processTypes.FINAL;
+          @let isFinalAdj = row.processType === processTypes.FINAL || row.processType === processTypes.ADJUSTED;
+          @let isPrelim = row.processType === processTypes.PRELIM;
+
+          <!-- Btn Conditions -->
+          @let isPublished = subRowData?.published;
+          @let showUploadBillingStatement = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded') && isFinalAdj && isPublished;
+          @let showDownloadBillingStatement = ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded') && isFinalAdj) || ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateFiles')] : 'Succeeded') && isPrelim);
+          @let showPublish = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateFiles')] : 'Succeeded');
+          @let showGenerateFile = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded');
+          @let showFinalize = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-calculateMarketFee')] : 'Succeeded') && !isFinalized;
+          @let showCalc = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateInputWorkspace')] : 'Succeeded') && !isFinalized;
+          @let canGenerateInputWorkspace = !isFinalized && hasGenerateInputWorkspacePermission;
+          @let canCalc = showCalc && hasCalculatePermission;
+          @let canFinalize = showFinalize && hasFinalizePermission;
+          @let canGenerateFile = showGenerateFile && hasGenerateFilePermission;
+          @let canPublish = showPublish;
+
+          @if (!isInProgress && (showDownloadBillingStatement || (!isPublished && (canGenerateInputWorkspace || canCalc || canFinalize || canGenerateFile || canPublish)))) {
+            <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu">{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
+          }
+
+          @if (isInProgress) {
+            <div class="px-3">
+              <nz-progress [nzStrokeWidth]="4" [nzPercent]="99.9" [nzShowInfo]="false" [nzStrokeColor]="{ '0%': '#108ee9', '100%': '#87d068' }" nzStatus="active" />
+            </div>
+          }
+
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu nzSelectable>
+                @if (!subRowData?.published) {
+                  @if (!isFinalized) {
+                    <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_GENERATE_IW ] : [ AUTH.RMF_GENERATE_IW ]" (click)="triggerJob('generateInputWorkspace', subRowData, tableComp, LABELS.GENERATE_INPUT_WORKSPACE)">{{ LABELS.GENERATE_INPUT_WORKSPACE }}</li>
+                  }
+
+                  @if (showCalc) {
+                    <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_CALCULATE ] : [ AUTH.RMF_CALCULATE ]" (click)="triggerJob('calculateMarketFee', subRowData, tableComp, LABELS.CALCULATE + ' ' + label)">{{ LABELS.CALCULATE }}</li>
+                  }
+
+                  @if (showFinalize) {
+                    <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_FINALIZE ] : [ AUTH.RMF_FINALIZE ]" (click)="finalize('finalize', subRowData, tableComp, LABELS.FINALIZE)">{{ LABELS.FINALIZE }}</li>
+                  }
+
+                  @if (showGenerateFile) {
+                    <li nz-menu-item *ngxPermissionsOnly="isEnergy() ? [ AUTH.EMF_GENERATE_EMF_FILE ] : [ AUTH.RMF_GENERATE_RMF_FILE ]" (click)="triggerJob('generateFiles', subRowData, tableComp, LABELS.GENERATE_FILES)">{{ LABELS.GENERATE_FILES }}</li>
+                  }
+
+                  @if (showPublish) {
+                    <li nz-menu-item (click)="publish('Energy Market Fee Calculation', row, subRowData)">{{ LABELS.PUBLISH }}</li>
+                  }
+                }
+
+                @if (showUploadBillingStatement) {
+                  <li nz-menu-item (click)="uploadBillingStatement(row, subRowData)">{{ LABELS.UPLOAD_BILLING_STATEMENT }}</li>
+                }
+
+                @if (isFinalized && isFinal) {
+                  <li nz-menu-item (click)="runAdjusted(subRowData, tableComp)">{{ LABELS.RUN_ADJUSTMENT }}</li>
+                }
+
+                <!-- @if (showDownloadBillingStatement) {
+                  <li nz-menu-item [nzDisabled]="isDownloadingReport(subRowData.id)" (click)="downloadBillingStatement(row, subRowData)">{{ LABELS.DOWNLOAD_BILLING_STATEMENT }}</li>
+                } -->
+
+              </ul>
+          </nz-dropdown-menu>
+        }
+      </ng-template>
+    </div>
+  </ng-template>
+</nz-card>
+
+<!-- Column Templates -->
+<ng-template #downloadTpl let-data="data">
+  <div class="d-flex progress-bar flex-row" [style.--percent]="data.percentage || 0">
+    <p class="mb-0">
+      {{ (data.percentage !== undefined || data.size !== 'Preparing...') ? 'Downloading report for workspace id: ' : 'Preparing download for workspace id: ' }} {{ data.id }}
+      {{ data.percentage !== undefined ? '(' + data.percentage + '%)' : '' }}
+    </p>
+    <span><p class="mb-0 text-right text-muted">{{ data.size }}</p></span>
+  </div>
+</ng-template>
+
+<ng-template #bpTpl let-allData="allData">
+  {{ allData?.processType === 'DAILY' ? allData?.billingStartDate : `${allData?.billingStartDate} -
+  ${allData?.billingEndDate}` }}
+</ng-template>
+
+<ng-template #tagTpl let-data="data">
+  <nz-tag class="break-word-tag">
+    {{ data }}
+  </nz-tag>
+</ng-template>
