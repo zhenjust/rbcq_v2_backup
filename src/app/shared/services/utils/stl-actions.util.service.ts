@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { AmsComponent } from '@modules/settlement/shared/ams/ams.component';
 import { SendNotificationComponent } from '@shared/components/send-notification/send-notification.component';
 import { LABELS } from '@shared/constants/labels.const';
@@ -19,8 +19,6 @@ export class StlUtilitiesService {
   private readonly modal = inject(NzModalService);
   private readonly stlService = inject(SettlementService);
   private readonly toastr = inject(ToastrService);
-
-  public isSendingDone = signal<boolean>(false);
 
   triggerAllocModal(action: string, row: any, callback: () => void): void {
     const modal = this.modal.create({
@@ -54,10 +52,8 @@ export class StlUtilitiesService {
     const findParams = rowData.pipelines
       .find((pipeline: PipelineRun) => pipeline.name.includes('finalize') && ['Completed', 'Succeeded'].includes(pipeline.status));
 
-    this.isSendingDone.set(false);
-
     const dueDateTable = [
-      { dueDate: findParams?.parameters?.dueDate || null, status: 'PUBLISHED' }
+      { dueDate: findParams?.parameters?.dueDate || null, status: '' }
     ];
 
     const modal = this.modal.create({
@@ -71,8 +67,8 @@ export class StlUtilitiesService {
       }
     });
 
-    modal.afterClose.subscribe(() => {
-      if (this.isSendingDone()) {
+    modal.afterClose.subscribe(res => {
+      if (res) {
         callback();
       }
     });

@@ -43,8 +43,9 @@ export class SendNotificationComponent{
 
   constructor() {
     this.columns = Object.values(expandedTableCols);
-    this.tableData.set(this.modalData?.dueDateTable as { dueDate: string, status: string }[]);
+    this.tableData.set(this.modalData?.dueDateTable);
     this.rowData.set(this.modalData?.rowData);
+    this.getStatus();
 
     this.modalRef.updateConfig({
       nzOnOk: (): boolean | void => {
@@ -54,8 +55,20 @@ export class SendNotificationComponent{
         }
 
         this.sendNotice();
+        return false;
       }
     });
+  }
+
+  getStatus(): void {
+    this.settlementService.sendNoticeStatus(this.rowData()?.workspaceId || this.rowData()?.id)
+      .pipe(takeUntilDestroyed(this.destroyRef$))
+      .subscribe(response => {
+        console.log(response.status)
+        this.modalData.dueDateTable[0].status = response?.status ?? '';
+        this.tableData.set(this.modalData?.dueDateTable);
+        console.log(this.tableData())
+      });
   }
 
   sendNotice(): void {
@@ -77,9 +90,7 @@ export class SendNotificationComponent{
     }
 
     this.settlementService.sendNotice(payload)
-      .pipe(takeUntilDestroyed(this.destroyRef$))
       .subscribe(() => {
-        this.stlUtil.isSendingDone.set(true);
         this.toastrService.success(MESSAGES.SUCCESS_SEND_NOTICE);
         this.modalRef.close(true);
       });
