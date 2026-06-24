@@ -258,8 +258,15 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       ['reserveTradingAmounts-finalize']: () => this.runJobWithConfirmation(action, row),
       ['energyTradingAmounts-finalize']: () => this.runJobWithConfirmation(action, row),
 
-      ['energyTradingAmounts-calculateTransAlloc']: () => row.processType === MeterProcessTypes.PRELIM ? this.runJobWithConfirmation(action, row) : this.stlUtil.triggerAllocModal(action, row, () => this.reload$.next()),
-      ['reserveTradingAmounts-calculateTransAlloc']: () => row.processType === MeterProcessTypes.PRELIM ? this.runJobWithConfirmation(action, row) : this.stlUtil.triggerAllocModal(action, row, () => this.reload$.next()),
+      /**
+       *
+       * Temporarily commented; always use trigger alloc modal
+       */
+      // ['energyTradingAmounts-calculateTransAlloc']: () => row.processType === MeterProcessTypes.PRELIM ? this.runJobWithConfirmation(action, row) : this.stlUtil.triggerAllocModal(action, row, () => this.reload$.next()),
+      // ['reserveTradingAmounts-calculateTransAlloc']: () => row.processType === MeterProcessTypes.PRELIM ? this.runJobWithConfirmation(action, row) : this.stlUtil.triggerAllocModal(action, row, () => this.reload$.next()),
+
+      ['energyTradingAmounts-calculateTransAlloc']: () => this.stlUtil.triggerAllocModal(action, row, () => this.reload$.next()),
+      ['reserveTradingAmounts-calculateTransAlloc']: () => this.stlUtil.triggerAllocModal(action, row, () => this.reload$.next()),
 
       ['energyTradingAmounts-generateTransactionReport']: () => this.generateFiles(action, row),
       ['reserveTradingAmounts-generateTransactionReport']: () => this.generateFiles(action, row),
@@ -269,7 +276,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
       ['energyTradingAmounts-publish']: () => this.handlePublishAction('Energy Trading Amounts Calculation', row),
       ['reserveTradingAmounts-publish']: () => this.handlePublishAction('Reserve Trading Amounts Calculation', row),
-      ['sendNotification']: () => this.stlUtil.sendNotification(row)
+      ['sendNotification']: () => this.stlUtil.sendNotification(row, () => this.reload$.next())
 
     };
 

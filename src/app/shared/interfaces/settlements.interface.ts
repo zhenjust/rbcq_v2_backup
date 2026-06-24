@@ -165,3 +165,15 @@ export interface PublishedBillingPeriods {
   startDate: Date;
   endDate: Date;
 }
+
+export interface SendNotice {
+  notificationMessage: string;
+  type: string;
+  parameters: {
+    workspaceId: number;
+    processType: MeterProcessTypes;
+    billingPeriodName: string;
+    billingStartDate: string;
+    billingEndDate: string;
+  }
+}

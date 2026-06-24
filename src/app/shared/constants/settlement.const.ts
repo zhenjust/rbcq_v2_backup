@@ -60,6 +60,7 @@ export const SettlementJobActions: JobSelect[] = [
   { label: LABELS.PUBLISH_TRANSACTION_REPORT, value: 'reserveTradingAmounts-publish', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
 
   { label: LABELS.SEND_NOTIFICATION, value: 'sendNotification', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
+  { label: LABELS.SEND_NOTIFICATION, value: 'sendNotification', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
 
   /**
    * IN_PROGRESS
@@ -130,4 +131,11 @@ export const WESM_PENALTY_STATUS = [
 export const WESM_PENALTY_TYPE = {
   PENALTY: 'Penalty',
   REFUND: 'Refund'
+}
+
+export const SettlementModuleName: Record<string, string> = {
+  ['reserveTradingAmounts']: 'Reserve',
+  ['energyTradingAmounts']: 'Energy',
+  ['penalty']: 'Penalty'
+
 }

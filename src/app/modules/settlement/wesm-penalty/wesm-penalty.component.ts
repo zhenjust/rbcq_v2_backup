@@ -262,7 +262,18 @@ export class WesmPenaltyComponent implements OnInit {
   }
 
   actionControls = (row: meterProcessPipelineGroup): TableAction<any> [] => {
-    return row.published ? [] : [
+    return row.published ? [
+      {
+        label: LABELS.SEND_NOTIFICATION,
+        value: 'send',
+        click: () => this.stlUtil.sendNotification(row, () => {
+          this.paginatedTable.expandSet.clear();
+          this.paginatedTable.loading = false;
+          this.reload$.next();
+        }),
+        hidden: () => !row.published
+      },
+    ] : [
       {
         label: LABELS.CALCULATE,
         value: 'calculate',
@@ -296,7 +307,7 @@ export class WesmPenaltyComponent implements OnInit {
           const isRefund = row.pipelines?.find(p => p.name === 'penalty-calculateRefund');
           return this.hideAction(row, `penalty-finalize${isRefund ? 'Refund' : ''}`)
         },
-      },
+      }
     ];
   }
 
