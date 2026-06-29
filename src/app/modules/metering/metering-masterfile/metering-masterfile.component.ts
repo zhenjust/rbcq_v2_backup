@@ -1,10 +1,11 @@
 import { Component, DestroyRef, effect, inject, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
+import { HttpEventType } from '@angular/common/http';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { LABELS } from '@shared/constants/labels.const';
 import { DownloadMmfParams, meterProcessBillingPeriod, meterProcessOptions, TableAction, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { BehaviorSubject, exhaustMap, finalize, merge, Observable, Subject, switchMap, timer } from 'rxjs';
+import { BehaviorSubject, exhaustMap, filter, finalize, merge, Observable, Subject, switchMap, timer } from 'rxjs';
 import { GenerateMmfComponent } from './generate-mmf/generate-mmf.component';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
@@ -165,6 +166,7 @@ export class MeteringMasterfileComponent implements OnInit {
     const params: DownloadMmfParams = { workspaceId, endDate, processType };
 
     this.paginatedTable.busy$ = this.meterService.downloadMeteringReport(params, 'mmf')
+      .pipe(filter(res => res.type === HttpEventType.Response))
       .subscribe(res => {
         this.downloadService.handleDownloadedFile(res);
       });

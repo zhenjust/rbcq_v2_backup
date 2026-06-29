@@ -1,4 +1,5 @@
-  import { Component, DestroyRef, effect, inject, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
+import { Component, DestroyRef, effect, inject, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
+import { HttpEventType } from '@angular/common/http';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
@@ -10,7 +11,7 @@ import { DownloadUtilService } from '@shared/services/utils';
 import { format } from 'date-fns';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, distinctUntilChanged, merge, Observable, Subject, timer } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, filter, merge, Observable, Subject, timer } from 'rxjs';
 import { GenerateMdvComponent } from './generate-mdv/generate-mdv.component';
 import { MeterProcessTypes } from '@shared/enums';
 import { exhaustMap, finalize, switchMap } from 'rxjs/operators';
@@ -184,6 +185,7 @@ export class MeterDataValidationComponent implements OnInit {
     const params: DownloadMdvParams = { workspaceId, fileName };
 
     this.paginatedTable.busy$ = this.meterService.downloadMeteringReport(params, 'mdv')
+      .pipe(filter(res => res.type === HttpEventType.Response))
       .subscribe(res => {
         this.downloadService.handleDownloadedFile(res, fileName);
       });
