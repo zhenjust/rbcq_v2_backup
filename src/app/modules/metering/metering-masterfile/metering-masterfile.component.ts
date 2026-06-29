@@ -165,8 +165,13 @@ export class MeteringMasterfileComponent implements OnInit {
     const { endDate, processType } = data.parameters;
     const params: DownloadMmfParams = { workspaceId, endDate, processType };
 
-    this.paginatedTable.busy$ = this.meterService.downloadMeteringReport(params, 'mmf')
-      .pipe(filter(res => res.type === HttpEventType.Response))
+    data.loading = true;
+    this.meterService.downloadMeteringReport(params, 'mmf')
+      .pipe(
+        filter(res => res.type === HttpEventType.Response),
+        takeUntilDestroyed(this.destroyRef$),
+        finalize(() => data.loading = false)
+      )
       .subscribe(res => {
         this.downloadService.handleDownloadedFile(res);
       });
@@ -181,8 +186,12 @@ export class MeteringMasterfileComponent implements OnInit {
         const id = data.pipelineRuns[0].workspaceId;
         const processType = data.parameters?.processType;
 
-        this.paginatedTable.busy$ = this.meterService.deleteMeteringReport(id, 'mmf-delete', processType)
-          .pipe(takeUntilDestroyed(this.destroyRef$))
+        data.loading = true;
+        this.meterService.deleteMeteringReport(id, 'mmf-delete', processType)
+          .pipe(
+            takeUntilDestroyed(this.destroyRef$),
+            finalize(() => data.loading = false)
+          )
           .subscribe(() => {
             const message = MESSAGES.SUCCESS_DELETE_ITEM(LABELS.METERING_MASTERFILE);
             this.toastrService.success(message);
@@ -194,8 +203,8 @@ export class MeteringMasterfileComponent implements OnInit {
 
 
   actionControls = (rowData: any): TableAction<any>[] => [
-    { label: LABELS.DOWNLOAD, value: 'download', click: () => this.download(rowData)},
-    { label: LABELS.DELETE, value: 'generate', click: () => this.delete(rowData), danger: true},
+    { label: LABELS.DOWNLOAD, value: 'download', click: () => this.download(rowData), loading: rowData.loading},
+    { label: LABELS.DELETE, value: 'generate', click: () => this.delete(rowData), danger: true, loading: rowData.loading},
   ];
 
 }
