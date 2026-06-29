@@ -1,4 +1,5 @@
-  import { Component, DestroyRef, effect, inject, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
+import { Component, DestroyRef, effect, inject, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
+import { HttpEventType } from '@angular/common/http';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { METER_PROCESS_TYPE_OPTION } from '@shared/constants';
@@ -10,7 +11,7 @@ import { DownloadUtilService } from '@shared/services/utils';
 import { format } from 'date-fns';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, distinctUntilChanged, merge, Observable, Subject, timer } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, filter, merge, Observable, Subject, timer } from 'rxjs';
 import { GenerateMdvComponent } from './generate-mdv/generate-mdv.component';
 import { MeterProcessTypes } from '@shared/enums';
 import { exhaustMap, finalize, switchMap } from 'rxjs/operators';
@@ -183,7 +184,13 @@ export class MeterDataValidationComponent implements OnInit {
     const { workspaceId, fileName } = data;
     const params: DownloadMdvParams = { workspaceId, fileName };
 
-    this.paginatedTable.busy$ = this.meterService.downloadMeteringReport(params, 'mdv')
+    data.loading = true;
+    this.meterService.downloadMeteringReport(params, 'mdv')
+      .pipe(
+        filter(res => res.type === HttpEventType.Response),
+        takeUntilDestroyed(this.destroyRef$),
+        finalize(() => data.loading = false)
+      )
       .subscribe(res => {
         this.downloadService.handleDownloadedFile(res, fileName);
       });
@@ -196,7 +203,13 @@ export class MeterDataValidationComponent implements OnInit {
       nzContent: MESSAGES.CONFIRM_DELETE_ITEM(LABELS.METER_DATA_VALIDATION),
       nzOnOk: () => {
         const id = data.pipelineRuns[0].workspaceId;
-        this.paginatedTable.busy$ = this.meterService.deleteMeteringReport(id, 'mdv-delete')
+
+        data.loading = true;
+        this.meterService.deleteMeteringReport(id, 'mdv-delete')
+          .pipe(
+            takeUntilDestroyed(this.destroyRef$),
+            finalize(() => data.loading = false)
+          )
           .subscribe(() => {
             const message = MESSAGES.SUCCESS_DELETE_ITEM(LABELS.METER_DATA_VALIDATION);
             this.toastrService.success(message);
@@ -210,7 +223,7 @@ export class MeterDataValidationComponent implements OnInit {
   get isDaily(): boolean { return this.form.get('processType')?.value === MeterProcessTypes.DAILY; }
 
   actionControls = (rowData: any): TableAction<any>[] => [
-    { label: LABELS.DELETE, value: 'generate', click: () => this.delete(rowData), danger: true},
+    { label: LABELS.DELETE, value: 'generate', click: () => this.delete(rowData), danger: true, loading: rowData.loading},
   ];
 
 }
