@@ -2,7 +2,7 @@ import { Component, DestroyRef, effect, inject, OnInit, signal, TemplateRef, Vie
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { LABELS } from '@shared/constants/labels.const';
-import { meterProcessBillingPeriod, Reference, TPL_TABLE_COLUMN } from '@shared/interfaces';
+import { meterProcessBillingPeriod, Reference, TableAction, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { AdminService, MeterprocessService, SettlementService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
@@ -10,6 +10,11 @@ import { BehaviorSubject, exhaustMap, finalize, forkJoin, merge, Observable, Sub
 import { FileAClaimComponent } from './file-a-claim/file-a-claim.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PipelineTableColumns } from '@shared/constants/pipelines.const';
+import { ToastrService } from 'ngx-toastr';
+import { MESSAGES } from '@shared/constants/messages.const';
+import { modalConfig } from '@shared/constants';
+import { StlUtilitiesService } from '@shared/services/utils';
+import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
 
 @Component({
   selector: 'app-additional-compensation',
@@ -33,6 +38,8 @@ export class AdditionalCompensationComponent implements OnInit {
   private readonly modalService = inject(NzModalService);
   private readonly adminService = inject(AdminService);
   private readonly destroyRef$ = inject(DestroyRef);
+  private readonly toastrService$ = inject(ToastrService);
+  private readonly stlUtil = inject(StlUtilitiesService);
 
   LABELS = LABELS;
   tableColumns: TPL_TABLE_COLUMN[] = [];
@@ -212,6 +219,70 @@ export class AdditionalCompensationComponent implements OnInit {
     this.paginatedTable.loading = true;
     this.reload$.next();
   }
+
+  actionControls = (rowData: any): TableAction<any>[] => [
+    // Completed Tagging, <Completed/Failed> Generate Additional Compensation Files, <Completed/Failed> Transaction Allocation  or Published
+    { label: LABELS.CALCULATE_GMR_VAT, hidden: () => rowData?.published, click: () => this.runJob('additionalCompensation-calculateGmrVat', rowData, LABELS.CALCULATE_GMR_VAT) },
+    { label: LABELS.FINALIZE, hidden: () => rowData?.published, click: () => this.runJob('additionalCompensation-finalize', rowData, LABELS.FINALIZE) },
+    { label: LABELS.SEND_NOTIFICATION, hidden: () => rowData?.published, click: () => this.sendNotice(rowData) },
+    { label: LABELS.DELETE, hidden: () => rowData?.published, click: () => this.runJob('additionalCompensation-deleteAdditionalCompensationClaim', rowData, LABELS.FINALIZE) },
+  ];
+
+  sendNotice(rowData: any): void {
+    this.stlUtil.sendNotification(rowData, () => {
+      this.paginatedTable.loading = true;
+      this.reload$.next();
+    });
+  }
+
+  cancelRun(id: number): void {
+    this.settlementService.cancelRun(+id)
+    .subscribe(() => {
+      this.reload$.next();
+    });
+  }
+
+  runJob(pipelineName: string, rowData: any, title: string): void {
+    this.modalService.confirm({
+      ...modalConfig,
+      nzTitle: title,
+      nzContent: ConfirmWithDescComponent,
+      nzData: {
+        message: MESSAGES.CONFIRM_ACTION,
+        descriptions: [
+          { label: LABELS.BILLING_PERIOD, value: rowData?.billingPeriod},
+          { label: LABELS.BILLING_START_DATE, value: rowData?.billingStartDate},
+          { label: LABELS.BILLING_END_DATE, value: rowData?.billingEndDate }
+        ]
+      },
+      nzOnOk: () => {
+        const payload = {
+          pipelineName,
+          refId: rowData?.id,
+          isGroup: true,
+          parameters: {
+            billingStartDate: rowData?.billingStartDate,
+            billingEndDate: rowData?.billingEndDate,
+            billingPeriodName: rowData?.billingPeriod
+          }
+        };
+
+        this.paginatedTable.loading = true;
+
+        this.settlementService.etaJobs(payload, false)
+          .pipe(takeUntilDestroyed(this.destroyRef$))
+          .subscribe({
+            next: () => {
+              this.toastrService$.success(MESSAGES.SUCCESS_JOB_TRIGGER_SINGULAR);
+              this.reload$.next();
+            },
+            error: () => this.paginatedTable.loading = false
+          });
+      }
+    });
+
+  }
+
 
 }
 

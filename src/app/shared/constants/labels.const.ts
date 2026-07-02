@@ -231,5 +231,6 @@ export const LABELS = {
   NOTIFICATION_MESSAGE: 'Notification Message',
   ISSUED_DATE: 'Issued Date',
   RUN_ADJUSTMENT: 'Run Adjustment',
-
+  BILLING_START_DATE: 'Billing Start Date',
+  BILLING_END_DATE: 'Billing End Date',
 }
