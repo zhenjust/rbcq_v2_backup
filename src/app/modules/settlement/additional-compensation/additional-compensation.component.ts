@@ -2,7 +2,7 @@ import { Component, DestroyRef, effect, inject, OnInit, signal, TemplateRef, Vie
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { LABELS } from '@shared/constants/labels.const';
-import { meterProcessBillingPeriod, Reference, TableAction, TPL_TABLE_COLUMN } from '@shared/interfaces';
+import { meterProcessBillingPeriod, pipeline, Reference, TableAction, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { AdminService, MeterprocessService, SettlementService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
@@ -221,11 +221,13 @@ export class AdditionalCompensationComponent implements OnInit {
   }
 
   actionControls = (rowData: any): TableAction<any>[] => [
-    // Completed Tagging, <Completed/Failed> Generate Additional Compensation Files, <Completed/Failed> Transaction Allocation  or Published
-    { label: LABELS.CALCULATE_GMR_VAT, hidden: () => rowData?.published, click: () => this.runJob('additionalCompensation-calculateGmrVat', rowData, LABELS.CALCULATE_GMR_VAT) },
-    { label: LABELS.FINALIZE, hidden: () => rowData?.published, click: () => this.runJob('additionalCompensation-finalize', rowData, LABELS.FINALIZE) },
-    { label: LABELS.SEND_NOTIFICATION, hidden: () => rowData?.published, click: () => this.sendNotice(rowData) },
-    { label: LABELS.DELETE, hidden: () => rowData?.published, click: () => this.runJob('additionalCompensation-deleteAdditionalCompensationClaim', rowData, LABELS.FINALIZE) },
+    { label: LABELS.CALCULATE_GMR_VAT, hidden: () => {
+      return !rowData.pipelines.some((pipeline: pipeline) => pipeline.name === 'additionalCompensation' && pipeline.status === 'Completed') && !rowData?.published
+    }, click: () => this.runJob('additionalCompensation-calculateGmrVat', rowData, LABELS.CALCULATE_GMR_VAT) },
+    { label: LABELS.FINALIZE, hidden: () => {
+      return !rowData.pipelines.some((pipeline: pipeline) => pipeline.name === 'additionalCompensation-calculateGmrVat' && pipeline.status === 'Completed') && !rowData?.published
+    }, click: () => this.runJob('additionalCompensation-finalize', rowData, LABELS.FINALIZE) },
+    { label: LABELS.SEND_NOTIFICATION, hidden: () => !rowData?.published, click: () => this.sendNotice(rowData) },
   ];
 
   sendNotice(rowData: any): void {
