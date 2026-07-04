@@ -177,3 +177,29 @@ export interface SendNotice {
     billingEndDate: string;
   }
 }
+
+export interface ACPipelineGroup {
+  id: number
+  name: string
+  billingPeriod: string
+  billingStartDate: string
+  billingEndDate: string
+  published: boolean
+  pricingCondition: string
+  allClaims: AllClaim[]
+  penaltyHeaders: any[]
+  pipelines: settlementPipeline[];
+  runDatetime: string
+  status: string
+  outdatedId: boolean
+  outdatedRun: boolean
+  lineRentalStatus?: string
+}
+
+export interface AllClaim {
+  billingId: string
+  mtn: string
+  approveRate: number
+  customDateRanges: { startDate: string, endDate: string }[]
+  creationDate: string
+}

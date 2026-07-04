@@ -2,7 +2,7 @@ import { Component, DestroyRef, effect, inject, OnInit, signal, TemplateRef, Vie
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { LABELS } from '@shared/constants/labels.const';
-import { meterProcessBillingPeriod, pipeline, Reference, TableAction, TPL_TABLE_COLUMN } from '@shared/interfaces';
+import { ACPipelineGroup, AllClaim, meterProcessBillingPeriod, pipeline, Reference, TableAction, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { AdminService, MeterprocessService, SettlementService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
@@ -250,7 +250,7 @@ export class AdditionalCompensationComponent implements OnInit {
     });
   }
 
-  deleteBillingId(mainRow: any, billingRow: any): void {
+  deleteBillingId(mainRow: ACPipelineGroup, billingRow: AllClaim): void {
     const payload = {
       pipelineName: 'additionalCompensation-deleteAdditionalCompensationClaim',
       isGroup: true,
@@ -272,7 +272,14 @@ export class AdditionalCompensationComponent implements OnInit {
     this.modalService.confirm({
       ...modalConfig,
       nzTitle: LABELS.CONFIRMATION,
-      nzContent: MESSAGES.CONFIRM_DELETE_ITEM(LABELS.BILLING_ID_ENTRY),
+      nzContent: ConfirmWithDescComponent,
+      nzWidth: '560px',
+      nzData: {
+        message: MESSAGES.CONFIRM_ACTION,
+        descriptions: [
+          { label: LABELS.DATE_TIME_RANGE, value: billingRow.customDateRanges.map(d => `${d.startDate} - ${d.endDate}`).join(', ')},
+        ]
+      },
       nzOnOk: () => {
         this.paginatedTable.loading = true;
         this.settlementService.etaJobs(payload, false)
