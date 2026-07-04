@@ -9,7 +9,7 @@ import { CurrentUser } from '@shared/interfaces';
 import { MqUploaderService } from '@shared/services/api';
 import { AdminService } from '@shared/services/api/admin.service';
 import { SystemUtilService } from '@shared/services/utils';
-import { addDays, differenceInCalendarMonths, format, getHours, getMinutes, getTime, isAfter, isSameDay, isSameHour, isToday, isWithinInterval, set, setHours, setMinutes, startOfDay, subMonths } from 'date-fns';
+import { addDays, addMonths, differenceInCalendarMonths, format, getHours, getMinutes, getTime, isAfter, isSameDay, isSameHour, isToday, isWithinInterval, set, setHours, setMinutes, startOfDay, subMonths } from 'date-fns';
 import { differenceInCalendarDays } from 'date-fns';
 import { DisabledTimeFn } from 'ng-zorro-antd/date-picker';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
@@ -84,16 +84,13 @@ export class MqUploaderFilterComponent implements OnInit {
           const newMins = setMinutes(newHour, +timeSplit[1]);
           this.timeLimit = format(newMins, 'p');
           this.isAllowedImport = (new Date()) < newMins;
-          const disableDaily = !this.isAllowedImport && this.isMspUser;
 
-          const currentDay = +format(new Date(), 'd');
-          const currentTime = +format(new Date(), 'HHmm');
-          const disableMonthly = this.isMspUser && (currentDay > 28 || (currentDay === 1 && currentTime < 5));
+          const disableDaily = !this.isAllowedImport && this.isMspUser;
 
           this.categoryOpts = this.sysUtil.nzOptionsFormatter(MQ_UPLOAD_CATEGORY, true)
             .map(option => ({
               ...option,
-              disabled: (option.value === 'DAILY' && disableDaily) || (option.value === 'MONTHLY' && disableMonthly)
+              disabled: (option.value === 'DAILY' && disableDaily)
             }));
         }
       });
@@ -299,7 +296,47 @@ export class MqUploaderFilterComponent implements OnInit {
   }
 
   disabledPrevDay = (currentDate: Date) => this.isDaily ? (differenceInCalendarDays(currentDate, new Date()) <= -this.dateDeduction || isAfter(currentDate, new Date()) ||  isToday(currentDate)) : differenceInCalendarDays(currentDate, new Date()) > -1;
-  disabledPrevMonth = (currentDate: Date) => differenceInCalendarMonths(currentDate, new Date()) > 0;
+
+  disabledPrevMonth = (currentDate: Date) => {
+
+    const date = new Date();
+    const _currentDate = set(currentDate, {date: 1, hours: 0, minutes: 0, seconds: 0});
+
+    const prevMonthInterval = {
+      start: set(subMonths(date, 2), { date: 27, hours: 0, minutes: 5, seconds: 0 }),
+      end: set(subMonths(date, 1), { date: 29, hours: 0, minutes: 0, seconds: 0 })
+    };
+
+    const currentMonthInterval = {
+      start: set(subMonths(date, 1), { date: 27, hours: 0, minutes: 5, seconds: 0 }),
+      end: set(date, { date: 29, hours: 0, minutes: 0, seconds: 0 })
+    };
+
+    const nextMonthInterval = {
+      start: set(date, { date: 27, hours: 0, minutes: 5, seconds: 0 }),
+      end: set(addMonths(date, 1), { date: 29, hours: 0, minutes: 0, seconds: 0 })
+    };
+
+    const dateIsWithinNextMonthInterval = isWithinInterval(date, nextMonthInterval);
+    const dateIsWithinPrevMonthInterval = isWithinInterval(date, prevMonthInterval);
+    const dateIsWithinCurrentMonthInterval = isWithinInterval(date, currentMonthInterval);
+
+    const getValidMonth = () => {
+      return [
+        ...dateIsWithinPrevMonthInterval ? [prevMonthInterval] : [],
+        ...dateIsWithinCurrentMonthInterval ? [currentMonthInterval] : [],
+        ...dateIsWithinNextMonthInterval ? [nextMonthInterval] : []
+      ]
+    };
+
+
+    if (this.isMspUser) {
+      return !getValidMonth().some(interval => isWithinInterval(_currentDate, interval));
+    }
+
+    return differenceInCalendarMonths(currentDate, date) > 0;
+  };
+
   disabledMonthlyInterval = (currentDate: Date) => this.intervalFrom?.value && this.intervalTo?.value && !isWithinInterval(currentDate, { start: this.intervalFrom?.value, end: this.intervalTo?.value});
   disabledDailyInterval = (currentDate: Date) => !isSameDay(this.tradingDay?.value, currentDate) && !isSameDay(addDays(this.tradingDay?.value, 1), currentDate);
   disabledInterval = (currentDate: Date) => this.isMonthly ? this.disabledMonthlyInterval(currentDate) : this.disabledDailyInterval(currentDate);
