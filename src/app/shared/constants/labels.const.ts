@@ -233,4 +233,6 @@ export const LABELS = {
   RUN_ADJUSTMENT: 'Run Adjustment',
   BILLING_START_DATE: 'Billing Start Date',
   BILLING_END_DATE: 'Billing End Date',
+
+  BILLING_ID_ENTRY: 'Billing ID Entry',
 }

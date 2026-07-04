@@ -66,7 +66,13 @@
       <div class="d-flex flex-column w-100">
         <p class="fw-bold">Billing ID Entries</p>
         <app-template-table class="w-100 mb-3" [tableColumns]="claimsTableCols"
-        [tableData]="row?.allClaims"></app-template-table>
+        [tableData]="row?.allClaims" [actionsTpl]="actionsTpl"></app-template-table>
+
+        <ng-template #actionsTpl let-subRow="row">
+          <button nz-button nzType="link" nzDanger (click)="deleteBillingId(row, subRow)">
+            {{ LABELS.DELETE }}
+          </button>
+        </ng-template>
 
         @if (row?.pipelines?.length) {
           <p class="fw-bold">Pipelines</p>

@@ -12,9 +12,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PipelineTableColumns } from '@shared/constants/pipelines.const';
 import { ToastrService } from 'ngx-toastr';
 import { MESSAGES } from '@shared/constants/messages.const';
-import { modalConfig } from '@shared/constants';
+import { modalConfig, PHASE_TWO_AUTHORITIES } from '@shared/constants';
 import { StlUtilitiesService } from '@shared/services/utils';
 import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
+import { NgxPermissionsService } from 'ngx-permissions';
 
 @Component({
   selector: 'app-additional-compensation',
@@ -40,6 +41,7 @@ export class AdditionalCompensationComponent implements OnInit {
   private readonly destroyRef$ = inject(DestroyRef);
   private readonly toastrService$ = inject(ToastrService);
   private readonly stlUtil = inject(StlUtilitiesService);
+  private readonly permsService = inject(NgxPermissionsService);
 
   LABELS = LABELS;
   tableColumns: TPL_TABLE_COLUMN[] = [];
@@ -63,6 +65,8 @@ export class AdditionalCompensationComponent implements OnInit {
   firstLoad = signal<boolean>(true);
   // END OF POLLING
 
+  currentPermissions = signal<string[]>([]);
+
   constructor() {
     this.pollingTime$.next(this.pollingTime());
     effect(() => {
@@ -77,6 +81,8 @@ export class AdditionalCompensationComponent implements OnInit {
     this.getReferences();
 
     this.url$ = this.getUrl();
+
+    this.currentPermissions.set(Object.keys(this.permsService.getPermissions()));
   }
 
   buildForm(): void {
@@ -222,10 +228,10 @@ export class AdditionalCompensationComponent implements OnInit {
 
   actionControls = (rowData: any): TableAction<any>[] => [
     { label: LABELS.CALCULATE_GMR_VAT, hidden: () => {
-      return !rowData.pipelines.some((pipeline: pipeline) => pipeline.name === 'additionalCompensation' && pipeline.status === 'Completed') && !rowData?.published
+      return !this.currentPermissions().includes(PHASE_TWO_AUTHORITIES.AC_CALC_GMR_VAT) || !rowData.pipelines.some((pipeline: pipeline) => pipeline.name === 'additionalCompensation' && pipeline.status === 'Completed') || rowData?.published
     }, click: () => this.runJob('additionalCompensation-calculateGmrVat', rowData, LABELS.CALCULATE_GMR_VAT) },
     { label: LABELS.FINALIZE, hidden: () => {
-      return !rowData.pipelines.some((pipeline: pipeline) => pipeline.name === 'additionalCompensation-calculateGmrVat' && pipeline.status === 'Completed') && !rowData?.published
+      return !rowData.pipelines.some((pipeline: pipeline) => pipeline.name === 'additionalCompensation-calculateGmrVat' && pipeline.status === 'Completed') || rowData?.published
     }, click: () => this.runJob('additionalCompensation-finalize', rowData, LABELS.FINALIZE) },
     { label: LABELS.SEND_NOTIFICATION, hidden: () => !rowData?.published, click: () => this.sendNotice(rowData) },
   ];
@@ -242,6 +248,44 @@ export class AdditionalCompensationComponent implements OnInit {
     .subscribe(() => {
       this.reload$.next();
     });
+  }
+
+  deleteBillingId(mainRow: any, billingRow: any): void {
+    const payload = {
+      pipelineName: 'additionalCompensation-deleteAdditionalCompensationClaim',
+      isGroup: true,
+      refId: mainRow?.id,
+      parameters: {
+        pricingCondition: mainRow?.pricingCondition
+      },
+      startEndDateRanges: billingRow?.customDateRanges,
+      claims: [
+        {
+          billingId: billingRow?.billingId,
+          mtn: billingRow?.mtn,
+          approveRate: billingRow?.approveRate
+        }
+      ]
+    };
+
+
+    this.modalService.confirm({
+      ...modalConfig,
+      nzTitle: LABELS.CONFIRMATION,
+      nzContent: MESSAGES.CONFIRM_DELETE_ITEM(LABELS.BILLING_ID_ENTRY),
+      nzOnOk: () => {
+        this.paginatedTable.loading = true;
+        this.settlementService.etaJobs(payload, false)
+          .subscribe({
+            next: () => {
+              this.toastrService$.success(MESSAGES.SUCCESS_JOB_TRIGGER_SINGULAR);
+              this.reload$.next();
+            },
+            error: () => this.paginatedTable.loading = false
+          });
+        }
+    });
+
   }
 
   runJob(pipelineName: string, rowData: any, title: string): void {
