@@ -231,7 +231,7 @@ export class AdditionalCompensationComponent implements OnInit {
       return !this.currentPermissions().includes(PHASE_TWO_AUTHORITIES.AC_CALC_GMR_VAT) || !rowData.pipelines.some((pipeline: pipeline) => pipeline.name === 'additionalCompensation' && pipeline.status === 'Completed') || rowData?.published
     }, click: () => this.runJob('additionalCompensation-calculateGmrVat', rowData, LABELS.CALCULATE_GMR_VAT) },
     { label: LABELS.FINALIZE, hidden: () => {
-      return !rowData.pipelines.some((pipeline: pipeline) => pipeline.name === 'additionalCompensation-calculateGmrVat' && pipeline.status === 'Completed') || rowData?.published
+      return !this.currentPermissions().includes(PHASE_TWO_AUTHORITIES.FINALIZE_AC) || !rowData.pipelines.some((pipeline: pipeline) => pipeline.name === 'additionalCompensation-calculateGmrVat' && pipeline.status === 'Completed') || rowData?.published
     }, click: () => this.runJob('additionalCompensation-finalize', rowData, LABELS.FINALIZE) },
     { label: LABELS.SEND_NOTIFICATION, hidden: () => !rowData?.published, click: () => this.sendNotice(rowData) },
   ];
@@ -250,6 +250,12 @@ export class AdditionalCompensationComponent implements OnInit {
     });
   }
 
+
+  // isRowInProgress(row: any): void {
+  //   row.pipelines.filter(pipeline => pipeline.name === 'additionalCompensation-deleteAdditionalCompensationClaim' && pipeline.status === 'In-Progress');
+
+  //   if ()
+  // }
   deleteBillingId(mainRow: ACPipelineGroup, billingRow: AllClaim): void {
     const payload = {
       pipelineName: 'additionalCompensation-deleteAdditionalCompensationClaim',

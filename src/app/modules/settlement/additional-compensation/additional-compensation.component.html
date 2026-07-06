@@ -69,6 +69,10 @@
         [tableData]="row?.allClaims" [actionsTpl]="actionsTpl"></app-template-table>
 
         <ng-template #actionsTpl let-subRow="row">
+          <!-- <div class="px-3">
+            <app-progress-bar></app-progress-bar>
+          </div> -->
+          <!-- @if (row.pipelines) -->
           <button nz-button nzType="link" nzDanger (click)="deleteBillingId(row, subRow)">
             {{ LABELS.DELETE }}
           </button>
