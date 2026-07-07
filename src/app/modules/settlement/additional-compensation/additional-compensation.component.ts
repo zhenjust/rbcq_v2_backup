@@ -250,12 +250,6 @@ export class AdditionalCompensationComponent implements OnInit {
     });
   }
 
-
-  // isRowInProgress(row: any): void {
-  //   row.pipelines.filter(pipeline => pipeline.name === 'additionalCompensation-deleteAdditionalCompensationClaim' && pipeline.status === 'In-Progress');
-
-  //   if ()
-  // }
   deleteBillingId(mainRow: ACPipelineGroup, billingRow: AllClaim): void {
     const payload = {
       pipelineName: 'additionalCompensation-deleteAdditionalCompensationClaim',
