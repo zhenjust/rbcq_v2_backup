@@ -66,10 +66,10 @@
       <div class="d-flex flex-column w-100">
         <p class="fw-bold">Billing ID Entries</p>
         <app-template-table class="w-100 mb-3" [tableColumns]="claimsTableCols"
-        [tableData]="row?.allClaims" [actionsTpl]="actionsTpl"></app-template-table>
+        [tableData]="row?.allClaims" [actionsTpl]="!row?.status?.startsWith('In-Progress') && actionsTpl"></app-template-table>
 
         <ng-template #actionsTpl let-subRow="row">
-          @if (row | isRowInProgress: row.id : subRow.billingId) {
+          @if (row | isRowInProgress: row.id : subRow.billingId : subRow.mtn) {
             <div class="px-3">
               <app-progress-bar></app-progress-bar>
             </div>

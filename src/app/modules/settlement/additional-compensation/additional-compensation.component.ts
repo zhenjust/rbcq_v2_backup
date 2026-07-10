@@ -228,10 +228,10 @@ export class AdditionalCompensationComponent implements OnInit {
 
   actionControls = (rowData: any): TableAction<any>[] => [
     { label: LABELS.CALCULATE_GMR_VAT, hidden: () => {
-      return !this.currentPermissions().includes(PHASE_TWO_AUTHORITIES.AC_CALC_GMR_VAT) || !rowData.pipelines.some((pipeline: pipeline) => pipeline.name === 'additionalCompensation' && pipeline.status === 'Completed') || rowData?.published
+      return !this.currentPermissions().includes(PHASE_TWO_AUTHORITIES.AC_CALC_GMR_VAT) || !rowData.pipelines.some((pipeline: pipeline) => pipeline.name === 'additionalCompensation' && ['Succeeded', 'Completed'].includes(pipeline.status)) || rowData?.published
     }, click: () => this.runJob('additionalCompensation-calculateGmrVat', rowData, LABELS.CALCULATE_GMR_VAT) },
     { label: LABELS.FINALIZE, hidden: () => {
-      return !this.currentPermissions().includes(PHASE_TWO_AUTHORITIES.FINALIZE_AC) || !rowData.pipelines.some((pipeline: pipeline) => pipeline.name === 'additionalCompensation-calculateGmrVat' && pipeline.status === 'Completed') || rowData?.published
+      return !this.currentPermissions().includes(PHASE_TWO_AUTHORITIES.FINALIZE_AC) || !rowData.pipelines.some((pipeline: pipeline) => pipeline.name === 'additionalCompensation-calculateGmrVat' && ['Succeeded', 'Completed'].includes(pipeline.status)) || rowData?.published
     }, click: () => this.runJob('additionalCompensation-finalize', rowData, LABELS.FINALIZE) },
     { label: LABELS.SEND_NOTIFICATION, hidden: () => !rowData?.published, click: () => this.sendNotice(rowData) },
   ];
@@ -309,6 +309,7 @@ export class AdditionalCompensationComponent implements OnInit {
         ]
       },
       nzOnOk: () => {
+        console.log(rowData)
         const payload = {
           pipelineName,
           refId: rowData?.id,
@@ -316,7 +317,8 @@ export class AdditionalCompensationComponent implements OnInit {
           parameters: {
             billingStartDate: rowData?.billingStartDate,
             billingEndDate: rowData?.billingEndDate,
-            billingPeriodName: rowData?.billingPeriod
+            billingPeriodName: rowData?.billingPeriod,
+            pricingCondition: rowData?.pricingCondition
           }
         };
 
