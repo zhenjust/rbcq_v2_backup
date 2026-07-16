@@ -76,7 +76,7 @@
 
           <!-- Btn Conditions -->
           @let isPublished = subRowData?.published;
-          @let showUploadBillingStatement = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded') && isFinalAdj && isPublished;
+          @let showUploadBillingStatement = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded') && isPublished;
           @let showDownloadBillingStatement = ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded') && isFinalAdj) || ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateFiles')] : 'Succeeded') && isPrelim);
           @let showPublish = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateFiles')] : 'Succeeded');
           @let showGenerateFile = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded');
