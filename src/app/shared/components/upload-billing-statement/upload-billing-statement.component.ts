@@ -51,7 +51,7 @@ export class UploadBillingStatementComponent implements OnInit {
       billingPeriod: [allData.billingPeriod, RxwebValidators.required()],
       type: [allData.processType, RxwebValidators.required()],
       category: ['MARKET_FEE', RxwebValidators.required()],
-      dueDate: [dueDate, RxwebValidators.required()],
+      dueDate: [dueDate],
     });
   }
 
