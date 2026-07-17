@@ -91,7 +91,7 @@ export class UploadBillingStatementComponent implements OnInit {
 
     Object.entries({
       ...values,
-      dueDate: format(values.dueDate, 'yyyy-MM-dd')
+      dueDate: values.dueDate ? format(values.dueDate, 'yyyy-MM-dd') : null
     }).forEach(([key, value]) => {
       formData.append(key, value as string);
     });
