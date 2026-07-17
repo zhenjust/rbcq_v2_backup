@@ -43,7 +43,7 @@ export class UploadBillingStatementComponent implements OnInit {
     const subRowData = this.modalData.subRowData;
 
     const finalizeRunData = subRowData.pipelineRuns?.find((run: PipelineRun) => run.name?.includes('finalize'));
-    const dueDate = finalizeRunData ? new Date(finalizeRunData.parameters?.dueDate?.dateValue) : null;
+    const dueDate = finalizeRunData && finalizeRunData.parameters?.dueDate?.dateValue ? new Date(finalizeRunData.parameters?.dueDate?.dateValue) : null;
 
     this.formGroup = this.formBuilder.group({
       groupId: [allData.id, RxwebValidators.required()],
