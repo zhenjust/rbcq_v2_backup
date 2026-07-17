@@ -50,7 +50,7 @@ export class UploadBillingStatementComponent implements OnInit {
       workspaceId: [subRowData.id, RxwebValidators.required()],
       billingPeriod: [allData.billingPeriod, RxwebValidators.required()],
       type: [allData.processType, RxwebValidators.required()],
-      category: ['MARKET_FEE', RxwebValidators.required()],
+      category: [this.modalData.isEnergy ? 'MARKET_FEE' : 'RESERVE_MARKET_FEE', RxwebValidators.required()],
       dueDate: [dueDate],
     });
   }
@@ -93,7 +93,9 @@ export class UploadBillingStatementComponent implements OnInit {
       ...values,
       dueDate: values.dueDate ? format(values.dueDate, 'yyyy-MM-dd') : null
     }).forEach(([key, value]) => {
-      formData.append(key, value as string);
+      if (value) {
+        formData.append(key, value as string);
+      }
     });
 
     this.busy$ = this.settlementService.uploadBillingStatement(formData)
