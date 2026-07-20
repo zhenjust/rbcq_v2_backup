@@ -226,13 +226,29 @@ export class AdditionalCompensationComponent implements OnInit {
     this.reload$.next();
   }
 
+
+  isPipelineComplete = (perm: string, pipelineName: string, rowData: any) => !this.currentPermissions().includes(perm) || !rowData.pipelines.some((pipeline: pipeline) => pipeline.name === pipelineName && ['Succeeded', 'Completed'].includes(pipeline.status));
+
   actionControls = (rowData: any): TableAction<any>[] => [
     { label: LABELS.CALCULATE_GMR_VAT, hidden: () => {
-      return !this.currentPermissions().includes(PHASE_TWO_AUTHORITIES.AC_CALC_GMR_VAT) || !rowData.pipelines.some((pipeline: pipeline) => pipeline.name === 'additionalCompensation' && ['Succeeded', 'Completed'].includes(pipeline.status)) || rowData?.published
+      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.AC_CALC_GMR_VAT, 'additionalCompensation', rowData) || rowData?.published
     }, click: () => this.runJob('additionalCompensation-calculateGmrVat', rowData, LABELS.CALCULATE_GMR_VAT) },
     { label: LABELS.FINALIZE, hidden: () => {
-      return !this.currentPermissions().includes(PHASE_TWO_AUTHORITIES.FINALIZE_AC) || !rowData.pipelines.some((pipeline: pipeline) => pipeline.name === 'additionalCompensation-calculateGmrVat' && ['Succeeded', 'Completed'].includes(pipeline.status)) || rowData?.published
+      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.FINALIZE_AC, 'additionalCompensation-calculateGmrVat', rowData)|| rowData?.published
     }, click: () => this.runJob('additionalCompensation-finalize', rowData, LABELS.FINALIZE) },
+
+    { label: LABELS.CALCULATE_TRANSACTION_ALLOCATION, hidden: () => {
+      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.FINALIZE_AC, 'additionalCompensation-finalize', rowData) || rowData?.published
+    }, click: () => this.stlUtil.triggerAllocModal('additionalCompensation-calculateTransAlloc', rowData, () => this.reloadTable() )},
+
+  { label: LABELS.GENERATE_FILES, hidden: () => {
+      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.FINALIZE_AC, 'additionalCompensation-finalize', rowData) || rowData?.published
+    }, click: () => this.runJob('additionalCompensation-generateFiles', rowData, LABELS.GENERATE_FILES) },
+
+    { label: LABELS.GENERATE_TRANSACTION_REPORT, hidden: () => {
+      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.FINALIZE_AC, 'additionalCompensation-finalize', rowData) || rowData?.published
+    }, click: () => this.runJob('additionalCompensation-generateTransactionReport', rowData, LABELS.GENERATE_TRANSACTION_REPORT) },
+
     { label: LABELS.SEND_NOTIFICATION, hidden: () => !rowData?.published, click: () => this.sendNotice(rowData) },
   ];
 
@@ -295,6 +311,11 @@ export class AdditionalCompensationComponent implements OnInit {
 
   }
 
+  reloadTable = () => {
+    this.paginatedTable.loading = true;
+    this.reload$.next();
+  }
+
   runJob(pipelineName: string, rowData: any, title: string): void {
     this.modalService.confirm({
       ...modalConfig,
@@ -309,7 +330,6 @@ export class AdditionalCompensationComponent implements OnInit {
         ]
       },
       nzOnOk: () => {
-        console.log(rowData)
         const payload = {
           pipelineName,
           refId: rowData?.id,
@@ -335,10 +355,7 @@ export class AdditionalCompensationComponent implements OnInit {
           });
       }
     });
-
   }
-
-
 }
 
 const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
@@ -346,6 +363,7 @@ const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.WORKSPACE_ID]: { label: LABELS.WORKSPACE_ID, propName: 'id', width: '100px' },
   [LABELS.PRICING_CONDITION]: { label: LABELS.PRICING_CONDITION, propName: 'pricingCondition', width: '100px', align: 'center' },
   [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', width: '200px', align: 'center' },
+  [LABELS.PUBLISHED]: { label: LABELS.PUBLISHED, propName: 'published', type: 'boolean', align: 'center' }
   // [LABELS.PROGRESS]: { label: LABELS.PROGRESS, propName: 'status', width: '100px', align: 'center', type: 'template' },
 }
 
