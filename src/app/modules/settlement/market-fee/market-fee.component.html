@@ -76,7 +76,7 @@
 
           <!-- Btn Conditions -->
           @let isPublished = subRowData?.published;
-          @let showUploadBillingStatement = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded') && isPublished;
+          @let showUploadBillingStatement = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded') && isPublished && isFinalAdj;
           @let showDownloadBillingStatement = ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded') && isFinalAdj) || ((subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateFiles')] : 'Succeeded') && isPrelim);
           @let showPublish = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-generateFiles')] : 'Succeeded');
           @let showGenerateFile = (subRowData?.pipelineRuns | pipelineSome : [(pipelineName + '-finalize')] : 'Succeeded');
@@ -88,7 +88,7 @@
           @let canGenerateFile = showGenerateFile && hasGenerateFilePermission;
           @let canPublish = showPublish;
 
-          @if (!isInProgress && (showDownloadBillingStatement || (!isPublished && (canGenerateInputWorkspace || canCalc || canFinalize || canGenerateFile || canPublish)))) {
+          @if (!isInProgress && (showUploadBillingStatement || (!isPublished && (canGenerateInputWorkspace || canCalc || canFinalize || canGenerateFile || canPublish)))) {
             <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu">{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
           }
 
