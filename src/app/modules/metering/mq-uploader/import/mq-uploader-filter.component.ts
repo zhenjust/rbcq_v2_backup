@@ -289,6 +289,7 @@ export class MqUploaderFilterComponent implements OnInit {
     const allHours = Array.from({ length: 12 }, (_, i) => (i + 1) * 5);
     const isBeforeEndDay = isBefore(_value as Date, this.intervalTo?.value)
 
+    console.debug('test')
     return {
       nzDisabledHours: () => isBeforeEndDay ? [] : (_isSameDay ? endHourArr : Array.from({ length: 23 }, (_, i) => i + 1)),
       nzDisabledMinutes: () => isBeforeEndDay ? [] : (_isSameDay ? (_isSameHour ? minsArr.slice(0, indexStartMin + 1) : (isAfterHour ? [] : allHours)) : Array.from({ length: 11 }, (_, i) => (i + 1) * 5)),
