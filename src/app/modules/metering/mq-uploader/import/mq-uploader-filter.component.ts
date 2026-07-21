@@ -9,7 +9,7 @@ import { CurrentUser } from '@shared/interfaces';
 import { MqUploaderService } from '@shared/services/api';
 import { AdminService } from '@shared/services/api/admin.service';
 import { SystemUtilService } from '@shared/services/utils';
-import { addDays, addMonths, differenceInCalendarMonths, format, getHours, getMinutes, getTime, isAfter, isSameDay, isSameHour, isToday, isWithinInterval, set, setHours, setMinutes, startOfDay, subMonths } from 'date-fns';
+import { addDays, addMonths, differenceInCalendarMonths, format, getHours, getMinutes, getTime, isAfter, isBefore, isSameDay, isSameHour, isToday, isWithinInterval, set, setHours, setMinutes, startOfDay, subMonths } from 'date-fns';
 import { differenceInCalendarDays } from 'date-fns';
 import { DisabledTimeFn } from 'ng-zorro-antd/date-picker';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
@@ -287,10 +287,11 @@ export class MqUploaderFilterComponent implements OnInit {
     const minsArr = Array.from({ length: 12 }, (_, i) => (i) * 5);
     const indexStartMin = minsArr.indexOf(startMin);
     const allHours = Array.from({ length: 12 }, (_, i) => (i + 1) * 5);
+    const isBeforeEndDay = isBefore(_value as Date, this.intervalTo?.value)
 
     return {
-      nzDisabledHours: () => _isSameDay ? endHourArr : Array.from({ length: 23 }, (_, i) => i + 1),
-      nzDisabledMinutes: () => _isSameDay ? (_isSameHour ? minsArr.slice(0, indexStartMin + 1) : (isAfterHour ? [] : allHours)) : Array.from({ length: 11 }, (_, i) => (i + 1) * 5),
+      nzDisabledHours: () => isBeforeEndDay ? [] : (_isSameDay ? endHourArr : Array.from({ length: 23 }, (_, i) => i + 1)),
+      nzDisabledMinutes: () => isBeforeEndDay ? [] : (_isSameDay ? (_isSameHour ? minsArr.slice(0, indexStartMin + 1) : (isAfterHour ? [] : allHours)) : Array.from({ length: 11 }, (_, i) => (i + 1) * 5)),
       nzDisabledSeconds: () => [] as number[]
     }
   }
