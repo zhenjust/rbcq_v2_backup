@@ -63,7 +63,7 @@
 
       <ng-template #expandTplActions let-subRowData="row">
         @if (subRowData.fileName) {
-          <a nz-button nzType="link" nzSize="small" (click)="download(subRowData)" nzBlock>{{ LABELS.DOWNLOAD }}</a>
+          <button nz-button nzType="link" nzSize="small" (click)="download(subRowData)" [nzLoading]="subRowData.loading" nzBlock>{{ LABELS.DOWNLOAD }}</button>
         }
       </ng-template>
     </div>

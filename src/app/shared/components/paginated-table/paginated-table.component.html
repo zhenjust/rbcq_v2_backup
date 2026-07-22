@@ -96,11 +96,12 @@
               </div>
             } @else {
               @if (actionLength > 1) {
-                <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu">{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
+                @let rowLoading = actions[0]?.loading;
+                <button nz-button nz-dropdown [nzLoading]="rowLoading || isLoading" nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu">{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
                 <nz-dropdown-menu #menu="nzDropdownMenu">
                   <ul nz-menu nzSelectable>
                     @for (action of actions; track action.label) {
-                      <li nz-menu-item (click)="action.click(row)" [nzDanger]="action?.danger">{{ action.label }}</li>
+                      <li nz-menu-item (click)="!action.loading && action.click(row)" [nzDanger]="action?.danger" [nzDisabled]="action?.loading">{{ action.label }}</li>
                     }
                   </ul>
                 </nz-dropdown-menu>
@@ -108,7 +109,7 @@
 
               @if (actionLength === 1) {
                 @let action = actions[0];
-                <button nz-button nzType="link" (click)="action.click(row)" [nzDanger]="action?.danger">{{ action.label }}</button>
+                <button nz-button nzType="link" [nzLoading]="action?.loading || isLoading" [disabled]="action?.loading || isLoading" (click)="action.click(row)" [nzDanger]="action?.danger">{{ action.label }}</button>
               }
             }
           </td>

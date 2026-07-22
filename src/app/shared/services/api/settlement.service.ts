@@ -115,8 +115,13 @@ export class SettlementService {
   }
 
   public sendNotice(payload: SendNotice): Observable<any> {
-    return this.http.post<any>(`${this.baseEndpoint}/admin/send-notice`, payload)
+    return this.http.post<any>(`${this.STL}/send-notice`, payload)
   }
+
+  public sendNoticeStatus(id: number): Observable<{ status: string }> {
+    return this.http.get<{ status: string }>(`${this.STL}/send-notice/status?workspaceId=${id}`)
+  }
+
 
 }
 

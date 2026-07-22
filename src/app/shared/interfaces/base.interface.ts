@@ -47,6 +47,7 @@ export interface TableAction<T> {
   label: string;
   value: string;
   danger?: boolean;
+  loading?: boolean;
   click: (rowData?: T) => void;
   hidden?: (rowData?: T) => boolean;
 }

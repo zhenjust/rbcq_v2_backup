@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { AmsComponent } from '@modules/settlement/shared/ams/ams.component';
 import { SendNotificationComponent } from '@shared/components/send-notification/send-notification.component';
 import { LABELS } from '@shared/constants/labels.const';
-import { PublishSettlement } from '@shared/interfaces';
+import { PipelineRun, PublishSettlement } from '@shared/interfaces';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { SettlementService } from '../api';
 import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
@@ -49,8 +49,11 @@ export class StlUtilitiesService {
   }
 
   sendNotification(rowData: any, callback: () => void): void {
+    const findParams = rowData.pipelines
+      .find((pipeline: PipelineRun) => pipeline.name.includes('finalize') && ['Completed', 'Succeeded'].includes(pipeline.status));
+
     const dueDateTable = [
-      { dueDate: new Date(), status: 'PUBLISHED' }
+      { dueDate: findParams?.parameters?.dueDate || null, status: '' }
     ];
 
     const modal = this.modal.create({
@@ -64,11 +67,11 @@ export class StlUtilitiesService {
       }
     });
 
-    modal.afterClose.subscribe(_reload => {
-      if (_reload) {
+    modal.afterClose.subscribe(res => {
+      if (res) {
         callback();
       }
-    })
+    });
   }
 
   publish(payload: PublishSettlement, title: string, message: string, descriptions: any[], callback?: () => void): void {
