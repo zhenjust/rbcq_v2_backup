@@ -1,6 +1,7 @@
 export const MESSAGES = {
   // STATIC MESSAGES
   SUCCESS_JOB_TRIGGER: 'Jobs successfully triggered!',
+  SUCCESS_JOB_TRIGGER_SINGULAR: 'Job successfully triggered!',
   CLEAR_ALL_FILES: 'Are you sure you want to clear all selected files?',
   CANCEL_RUN: `Are you sure you want to cancel this run?`,
   INVALID_FILE_TYPE: `Invalid file type. Please try again.`,

@@ -45,7 +45,7 @@ export interface TableDataResult<T> {
 
 export interface TableAction<T> {
   label: string;
-  value: string;
+  value?: string;
   danger?: boolean;
   loading?: boolean;
   click: (rowData?: T) => void;

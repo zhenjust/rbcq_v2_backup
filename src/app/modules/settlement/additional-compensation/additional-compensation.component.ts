@@ -2,7 +2,7 @@ import { Component, DestroyRef, effect, inject, OnInit, signal, TemplateRef, Vie
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { LABELS } from '@shared/constants/labels.const';
-import { meterProcessBillingPeriod, Reference, TPL_TABLE_COLUMN } from '@shared/interfaces';
+import { ACPipelineGroup, AllClaim, meterProcessBillingPeriod, pipeline, Reference, TableAction, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { AdminService, MeterprocessService, SettlementService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
@@ -10,6 +10,12 @@ import { BehaviorSubject, exhaustMap, finalize, forkJoin, merge, Observable, Sub
 import { FileAClaimComponent } from './file-a-claim/file-a-claim.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PipelineTableColumns } from '@shared/constants/pipelines.const';
+import { ToastrService } from 'ngx-toastr';
+import { MESSAGES } from '@shared/constants/messages.const';
+import { modalConfig, PHASE_TWO_AUTHORITIES } from '@shared/constants';
+import { StlUtilitiesService } from '@shared/services/utils';
+import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
+import { NgxPermissionsService } from 'ngx-permissions';
 
 @Component({
   selector: 'app-additional-compensation',
@@ -33,6 +39,9 @@ export class AdditionalCompensationComponent implements OnInit {
   private readonly modalService = inject(NzModalService);
   private readonly adminService = inject(AdminService);
   private readonly destroyRef$ = inject(DestroyRef);
+  private readonly toastrService$ = inject(ToastrService);
+  private readonly stlUtil = inject(StlUtilitiesService);
+  private readonly permsService = inject(NgxPermissionsService);
 
   LABELS = LABELS;
   tableColumns: TPL_TABLE_COLUMN[] = [];
@@ -56,6 +65,8 @@ export class AdditionalCompensationComponent implements OnInit {
   firstLoad = signal<boolean>(true);
   // END OF POLLING
 
+  currentPermissions = signal<string[]>([]);
+
   constructor() {
     this.pollingTime$.next(this.pollingTime());
     effect(() => {
@@ -70,6 +81,8 @@ export class AdditionalCompensationComponent implements OnInit {
     this.getReferences();
 
     this.url$ = this.getUrl();
+
+    this.currentPermissions.set(Object.keys(this.permsService.getPermissions()));
   }
 
   buildForm(): void {
@@ -213,6 +226,136 @@ export class AdditionalCompensationComponent implements OnInit {
     this.reload$.next();
   }
 
+
+  isPipelineComplete = (perm: string, pipelineName: string, rowData: any) => !this.currentPermissions().includes(perm) || !rowData.pipelines.some((pipeline: pipeline) => pipeline.name === pipelineName && ['Succeeded', 'Completed'].includes(pipeline.status));
+
+  actionControls = (rowData: any): TableAction<any>[] => [
+    { label: LABELS.CALCULATE_GMR_VAT, hidden: () => {
+      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.AC_CALC_GMR_VAT, 'additionalCompensation', rowData) || rowData?.published
+    }, click: () => this.runJob('additionalCompensation-calculateGmrVat', rowData, LABELS.CALCULATE_GMR_VAT) },
+    { label: LABELS.FINALIZE, hidden: () => {
+      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.FINALIZE_AC, 'additionalCompensation-calculateGmrVat', rowData)|| rowData?.published
+    }, click: () => this.runJob('additionalCompensation-finalize', rowData, LABELS.FINALIZE) },
+
+    { label: LABELS.CALCULATE_TRANSACTION_ALLOCATION, hidden: () => {
+      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.FINALIZE_AC, 'additionalCompensation-finalize', rowData) || rowData?.published
+    }, click: () => this.stlUtil.triggerAllocModal('additionalCompensation-calculateTransAlloc', rowData, () => this.reloadTable() )},
+
+  { label: LABELS.GENERATE_FILES, hidden: () => {
+      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.FINALIZE_AC, 'additionalCompensation-finalize', rowData) || rowData?.published
+    }, click: () => this.runJob('additionalCompensation-generateFiles', rowData, LABELS.GENERATE_FILES) },
+
+    { label: LABELS.GENERATE_TRANSACTION_REPORT, hidden: () => {
+      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.FINALIZE_AC, 'additionalCompensation-finalize', rowData) || rowData?.published
+    }, click: () => this.runJob('additionalCompensation-generateTransactionReport', rowData, LABELS.GENERATE_TRANSACTION_REPORT) },
+
+    { label: LABELS.SEND_NOTIFICATION, hidden: () => !rowData?.published, click: () => this.sendNotice(rowData) },
+  ];
+
+  sendNotice(rowData: any): void {
+    this.stlUtil.sendNotification(rowData, () => {
+      this.paginatedTable.loading = true;
+      this.reload$.next();
+    });
+  }
+
+  cancelRun(id: number): void {
+    this.settlementService.cancelRun(+id)
+    .subscribe(() => {
+      this.reload$.next();
+    });
+  }
+
+  deleteBillingId(mainRow: ACPipelineGroup, billingRow: AllClaim): void {
+    const payload = {
+      pipelineName: 'additionalCompensation-deleteAdditionalCompensationClaim',
+      isGroup: true,
+      refId: mainRow?.id,
+      parameters: {
+        pricingCondition: mainRow?.pricingCondition
+      },
+      startEndDateRanges: billingRow?.customDateRanges,
+      claims: [
+        {
+          billingId: billingRow?.billingId,
+          mtn: billingRow?.mtn,
+          approveRate: billingRow?.approveRate
+        }
+      ]
+    };
+
+
+    this.modalService.confirm({
+      ...modalConfig,
+      nzTitle: LABELS.CONFIRMATION,
+      nzContent: ConfirmWithDescComponent,
+      nzWidth: '560px',
+      nzData: {
+        message: MESSAGES.CONFIRM_ACTION,
+        descriptions: [
+          { label: LABELS.DATE_TIME_RANGE, value: billingRow.customDateRanges.map(d => `${d.startDate} - ${d.endDate}`).join(', ')},
+        ]
+      },
+      nzOnOk: () => {
+        this.paginatedTable.loading = true;
+        this.settlementService.etaJobs(payload, false)
+          .subscribe({
+            next: () => {
+              this.toastrService$.success(MESSAGES.SUCCESS_JOB_TRIGGER_SINGULAR);
+              this.reload$.next();
+            },
+            error: () => this.paginatedTable.loading = false
+          });
+        }
+    });
+
+  }
+
+  reloadTable = () => {
+    this.paginatedTable.loading = true;
+    this.reload$.next();
+  }
+
+  runJob(pipelineName: string, rowData: any, title: string): void {
+    this.modalService.confirm({
+      ...modalConfig,
+      nzTitle: title,
+      nzContent: ConfirmWithDescComponent,
+      nzData: {
+        message: MESSAGES.CONFIRM_ACTION,
+        descriptions: [
+          { label: LABELS.BILLING_PERIOD, value: rowData?.billingPeriod},
+          { label: LABELS.BILLING_START_DATE, value: rowData?.billingStartDate},
+          { label: LABELS.BILLING_END_DATE, value: rowData?.billingEndDate }
+        ]
+      },
+      nzOnOk: () => {
+        const payload = {
+          pipelineName,
+          refId: rowData?.id,
+          isGroup: true,
+          parameters: {
+            billingStartDate: rowData?.billingStartDate,
+            billingEndDate: rowData?.billingEndDate,
+            billingPeriodName: rowData?.billingPeriod,
+            pricingCondition: rowData?.pricingCondition
+          }
+        };
+
+        this.paginatedTable.loading = true;
+
+        this.settlementService.etaJobs(payload, false)
+          .pipe(takeUntilDestroyed(this.destroyRef$))
+          .subscribe({
+            next: () => {
+              this.toastrService$.success(MESSAGES.SUCCESS_JOB_TRIGGER_SINGULAR);
+              this.reload$.next();
+            },
+            error: () => this.paginatedTable.loading = false
+          });
+      }
+    });
+  }
 }
 
 const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
@@ -220,6 +363,7 @@ const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.WORKSPACE_ID]: { label: LABELS.WORKSPACE_ID, propName: 'id', width: '100px' },
   [LABELS.PRICING_CONDITION]: { label: LABELS.PRICING_CONDITION, propName: 'pricingCondition', width: '100px', align: 'center' },
   [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', width: '200px', align: 'center' },
+  [LABELS.PUBLISHED]: { label: LABELS.PUBLISHED, propName: 'published', type: 'boolean', align: 'center' }
   // [LABELS.PROGRESS]: { label: LABELS.PROGRESS, propName: 'status', width: '100px', align: 'center', type: 'template' },
 }
 

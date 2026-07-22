@@ -43,15 +43,15 @@ export class UploadBillingStatementComponent implements OnInit {
     const subRowData = this.modalData.subRowData;
 
     const finalizeRunData = subRowData.pipelineRuns?.find((run: PipelineRun) => run.name?.includes('finalize'));
-    const dueDate = finalizeRunData ? new Date(finalizeRunData.parameters?.dueDate?.dateValue) : null;
+    const dueDate = finalizeRunData && finalizeRunData.parameters?.dueDate?.dateValue ? new Date(finalizeRunData.parameters?.dueDate?.dateValue) : null;
 
     this.formGroup = this.formBuilder.group({
       groupId: [allData.id, RxwebValidators.required()],
       workspaceId: [subRowData.id, RxwebValidators.required()],
       billingPeriod: [allData.billingPeriod, RxwebValidators.required()],
       type: [allData.processType, RxwebValidators.required()],
-      category: ['MARKET_FEE', RxwebValidators.required()],
-      dueDate: [dueDate, RxwebValidators.required()],
+      category: [this.modalData.isEnergy ? 'MARKET_FEE' : 'RESERVE_MARKET_FEE', RxwebValidators.required()],
+      dueDate: [dueDate],
     });
   }
 
@@ -91,9 +91,11 @@ export class UploadBillingStatementComponent implements OnInit {
 
     Object.entries({
       ...values,
-      dueDate: format(values.dueDate, 'yyyy-MM-dd')
+      dueDate: values.dueDate ? format(values.dueDate, 'yyyy-MM-dd') : null
     }).forEach(([key, value]) => {
-      formData.append(key, value as string);
+      if (value) {
+        formData.append(key, value as string);
+      }
     });
 
     this.busy$ = this.settlementService.uploadBillingStatement(formData)

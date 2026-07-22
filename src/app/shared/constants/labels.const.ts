@@ -132,6 +132,7 @@ export const LABELS = {
   CALCULATE_RESERVE_GMR_VAT: 'Calculate Reserve GMR/VAT',
   CALCULATE_RESERVE_TRANSACTION_ALLOCATION: 'Calculate Reserve Transaction Allocation',
   CALCULATE_SETTLEMENT: 'Calculate Settlement',
+  CALCULATE_TRANSACTION_ALLOCATION: 'Calculate Transaction Allocation',
 
   FINALIZE_LINE_RENTAL: 'Finalize Line Rental',
   FINALIZE_SETTLEMENT: 'Finalize Settlement',
@@ -143,6 +144,7 @@ export const LABELS = {
   GENERATE_RESERVE_MONTHLY_SUMMARY: 'Generate Reserve Monthly Summary',
   GENERATE_RESERVE_TRANSACTION_REPORT: 'Generate Reserve Transaction Report',
   GENERATE_ENERGY_TRANSACTION_REPORT: 'Generate Energy Transaction Report',
+  GENERATE_TRANSACTION_REPORT: 'Generate Transaction Report',
 
   PUBLISH_TRANSACTION_REPORT: 'Publish Transaction Report',
   PUBLISH_PENALTY_REPORT: 'Publish Penalty Report',
@@ -231,5 +233,8 @@ export const LABELS = {
   NOTIFICATION_MESSAGE: 'Notification Message',
   ISSUED_DATE: 'Issued Date',
   RUN_ADJUSTMENT: 'Run Adjustment',
+  BILLING_START_DATE: 'Billing Start Date',
+  BILLING_END_DATE: 'Billing End Date',
 
+  BILLING_ID_ENTRY: 'Billing ID Entry',
 }
