@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { RxwebValidators } from '@rxweb/reactive-form-validators';
@@ -48,6 +48,8 @@ export class MqUploaderFilterComponent implements OnInit {
   regCategory: string;
   timeLimit: string;
   isAllowedImport: boolean;
+
+  maxInterval = signal<Date | null>(null);
 
   ngOnInit(): void {
     this.currentUser = this.as.currentUser();
@@ -152,6 +154,7 @@ export class MqUploaderFilterComponent implements OnInit {
 
         const startInterval = set(subMonths(month, 1), { date: 26, hours: 0, minutes: 5 });
         const endInterval = set(month, { date: 26, hours: 0, minutes: 0 });
+        this.maxInterval.set(endInterval);
         this.intervalFrom?.setValue(startInterval);
         this.intervalTo?.setValue(endInterval);
         this.intervalFrom?.enable();
@@ -287,9 +290,8 @@ export class MqUploaderFilterComponent implements OnInit {
     const minsArr = Array.from({ length: 12 }, (_, i) => (i) * 5);
     const indexStartMin = minsArr.indexOf(startMin);
     const allHours = Array.from({ length: 12 }, (_, i) => (i + 1) * 5);
-    const isBeforeEndDay = isBefore(_value as Date, this.intervalTo?.value)
+    const isBeforeEndDay = isBefore(_value as Date, this.maxInterval() as Date);
 
-    console.debug('test')
     return {
       nzDisabledHours: () => isBeforeEndDay ? [] : (_isSameDay ? endHourArr : Array.from({ length: 23 }, (_, i) => i + 1)),
       nzDisabledMinutes: () => isBeforeEndDay ? [] : (_isSameDay ? (_isSameHour ? minsArr.slice(0, indexStartMin + 1) : (isAfterHour ? [] : allHours)) : Array.from({ length: 11 }, (_, i) => (i + 1) * 5)),
@@ -341,7 +343,7 @@ export class MqUploaderFilterComponent implements OnInit {
     return differenceInCalendarMonths(currentDate, date) > 0;
   };
 
-  disabledMonthlyInterval = (currentDate: Date) => this.intervalFrom?.value && this.intervalTo?.value && !isWithinInterval(currentDate, { start: this.intervalFrom?.value, end: this.intervalTo?.value});
+  disabledMonthlyInterval = (currentDate: Date) => this.intervalFrom?.value && this.intervalTo?.value && !isWithinInterval(currentDate, { start: this.intervalFrom?.value, end: this.maxInterval() as Date });
   disabledDailyInterval = (currentDate: Date) => !isSameDay(this.tradingDay?.value, currentDate) && !isSameDay(addDays(this.tradingDay?.value, 1), currentDate);
   disabledInterval = (currentDate: Date) => this.isMonthly ? this.disabledMonthlyInterval(currentDate) : this.disabledDailyInterval(currentDate);
 
