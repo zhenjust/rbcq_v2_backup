@@ -16,7 +16,6 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { ToastrService } from 'ngx-toastr';
-
 import { distinctUntilChanged, Subscription } from 'rxjs';
 
 @Component({
@@ -304,7 +303,7 @@ export class MqUploaderFilterComponent implements OnInit {
   disabledPrevMonth = (currentDate: Date) => {
 
     const date = new Date();
-    // const date = set(new Date('2026-02-27'), {hours: 0, minutes: 0, seconds: 0});
+    // const date = set(new Date('2026-01-27'), {hours: 0, minutes: 0, seconds: 0});
     const _currentDate = set(currentDate, {date: 1, hours: 0, minutes: 0, seconds: 0});
 
     const prevMonthInterval = {
@@ -326,6 +325,7 @@ export class MqUploaderFilterComponent implements OnInit {
     const dateIsWithinPrevMonthInterval = isWithinInterval(date, prevMonthInterval);
     const dateIsWithinCurrentMonthInterval = isWithinInterval(date, currentMonthInterval);
 
+    console.log({ date, prevMonthInterval, currentMonthInterval, nextMonthInterval, dateIsWithinNextMonthInterval, dateIsWithinPrevMonthInterval, dateIsWithinCurrentMonthInterval})
 
     const getValidMonth = () => {
       return [
