@@ -308,17 +308,17 @@ export class MqUploaderFilterComponent implements OnInit {
 
     const prevMonthInterval = {
       start: set(subMonths(date, 2), { date: 27, hours: 0, minutes: 0, seconds: 0 }),
-      end: set(subMonths(date, 1), { date: 29, hours: 0, minutes: 0, seconds: 0 })
+      end: set(subMonths(date, 1), { date: 28, hours: 23, minutes: 59, seconds: 59 })
     };
 
     const currentMonthInterval = {
       start: set(subMonths(date, 1), { date: 27, hours: 0, minutes: 0, seconds: 0 }),
-      end: set(date, { date: 29, hours: 0, minutes: 0, seconds: 0 })
+      end: set(date, { date: 28, hours: 23, minutes: 59, seconds: 59 })
     };
 
     const nextMonthInterval = {
       start: set(date, { date: 27, hours: 0, minutes: 0, seconds: 0 }),
-      end: set(addMonths(date, 1), { date: 29, hours: 0, minutes: 0, seconds: 0 })
+      end: set(addMonths(date, 1), { date: 28, hours: 23, minutes: 59, seconds: 59 })
     };
 
     const dateIsWithinNextMonthInterval = isWithinInterval(date, nextMonthInterval);
