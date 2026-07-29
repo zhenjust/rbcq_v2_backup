@@ -300,7 +300,7 @@ export class MarketFeeComponent  implements OnInit {
           disabled: (component) => component ? ((component.formGroup.invalid || !component.fileList?.length) || (component?.busy$ && !component?.busy$?.closed)) : true
         }
       ],
-      nzData: { allData, subRowData },
+      nzData: { allData, subRowData, isEnergy: this.isEnergy() ? true : false },
       nzWidth: '600px',
     });
 

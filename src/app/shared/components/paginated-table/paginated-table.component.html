@@ -87,6 +87,7 @@
           <td nzAlign="center">
             @let actions = getActions(row);
             @let actionLength = actions?.length || 0;
+            @let isInProgress = showInProgress && row?.status?.startsWith('In-Progress');
 
             @if (progressBarCondition?.(row)) {
               <div class="w-100">
@@ -95,7 +96,13 @@
                 </div>
               </div>
             } @else {
-              @if (actionLength > 1) {
+              @if (isInProgress) {
+                <div class="px-3">
+                  <app-progress-bar></app-progress-bar>
+                </div>
+              }
+
+              @if (actionLength > 1 && !isInProgress) {
                 @let rowLoading = actions[0]?.loading;
                 <button nz-button nz-dropdown [nzLoading]="rowLoading || isLoading" nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu">{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
                 <nz-dropdown-menu #menu="nzDropdownMenu">
@@ -107,7 +114,7 @@
                 </nz-dropdown-menu>
               }
 
-              @if (actionLength === 1) {
+              @if (actionLength === 1 && !isInProgress) {
                 @let action = actions[0];
                 <button nz-button nzType="link" [nzLoading]="action?.loading || isLoading" [disabled]="action?.loading || isLoading" (click)="action.click(row)" [nzDanger]="action?.danger">{{ action.label }}</button>
               }

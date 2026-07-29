@@ -98,3 +98,7 @@ export enum Status {
   QUEUED_FOR_PROCESSING = 'QUEUED_FOR_PROCESSING',
   IN_PROGRESS = 'IN_PROGRESS'
 }
+
+export const AdditionalCompStatus = {
+  C_CALC_ADD_COMP: 'Completed - Calculate Additional Compensation',
+}

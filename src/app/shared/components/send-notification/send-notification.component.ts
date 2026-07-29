@@ -4,7 +4,7 @@ import 'froala-editor/js/plugins/link.min.js';
 import 'froala-editor/js/plugins/image.min.js';
 import 'froala-editor/js/plugins/colors.min.js';
 import { LABELS } from '@shared/constants/labels.const';
-import { PipelineRun, SendNotice, TPL_TABLE_COLUMN } from '@shared/interfaces';
+import { SendNotice, settlementPipeline, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { SettlementService } from '@shared/services/api';
 import { SettlementModuleName } from '@shared/constants';
@@ -61,13 +61,11 @@ export class SendNotificationComponent{
   }
 
   getStatus(): void {
-    this.settlementService.sendNoticeStatus(this.rowData()?.workspaceId || this.rowData()?.id)
+    this.settlementService.sendNoticeStatus(this.rowData()?.id)
       .pipe(takeUntilDestroyed(this.destroyRef$))
       .subscribe(response => {
-        console.log(response.status)
         this.modalData.dueDateTable[0].status = response?.status ?? '';
         this.tableData.set(this.modalData?.dueDateTable);
-        console.log(this.tableData())
       });
   }
 
@@ -75,13 +73,13 @@ export class SendNotificationComponent{
     this.showError.set(false);
 
     const findParams = this.rowData().pipelines
-      .find((pipeline: PipelineRun) => pipeline.name.includes('finalize') && ['Completed', 'Succeeded'].includes(pipeline.status));
+      .find((pipeline: settlementPipeline) => pipeline?.parameters?.dueDate && ['Completed', 'Succeeded'].includes(pipeline.status));
 
     const payload: SendNotice = {
       notificationMessage: this.notificationMessage,
       type: SettlementModuleName[this.rowData()?.name],
       parameters: {
-        workspaceId: this.rowData().workspaceId || this.rowData().id,
+        workspaceId: this.rowData().id,
         processType: this.rowData().processType,
         billingPeriodName: this.rowData()?.billingPeriod || findParams?.parameters?.billingPeriodName || null,
         billingStartDate: this.rowData()?.billingStartDate || findParams?.parameters?.billingStartDate,

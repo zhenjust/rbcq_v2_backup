@@ -24,7 +24,7 @@ export class PaginatedTableComponent<T> extends SearchListBase {
   @Input() progressBarCondition!: (rowData: any) => boolean;
   @Input() url: Observable<any>;
   @Input() showCustomLoading: boolean;
-
+  @Input() showInProgress = false;
 
   enableExpand = input<boolean>();
   expandTpl = input<TemplateRef<any>>();

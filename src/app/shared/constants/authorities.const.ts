@@ -314,6 +314,7 @@ export const PHASE_ONE_AUTHORITIES = {
     VIEW_STL_PROCESS: 'VIEW_STL_PROCESS', // View Settlement Process Page
     AC_CALC_GMR_VAT: 'AC_CALC_GMR_VAT', // Calculate GMR/VAT AC (used by AC)
     FINALIZE_CALC: 'FINALIZE_CALC', // Finalize Calculations (used by AC)
+    FINALIZE_AC: 'FINALIZE_AC',
     AC_VIEW_AMS_INV_FOR_UPDATE: 'AC_VIEW_AMS_INV_FOR_UPDATE',
     AC_UPDATE_AMS_INV_FOR_UPDATE: 'AC_UPDATE_AMS_INV_FOR_UPDATE',
     GENERATE_FILES: 'GENERATE_FILES', // Generate Files (used by AC)

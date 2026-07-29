@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { AmsComponent } from '@modules/settlement/shared/ams/ams.component';
 import { SendNotificationComponent } from '@shared/components/send-notification/send-notification.component';
 import { LABELS } from '@shared/constants/labels.const';
-import { PipelineRun, PublishSettlement } from '@shared/interfaces';
+import { PublishSettlement, settlementPipeline } from '@shared/interfaces';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { SettlementService } from '../api';
 import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
@@ -50,7 +50,7 @@ export class StlUtilitiesService {
 
   sendNotification(rowData: any, callback: () => void): void {
     const findParams = rowData.pipelines
-      .find((pipeline: PipelineRun) => pipeline.name.includes('finalize') && ['Completed', 'Succeeded'].includes(pipeline.status));
+      .find((pipeline: settlementPipeline) => pipeline?.parameters?.dueDate && ['Completed', 'Succeeded'].includes(pipeline.status));
 
     const dueDateTable = [
       { dueDate: findParams?.parameters?.dueDate || null, status: '' }

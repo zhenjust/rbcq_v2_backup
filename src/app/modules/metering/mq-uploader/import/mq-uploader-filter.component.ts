@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { RxwebValidators } from '@rxweb/reactive-form-validators';
@@ -9,14 +9,13 @@ import { CurrentUser } from '@shared/interfaces';
 import { MqUploaderService } from '@shared/services/api';
 import { AdminService } from '@shared/services/api/admin.service';
 import { SystemUtilService } from '@shared/services/utils';
-import { addDays, differenceInCalendarMonths, format, getHours, getMinutes, getTime, isAfter, isSameDay, isSameHour, isToday, isWithinInterval, set, setHours, setMinutes, startOfDay, subMonths } from 'date-fns';
+import { addDays, addMonths, differenceInCalendarMonths, format, getHours, getMinutes, getTime, isAfter, isBefore, isSameDay, isSameHour, isToday, isWithinInterval, set, setHours, setMinutes, startOfDay, subMonths } from 'date-fns';
 import { differenceInCalendarDays } from 'date-fns';
 import { DisabledTimeFn } from 'ng-zorro-antd/date-picker';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { ToastrService } from 'ngx-toastr';
-
 import { distinctUntilChanged, Subscription } from 'rxjs';
 
 @Component({
@@ -48,6 +47,8 @@ export class MqUploaderFilterComponent implements OnInit {
   regCategory: string;
   timeLimit: string;
   isAllowedImport: boolean;
+
+  maxInterval = signal<Date | null>(null);
 
   ngOnInit(): void {
     this.currentUser = this.as.currentUser();
@@ -84,16 +85,13 @@ export class MqUploaderFilterComponent implements OnInit {
           const newMins = setMinutes(newHour, +timeSplit[1]);
           this.timeLimit = format(newMins, 'p');
           this.isAllowedImport = (new Date()) < newMins;
-          const disableDaily = !this.isAllowedImport && this.isMspUser;
 
-          const currentDay = +format(new Date(), 'd');
-          const currentTime = +format(new Date(), 'HHmm');
-          const disableMonthly = this.isMspUser && (currentDay > 28 || (currentDay === 1 && currentTime < 5));
+          const disableDaily = !this.isAllowedImport && this.isMspUser;
 
           this.categoryOpts = this.sysUtil.nzOptionsFormatter(MQ_UPLOAD_CATEGORY, true)
             .map(option => ({
               ...option,
-              disabled: (option.value === 'DAILY' && disableDaily) || (option.value === 'MONTHLY' && disableMonthly)
+              disabled: (option.value === 'DAILY' && disableDaily)
             }));
         }
       });
@@ -155,6 +153,7 @@ export class MqUploaderFilterComponent implements OnInit {
 
         const startInterval = set(subMonths(month, 1), { date: 26, hours: 0, minutes: 5 });
         const endInterval = set(month, { date: 26, hours: 0, minutes: 0 });
+        this.maxInterval.set(endInterval);
         this.intervalFrom?.setValue(startInterval);
         this.intervalTo?.setValue(endInterval);
         this.intervalFrom?.enable();
@@ -290,17 +289,61 @@ export class MqUploaderFilterComponent implements OnInit {
     const minsArr = Array.from({ length: 12 }, (_, i) => (i) * 5);
     const indexStartMin = minsArr.indexOf(startMin);
     const allHours = Array.from({ length: 12 }, (_, i) => (i + 1) * 5);
+    const isBeforeEndDay = isBefore(_value as Date, this.maxInterval() as Date);
 
     return {
-      nzDisabledHours: () => _isSameDay ? endHourArr : Array.from({ length: 23 }, (_, i) => i + 1),
-      nzDisabledMinutes: () => _isSameDay ? (_isSameHour ? minsArr.slice(0, indexStartMin + 1) : (isAfterHour ? [] : allHours)) : Array.from({ length: 11 }, (_, i) => (i + 1) * 5),
+      nzDisabledHours: () => isBeforeEndDay ? [] : (_isSameDay ? endHourArr : Array.from({ length: 23 }, (_, i) => i + 1)),
+      nzDisabledMinutes: () => isBeforeEndDay ? [] : (_isSameDay ? (_isSameHour ? minsArr.slice(0, indexStartMin + 1) : (isAfterHour ? [] : allHours)) : Array.from({ length: 11 }, (_, i) => (i + 1) * 5)),
       nzDisabledSeconds: () => [] as number[]
     }
   }
 
   disabledPrevDay = (currentDate: Date) => this.isDaily ? (differenceInCalendarDays(currentDate, new Date()) <= -this.dateDeduction || isAfter(currentDate, new Date()) ||  isToday(currentDate)) : differenceInCalendarDays(currentDate, new Date()) > -1;
-  disabledPrevMonth = (currentDate: Date) => differenceInCalendarMonths(currentDate, new Date()) > 0;
-  disabledMonthlyInterval = (currentDate: Date) => this.intervalFrom?.value && this.intervalTo?.value && !isWithinInterval(currentDate, { start: this.intervalFrom?.value, end: this.intervalTo?.value});
+
+  disabledPrevMonth = (currentDate: Date) => {
+
+    const date = new Date();
+    // const date = set(new Date('2026-01-27'), {hours: 0, minutes: 0, seconds: 0});
+    const _currentDate = set(currentDate, {date: 1, hours: 0, minutes: 0, seconds: 0});
+
+    const prevMonthInterval = {
+      start: set(subMonths(date, 2), { date: 27, hours: 0, minutes: 0, seconds: 0 }),
+      end: set(subMonths(date, 1), { date: 28, hours: 23, minutes: 59, seconds: 59 })
+    };
+
+    const currentMonthInterval = {
+      start: set(subMonths(date, 1), { date: 27, hours: 0, minutes: 0, seconds: 0 }),
+      end: set(date, { date: 28, hours: 23, minutes: 59, seconds: 59 })
+    };
+
+    const nextMonthInterval = {
+      start: set(date, { date: 27, hours: 0, minutes: 0, seconds: 0 }),
+      end: set(addMonths(date, 1), { date: 28, hours: 23, minutes: 59, seconds: 59 })
+    };
+
+    const dateIsWithinNextMonthInterval = isWithinInterval(date, nextMonthInterval);
+    const dateIsWithinPrevMonthInterval = isWithinInterval(date, prevMonthInterval);
+    const dateIsWithinCurrentMonthInterval = isWithinInterval(date, currentMonthInterval);
+
+    console.log({ date, prevMonthInterval, currentMonthInterval, nextMonthInterval, dateIsWithinNextMonthInterval, dateIsWithinPrevMonthInterval, dateIsWithinCurrentMonthInterval})
+
+    const getValidMonth = () => {
+      return [
+        ...dateIsWithinPrevMonthInterval ? [prevMonthInterval] : [],
+        ...dateIsWithinCurrentMonthInterval ? [currentMonthInterval] : [],
+        ...dateIsWithinNextMonthInterval ? [nextMonthInterval] : []
+      ]
+    };
+
+
+    if (this.isMspUser) {
+      return !getValidMonth().some(interval => isWithinInterval(_currentDate, interval));
+    }
+
+    return differenceInCalendarMonths(currentDate, date) > 0;
+  };
+
+  disabledMonthlyInterval = (currentDate: Date) => this.intervalFrom?.value && this.intervalTo?.value && !isWithinInterval(currentDate, { start: this.intervalFrom?.value, end: this.maxInterval() as Date });
   disabledDailyInterval = (currentDate: Date) => !isSameDay(this.tradingDay?.value, currentDate) && !isSameDay(addDays(this.tradingDay?.value, 1), currentDate);
   disabledInterval = (currentDate: Date) => this.isMonthly ? this.disabledMonthlyInterval(currentDate) : this.disabledDailyInterval(currentDate);
 
