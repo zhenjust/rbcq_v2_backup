@@ -241,13 +241,17 @@ export class AdditionalCompensationComponent implements OnInit {
       return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.FINALIZE_AC, 'additionalCompensation-finalize', rowData) || rowData?.published
     }, click: () => this.stlUtil.triggerAllocModal('additionalCompensation-calculateTransAlloc', rowData, () => this.reloadTable() )},
 
-  { label: LABELS.GENERATE_FILES, hidden: () => {
+    { label: LABELS.GENERATE_FILES, hidden: () => {
       return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.FINALIZE_AC, 'additionalCompensation-finalize', rowData) || rowData?.published
     }, click: () => this.runJob('additionalCompensation-generateFiles', rowData, LABELS.GENERATE_FILES) },
 
     { label: LABELS.GENERATE_TRANSACTION_REPORT, hidden: () => {
       return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.FINALIZE_AC, 'additionalCompensation-finalize', rowData) || rowData?.published
     }, click: () => this.runJob('additionalCompensation-generateTransactionReport', rowData, LABELS.GENERATE_TRANSACTION_REPORT) },
+
+    { label: LABELS.PUBLISH, hidden: () => {
+      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.FINALIZE_AC, 'additionalCompensation-generateTransactionReport', rowData) || rowData?.published
+    }, click: () => this.runJob('additionalCompensation-publish', rowData, LABELS.PUBLISH) },
 
     { label: LABELS.SEND_NOTIFICATION, hidden: () => !rowData?.published, click: () => this.sendNotice(rowData) },
   ];
