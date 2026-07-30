@@ -238,15 +238,15 @@ export class AdditionalCompensationComponent implements OnInit {
     }, click: () => this.runJob('additionalCompensation-finalize', rowData, LABELS.FINALIZE) },
 
     { label: LABELS.CALCULATE_TRANSACTION_ALLOCATION, hidden: () => {
-      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.FINALIZE_AC, 'additionalCompensation-finalize', rowData) || rowData?.published
+      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.AC_TRANS_ALLOC, 'additionalCompensation-finalize', rowData) || rowData?.published
     }, click: () => this.stlUtil.triggerAllocModal('additionalCompensation-calculateTransAlloc', rowData, () => this.reloadTable() )},
 
     { label: LABELS.GENERATE_FILES, hidden: () => {
-      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.FINALIZE_AC, 'additionalCompensation-finalize', rowData) || rowData?.published
+      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.AC_GENERATE_FILES, 'additionalCompensation-finalize', rowData) || rowData?.published
     }, click: () => this.runJob('additionalCompensation-generateFiles', rowData, LABELS.GENERATE_FILES) },
 
     { label: LABELS.GENERATE_TRANSACTION_REPORT, hidden: () => {
-      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.FINALIZE_AC, 'additionalCompensation-finalize', rowData) || rowData?.published
+      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.AC_GENERATE_FILES, 'additionalCompensation-finalize', rowData) || rowData?.published
     }, click: () => this.runJob('additionalCompensation-generateTransactionReport', rowData, LABELS.GENERATE_TRANSACTION_REPORT) },
 
     { label: LABELS.PUBLISH, hidden: () => {
