@@ -229,12 +229,15 @@ export class AdditionalCompensationComponent implements OnInit {
 
   isPipelineComplete = (perm: string, pipelineName: string, rowData: any) => !this.currentPermissions().includes(perm) || !rowData.pipelines.some((pipeline: pipeline) => pipeline.name === pipelineName && ['Succeeded', 'Completed'].includes(pipeline.status));
 
+  isFinalized = (pipelineName: string, rowData: any) => rowData.pipelines.some((pipeline: pipeline) => pipeline.name === pipelineName && ['Succeeded', 'Completed'].includes(pipeline.status));
+
+
   actionControls = (rowData: any): TableAction<any>[] => [
     { label: LABELS.CALCULATE_GMR_VAT, hidden: () => {
-      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.AC_CALC_GMR_VAT, 'additionalCompensation', rowData) || rowData?.published
+      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.AC_CALC_GMR_VAT, 'additionalCompensation', rowData) || this.isFinalized('additionalCompensation-finalize', rowData) || rowData?.published
     }, click: () => this.runJob('additionalCompensation-calculateGmrVat', rowData, LABELS.CALCULATE_GMR_VAT) },
     { label: LABELS.FINALIZE, hidden: () => {
-      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.FINALIZE_AC, 'additionalCompensation-calculateGmrVat', rowData)|| rowData?.published
+      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.FINALIZE_AC, 'additionalCompensation-calculateGmrVat', rowData) || this.isPipelineComplete(PHASE_TWO_AUTHORITIES.FINALIZE_AC, 'additionalCompensation-finalize', rowData) || rowData?.published || this.isFinalized('additionalCompensation-finalize', rowData)
     }, click: () => this.runJob('additionalCompensation-finalize', rowData, LABELS.FINALIZE) },
 
     { label: LABELS.CALCULATE_TRANSACTION_ALLOCATION, hidden: () => {
