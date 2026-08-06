@@ -45,6 +45,7 @@ export class AdditionalCompensationComponent implements OnInit {
 
   LABELS = LABELS;
   tableColumns: TPL_TABLE_COLUMN[] = [];
+  PERM = PHASE_TWO_AUTHORITIES;
   form: FormGroup;
   showForm = false;
   claimsTableCols: TPL_TABLE_COLUMN[];
