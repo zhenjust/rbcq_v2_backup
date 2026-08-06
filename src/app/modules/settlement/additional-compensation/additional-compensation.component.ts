@@ -2,7 +2,7 @@ import { Component, DestroyRef, effect, inject, OnInit, signal, TemplateRef, Vie
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { LABELS } from '@shared/constants/labels.const';
-import { ACPipelineGroup, AllClaim, meterProcessBillingPeriod, pipeline, Reference, TableAction, TPL_TABLE_COLUMN } from '@shared/interfaces';
+import { ACPipelineGroup, AllClaim, meterProcessBillingPeriod, pipeline, PublishSettlement, Reference, TableAction, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { AdminService, MeterprocessService, SettlementService } from '@shared/services/api';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
@@ -254,10 +254,34 @@ export class AdditionalCompensationComponent implements OnInit {
 
     { label: LABELS.PUBLISH, hidden: () => {
       return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.FINALIZE_AC, 'additionalCompensation-generateTransactionReport', rowData) || rowData?.published
-    }, click: () => this.runJob('additionalCompensation-publish', rowData, LABELS.PUBLISH) },
+    }, click: () => this.handlePublishAction('Additional Compensation - Publish', rowData) },
 
     { label: LABELS.SEND_NOTIFICATION, hidden: () => !rowData?.published, click: () => this.sendNotice(rowData) },
   ];
+
+  handlePublishAction(functionName: string, data: any): void {
+    const payload: PublishSettlement = {
+      workspaceId: +data.id,
+      pipelineGroupId: +data.id,
+      stlGroupId: +data.id,
+      functionName: functionName,
+      // processType: data.processType,
+      billingPeriod: data.billingPeriod,
+    };
+
+    const title = LABELS.PUBLISH_TRANSACTION_REPORT;
+    const message = MESSAGES.CONFIRM_PUBLISH_ITEM(LABELS.TRANSACTION_REPORT.toLowerCase());
+    const descriptions = [
+      {
+        label: `${LABELS.TRADING_DATE}/${LABELS.BILLING_PERIOD}`,
+        value: data.tradingDate
+          ? data.tradingDate
+          : `${data.billingStartDate} to ${data.billingEndDate}`
+      },
+    ];
+
+    this.stlUtil.publish(payload, title, message, descriptions, () => this.reload$.next());
+  }
 
   sendNotice(rowData: any): void {
     this.stlUtil.sendNotification(rowData, () => {
