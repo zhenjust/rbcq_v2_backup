@@ -1,16 +1,9 @@
+import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import {
-  HttpEvent,
-  HttpHandler,
-  HttpInterceptor,
-  HttpRequest,
-  HttpErrorResponse
-} from '@angular/common/http';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { catchError, filter, finalize, switchMap, take } from 'rxjs/operators';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { ToastrService } from 'ngx-toastr';
-import { LABELS } from '@shared/constants/labels.const';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { catchError, filter, finalize, switchMap, take } from 'rxjs/operators';
 
 @Injectable()
 export class RequestInterceptor implements HttpInterceptor {
@@ -104,7 +97,7 @@ export class RequestInterceptor implements HttpInterceptor {
           }
           case 400:
           case 500:
-            this.toast.error(error?.error?.message || '', error?.error?.error || LABELS.ERROR);
+            this.toast.error(error?.error?.message || error?.error?.error || '');
             break;
         }
 
