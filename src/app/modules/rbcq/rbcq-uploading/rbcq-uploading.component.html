@@ -1,0 +1,16 @@
+<nz-upload
+  nzType="drag"
+  [nzMultiple]="true"
+  [nzCustomRequest]="uploadRbcq"
+  nzName="file" 
+  [nzShowUploadList]="{ showDownloadIcon: false }"
+  
+>
+  <p class="fas fa-cloud-upload-alt fa-2x">
+    <fa-icon [icon]="uploadIcon" size="2x"></fa-icon>
+  </p>
+  <p class="ant-upload-text">Click or drag file to this area to upload</p>
+  <p class="ant-upload-hint">
+    Support for a single or bulk upload. Strictly prohibit uploading company data or other banned files
+  </p>
+</nz-upload>

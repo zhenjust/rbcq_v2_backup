@@ -1,7 +1,7 @@
 import { Component, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
 import { externalRoutes, NEW_ROUTES } from '@shared/constants';
 import { CurrentUser, navItems } from '@shared/interfaces';
-import { faBell, faHome, faChevronDown, faChevronRight, faAddressCard, faBuilding, faCopy, faUserLarge, faCircleUser, faCalendar, faFileArchive, faAddressBook, faBuildingUn, faTachometer, faTachometerAlt, faBinoculars, faContactCard, faHandHoldingHand, faTachometerAverage, faListCheck, faRoadCircleCheck, faUpload } from '@fortawesome/free-solid-svg-icons';
+import { faBell, faHome, faChevronDown, faChevronRight, faAddressCard, faFileContract,faBuilding, faCopy, faUserLarge, faCircleUser, faCalendar, faFileArchive, faAddressBook, faBuildingUn, faTachometer, faTachometerAlt, faBinoculars, faContactCard, faHandHoldingHand, faTachometerAverage, faListCheck, faRoadCircleCheck, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { Router } from '@angular/router';
 import { PHASE_ONE_AUTHORITIES, PHASE_TWO_AUTHORITIES } from '@shared/constants';
 import { isAuthorizedAny } from '@shared/validators';
@@ -1225,7 +1225,29 @@ export class NavbarComponent implements OnInit {
                 show: true,
                 externalLink: externalRoutes.ADMIN.DATA_INTERFACE_MANAGEMENT.IMPORT_TRADING_OPERATIONS_DATA,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY]
+              },
+              {
+                title: 'Submit RBCQ',
+                path: NEW_ROUTES.RBCQ_SUBMIT,
+                show: true,
+                permission: []
+              },
+              {
+                title: 'View RBCQ',
+                path: NEW_ROUTES.RBCQ_VIEW,
+                show: true,
+                permission: []
+              },
+              {
+                title: 'Process RBCQ',
+                path: NEW_ROUTES.RBCQ_PROCESS,
+                show: true,
+                permission: [
+                  PHASE_TWO_AUTHORITIES.SET_TOD_GEN_CONFIG,
+                  PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY
+                ],
               }
+              
             ]
           },
           {
@@ -1257,6 +1279,44 @@ export class NavbarComponent implements OnInit {
           }
         ]
       },
+
+      {
+        title: 'RBCQ',
+        show: true,
+        icon: faFileContract,
+        permission: [
+
+        ],
+        children: [
+          {
+            title: 'Submit RBCQ',
+            path: NEW_ROUTES.RBCQ_SUBMIT,
+            show: true,
+            permission: []
+          },
+          {
+            title: 'View RBCQ',
+            path: NEW_ROUTES.RBCQ_VIEW,
+            show: true,
+            permission: []
+          },
+          {
+            title: 'Process RBCQ',
+            path: NEW_ROUTES.RBCQ_PROCESS,
+            show: true,
+            permission: [
+              PHASE_TWO_AUTHORITIES.SET_TOD_GEN_CONFIG,
+              PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY
+            ],
+          }
+          // {
+          //   title: 'BCQ Download Template',
+          //   externalLink: externalRoutes.BCQ_MENU_FOR_TP.BCQ_DOWNLOAD_TEMPLATE,
+          //   permission: []
+          // }
+        ]
+      },
+
       {
         title: LABELS.MQ_UPLOADER,
         show: this.regCategory === 'MSP',
@@ -1264,6 +1324,11 @@ export class NavbarComponent implements OnInit {
         path: NEW_ROUTES.MSP_MQ_UPLOADER,
       },
     ];
+
+    
+
+
+    
 
     this.navItems = this.navItems.filter(item => this.hasPermission(item)); //for checking
     this.getNavbarInfo();
