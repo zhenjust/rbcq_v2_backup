@@ -1,7 +1,9 @@
-import { Component, DestroyRef, OnInit, TemplateRef, ViewChild, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthorizationService } from '@core/services/authorization.service';
-import { MeterDataPipelineName, MeterProcessStatus, MeterDataPipelineProcess, PipelineStatus, MeterDataPipelineNameLabel } from '@shared/constants';
+import { MeterDataPipelineName, MeterDataPipelineNameLabel, MeterDataPipelineProcess, MeterProcessStatus, PipelineStatus } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
+import { MESSAGES } from '@shared/constants/messages.const';
 import { MeterProcessTypes } from '@shared/enums';
 import { meterProcessJobSearchGroupParams, meterProcessPipeline, meterProcessPipelineGroup, meterProcessTable } from '@shared/interfaces';
 import { MeterprocessService } from '@shared/services/api';
@@ -9,11 +11,11 @@ import { SearchFilterService } from '@shared/services/meterProcess';
 import { DateFormatterUtilService, DownloadUtilService } from '@shared/services/utils';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { ToastrService } from 'ngx-toastr';
-import { ConsolidateComponent } from '../consolidate/consolidate.component';
-import { MESSAGES } from '@shared/constants/messages.const';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Subject, BehaviorSubject, Observable, EMPTY, merge, timer } from 'rxjs';
+import { BehaviorSubject, EMPTY, merge, Observable, Subject, timer } from 'rxjs';
 import { exhaustMap, finalize, switchMap } from 'rxjs/operators';
+
+import { ConsolidateComponent } from '../consolidate/consolidate.component';
+
 interface tableColumn {
   name: string;
 }
@@ -253,7 +255,7 @@ export class TableComponent implements OnInit {
       nzCancelText: 'Cancel',
       nzOnOk: () => {
         return new Promise<void>((resolve) => {
-          this.mpa.runJob({}, this.currentModalData?.actionType, this.currentModalData?.pipeline.id)
+          this.mpa.runJob({ adjNo: parentData?.adjNo || null  }, this.currentModalData?.actionType, this.currentModalData?.pipeline.id)
             .subscribe({
               next: () => {
                 this.modal.success({
