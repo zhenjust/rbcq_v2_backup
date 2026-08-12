@@ -1225,7 +1225,29 @@ export class NavbarComponent implements OnInit {
                 show: true,
                 externalLink: externalRoutes.ADMIN.DATA_INTERFACE_MANAGEMENT.IMPORT_TRADING_OPERATIONS_DATA,
                 permission: [PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY]
+              },
+              {
+                title: 'Submit RBCQ',
+                path: NEW_ROUTES.RBCQ_SUBMIT,
+                show: true,
+                permission: []
+              },
+              {
+                title: 'View RBCQ',
+                path: NEW_ROUTES.RBCQ_VIEW,
+                show: true,
+                permission: []
+              },
+              {
+                title: 'Process RBCQ',
+                path: NEW_ROUTES.RBCQ_PROCESS,
+                show: true,
+                permission: [
+                  PHASE_TWO_AUTHORITIES.SET_TOD_GEN_CONFIG,
+                  PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY
+                ],
               }
+              
             ]
           },
           {
