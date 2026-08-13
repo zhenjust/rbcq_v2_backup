@@ -1,21 +1,22 @@
 import { Component, DestroyRef, effect, inject, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
+import { modalConfig, PHASE_TWO_AUTHORITIES } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
+import { MESSAGES } from '@shared/constants/messages.const';
+import { PipelineTableColumns } from '@shared/constants/pipelines.const';
 import { ACPipelineGroup, AllClaim, meterProcessBillingPeriod, pipeline, PublishSettlement, Reference, TableAction, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { AdminService, MeterprocessService, SettlementService } from '@shared/services/api';
+import { StlUtilitiesService } from '@shared/services/utils';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
-import { BehaviorSubject, exhaustMap, finalize, forkJoin, merge, Observable, Subject, switchMap, timer } from 'rxjs';
-import { FileAClaimComponent } from './file-a-claim/file-a-claim.component';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { PipelineTableColumns } from '@shared/constants/pipelines.const';
-import { ToastrService } from 'ngx-toastr';
-import { MESSAGES } from '@shared/constants/messages.const';
-import { modalConfig, PHASE_TWO_AUTHORITIES } from '@shared/constants';
-import { StlUtilitiesService } from '@shared/services/utils';
-import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
 import { NgxPermissionsService } from 'ngx-permissions';
+import { ToastrService } from 'ngx-toastr';
+import { BehaviorSubject, exhaustMap, finalize, forkJoin, merge, Observable, Subject, switchMap, timer } from 'rxjs';
+
+import { FileAClaimComponent } from './file-a-claim/file-a-claim.component';
 
 @Component({
   selector: 'app-additional-compensation',
@@ -238,7 +239,7 @@ export class AdditionalCompensationComponent implements OnInit {
       return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.AC_CALC_GMR_VAT, 'additionalCompensation', rowData) || this.isFinalized('additionalCompensation-finalize', rowData) || rowData?.published
     }, click: () => this.runJob('additionalCompensation-calculateGmrVat', rowData, LABELS.CALCULATE_GMR_VAT) },
     { label: LABELS.FINALIZE, hidden: () => {
-      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.FINALIZE_AC, 'additionalCompensation-calculateGmrVat', rowData) || this.isPipelineComplete(PHASE_TWO_AUTHORITIES.FINALIZE_AC, 'additionalCompensation-finalize', rowData) || rowData?.published || this.isFinalized('additionalCompensation-finalize', rowData)
+      return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.FINALIZE_AC, 'additionalCompensation-calculateGmrVat', rowData) || rowData?.published || this.isFinalized('additionalCompensation-finalize', rowData)
     }, click: () => this.runJob('additionalCompensation-finalize', rowData, LABELS.FINALIZE) },
 
     { label: LABELS.CALCULATE_TRANSACTION_ALLOCATION, hidden: () => {
