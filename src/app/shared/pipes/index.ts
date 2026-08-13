@@ -7,3 +7,4 @@ export * from './enum-to-labels.pipe';
 export * from './has-inprogress.pipe';
 export * from './pipeline-some.pipe';
 export * from './is-row-in-progress.pipe';
+export * from './has-finalized-pipeline.pipe';

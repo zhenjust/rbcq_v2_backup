@@ -75,9 +75,11 @@
             </div>
           } @else {
             <div *ngxPermissionsOnly="[ PERM.RUN_ADDTL_COMP ]">
+              @if (!(row?.pipelines | hasFinalizedPipeline)) {
               <button nz-button nzType="link" nzDanger (click)="deleteBillingId(row, subRow)">
                 {{ LABELS.DELETE }}
               </button>
+              }
             </div>
           }
         </ng-template>
