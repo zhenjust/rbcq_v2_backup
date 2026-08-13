@@ -162,8 +162,9 @@ export class MeteringMasterfileComponent implements OnInit {
 
   download(data: any): void {
     const { workspaceId } = data.pipelineRuns[0];
-    const { endDate, processType } = data.parameters;
-    const params: DownloadMmfParams = { workspaceId, endDate, processType };
+    const { startDate, endDate, processType } = data.parameters;
+    const billingPeriod = `${startDate} - ${endDate}`;
+    const params: DownloadMmfParams = { workspaceId, endDate, processType, billingPeriod };
 
     data.loading = true;
     this.meterService.downloadMeteringReport(params, 'mmf')
