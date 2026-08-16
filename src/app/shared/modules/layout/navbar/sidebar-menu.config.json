@@ -1,0 +1,50 @@
+{
+  "items": [
+    {
+      "id": "notifications",
+      "title": "Notifications",
+      "iconKey": "bell",
+      "targets": {
+        "angular2": {
+          "kind": "external",
+          "href": "{external.NOTIFICATION}"
+        },
+        "react": {
+          "kind": "external",
+          "href": "{phaseThree}/#/notifications"
+        },
+        "angular1": {
+          "kind": "external",
+          "href": "{phaseThree}/#/notifications"
+        }
+      },
+      "conditions": {
+        "always": true
+      },
+      "permission": []
+    },
+    {
+      "id": "home",
+      "title": "Home",
+      "iconKey": "home",
+      "targets": {
+        "angular2": {
+          "kind": "external",
+          "href": "{external.HOME}"
+        },
+        "react": {
+          "kind": "external",
+          "href": "{phaseThree}/#/"
+        },
+        "angular1": {
+          "kind": "external",
+          "href": "{phaseThree}/#/"
+        }
+      },
+      "conditions": {
+        "always": true
+      },
+      "permission": []
+    }
+  ]
+}
