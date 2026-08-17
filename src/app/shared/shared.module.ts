@@ -36,6 +36,7 @@ import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NgxPermissionsModule } from 'ngx-permissions';
+import { QuillModule } from 'ngx-quill';
 
 import { ConfirmWithContentComponent } from './components/confirm-with-content/confirm-with-content.component';
 import { ConfirmWithDescComponent } from './components/confirm-with-desc/confirm-with-desc.component';
@@ -142,6 +143,7 @@ const Pipes = [
     FormsModule,
     FroalaEditorModule,
     FroalaViewModule,
+    QuillModule.forRoot()
 ],
   exports: [
     ...Pipes,
@@ -159,7 +161,8 @@ const Pipes = [
     DateTimePickerComponent,
     PipelineTableComponent,
     PollingTimerComponent,
-    ProgressBarComponent
+    ProgressBarComponent,
+    QuillModule
   ],
   providers: [
     { provide: NZ_CONFIG, useValue: ngZorroConfig }

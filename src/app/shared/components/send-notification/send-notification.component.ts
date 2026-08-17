@@ -1,8 +1,5 @@
 import { Component, DestroyRef, inject, input, signal } from '@angular/core';
 
-import 'froala-editor/js/plugins/link.min.js';
-import 'froala-editor/js/plugins/image.min.js';
-import 'froala-editor/js/plugins/colors.min.js';
 import { LABELS } from '@shared/constants/labels.const';
 import { SendNotice, settlementPipeline, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
@@ -35,7 +32,6 @@ export class SendNotificationComponent{
   showError = signal<boolean>(false);
 
   columns: TPL_TABLE_COLUMN[] = [];
-  froalaOptions = froalaOptions;
   LABELS = LABELS;
   MESSAGES = MESSAGES;
 
@@ -99,11 +95,4 @@ export class SendNotificationComponent{
 const expandedTableCols: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.DUE_DATE]: { label: LABELS.DUE_DATE, propName: 'dueDate', type: 'date' },
   [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status' },
-}
-
-const froalaOptions = {
-  toolbarButtons: [ 'bold', 'italic', 'underline', 'strikeThrough', '|', 'insertLink', 'insertImage', 'textColor', 'backgroundColor', '|', 'undo', 'redo' ],
-  pluginsEnabled: ['link', 'image', 'colors'],
-  colorsHEXTemplate: true,
-  colorsBackground: true,
 };
