@@ -345,6 +345,13 @@ export class NavbarComponent implements OnInit {
         permission: [PHASE_ONE_AUTHORITIES.VIEW_DOWNLOAD_METER_STL_DATA],
         externalLink: externalRoutes.FILE_SUMMARY_FOR_TP
       },
+      {
+                title: 'View RBCQ',
+                path: NEW_ROUTES.RBCQ_VIEW,
+                show: true,
+                icon: faFileContract,
+                permission: []
+      },
       //MTN link route
       {
         title: 'View MTNs',
@@ -1232,12 +1239,12 @@ export class NavbarComponent implements OnInit {
                 show: true,
                 permission: []
               },
-              {
-                title: 'View RBCQ',
-                path: NEW_ROUTES.RBCQ_VIEW,
-                show: true,
-                permission: []
-              },
+              // {
+              //   title: 'View RBCQ',
+              //   path: NEW_ROUTES.RBCQ_VIEW,
+              //   show: true,
+              //   permission: []
+              // },
               {
                 title: 'Process RBCQ',
                 path: NEW_ROUTES.RBCQ_PROCESS,
@@ -1280,42 +1287,42 @@ export class NavbarComponent implements OnInit {
         ]
       },
 
-      {
-        title: 'RBCQ',
-        show: true,
-        icon: faFileContract,
-        permission: [
+      // {
+      //   title: 'RBCQ',
+      //   show: true,
+      //   icon: faFileContract,
+      //   permission: [
 
-        ],
-        children: [
-          {
-            title: 'Submit RBCQ',
-            path: NEW_ROUTES.RBCQ_SUBMIT,
-            show: true,
-            permission: []
-          },
-          {
-            title: 'View RBCQ',
-            path: NEW_ROUTES.RBCQ_VIEW,
-            show: true,
-            permission: []
-          },
-          {
-            title: 'Process RBCQ',
-            path: NEW_ROUTES.RBCQ_PROCESS,
-            show: true,
-            permission: [
-              PHASE_TWO_AUTHORITIES.SET_TOD_GEN_CONFIG,
-              PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY
-            ],
-          }
-          // {
-          //   title: 'BCQ Download Template',
-          //   externalLink: externalRoutes.BCQ_MENU_FOR_TP.BCQ_DOWNLOAD_TEMPLATE,
-          //   permission: []
-          // }
-        ]
-      },
+      //   ],
+      //   children: [
+      //     {
+      //       title: 'Submit RBCQ',
+      //       path: NEW_ROUTES.RBCQ_SUBMIT,
+      //       show: true,
+      //       permission: []
+      //     },
+      //     {
+      //       title: 'View RBCQ',
+      //       path: NEW_ROUTES.RBCQ_VIEW,
+      //       show: true,
+      //       permission: []
+      //     },
+      //     {
+      //       title: 'Process RBCQ',
+      //       path: NEW_ROUTES.RBCQ_PROCESS,
+      //       show: true,
+      //       permission: [
+      //         PHASE_TWO_AUTHORITIES.SET_TOD_GEN_CONFIG,
+      //         PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY
+      //       ],
+      //     }
+      //     // {
+      //     //   title: 'BCQ Download Template',
+      //     //   externalLink: externalRoutes.BCQ_MENU_FOR_TP.BCQ_DOWNLOAD_TEMPLATE,
+      //     //   permission: []
+      //     // }
+      //   ]
+      // },
 
       {
         title: LABELS.MQ_UPLOADER,
