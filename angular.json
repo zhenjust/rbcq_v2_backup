@@ -62,18 +62,11 @@
               "src/assets/css/bootstrap.min.css",
               "src/styles.scss",
               "node_modules/ngx-toastr/toastr.css",
-              "node_modules/froala-editor/css/froala_editor.pkgd.min.css",
-              "node_modules/froala-editor/css/froala_style.min.css",
-              "node_modules/froala-editor/css/plugins/image.min.css",
-              "node_modules/froala-editor/css/plugins/table.min.css",
-              "node_modules/froala-editor/css/plugins/colors.min.css"
+              "./node_modules/quill/dist/quill.core.css",
+              "./node_modules/quill/dist/quill.snow.css",
+              "./node_modules/quill/dist/quill.bubble.css"
             ],
             "scripts": [
-              "node_modules/froala-editor/js/froala_editor.min.js",
-              "node_modules/froala-editor/js/plugins/link.min.js",
-              "node_modules/froala-editor/js/plugins/image.min.js",
-              "node_modules/froala-editor/js/plugins/table.min.js",
-              "node_modules/froala-editor/js/plugins/colors.min.js"
             ]
           },
           "configurations": {

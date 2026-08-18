@@ -1,0 +1,4475 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "notifications",
+      "label": "Notifications",
+      "iconKey": "faBell",
+      "targets": {
+        "angular2": {
+          "kind": "external",
+          "href": "{PHASE_ONE_URL}/#/notifications"
+        },
+        "angular1": {
+          "kind": "external",
+          "href": "{PHASE_ONE_URL}/#/notifications"
+        },
+        "react": {
+          "kind": "external",
+          "href": "{PHASE_ONE_URL}/#/notifications"
+        }
+      },
+      "conditions": {
+        "always": true
+      }
+    },
+    {
+      "id": "home",
+      "label": "Home",
+      "iconKey": "faHome",
+      "targets": {
+        "angular2": {
+          "kind": "external",
+          "href": "{PHASE_ONE_URL}/#/"
+        },
+        "angular1": {
+          "kind": "external",
+          "href": "{PHASE_ONE_URL}/#/"
+        },
+        "react": {
+          "kind": "external",
+          "href": "{PHASE_ONE_URL}/#/"
+        }
+      },
+      "conditions": {
+        "always": true
+      }
+    },
+    {
+      "id": "view-metering-and-settlement-data",
+      "label": "View Metering and Settlement Data",
+      "iconKey": "faFileArchive",
+      "targets": {
+        "angular2": {
+          "kind": "external",
+          "href": "{PHASE_ONE_URL}/#/tp-files"
+        },
+        "angular1": {
+          "kind": "external",
+          "href": "{PHASE_ONE_URL}/#/tp-files"
+        },
+        "react": {
+          "kind": "external",
+          "href": "{PHASE_ONE_URL}/#/tp-files"
+        }
+      },
+      "conditions": {
+        "expression": {
+          "all": [
+            {
+              "predicate": "nonPemcUser"
+            },
+            {
+              "permissionAny": [
+                "VIEW_DOWNLOAD_METER_STL_DATA"
+              ]
+            },
+            {
+              "predicate": "billingIdPresent"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "calendar",
+      "label": "View Calendar",
+      "iconKey": "faCalendar",
+      "targets": {
+        "angular2": {
+          "kind": "external",
+          "href": "{PHASE_ONE_URL}/#/calendar"
+        },
+        "angular1": {
+          "kind": "external",
+          "href": "{PHASE_ONE_URL}/#/calendar"
+        },
+        "react": {
+          "kind": "external",
+          "href": "{PHASE_ONE_URL}/#/calendar"
+        }
+      },
+      "conditions": {
+        "expression": {
+          "all": [
+            {
+              "permissionAny": [
+                "VIEW_CALENDAR"
+              ]
+            },
+            {
+              "not": {
+                "predicate": "registrationCategoryIs",
+                "args": {
+                  "value": "NSP"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "manage-bcqs",
+      "label": "Manage BCQs",
+      "iconKey": "faBinoculars",
+      "conditions": {
+        "expression": {
+          "all": [
+            {
+              "predicate": "nonPemcUser"
+            },
+            {
+              "permissionAny": [
+                "UPLOAD_BCQ",
+                "VIEW_BCQ",
+                "CANCEL_BCQ",
+                "ASSESS_BCQ"
+              ]
+            },
+            {
+              "not": {
+                "predicate": "registrationCategoryIs",
+                "args": {
+                  "value": "MSP"
+                }
+              }
+            },
+            {
+              "not": {
+                "predicate": "registrationCategoryIs",
+                "args": {
+                  "value": "NSP"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "children": [
+        {
+          "id": "manage-bcqs/submit-bcqs-as-seller",
+          "label": "Submit BCQs (as Seller)",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/bcq/upload"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/bcq/upload"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/bcq/upload"
+            }
+          },
+          "conditions": {
+            "always": true
+          }
+        },
+        {
+          "id": "manage-bcqs/confirm-as-buyer-view-bcqs",
+          "label": "Confirm (as Buyer) / View BCQs",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/bcq/declaration"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/bcq/declaration"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/bcq/declaration"
+            }
+          },
+          "conditions": {
+            "always": true
+          }
+        },
+        {
+          "id": "manage-bcqs/bcq-download-template",
+          "label": "BCQ Download Template",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/bcq/download/template"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/bcq/download/template"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/bcq/download/template"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "predicate": "nonPemcUser"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "view-submitted-meter-data",
+      "label": "View Submitted Meter Data",
+      "iconKey": "faTachometer",
+      "targets": {
+        "angular2": {
+          "kind": "external",
+          "href": "{PHASE_ONE_URL}/#/metering/list/meter-data"
+        },
+        "angular1": {
+          "kind": "external",
+          "href": "{PHASE_ONE_URL}/#/metering/list/meter-data"
+        },
+        "react": {
+          "kind": "external",
+          "href": "{PHASE_ONE_URL}/#/metering/list/meter-data"
+        }
+      },
+      "conditions": {
+        "expression": {
+          "all": [
+            {
+              "permissionAny": [
+                "MQ_VIEW_METERING_QUANTITY"
+              ]
+            },
+            {
+              "predicate": "registrationCategoryIs",
+              "args": {
+                "value": "MSP"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "manage-meter-trouble-reports",
+      "label": "Manage Meter Trouble Reports",
+      "iconKey": "faTachometerAlt",
+      "targets": {
+        "angular2": {
+          "kind": "external",
+          "href": "{PHASE_TWO_URL}/#/mtr"
+        },
+        "angular1": {
+          "kind": "external",
+          "href": "{PHASE_TWO_URL}/#/mtr"
+        },
+        "react": {
+          "kind": "external",
+          "href": "{PHASE_TWO_URL}/#/mtr"
+        }
+      },
+      "conditions": {
+        "expression": {
+          "all": [
+            {
+              "permissionAny": [
+                "VIEW_MTR"
+              ]
+            },
+            {
+              "predicate": "registrationCategoryIs",
+              "args": {
+                "value": "MSP"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "manage-facility-applications",
+      "label": "Manage Facility Applications",
+      "iconKey": "faBuilding",
+      "conditions": {
+        "expression": {
+          "all": [
+            {
+              "permissionAny": [
+                "VIEW_MIRF"
+              ]
+            },
+            {
+              "predicate": "registrationCategoryIs",
+              "args": {
+                "value": "MSP"
+              }
+            }
+          ]
+        }
+      },
+      "children": [
+        {
+          "id": "manage-facility-applications/view-facility-applications",
+          "label": "View Facility Applications",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/mirf"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/mirf"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/mirf"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "VIEW_MIRF"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "manage-mirf",
+      "label": "Manage MIRF",
+      "iconKey": "faCopy",
+      "conditions": {
+        "expression": {
+          "all": [
+            {
+              "permissionAny": [
+                "VIEW_MIRF",
+                "MIRF_UPLOAD_VIEW",
+                "MIRF_SUMMARY_VIEW"
+              ]
+            },
+            {
+              "predicate": "registrationCategoryIs",
+              "args": {
+                "value": "MSP"
+              }
+            }
+          ]
+        }
+      },
+      "children": [
+        {
+          "id": "manage-mirf/upload-mirf",
+          "label": "Upload MIRF",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/mirf/upload/csv"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/mirf/upload/csv"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/mirf/upload/csv"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "MIRF_UPLOAD_VIEW"
+            ]
+          }
+        },
+        {
+          "id": "manage-mirf/view-mirf-summary",
+          "label": "View MIRF Summary",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/mirf/list/view-summary"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/mirf/list/view-summary"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/mirf/list/view-summary"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "MIRF_SUMMARY_VIEW"
+            ]
+          }
+        },
+        {
+          "id": "manage-mirf/mirf-updates",
+          "label": "MIRF Updates",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/post-reg-mirf-updates"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/post-reg-mirf-updates"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/post-reg-mirf-updates"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "MIRF_UPLOAD_VIEW"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "view-mtns",
+      "label": "View MTNs",
+      "iconKey": "faCopy",
+      "targets": {
+        "angular2": {
+          "kind": "external",
+          "href": "{PHASE_ONE_URL}/#/list/mtn"
+        },
+        "angular1": {
+          "kind": "external",
+          "href": "{PHASE_ONE_URL}/#/list/mtn"
+        },
+        "react": {
+          "kind": "external",
+          "href": "{PHASE_ONE_URL}/#/list/mtn"
+        }
+      },
+      "conditions": {
+        "expression": {
+          "all": [
+            {
+              "permissionAny": [
+                "VIEW_MARKET_TRADING_NODE",
+                "UPDATE_MARKET_TRADING_NODE"
+              ]
+            },
+            {
+              "predicate": "registrationCategoryIs",
+              "args": {
+                "value": "MSP"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "registration",
+      "label": "Registration",
+      "iconKey": "faAddressCard",
+      "conditions": {
+        "permissionAny": [
+          "VIEW_LIST_OF_REGISTRATION",
+          "UPDATE_REGISTRATION",
+          "VIEW_REGISTRATION",
+          "ASSESS_APPLICANT",
+          "VIEW_APPLICANT",
+          "VIEW_ORGANIZATION",
+          "CREATE_ORGANIZATION",
+          "UPDATE_ORGANIZATION",
+          "VIEW_CREATED_PARTICIPANTS",
+          "POSTREG_VIEW_LIST",
+          "VIEW_SUSPENDED_PARTICIPANTS",
+          "IMPORT_IPR_DATA",
+          "MANAGE_DOCUMENTS",
+          "VIEW_EXPIRED_DOCS",
+          "VIEW_EXPIRING_DOCS",
+          "VIEW_LIST_OF_REGISTRATION",
+          "EXPORT_WESM_REG_UPDATE_REPORT",
+          "MANAGE_MARKET_PARTICIPANTS",
+          "MANAGE_SYSTEM_OPERATORS"
+        ]
+      },
+      "children": [
+        {
+          "id": "registration/registration-transaction",
+          "label": "Registration Transaction",
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "permissionAny": [
+                    "VIEW_LIST_OF_REGISTRATION",
+                    "UPDATE_REGISTRATION",
+                    "VIEW_REGISTRATION",
+                    "ASSESS_APPLICANT",
+                    "VIEW_APPLICANT",
+                    "VIEW_ORGANIZATION",
+                    "CREATE_ORGANIZATION",
+                    "UPDATE_ORGANIZATION",
+                    "VIEW_CREATED_PARTICIPANTS"
+                  ]
+                }
+              ]
+            }
+          },
+          "children": [
+            {
+              "id": "registration/registration-transaction/manage-registration-transaction",
+              "label": "Manage Registration Transaction",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/registration"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/registration"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/registration"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_LIST_OF_REGISTRATION",
+                  "UPDATE_REGISTRATION",
+                  "VIEW_REGISTRATION"
+                ]
+              }
+            },
+            {
+              "id": "registration/registration-transaction/manage-sign-up-applications",
+              "label": "Manage Sign-up Applications",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/signup"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/signup"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/signup"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "ASSESS_APPLICANT",
+                  "VIEW_APPLICANT"
+                ]
+              }
+            },
+            {
+              "id": "registration/registration-transaction/manage-business-organization",
+              "label": "Manage Business Organization",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/organization"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/organization"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/organization"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_ORGANIZATION",
+                  "CREATE_ORGANIZATION",
+                  "UPDATE_ORGANIZATION"
+                ]
+              }
+            },
+            {
+              "id": "registration/registration-transaction/create-new-trading-participant",
+              "label": "Create New Trading Participant",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/registration/internal/list"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/registration/internal/list"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/registration/internal/list"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_CREATED_PARTICIPANTS"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "registration/post-registration-transactions",
+          "label": "Post Registration Transactions",
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "permissionAny": [
+                    "POSTREG_VIEW_LIST"
+                  ]
+                }
+              ]
+            }
+          },
+          "children": [
+            {
+              "id": "registration/post-registration-transactions/manage-post-registration-transactions",
+              "label": "Manage Post Registration Transactions",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/post-registration"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/post-registration"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/post-registration"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "POSTREG_VIEW_LIST"
+                ]
+              }
+            },
+            {
+              "id": "registration/post-registration-transactions/advisory-publication",
+              "label": "Advisory Publication",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/advisory-publication"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/advisory-publication"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/advisory-publication"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "POSTREG_VIEW_LIST"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "registration/document-management",
+          "label": "Document Management",
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "permissionAny": [
+                    "MANAGE_DOCUMENTS",
+                    "VIEW_EXPIRING_DOCS",
+                    "VIEW_EXPIRED_DOCS"
+                  ]
+                }
+              ]
+            }
+          },
+          "children": [
+            {
+              "id": "registration/document-management/manage-document-managent",
+              "label": "Manage Document Managent",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/doc/document-management"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/doc/document-management"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/doc/document-management"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "MANAGE_DOCUMENTS"
+                ]
+              }
+            },
+            {
+              "id": "registration/document-management/view-expiring-registration-documents",
+              "label": "View Expiring Registration Documents",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/doc/expiry/notif"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/doc/expiry/notif"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/doc/expiry/notif"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_EXPIRING_DOCS"
+                ]
+              }
+            },
+            {
+              "id": "registration/document-management/view-expired-registration-documents",
+              "label": "View Expired Registration Documents",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/doc/expired"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/doc/expired"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/doc/expired"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_EXPIRED_DOCS"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "registration/reports",
+          "label": "Reports",
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "permissionAny": [
+                    "EXPORT_WESM_REG_UPDATE_REPORT"
+                  ]
+                }
+              ]
+            }
+          },
+          "children": [
+            {
+              "id": "registration/reports/wesm-registration-updates",
+              "label": "WESM Registration Updates",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/reports/wesm"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/reports/wesm"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/reports/wesm"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "EXPORT_WESM_REG_UPDATE_REPORT"
+                ]
+              }
+            },
+            {
+              "id": "registration/reports/retail-compliance-reports",
+              "label": "Retail Compliance Reports",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/reports/retails"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/reports/retails"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/reports/retails"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "EXPORT_WESM_REG_UPDATE_REPORT"
+                ]
+              }
+            },
+            {
+              "id": "registration/reports/testing-and-commissioning-reports",
+              "label": "Testing and Commissioning Reports",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/reports/testing-commissioning"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/reports/testing-commissioning"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/reports/testing-commissioning"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_TESTING_AND_COMMISSIONING_REPORT"
+                ]
+              }
+            },
+            {
+              "id": "registration/reports/rcoa-summary-report",
+              "label": "RCOA Summary Report",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/reports/rcoa-summary"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/reports/rcoa-summary"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/reports/rcoa-summary"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_RCOA_REPORTS"
+                ]
+              }
+            },
+            {
+              "id": "registration/reports/geop-summary-report",
+              "label": "GEOP Summary Report",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/reports/geop-summary"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/reports/geop-summary"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/reports/geop-summary"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_GEOP_REPORTS"
+                ]
+              }
+            },
+            {
+              "id": "registration/reports/generators-list",
+              "label": "Generators List",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/reports/generators-list"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/reports/generators-list"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/reports/generators-list"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VW_REPORT_GENERATOR_LIST_REPORT"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "registration/external-user-management",
+          "label": "External User Management",
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "permissionAny": [
+                    "MANAGE_MARKET_PARTICIPANTS",
+                    "MANAGE_SYSTEM_OPERATORS"
+                  ]
+                }
+              ]
+            }
+          },
+          "children": [
+            {
+              "id": "registration/external-user-management/manage-trading-participant-users",
+              "label": "Manage Trading Participant Users",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/admin/user/MP"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/admin/user/MP"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/admin/user/MP"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "MANAGE_MARKET_PARTICIPANTS"
+                ]
+              }
+            },
+            {
+              "id": "registration/external-user-management/manage-service-provider-users",
+              "label": "Manage Service Provider Users",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/admin/user/SO"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/admin/user/SO"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/admin/user/SO"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "MANAGE_SYSTEM_OPERATORS"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "registration/view-suspended-participants",
+          "label": "View Suspended Participants",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/suspended-participants"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/suspended-participants"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/suspended-participants"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "permissionAny": [
+                    "VIEW_SUSPENDED_PARTICIPANTS"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "registration/upload-iprs",
+          "label": "Upload IPRs",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/upload-initial-pr"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/upload-initial-pr"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/upload-initial-pr"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "permissionAny": [
+                    "IMPORT_IPR_DATA"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "registration/manage-iprs",
+          "label": "Manage IPRs",
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "permissionAny": [
+                    "CREATE_REGISTRATION",
+                    "VIEW_REGISTRATION",
+                    "UPDATE_REGISTRATION"
+                  ]
+                }
+              ]
+            }
+          },
+          "children": [
+            {
+              "id": "registration/manage-iprs/upload-iprs",
+              "label": "Upload IPRs",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/upload-ipr"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/upload-ipr"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/upload-ipr"
+                }
+              },
+              "conditions": {
+                "always": true
+              }
+            },
+            {
+              "id": "registration/manage-iprs/calculate-iprs",
+              "label": "Calculate IPRs",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/calculate-ipr"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/calculate-ipr"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/calculate-ipr"
+                }
+              },
+              "conditions": {
+                "always": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "registration/manage-registration",
+          "label": "Manage Registration",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/registration/0/"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/registration/0/"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/registration/0/"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "nonPemcUser"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "registration/view-indirect-member-counterparties",
+          "label": "View Indirect Member Counterparties",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/registration/0/indirect/list"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/registration/0/indirect/list"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/registration/0/indirect/list"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "nonPemcUser"
+                },
+                {
+                  "permissionAny": [
+                    "VIEW_INDIRECT_MEMBER_LIST"
+                  ]
+                },
+                {
+                  "predicate": "participantApproved"
+                },
+                {
+                  "predicate": "membershipDirect"
+                },
+                {
+                  "not": {
+                    "predicate": "registrationCategoryIs",
+                    "args": {
+                      "value": "RESupplier"
+                    }
+                  }
+                },
+                {
+                  "not": {
+                    "predicate": "registrationCategoryIs",
+                    "args": {
+                      "value": "MSP"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "registration/view-geop-end-users",
+          "label": "View GEOP End-Users",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/registration/0/indirect/list"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/registration/0/indirect/list"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/registration/0/indirect/list"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "nonPemcUser"
+                },
+                {
+                  "predicate": "registrationCategoryIs",
+                  "args": {
+                    "value": "RESupplier"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "registration/manage-facilities",
+          "label": "Manage Facilities",
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "nonPemcUser"
+                },
+                {
+                  "permissionAny": [
+                    "REQUEST_TRANSFER_FACILITY"
+                  ]
+                },
+                {
+                  "not": {
+                    "predicate": "registrationCategoryIs",
+                    "args": {
+                      "value": "MSP"
+                    }
+                  }
+                },
+                {
+                  "not": {
+                    "predicate": "registrationCategoryIs",
+                    "args": {
+                      "value": "RES"
+                    }
+                  }
+                },
+                {
+                  "not": {
+                    "predicate": "registrationCategoryIs",
+                    "args": {
+                      "value": "LRES"
+                    }
+                  }
+                },
+                {
+                  "not": {
+                    "predicate": "registrationCategoryIs",
+                    "args": {
+                      "value": "SOLR"
+                    }
+                  }
+                },
+                {
+                  "not": {
+                    "predicate": "registrationCategoryIs",
+                    "args": {
+                      "value": "NSP"
+                    }
+                  }
+                },
+                {
+                  "not": {
+                    "predicate": "registrationCategoryIs",
+                    "args": {
+                      "value": "RESupplier"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "children": [
+            {
+              "id": "registration/manage-facilities/available-facilities",
+              "label": "Available Facilities",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/transfer-facilities/available"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/transfer-facilities/available"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/transfer-facilities/available"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "REQUEST_TRANSFER_FACILITY"
+                ]
+              }
+            },
+            {
+              "id": "registration/manage-facilities/ancillary-service-facility-request",
+              "label": "Ancillary Service Facility Request",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/registration/{PARTICIPANT_ID}/ancillary-facilities-requests"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/registration/{PARTICIPANT_ID}/ancillary-facilities-requests"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/registration/{PARTICIPANT_ID}/ancillary-facilities-requests"
+                }
+              },
+              "conditions": {
+                "predicate": "participantApproved"
+              }
+            },
+            {
+              "id": "registration/manage-facilities/facilities-for-transfer",
+              "label": "Facilities For Transfer",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#//transfer-facilities"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#//transfer-facilities"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#//transfer-facilities"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "REQUEST_TRANSFER_FACILITY"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "registration/view-expiring-expired-documents",
+          "label": "View Expiring / Expired Documents",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/doc/expiry/notif"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/doc/expiry/notif"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/doc/expiry/notif"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "nonPemcUser"
+                },
+                {
+                  "permissionAny": [
+                    "VIEW_EXPIRING_EXPIRED_DOCS"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "facility-management",
+      "label": "Facility Management",
+      "iconKey": "faBuildingUn",
+      "conditions": {
+        "expression": {
+          "all": [
+            {
+              "predicate": "internalUser"
+            },
+            {
+              "permissionAny": [
+                "VIEW_MARKET_TRADING_NODE",
+                "UPDATE_MARKET_TRADING_NODE",
+                "VIEW_MIRF",
+                "VIEW_FACILITY_LIST",
+                "VIEW_FACILITIES_FOR_ACTIVATION",
+                "VIEW_FACILITIES_FOR_TRANSFER"
+              ]
+            }
+          ]
+        }
+      },
+      "children": [
+        {
+          "id": "facility-management/manage-market-trading-nodes",
+          "label": "Manage Market Trading Nodes",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/mtn"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/mtn"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/mtn"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "VIEW_MARKET_TRADING_NODE",
+              "UPDATE_MARKET_TRADING_NODE"
+            ]
+          }
+        },
+        {
+          "id": "facility-management/manage-facilities",
+          "label": "Manage Facilities",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/facilities"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/facilities"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/facilities"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "VIEW_FACILITY_LIST"
+            ]
+          }
+        },
+        {
+          "id": "facility-management/testing-and-commissioning",
+          "label": "Testing and Commissioning",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/testing-commissioning"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/testing-commissioning"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/testing-commissioning"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "VIEW_TESTING_AND_COMMISSIONING_CERT",
+              "MANAGE_TESTING_AND_COMMISSIONING_CERT",
+              "REVIEW_TESTING_AND_COMMISSIONING_CERT"
+            ]
+          }
+        },
+        {
+          "id": "facility-management/facilities-for-activation",
+          "label": "Facilities for Activation",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/transfer-facilities/for-activation"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/transfer-facilities/for-activation"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/transfer-facilities/for-activation"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "VIEW_FACILITIES_FOR_ACTIVATION"
+            ]
+          }
+        },
+        {
+          "id": "facility-management/facilities-for-transfer",
+          "label": "Facilities For Transfer",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/transfer-facilities/irps"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/transfer-facilities/irps"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/transfer-facilities/irps"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "VIEW_FACILITIES_FOR_TRANSFER"
+            ]
+          }
+        },
+        {
+          "id": "facility-management/mirf",
+          "label": "MIRF",
+          "conditions": {
+            "permissionAny": [
+              "VIEW_MIRF"
+            ]
+          },
+          "children": [
+            {
+              "id": "facility-management/mirf/view-facility-applications",
+              "label": "View Facility Applications",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/mirf"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/mirf"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/mirf"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_MIRF"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "facility-management/ancillary-service-facility",
+          "label": "Ancillary Service Facility",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/registration/ancillary-service-facility"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/registration/ancillary-service-facility"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/registration/ancillary-service-facility"
+            }
+          },
+          "conditions": {
+            "not": {
+              "predicate": "departmentNot",
+              "args": {
+                "value": "IRPS"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "counterparties-and-contract-management",
+      "label": "Counterparties and Contract Management",
+      "iconKey": "faContactCard",
+      "conditions": {
+        "permissionAny": [
+          "VIEW_COUNTERPARTY_LIST",
+          "VIEW_CUSTOMER_ENROLLMENT_LIST",
+          "VIEW_CUSTOMER_SWITCHING_LIST",
+          "MANAGE_SOLR_EVENT",
+          "VIEW_SWITCH_MONITORING_FORM",
+          "MANAGE_SWITCH_MONITORING_FORM",
+          "MANAGE_GOTP_SWITCH_MONITORING_FORMG",
+          "MANAGE_SHORTNAME_SEIN_SWITCH_MONITORING_FORM",
+          "VIEW_COUNTERPARTY_LIST",
+          "VIEW_CUSTOMER_ENROLLMENT_LIST",
+          "VIEW_CUSTOMER_SWITCHING_LIST"
+        ]
+      },
+      "children": [
+        {
+          "id": "counterparties-and-contract-management/manage-direct-retail-supplier-requests",
+          "label": "Manage Direct Retail Supplier Requests",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/retail-suppliers"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/retail-suppliers"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/retail-suppliers"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "any": [
+                {
+                  "all": [
+                    {
+                      "predicate": "internalUser"
+                    },
+                    {
+                      "permissionAny": [
+                        "VIEW_COUNTERPARTY_LIST"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "all": [
+                    {
+                      "predicate": "nonPemcUser"
+                    },
+                    {
+                      "permissionAny": [
+                        "VIEW_COUNTERPARTY_LIST"
+                      ]
+                    },
+                    {
+                      "not": {
+                        "predicate": "registrationCategoryIs",
+                        "args": {
+                          "value": "MSP"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "counterparties-and-contract-management/manage-tp-counterparties",
+          "label": "Manage TP Counterparties",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/counterparty"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/counterparty"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/counterparty"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "permissionAny": [
+                    "VIEW_COUNTERPARTY_LIST"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "counterparties-and-contract-management/manage-supply-contracts",
+          "label": "Manage Supply Contracts",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/enrollment"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/enrollment"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/enrollment"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "any": [
+                {
+                  "all": [
+                    {
+                      "predicate": "internalUser"
+                    },
+                    {
+                      "permissionAny": [
+                        "VIEW_CUSTOMER_ENROLLMENT_LIST"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "all": [
+                    {
+                      "predicate": "nonPemcUser"
+                    },
+                    {
+                      "permissionAny": [
+                        "VIEW_CUSTOMER_ENROLLMENT_LIST"
+                      ]
+                    },
+                    {
+                      "not": {
+                        "predicate": "registrationCategoryIs",
+                        "args": {
+                          "value": "MSP"
+                        }
+                      }
+                    },
+                    {
+                      "not": {
+                        "predicate": "registrationCategoryIs",
+                        "args": {
+                          "value": "RESupplier"
+                        }
+                      }
+                    },
+                    {
+                      "not": {
+                        "predicate": "registrationCategoryIs",
+                        "args": {
+                          "value": "SOLR"
+                        }
+                      }
+                    },
+                    {
+                      "not": {
+                        "predicate": "dccIndirect"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "counterparties-and-contract-management/manage-customer-switch-request",
+          "label": "Manage Customer Switch Requests",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/customer-switching"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/customer-switching"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/customer-switching"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "any": [
+                {
+                  "all": [
+                    {
+                      "predicate": "internalUser"
+                    },
+                    {
+                      "permissionAny": [
+                        "VIEW_CUSTOMER_SWITCHING_LIST"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "all": [
+                    {
+                      "predicate": "nonPemcUser"
+                    },
+                    {
+                      "permissionAny": [
+                        "VIEW_CUSTOMER_SWITCHING_LIST"
+                      ]
+                    },
+                    {
+                      "predicate": "participantApproved"
+                    },
+                    {
+                      "predicate": "participantSupplier"
+                    },
+                    {
+                      "not": {
+                        "predicate": "registrationCategoryIs",
+                        "args": {
+                          "value": "MSP"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "counterparties-and-contract-management/manage-solr-events",
+          "label": "Manage SOLR Events",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/customer-switching/cessation"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/customer-switching/cessation"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/customer-switching/cessation"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "permissionAny": [
+                    "MANAGE_SOLR_EVENT"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "counterparties-and-contract-management/manage-contestable-management",
+          "label": "Manage Contestable Management",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/registration/0/cc"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/registration/0/cc"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/registration/0/cc"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "nonPemcUser"
+                },
+                {
+                  "permissionAny": [
+                    "VIEW_INDIRECT_CC_LIST"
+                  ]
+                },
+                {
+                  "predicate": "participantApproved"
+                },
+                {
+                  "predicate": "participantSupplier"
+                },
+                {
+                  "not": {
+                    "predicate": "registrationCategoryIs",
+                    "args": {
+                      "value": "MSP"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "counterparties-and-contract-management/manage-indirect-member-counterparties",
+          "label": "Manage Indirect Member Counterparties",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/counterparty"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/counterparty"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/counterparty"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "nonPemcUser"
+                },
+                {
+                  "permissionAny": [
+                    "VIEW_COUNTERPARTY_LIST"
+                  ]
+                },
+                {
+                  "not": {
+                    "predicate": "registrationCategoryIs",
+                    "args": {
+                      "value": "MSP"
+                    }
+                  }
+                },
+                {
+                  "predicate": "counterpartyListVisible"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "counterparties-and-contract-management/solr-event-request",
+          "label": "SOLR Event Request",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/customer-switching/cessation"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/customer-switching/cessation"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/customer-switching/cessation"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "nonPemcUser"
+                },
+                {
+                  "permissionAny": [
+                    "VIEW_SOLR_EVENT"
+                  ]
+                },
+                {
+                  "predicate": "participantApproved"
+                },
+                {
+                  "predicate": "registrationCategoryIs",
+                  "args": {
+                    "value": "SOLR"
+                  }
+                },
+                {
+                  "not": {
+                    "predicate": "registrationCategoryIs",
+                    "args": {
+                      "value": "MSP"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "counterparties-and-contract-management/manage-switch-monitoring-forms",
+          "label": "Manage Switch Monitoring Forms",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/switch-monitoring-forms/list"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/switch-monitoring-forms/list"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/switch-monitoring-forms/list"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "any": [
+                {
+                  "all": [
+                    {
+                      "predicate": "internalUser"
+                    },
+                    {
+                      "permissionAny": [
+                        "VIEW_SWITCH_MONITORING_FORM",
+                        "MANAGE_SWITCH_MONITORING_FORM",
+                        "MANAGE_GOTP_SWITCH_MONITORING_FORMG",
+                        "MANAGE_SHORTNAME_SEIN_SWITCH_MONITORING_FORM"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "all": [
+                    {
+                      "predicate": "nonPemcUser"
+                    },
+                    {
+                      "permissionAny": [
+                        "VIEW_SWITCH_MONITORING_FORM",
+                        "MANAGE_SWITCH_MONITORING_FORM",
+                        "MANAGE_GOTP_SWITCH_MONITORING_FORMG",
+                        "MANAGE_SHORTNAME_SEIN_SWITCH_MONITORING_FORM"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "manage-user-accounts",
+      "label": "Manage User Accounts",
+      "iconKey": "faCircleUser",
+      "targets": {
+        "angular2": {
+          "kind": "external",
+          "href": "{PHASE_ONE_URL}/#/user-account"
+        },
+        "angular1": {
+          "kind": "external",
+          "href": "{PHASE_ONE_URL}/#/user-account"
+        },
+        "react": {
+          "kind": "external",
+          "href": "{PHASE_ONE_URL}/#/user-account"
+        }
+      },
+      "conditions": {
+        "expression": {
+          "all": [
+            {
+              "predicate": "nonPemcUser"
+            },
+            {
+              "permissionAny": [
+                "POSTREG_VIEW_LIST_USERACCOUNT",
+                "POSTREG_VIEW_USERACCOUNT_DETAILS"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "prudential-requirements",
+      "label": "Prudential Requirements",
+      "iconKey": "faAddressBook",
+      "conditions": {
+        "permissionAny": [
+          "MARGIN_CALL_SUMMARY_CONFIRMATION_VIEW",
+          "VIEW_HISTORICAL_DRAWDOWN_SUMMARY",
+          "VIEW_FINANCIAL_INFO_PAGE",
+          "VIEW_PRUDENTIAL_REQ_SECURITY_DEPOSIT_LIST",
+          "VIEW_PRUDENTIAL_REQ_EXEMPTION_LIST",
+          "VIEW_PR_SEC_DEP_EMAIL_LIST",
+          "VIEW_PR_OUT_BAL_LIST",
+          "VIEW_PR_SD_EXPIRING_SENT_NOTIFICATION_LIST",
+          "MARGIN_CALL_SUMMARY_VIEW",
+          "ADM_VIEW_HOLIDAY_LIST",
+          "GENERATE_DRAWDOWN_SUMMARY",
+          "CONFIRM_DRAWDOWN_SUMMARY",
+          "VIEW_GENERATE_DRAWDOWN_SUMMARY",
+          "VIEW_PR_MONITOR_REPORT",
+          "VIEW_CONFIRM_DRAWDOWN_SUMMARY",
+          "DOWNLOAD_HISTORICAL_DRAWDOWN_SUMMARY",
+          "VIEW_MAXIMUM_EXPOSURE_LIST"
+        ]
+      },
+      "children": [
+        {
+          "id": "prudential-requirements/view-margin-call-reports",
+          "label": "View Margin Call Reports",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/margin-call-summary"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/margin-call-summary"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/margin-call-summary"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "nonPemcUser"
+                },
+                {
+                  "permissionAny": [
+                    "MARGIN_CALL_SUMMARY_CONFIRMATION_VIEW"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "prudential-requirements/financial-information",
+          "label": "Financial Information",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/registration/0/financial-info/view"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/registration/0/financial-info/view"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/registration/0/financial-info/view"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "nonPemcUser"
+                },
+                {
+                  "permissionAny": [
+                    "VIEW_FINANCIAL_INFO_PAGE"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "prudential-requirements/view-drawdown-reports",
+          "label": "View Drawdown Reports",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/drawdown-summary"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/drawdown-summary"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/drawdown-summary"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "nonPemcUser"
+                },
+                {
+                  "permissionAny": [
+                    "VIEW_HISTORICAL_DRAWDOWN_SUMMARY"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "prudential-requirements/security-deposit",
+          "label": "Security Deposit",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/security-deposit"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/security-deposit"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/security-deposit"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "permissionAny": [
+                    "VIEW_PRUDENTIAL_REQ_SECURITY_DEPOSIT_LIST",
+                    "VIEW_PRUDENTIAL_REQ_EXPIRING_SECURITY_DEPOSIT_LIST",
+                    "VIEW_PR_SD_EXPIRING_SENT_NOTIFICATION_LIST"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "prudential-requirements/manage-pr-exemptions",
+          "label": "Manage PR Exemptions",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/exemption"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/exemption"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/exemption"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "permissionAny": [
+                    "VIEW_PRUDENTIAL_REQ_EXEMPTION_LIST"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "prudential-requirements/manage-holiday",
+          "label": "Manage Holiday",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/admin/holiday"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/admin/holiday"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/admin/holiday"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "permissionAny": [
+                    "ADM_VIEW_HOLIDAY_LIST"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "prudential-requirements/manage-contact-list-for-financial-transactions",
+          "label": "Manage Contact List (For Financial Transactions)",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/contact"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/contact"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/contact"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "permissionAny": [
+                    "VIEW_PR_SEC_DEP_EMAIL_LIST"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "prudential-requirements/manage-outstanding-balance",
+          "label": "Manage Outstanding Balance",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/outstandingBalance"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/outstandingBalance"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/outstandingBalance"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "permissionAny": [
+                    "VIEW_PR_OUT_BAL_LIST"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "prudential-requirements/maximum-exposure",
+          "label": "Maximum Exposure",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/maximum-exposure"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/maximum-exposure"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/maximum-exposure"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "permissionAny": [
+                    "VIEW_MAXIMUM_EXPOSURE_LIST"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "prudential-requirements/manage-margin-calls",
+          "label": "Manage Margin Calls",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/margin-call-summary"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/margin-call-summary"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/margin-call-summary"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "permissionAny": [
+                    "MARGIN_CALL_SUMMARY_VIEW"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "prudential-requirements/monitoring-reports",
+          "label": "Monitoring Reports",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/monitoring-report"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/monitoring-report"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/monitoring-report"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "permissionAny": [
+                    "VIEW_PR_MONITOR_REPORT"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "prudential-requirements/extract-historical-wesm-bill-information",
+          "label": "Extract Historical WESM Bill Information",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/historical-wesm-bill/summary"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/historical-wesm-bill/summary"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/historical-wesm-bill/summary"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "permissionAny": [
+                    "VIEW_HISTORICAL_WESM_BILL"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "prudential-requirements/manage-drawdown-summary",
+          "label": "Manage Drawdown Summary",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/drawdown-summary"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/drawdown-summary"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/prudential-requirements/drawdown-summary"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "permissionAny": [
+                    "VIEW_GENERATE_DRAWDOWN_SUMMARY",
+                    "VIEW_CONFIRM_DRAWDOWN_SUMMARY",
+                    "VIEW_NOTICE_ISSUANCE_DRAWDOWN_SUMMARY",
+                    "VIEW_HISTORICAL_DRAWDOWN_SUMMARY"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "settlement",
+      "label": "Settlement",
+      "iconKey": "faHandHoldingHand",
+      "conditions": {
+        "expression": {
+          "all": [
+            {
+              "predicate": "internalUser"
+            },
+            {
+              "permissionAny": [
+                "UPLOAD_BCQ",
+                "VIEW_BCQ",
+                "BCQ_VIEW_SPECIAL_EVENT",
+                "BCQ_VIEW_PROHIBITED",
+                "SET_BILLING_ID_CONFIG",
+                "SET_BILLING_PERIOD_CONFIG",
+                "SET_RESERVE_PROCESS_CONFIG",
+                "SET_COST_RECOVERY_MODE",
+                "SET_CHARGE_ID_CONFIG",
+                "SET_MARKET_FEE_MODE",
+                "SET_STL_FILE_LOCATION",
+                "SET_MRU_CONFIG",
+                "SET_TP_PASSWORD_CONFIG",
+                "SET_STL_GEN_CONFIG",
+                "VIEW_STL_PROCESS",
+                "VIEW_ADDTL_COMP",
+                "AC_VIEW_AMS_INV_FOR_UPDATE",
+                "VIEW_WORKSPACE",
+                "APPROVE_STL_TP_WORKLIST",
+                "EMF_GENERATE_IW",
+                "EMF_CALCULATE",
+                "EMF_FINALIZE",
+                "EMF_GENERATE_EMF_FILE",
+                "UPLOAD_BILLING_STATEMENT",
+                "CALC_PENALTY"
+              ]
+            }
+          ]
+        }
+      },
+      "children": [
+        {
+          "id": "settlement/manage-bcqs",
+          "label": "Manage BCQs",
+          "conditions": {
+            "permissionAny": [
+              "UPLOAD_BCQ",
+              "VIEW_BCQ",
+              "BCQ_VIEW_SPECIAL_EVENT",
+              "BCQ_VIEW_PROHIBITED"
+            ]
+          },
+          "children": [
+            {
+              "id": "settlement/manage-bcqs/override-bcq",
+              "label": "Override BCQ",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/bcq/settlement/upload"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/bcq/settlement/upload"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/bcq/settlement/upload"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "UPLOAD_BCQ"
+                ]
+              }
+            },
+            {
+              "id": "settlement/manage-bcqs/view-bcqs",
+              "label": "View BCQs",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/bcq/declaration"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/bcq/declaration"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/bcq/declaration"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_BCQ"
+                ]
+              }
+            },
+            {
+              "id": "settlement/manage-bcqs/special-events",
+              "label": "Special Events",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/bcq/special-event/list"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/bcq/special-event/list"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/bcq/special-event/list"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "BCQ_VIEW_SPECIAL_EVENT"
+                ]
+              }
+            },
+            {
+              "id": "settlement/manage-bcqs/manage-prohibited-list",
+              "label": "Manage Prohibited List",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/bcq/prohibited/list"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/bcq/prohibited/list"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/bcq/prohibited/list"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "BCQ_VIEW_PROHIBITED"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "settlement/maintenance",
+          "label": "Maintenance",
+          "conditions": {
+            "permissionAny": [
+              "SET_BILLING_ID_CONFIG",
+              "SET_BILLING_PERIOD_CONFIG",
+              "SET_RESERVE_PROCESS_CONFIG",
+              "SET_COST_RECOVERY_MODE",
+              "SET_CHARGE_ID_CONFIG",
+              "SET_MARKET_FEE_MODE",
+              "SET_STL_FILE_LOCATION",
+              "SET_MRU_CONFIG",
+              "SET_TP_PASSWORD_CONFIG",
+              "SET_STL_GEN_CONFIG"
+            ]
+          },
+          "children": [
+            {
+              "id": "settlement/maintenance/manage-billing-id-masterlist",
+              "label": "Manage Billing ID Masterlist",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/billing-id-masterlist"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/billing-id-masterlist"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/billing-id-masterlist"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "SET_BILLING_ID_CONFIG"
+                ]
+              }
+            },
+            {
+              "id": "settlement/maintenance/manage-billing-period",
+              "label": "Manage Billing Period",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/billing-period"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/billing-period"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/billing-period"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "SET_BILLING_PERIOD_CONFIG"
+                ]
+              }
+            },
+            {
+              "id": "settlement/maintenance/manage-reserve-calculation-configuration",
+              "label": "Manage Reserve Calculation Configuration",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/reserve-config"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/reserve-config"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/reserve-config"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "SET_RESERVE_PROCESS_CONFIG",
+                  "SET_COST_RECOVERY_MODE"
+                ]
+              }
+            },
+            {
+              "id": "settlement/maintenance/manage-charge-ids",
+              "label": "Manage Charge IDs",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/charge-id-config"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/charge-id-config"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/charge-id-config"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "SET_CHARGE_ID_CONFIG"
+                ]
+              }
+            },
+            {
+              "id": "settlement/maintenance/manage-market-fee-calculation",
+              "label": "Manage Market Fee Calculation",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/market-fee-config"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/market-fee-config"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/market-fee-config"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "SET_MARKET_FEE_MODE"
+                ]
+              }
+            },
+            {
+              "id": "settlement/maintenance/manage-mrus",
+              "label": "Manage MRUs",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/mru-maintenance"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/mru-maintenance"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/mru-maintenance"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "SET_MRU_CONFIG"
+                ]
+              }
+            },
+            {
+              "id": "settlement/maintenance/manage-output-file-location",
+              "label": "Manage Output File Location",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/settlement-file-location"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/settlement-file-location"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/settlement-file-location"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "SET_STL_FILE_LOCATION"
+                ]
+              }
+            },
+            {
+              "id": "settlement/maintenance/manage-password-prefix-for-output-files",
+              "label": "Manage Password Prefix For Output Files",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/billing-id-password"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/billing-id-password"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/billing-id-password"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "SET_TP_PASSWORD_CONFIG"
+                ]
+              }
+            },
+            {
+              "id": "settlement/maintenance/general-calculation-configuration",
+              "label": "General Calculation Configuration",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/system-config"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/system-config"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/system-config"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "SET_STL_GEN_CONFIG"
+                ]
+              }
+            },
+            {
+              "id": "settlement/maintenance/manage-single-buyer",
+              "label": "Manage Single Buyer",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/single-buyer-config"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/single-buyer-config"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/single-buyer-config"
+                }
+              },
+              "conditions": {
+                "expression": {
+                  "all": [
+                    {
+                      "not": {
+                        "predicate": "departmentNot",
+                        "args": {
+                          "value": "BILLING"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "settlement/calculate-settlement-amounts",
+          "label": "Calculate Settlement Amounts",
+          "conditions": {
+            "permissionAny": [
+              "VIEW_STL_PROCESS",
+              "VIEW_ADDTL_COMP",
+              "AC_VIEW_AMS_INV_FOR_UPDATE"
+            ]
+          },
+          "children": [
+            {
+              "id": "settlement/calculate-settlement-amounts/calculate-energy-trading-amounts",
+              "label": "Calculate Energy Trading Amounts",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/settlement/trading-amounts-calculation"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/settlement/trading-amounts-calculation"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/settlement/trading-amounts-calculation"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_STL_PROCESS"
+                ]
+              }
+            },
+            {
+              "id": "settlement/calculate-settlement-amounts/calculate-reserve-trading-amounts",
+              "label": "Calculate Reserve Trading Amounts",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/settlement/reserve-trading-amounts-calculation"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/settlement/reserve-trading-amounts-calculation"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/settlement/reserve-trading-amounts-calculation"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_STL_PROCESS"
+                ]
+              }
+            },
+            {
+              "id": "settlement/calculate-settlement-amounts/calculate-energy-market-fee",
+              "label": "Calculate Energy Market Fee",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/settlement/energy-market-fee-calculation"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/settlement/energy-market-fee-calculation"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/settlement/energy-market-fee-calculation"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_STL_PROCESS"
+                ]
+              }
+            },
+            {
+              "id": "settlement/calculate-settlement-amounts/calculate-reserve-market-fee",
+              "label": "Calculate Reserve Market Fee",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/settlement/reserve-market-fee-calculation"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/settlement/reserve-market-fee-calculation"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/settlement/reserve-market-fee-calculation"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_STL_PROCESS"
+                ]
+              }
+            },
+            {
+              "id": "settlement/calculate-settlement-amounts/manage-additional-compensation-claims",
+              "label": "Manage Additional Compensation Claims",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/additional-compensation"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/additional-compensation"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/additional-compensation"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_ADDTL_COMP"
+                ]
+              }
+            },
+            {
+              "id": "settlement/calculate-settlement-amounts/update-additional-compensation-invoice",
+              "label": "Update Additional Compensation Invoice",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/addtl-comp-ams-update"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/addtl-comp-ams-update"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/addtl-comp-ams-update"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "AC_VIEW_AMS_INV_FOR_UPDATE"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "settlement/calculate-settlement-amounts-v2",
+          "label": "Calculate Settlement Amounts v2",
+          "conditions": {
+            "permissionAny": [
+              "VIEW_STL_PROCESS",
+              "VIEW_ADDTL_COMP",
+              "AC_VIEW_AMS_INV_FOR_UPDATE",
+              "EMF_GENERATE_IW",
+              "EMF_CALCULATE",
+              "EMF_FINALIZE",
+              "EMF_GENERATE_EMF_FILE",
+              "UPLOAD_BILLING_STATEMENT",
+              "CALC_PENALTY"
+            ]
+          },
+          "children": [
+            {
+              "id": "settlement/calculate-settlement-amounts-v2/calculate-energy-trading-amounts",
+              "label": "Calculate Energy Trading Amounts",
+              "targets": {
+                "angular2": {
+                  "kind": "internal",
+                  "to": "trading-amounts-calculations-v2"
+                },
+                "angular1": {
+                  "kind": "internal",
+                  "to": "trading-amounts-calculations-v2"
+                },
+                "react": {
+                  "kind": "internal",
+                  "to": "trading-amounts-calculations-v2"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_STL_PROCESS"
+                ]
+              }
+            },
+            {
+              "id": "settlement/calculate-settlement-amounts-v2/calculate-reserve-trading-amounts",
+              "label": "Calculate Reserve Trading Amounts",
+              "targets": {
+                "angular2": {
+                  "kind": "internal",
+                  "to": "reserve-trading-amounts-calculation-v2"
+                },
+                "angular1": {
+                  "kind": "internal",
+                  "to": "reserve-trading-amounts-calculation-v2"
+                },
+                "react": {
+                  "kind": "internal",
+                  "to": "reserve-trading-amounts-calculation-v2"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_STL_PROCESS"
+                ]
+              }
+            },
+            {
+              "id": "settlement/calculate-settlement-amounts-v2/calculate-energy-market-fee",
+              "label": "Calculate Energy Market Fee",
+              "targets": {
+                "angular2": {
+                  "kind": "internal",
+                  "to": "settlement/energy-market-fee"
+                },
+                "angular1": {
+                  "kind": "internal",
+                  "to": "settlement/energy-market-fee"
+                },
+                "react": {
+                  "kind": "internal",
+                  "to": "settlement/energy-market-fee"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "EMF_GENERATE_IW",
+                  "EMF_CALCULATE",
+                  "EMF_FINALIZE",
+                  "EMF_GENERATE_EMF_FILE",
+                  "UPLOAD_BILLING_STATEMENT",
+                  "VIEW_STL_PROCESS"
+                ]
+              }
+            },
+            {
+              "id": "settlement/calculate-settlement-amounts-v2/calculate-reserve-market-fee",
+              "label": "Calculate Reserve Market Fee",
+              "targets": {
+                "angular2": {
+                  "kind": "internal",
+                  "to": "settlement/reserve-market-fee"
+                },
+                "angular1": {
+                  "kind": "internal",
+                  "to": "settlement/reserve-market-fee"
+                },
+                "react": {
+                  "kind": "internal",
+                  "to": "settlement/reserve-market-fee"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_STL_PROCESS"
+                ]
+              }
+            },
+            {
+              "id": "settlement/calculate-settlement-amounts-v2/calculate-financial-penalty",
+              "label": "Calculate Financial Penalty",
+              "targets": {
+                "angular2": {
+                  "kind": "internal",
+                  "to": "settlement/wesm-penalty"
+                },
+                "angular1": {
+                  "kind": "internal",
+                  "to": "settlement/wesm-penalty"
+                },
+                "react": {
+                  "kind": "internal",
+                  "to": "settlement/wesm-penalty"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_STL_PROCESS",
+                  "CALC_PENALTY"
+                ]
+              }
+            },
+            {
+              "id": "settlement/calculate-settlement-amounts-v2/manage-additional-compensation-claims",
+              "label": "Manage Additional Compensation Claims",
+              "targets": {
+                "angular2": {
+                  "kind": "internal",
+                  "to": "settlement/additional-compensation"
+                },
+                "angular1": {
+                  "kind": "internal",
+                  "to": "settlement/additional-compensation"
+                },
+                "react": {
+                  "kind": "internal",
+                  "to": "settlement/additional-compensation"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_ADDTL_COMP"
+                ]
+              }
+            },
+            {
+              "id": "settlement/calculate-settlement-amounts-v2/update-additional-compensation-invoice",
+              "label": "Update Additional Compensation Invoice",
+              "targets": {
+                "angular2": {
+                  "kind": "internal",
+                  "to": "addtl-comp-ams-update-v2"
+                },
+                "angular1": {
+                  "kind": "internal",
+                  "to": "addtl-comp-ams-update-v2"
+                },
+                "react": {
+                  "kind": "internal",
+                  "to": "addtl-comp-ams-update-v2"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "AC_VIEW_AMS_INV_FOR_UPDATE"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "settlement/view-settlement-workspace",
+          "label": "View Settlement Workspace",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/workspace"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/workspace"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/workspace"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "VIEW_WORKSPACE"
+            ]
+          }
+        },
+        {
+          "id": "settlement/worklist",
+          "label": "Worklist",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/tp-worklist"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/tp-worklist"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/tp-worklist"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "APPROVE_STL_TP_WORKLIST"
+            ]
+          }
+        },
+        {
+          "id": "settlement/upload-ams-billing-info",
+          "label": "Upload Ams Billing Info",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/billing/upload"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/billing/upload"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/billing/upload"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "permissionAny": [
+                    "UPLOAD_AMS_BILLING_INFO"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "settlement/upload-billing-statement",
+          "label": "Upload Billing Statement",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/upload-billing-statement"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/upload-billing-statement"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/upload-billing-statement"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "UPLOAD_BILLING_STATEMENT"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "metering",
+      "label": "Metering",
+      "iconKey": "faTachometerAverage",
+      "conditions": {
+        "expression": {
+          "all": [
+            {
+              "predicate": "internalUser"
+            },
+            {
+              "permissionAny": [
+                "VIEW_IMPORT_METERING_CONFIGURATION",
+                "VIEW_IMPORT_SETTLEMENT_METERING_CONFIGURATION",
+                "SET_STL_SEIN_CONFIG",
+                "SET_VSEIN_MAPPING",
+                "SET_MTN_MODEL_CONFIG",
+                "SET_MTN_GROUP_SCHED_SCHED",
+                "SET_MTN_LOOP_CONFIG",
+                "SET_RCOA_CHANNEL_CONFIG",
+                "SET_MET_GEN_CONFIG",
+                "VIEW_METER_PROCESS",
+                "VIEW_MTR",
+                "MQ_VIEW_METERING_QUANTITY",
+                "VIEW_SHIFTING_ANALYSIS",
+                "APPROVE_MET_MP_WORKLIST"
+              ]
+            }
+          ]
+        }
+      },
+      "children": [
+        {
+          "id": "metering/calculations",
+          "label": "Calculations",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/meter-process"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/meter-process"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/meter-process"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "VIEW_METER_PROCESS"
+            ]
+          }
+        },
+        {
+          "id": "metering/calculations-v2",
+          "label": "Calculations v2",
+          "targets": {
+            "angular2": {
+              "kind": "internal",
+              "to": "meter-process-v2"
+            },
+            "angular1": {
+              "kind": "internal",
+              "to": "meter-process-v2"
+            },
+            "react": {
+              "kind": "internal",
+              "to": "meter-process-v2"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "VIEW_METER_PROCESS"
+            ]
+          }
+        },
+        {
+          "id": "metering/labels-mq-uploader",
+          "labelRef": "LABELS.MQ_UPLOADER",
+          "targets": {
+            "angular2": {
+              "kind": "internal",
+              "to": "metering/mq-uploader"
+            },
+            "angular1": {
+              "kind": "internal",
+              "to": "metering/mq-uploader"
+            },
+            "react": {
+              "kind": "internal",
+              "to": "metering/mq-uploader"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "permissionAny": [
+                    "RUN_MQ_UPLOADER"
+                  ]
+                },
+                {
+                  "predicate": "departmentNot",
+                  "args": {
+                    "value": "MSP"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "metering/labels-metering-masterfile",
+          "labelRef": "LABELS.METERING_MASTERFILE",
+          "targets": {
+            "angular2": {
+              "kind": "internal",
+              "to": "metering/metering-masterfile"
+            },
+            "angular1": {
+              "kind": "internal",
+              "to": "metering/metering-masterfile"
+            },
+            "react": {
+              "kind": "internal",
+              "to": "metering/metering-masterfile"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "permissionAny": [
+                    "RUN_MQ_UPLOADER"
+                  ]
+                },
+                {
+                  "predicate": "departmentNot",
+                  "args": {
+                    "value": "MSP"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "metering/labels-meter-data-validation",
+          "labelRef": "LABELS.METER_DATA_VALIDATION",
+          "targets": {
+            "angular2": {
+              "kind": "internal",
+              "to": "metering/meter-data-validation"
+            },
+            "angular1": {
+              "kind": "internal",
+              "to": "metering/meter-data-validation"
+            },
+            "react": {
+              "kind": "internal",
+              "to": "metering/meter-data-validation"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "permissionAny": [
+                    "RUN_MQ_UPLOADER"
+                  ]
+                },
+                {
+                  "predicate": "departmentNot",
+                  "args": {
+                    "value": "MSP"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "metering/meter-streaming-statistics",
+          "label": "Meter Streaming Statistics",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/meter-streaming-stats"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/meter-streaming-stats"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/meter-streaming-stats"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "VIEW_METER_PROCESS"
+            ]
+          }
+        },
+        {
+          "id": "metering/calculation-maintenance-and-configuration",
+          "label": "Calculation Maintenance and Configuration",
+          "conditions": {
+            "permissionAny": [
+              "VIEW_IMPORT_METERING_CONFIGURATION",
+              "VIEW_IMPORT_SETTLEMENT_METERING_CONFIGURATION",
+              "SET_STL_SEIN_CONFIG",
+              "SET_VSEIN_MAPPING",
+              "SET_MTN_MODEL_CONFIG",
+              "SET_MTN_GROUP_SCHED_SCHED",
+              "SET_MTN_LOOP_CONFIG",
+              "SET_RCOA_CHANNEL_CONFIG",
+              "SET_MET_GEN_CONFIG"
+            ]
+          },
+          "children": [
+            {
+              "id": "metering/calculation-maintenance-and-configuration/import-metering-configuration",
+              "label": "Import Metering Configuration",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/import-metering-config"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/import-metering-config"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/import-metering-config"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_IMPORT_METERING_CONFIGURATION"
+                ]
+              }
+            },
+            {
+              "id": "metering/calculation-maintenance-and-configuration/import-settlement-metering-point-configuration",
+              "label": "Import Settlement Metering Point Configuration",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/import-stl-mpconfig"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/import-stl-mpconfig"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/import-stl-mpconfig"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_IMPORT_SETTLEMENT_METERING_CONFIGURATION"
+                ]
+              }
+            },
+            {
+              "id": "metering/calculation-maintenance-and-configuration/metering-configuration",
+              "label": "Metering Configuration",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/metering-config"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/metering-config"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/metering-config"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "SET_STL_SEIN_CONFIG",
+                  "SET_MTN_MODEL_CONFIG"
+                ]
+              }
+            },
+            {
+              "id": "metering/calculation-maintenance-and-configuration/historical-factors-maintenance",
+              "label": "Historical Factors Maintenance",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/historical-factor"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/historical-factor"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/historical-factor"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_MET_CFG"
+                ]
+              }
+            },
+            {
+              "id": "metering/calculation-maintenance-and-configuration/virtual-sein-mapping",
+              "label": "Virtual SEIN Mapping",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/virtual-sein-mapping"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/virtual-sein-mapping"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/virtual-sein-mapping"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "SET_VSEIN_MAPPING"
+                ]
+              }
+            },
+            {
+              "id": "metering/calculation-maintenance-and-configuration/mtn-group-and-schedule",
+              "label": "MTN Group and Schedule",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/mtn-group-sched"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/mtn-group-sched"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/mtn-group-sched"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "SET_MTN_GROUP_SCHED_SCHED"
+                ]
+              }
+            },
+            {
+              "id": "metering/calculation-maintenance-and-configuration/rcoa-channel-configuration",
+              "label": "RCOA Channel Configuration",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/rcoa-config"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/rcoa-config"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/rcoa-config"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "SET_RCOA_CHANNEL_CONFIG"
+                ]
+              }
+            },
+            {
+              "id": "metering/calculation-maintenance-and-configuration/file-location",
+              "label": "File Location",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/meterprocess-file-loc-config"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/meterprocess-file-loc-config"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/meterprocess-file-loc-config"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "SET_MET_GEN_CONFIG"
+                ]
+              }
+            },
+            {
+              "id": "metering/calculation-maintenance-and-configuration/manage-virtual-metering-point",
+              "label": "Manage Virtual Metering Point",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/virtual-metering-point"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/virtual-metering-point"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/virtual-metering-point"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VMP_MAINTENANCE_VIEW"
+                ]
+              }
+            },
+            {
+              "id": "metering/calculation-maintenance-and-configuration/meter-registry-maintenance",
+              "label": "Meter Registry Maintenance",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/mtr-meter-list"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/mtr-meter-list"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/mtr-meter-list"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_MET_CFG"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "metering/manage-mtr",
+          "label": "Manage MTR",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/mtr"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/mtr"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/mtr"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "VIEW_MTR"
+            ]
+          }
+        },
+        {
+          "id": "metering/worklist",
+          "label": "Worklist",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/mpoint-worklist"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/mpoint-worklist"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_TWO_URL}/#/mpoint-worklist"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "APPROVE_MET_MP_WORKLIST"
+            ]
+          }
+        },
+        {
+          "id": "metering/data-analysis-and-validation",
+          "label": "Data Analysis and Validation",
+          "conditions": {
+            "permissionAny": [
+              "MQ_VIEW_METERING_QUANTITY",
+              "VIEW_SHIFTING_ANALYSIS"
+            ]
+          },
+          "children": [
+            {
+              "id": "metering/data-analysis-and-validation/view-submitted-meter-data",
+              "label": "View Submitted Meter Data",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/metering/list/meter-data"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/metering/list/meter-data"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/metering/list/meter-data"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "MQ_VIEW_METERING_QUANTITY"
+                ]
+              }
+            },
+            {
+              "id": "metering/data-analysis-and-validation/rtu-comparison",
+              "label": "RTU Comparison",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/rtu-comparison"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/rtu-comparison"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/rtu-comparison"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_SHIFTING_ANALYSIS"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "activity-logs",
+      "label": "Activity Logs",
+      "iconKey": "faListCheck",
+      "targets": {
+        "angular2": {
+          "kind": "external",
+          "href": "{PHASE_TWO_URL}/#/audit-log/list"
+        },
+        "angular1": {
+          "kind": "external",
+          "href": "{PHASE_TWO_URL}/#/audit-log/list"
+        },
+        "react": {
+          "kind": "external",
+          "href": "{PHASE_TWO_URL}/#/audit-log/list"
+        }
+      },
+      "conditions": {
+        "expression": {
+          "all": [
+            {
+              "predicate": "internalUser"
+            },
+            {
+              "permissionAny": [
+                "VIEW_ACTIVITY_LOG"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "job-queue",
+      "label": "Job Queue",
+      "iconKey": "faRoadCircleCheck",
+      "targets": {
+        "angular2": {
+          "kind": "external",
+          "href": "{PHASE_TWO_URL}/#/job-queue"
+        },
+        "angular1": {
+          "kind": "external",
+          "href": "{PHASE_TWO_URL}/#/job-queue"
+        },
+        "react": {
+          "kind": "external",
+          "href": "{PHASE_TWO_URL}/#/job-queue"
+        }
+      },
+      "conditions": {
+        "expression": {
+          "all": [
+            {
+              "predicate": "internalUser"
+            },
+            {
+              "permissionAny": [
+                "VIEW_QUEUE"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "admin",
+      "label": "Admin",
+      "iconKey": "faUserLarge",
+      "conditions": {
+        "expression": {
+          "all": [
+            {
+              "predicate": "internalUser"
+            },
+            {
+              "permissionAny": [
+                "MANAGE_MARKET_OPERATORS",
+                "VIEW_ROLE",
+                "VIEW_PRIVILEGES",
+                "MANAGE_AUDIT_LOGS",
+                "MANAGE_SYS_CONFIG",
+                "MANAGE_JOB_SCHEDULER",
+                "VIEW_IMPORT_SUMMARY",
+                "SET_TOD_GEN_CONFIG",
+                "MANAGE_WESM_MARKET_PRODUCTS",
+                "MANAGE_FIELD_SETTINGS",
+                "MANAGE_SEC",
+                "VIEW_SEC",
+                "ADM_VIEW_REFERENCE"
+              ]
+            }
+          ]
+        }
+      },
+      "children": [
+        {
+          "id": "admin/mo-user-management",
+          "label": "MO User Management",
+          "conditions": {
+            "permissionAny": [
+              "MANAGE_MARKET_OPERATORS",
+              "VIEW_ROLE",
+              "VIEW_PRIVILEGES"
+            ]
+          },
+          "children": [
+            {
+              "id": "admin/mo-user-management/manage-market-operator-users",
+              "label": "Manage Market Operator Users",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/admin/user/MO"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/admin/user/MO"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/admin/user/MO"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "MANAGE_MARKET_OPERATORS"
+                ]
+              }
+            },
+            {
+              "id": "admin/mo-user-management/manage-user-roles",
+              "label": "Manage User Roles",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/admin/role"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/admin/role"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/admin/role"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_ROLE"
+                ]
+              }
+            },
+            {
+              "id": "admin/mo-user-management/view-privileges",
+              "label": "View Privileges",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/admin/privilege"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/admin/privilege"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_ONE_URL}/#/list/admin/privilege"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_PRIVILEGES"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "admin/view-audit-logs",
+          "label": "View Audit Logs",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/admin/audit"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/admin/audit"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/admin/audit"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "MANAGE_AUDIT_LOGS"
+            ]
+          }
+        },
+        {
+          "id": "admin/view-xdf-audit-logs",
+          "label": "View XDF Audit Logs",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/admin/xdf"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/admin/xdf"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/admin/xdf"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "MANAGE_AUDIT_LOGS"
+            ]
+          }
+        },
+        {
+          "id": "admin/system-configuration",
+          "label": "System Configuration",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/admin/config/form"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/admin/config/form"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/admin/config/form"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "MANAGE_SYS_CONFIG"
+            ]
+          }
+        },
+        {
+          "id": "admin/manage-scheduled-jobs",
+          "label": "Manage Scheduled Jobs",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/admin/scheduler/jobs"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/admin/scheduler/jobs"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/admin/scheduler/jobs"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "MANAGE_JOB_SCHEDULER"
+            ]
+          }
+        },
+        {
+          "id": "admin/data-interface-management",
+          "label": "Data Interface Management",
+          "conditions": {
+            "permissionAny": [
+              "SET_TOD_GEN_CONFIG",
+              "VIEW_IMPORT_SUMMARY"
+            ]
+          },
+          "children": [
+            {
+              "id": "admin/data-interface-management/manage-trading-operations-data-interface",
+              "label": "Manage Trading Operations Data Interface",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/data-interface-config"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/data-interface-config"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/data-interface-config"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "SET_TOD_GEN_CONFIG"
+                ]
+              }
+            },
+            {
+              "id": "admin/data-interface-management/import-trading-operations-data",
+              "label": "Import Trading Operations Data",
+              "targets": {
+                "angular2": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/data-interface"
+                },
+                "angular1": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/data-interface"
+                },
+                "react": {
+                  "kind": "external",
+                  "href": "{PHASE_TWO_URL}/#/data-interface"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_IMPORT_SUMMARY"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "admin/manage-market-products",
+          "label": "Manage Market Products",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/market-product"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/market-product"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/market-product"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "MANAGE_WESM_MARKET_PRODUCTS"
+            ]
+          }
+        },
+        {
+          "id": "admin/manage-sub-market-products",
+          "label": "Manage Sub Market Products",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/sub-market-product"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/sub-market-product"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/sub-market-product"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "MANAGE_WESM_MARKET_PRODUCTS"
+            ]
+          }
+        },
+        {
+          "id": "admin/manage-field-settings",
+          "label": "Manage Field Settings",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/manage/field-settings"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/manage/field-settings"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/manage/field-settings"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "MANAGE_FIELD_SETTINGS"
+            ]
+          }
+        },
+        {
+          "id": "admin/manage-references",
+          "label": "Manage References",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/admin/referencev2"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/admin/referencev2"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/list/admin/referencev2"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "ADM_VIEW_REFERENCE"
+            ]
+          }
+        },
+        {
+          "id": "admin/manage-sec-parameters",
+          "label": "Manage SEC Parameters",
+          "targets": {
+            "angular2": {
+              "kind": "internal",
+              "to": "admin/sec"
+            },
+            "angular1": {
+              "kind": "internal",
+              "to": "admin/sec"
+            },
+            "react": {
+              "kind": "internal",
+              "to": "admin/sec"
+            }
+          },
+          "conditions": {
+            "permissionAny": [
+              "MANAGE_SEC",
+              "VIEW_SEC"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "labels-mq-uploader",
+      "labelRef": "LABELS.MQ_UPLOADER",
+      "iconKey": "faUpload",
+      "targets": {
+        "angular2": {
+          "kind": "internal",
+          "to": "msp-mq-uploader"
+        },
+        "angular1": {
+          "kind": "internal",
+          "to": "msp-mq-uploader"
+        },
+        "react": {
+          "kind": "internal",
+          "to": "msp-mq-uploader"
+        }
+      },
+      "conditions": {
+        "predicate": "registrationCategoryIs",
+        "args": {
+          "value": "MSP"
+        }
+      }
+    }
+  ]
+}

@@ -1,14 +1,59 @@
 import { Component, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
 import { externalRoutes, NEW_ROUTES } from '@shared/constants';
 import { CurrentUser, navItems } from '@shared/interfaces';
-import { faBell, faHome, faChevronDown, faChevronRight, faAddressCard, faFileContract,faBuilding, faCopy, faUserLarge, faCircleUser, faCalendar, faFileArchive, faAddressBook, faBuildingUn, faTachometer, faTachometerAlt, faBinoculars, faContactCard, faHandHoldingHand, faTachometerAverage, faListCheck, faRoadCircleCheck, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { Router } from '@angular/router';
-import { PHASE_ONE_AUTHORITIES, PHASE_TWO_AUTHORITIES } from '@shared/constants';
-import { isAuthorizedAny } from '@shared/validators';
+import navConfig from '@assets/navigation/navbar-menu.config.json';
 import { AuthorizationService } from '@core/services/authorization.service';
-import { ToastrService } from 'ngx-toastr';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { faAddressBook, faAddressCard, faBell, faBinoculars, faBuilding, faBuildingUn, faCalendar, faChevronDown, faChevronRight, faCircleUser, faContactCard, faCopy, faFileArchive, faHandHoldingHand, faHome, faListCheck, faRoadCircleCheck, faTachometer, faTachometerAlt, faTachometerAverage, faUpload, faUserLarge } from '@fortawesome/free-solid-svg-icons';
+import { environment } from '../../../../../environments/environment';
+import { PHASE_ONE_AUTHORITIES, PHASE_TWO_AUTHORITIES } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { AdminService } from '@shared/services/api';
+import { isAuthorizedAny } from '@shared/validators';
+import { ToastrService } from 'ngx-toastr';
+
+type SidebarPlatform = 'react' | 'angular1' | 'angular2';
+
+interface MenuTarget {
+  kind: 'external' | 'internal' | 'externalRouteRef' | 'internalRouteRef';
+  href?: string;
+  to?: string;
+  ref?: string;
+}
+
+interface MenuConditions {
+  always?: boolean;
+  permissionAny?: string[];
+  predicate?: string;
+  args?: Record<string, unknown>;
+  expression?: MenuExpressionNode;
+}
+
+interface MenuExpressionNode {
+  all?: MenuExpressionNode[];
+  any?: MenuExpressionNode[];
+  not?: MenuExpressionNode;
+  predicate?: string;
+  args?: Record<string, unknown>;
+  permissionAny?: string[];
+  always?: boolean;
+}
+
+interface MenuConfigItem {
+  id: string;
+  label?: string;
+  labelRef?: string;
+  iconKey?: string;
+  targets?: Partial<Record<SidebarPlatform, MenuTarget>>;
+  conditions?: MenuConditions;
+  children?: MenuConfigItem[];
+}
+
+interface NavbarMenuConfig {
+  version: number;
+  items: MenuConfigItem[];
+}
 
 @Component({
   selector: 'app-navbar',
@@ -36,6 +81,63 @@ export class NavbarComponent implements OnInit {
   private toast = inject(ToastrService);
   private as = inject(AdminService);
   regCategory: string;
+  private navbarInfo: Record<string, unknown> | null = null;
+  private readonly menuConfig = navConfig as NavbarMenuConfig;
+  private readonly iconMap: Record<string, IconDefinition> = {
+    faBell,
+    faHome,
+    faAddressCard,
+    faBuilding,
+    faCopy,
+    faUserLarge,
+    faCircleUser,
+    faCalendar,
+    faFileArchive,
+    faAddressBook,
+    faBuildingUn,
+    faTachometer,
+    faTachometerAlt,
+    faBinoculars,
+    faContactCard,
+    faHandHoldingHand,
+    faTachometerAverage,
+    faListCheck,
+    faRoadCircleCheck,
+    faUpload
+  };
+  private readonly routeRefContext = {
+    externalRoutes,
+    NEW_ROUTES,
+    LABELS,
+    PHASE_ONE_AUTHORITIES,
+    PHASE_TWO_AUTHORITIES
+  };
+  private readonly topLevelMenuOrder: string[] = [
+    'notifications',
+    'home',
+    'view-metering-and-settlement-data',
+    'calendar',
+    'manage-bcqs',
+    'view-submitted-meter-data',
+    'manage-meter-trouble-reports',
+    'manage-facility-applications',
+    'manage-mirf',
+    'view-mtns',
+    'registration',
+    'facility-management',
+    'counterparties-and-contract-management',
+    'manage-user-accounts',
+    'prudential-requirements',
+    'settlement',
+    'metering',
+    'activity-logs',
+    'job-queue',
+    'admin',
+    'labels-mq-uploader'
+  ];
+  private readonly topLevelMenuOrderIndex = new Map<string, number>(
+    this.topLevelMenuOrder.map((id, index) => [id, index])
+  );
 
   constructor() { }
 
@@ -47,1298 +149,27 @@ export class NavbarComponent implements OnInit {
           this.isLoading.set(false)
           this.userData.set(this.authorizationService.currentUser())
           this.getMenuItems();
+          this.getNavbarInfo();
         }
       });
     } else {
       this.userData.set(this.authorizationService.currentUser())
       this.getMenuItems();
+      this.getNavbarInfo();
       this.isLoading.set(false);
     }
   }
 
   private getMenuItems(): void {
-    this.navItems = [
-      {
-        title: 'Notifications',
-        show: true,
-        externalLink: externalRoutes.NOTIFICATION,
-        icon: faBell,
-        permission: []
-      },
-      {
-        title: 'Home',
-        show: true,
-        externalLink: externalRoutes.HOME,
-        icon: faHome,
-        permission: []
-      },
-      //Registration External Routes
-      {
-        title: 'Registration',
-        show: true,
-        icon: faAddressCard,
-        permission: [
-          PHASE_ONE_AUTHORITIES.VIEW_LIST_OF_REGISTRATION,
-          PHASE_ONE_AUTHORITIES.UPDATE_REGISTRATION,
-          PHASE_ONE_AUTHORITIES.VIEW_REGISTRATION,
-          PHASE_ONE_AUTHORITIES.ASSESS_APPLICANT,
-          PHASE_ONE_AUTHORITIES.VIEW_APPLICANT,
-          PHASE_ONE_AUTHORITIES.VIEW_ORGANIZATION,
-          PHASE_ONE_AUTHORITIES.CREATE_ORGANIZATION,
-          PHASE_ONE_AUTHORITIES.UPDATE_ORGANIZATION,
-          PHASE_ONE_AUTHORITIES.VIEW_CREATED_PARTICIPANTS,
-          PHASE_ONE_AUTHORITIES.POSTREG_VIEW_LIST,
-          PHASE_ONE_AUTHORITIES.VIEW_SUSPENDED_PARTICIPANTS,
-          PHASE_ONE_AUTHORITIES.IMPORT_IPR_DATA,
-          PHASE_ONE_AUTHORITIES.MANAGE_DOCUMENTS,
-          PHASE_ONE_AUTHORITIES.VIEW_EXPIRED_DOCS,
-          PHASE_ONE_AUTHORITIES.VIEW_EXPIRING_DOCS,
-          PHASE_ONE_AUTHORITIES.VIEW_LIST_OF_REGISTRATION,
-          PHASE_ONE_AUTHORITIES.EXPORT_WESM_REG_UPDATE_REPORT,
-          PHASE_ONE_AUTHORITIES.MANAGE_MARKET_PARTICIPANTS,
-          PHASE_ONE_AUTHORITIES.MANAGE_SYSTEM_OPERATORS
-        ],
-        children: [
-          {
-            title: 'Registration Transaction',
-            show: true,
-            permission: [
-              PHASE_ONE_AUTHORITIES.VIEW_LIST_OF_REGISTRATION,
-              PHASE_ONE_AUTHORITIES.UPDATE_REGISTRATION,
-              PHASE_ONE_AUTHORITIES.VIEW_REGISTRATION,
-              PHASE_ONE_AUTHORITIES.ASSESS_APPLICANT,
-              PHASE_ONE_AUTHORITIES.VIEW_APPLICANT,
-              PHASE_ONE_AUTHORITIES.VIEW_ORGANIZATION,
-              PHASE_ONE_AUTHORITIES.CREATE_ORGANIZATION,
-              PHASE_ONE_AUTHORITIES.UPDATE_ORGANIZATION,
-              PHASE_ONE_AUTHORITIES.VIEW_CREATED_PARTICIPANTS,
-            ],
-            children: [
-              //PEMC ROUTES
-              {
-                title: 'Manage Registration Transaction',
-                show: true,
-                externalLink: externalRoutes.REGISTRATION_PEMC.REGISRATION_TRANSACTIONS.MANAGE_REGISTRATION_TRANSACTION,
-                permission: [
-                  PHASE_ONE_AUTHORITIES.VIEW_LIST_OF_REGISTRATION,
-                  PHASE_ONE_AUTHORITIES.UPDATE_REGISTRATION,
-                  PHASE_ONE_AUTHORITIES.VIEW_REGISTRATION
-                ]
-              },
-              {
-                title: 'Manage Sign-up Applications',
-                show: true,
-                externalLink: externalRoutes.REGISTRATION_PEMC.REGISRATION_TRANSACTIONS.MANAGE_SIGNUP_APPLICATION,
-                permission: [
-                  PHASE_ONE_AUTHORITIES.ASSESS_APPLICANT,
-                  PHASE_ONE_AUTHORITIES.VIEW_APPLICANT
-                ]
-              },
-              {
-                title: 'Manage Business Organization',
-                show: true,
-                externalLink: externalRoutes.REGISTRATION_PEMC.REGISRATION_TRANSACTIONS.MANAGE_BUSINESS_ORGANIZATION,
-                permission: [
-                  PHASE_ONE_AUTHORITIES.VIEW_ORGANIZATION,
-                  PHASE_ONE_AUTHORITIES.CREATE_ORGANIZATION,
-                  PHASE_ONE_AUTHORITIES.UPDATE_ORGANIZATION
-                ]
-              },
-              {
-                title: 'Create New Trading Participant',
-                show: true,
-                externalLink: externalRoutes.REGISTRATION_PEMC.REGISRATION_TRANSACTIONS.CREATE_NEW_TRADING_PARTICIPANTS,
-                permission: [PHASE_ONE_AUTHORITIES.VIEW_CREATED_PARTICIPANTS]
-              }
-            ]
-          },
-          {
-            title: 'Post Registration Transactions',
-            show: true,
-            permission: [PHASE_ONE_AUTHORITIES.POSTREG_VIEW_LIST],
-            children: [
-              {
-                title: 'Manage Post Registration Transactions',
-                show: true,
-                externalLink: externalRoutes.REGISTRATION_PEMC.POST_REGISTRATION_TRANSACTIONS.MANAGE_POST_REGISTRATION_TRANSACTIONS,
-                permission: [PHASE_ONE_AUTHORITIES.POSTREG_VIEW_LIST]
-              },
-              {
-                title: 'Advisory Publication',
-                show: true,
-                externalLink: externalRoutes.REGISTRATION_PEMC.POST_REGISTRATION_TRANSACTIONS.ADVISORY_PUBLICATION,
-                permission: [PHASE_ONE_AUTHORITIES.POSTREG_VIEW_LIST]
-              }
-            ]
-          },
-          {
-            title: 'Document Management',
-            show: true,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_DOCUMENTS, PHASE_ONE_AUTHORITIES.VIEW_EXPIRING_DOCS, PHASE_ONE_AUTHORITIES.VIEW_EXPIRED_DOCS],
-            children: [
-              {
-                title: 'Manage Document Managent',
-                show: true,
-                externalLink: externalRoutes.REGISTRATION_PEMC.DOCUMENT_MANAGEMENT.MANAGE_REGISTRATION_DOCUMENTS,
-                permission: [PHASE_ONE_AUTHORITIES.MANAGE_DOCUMENTS]
-              },
-              {
-                title: 'View Expiring Registration Documents',
-                show: true,
-                externalLink: externalRoutes.REGISTRATION_PEMC.DOCUMENT_MANAGEMENT.VIEW_EXPIRING_REGISTRATION_DOCUMENTS,
-                permission: [PHASE_ONE_AUTHORITIES.VIEW_EXPIRING_DOCS]
-              },
-              {
-                title: 'View Expired Registration Documents',
-                show: true,
-                externalLink: externalRoutes.REGISTRATION_PEMC.DOCUMENT_MANAGEMENT.VIEW_EXPIRED_REGISTRATION_DOCUMENTS,
-                permission: [PHASE_ONE_AUTHORITIES.VIEW_EXPIRED_DOCS]
-              }
-            ]
-          },
-          {
-            title: 'Reports',
-            show: true,
-            permission: [PHASE_ONE_AUTHORITIES.EXPORT_WESM_REG_UPDATE_REPORT],
-            children: [
-              {
-                title: 'WESM Registration Updates',
-                show: true,
-                externalLink: externalRoutes.REGISTRATION_PEMC.REPORTS.WESM_REGISTRATION_UPDATES,
-                permission: [PHASE_ONE_AUTHORITIES.EXPORT_WESM_REG_UPDATE_REPORT]
-              },
-              {
-                title: 'Retail Compliance Reports',
-                show: true,
-                externalLink: externalRoutes.REGISTRATION_PEMC.REPORTS.RETAIL_COMPLIANCE_REPORTS,
-                permission: [PHASE_ONE_AUTHORITIES.EXPORT_WESM_REG_UPDATE_REPORT]
-              }
-            ]
-          },
-          {
-            title: 'View Suspended Participants',
-            show: true,
-            externalLink: externalRoutes.REGISTRATION_PEMC.VIEW_SUSPENDED_PARTICIPANTS,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_SUSPENDED_PARTICIPANTS]
-          },
-          {
-            title: 'Upload IPRs',
-            show: true,
-            externalLink: externalRoutes.REGISTRATION_PEMC.UPLOAD_IPRS,
-            permission: [PHASE_ONE_AUTHORITIES.IMPORT_IPR_DATA]
-          },
-          // TP Routes
-          {
-            title: 'Manage Registration',
-            show: true,
-            externalLink: externalRoutes.REGISTRATION_TP.MANAGE_REGISTRATION,
-            permission: []
-          },
-          {
-            title: 'View GEOP End-Users',
-            show: true,
-            externalLink: externalRoutes.REGISTRATION_TP.VIEW_GEOP_END_USERS,
-            permission: []
-          },
-          {
-            title: 'Manage Facilities',
-            show: true,
-            permission: [PHASE_ONE_AUTHORITIES.REQUEST_TRANSFER_FACILITY],
-            children: [
-              {
-                title: 'Available Facilities',
-                show: true,
-                externalLink: externalRoutes.REGISTRATION_TP.MANAGE_FACILITIES.AVAILABLE_FACILITIES,
-                permission: [PHASE_ONE_AUTHORITIES.REQUEST_TRANSFER_FACILITY]
-              },
-              {
-                title: 'Facilities For Transfer',
-                show: true,
-                externalLink: externalRoutes.REGISTRATION_TP.MANAGE_FACILITIES.FACILITIES_FOR_TRANSFER,
-                permission: [PHASE_ONE_AUTHORITIES.REQUEST_TRANSFER_FACILITY]
-              }
-            ]
-          },
-          {
-            title: 'View Expiring / Expired Documents',
-            show: true,
-            externalLink: externalRoutes.REGISTRATION_TP.VIEW_EXPIRING_EXPIRED_DOCUMENTS,
-            permission:[PHASE_ONE_AUTHORITIES.VIEW_EXPIRING_EXPIRED_DOCS]
-          },
-          // MSP Routes
-          {
-            title: 'Manage Registration',
-            show: true,
-            externalLink: externalRoutes.REGISTRATION_MSP.MANAGE_REGISTRATION,
-            permission: []
-          },
-          {
-            title: 'View Expiring / Expired Documents',
-            show: true,
-            externalLink: externalRoutes.REGISTRATION_MSP.VIEW_EXPIRING_EXPIRED_DOCUMENTS,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_EXPIRING_EXPIRED_DOCS]
-          }
-        ]
-      },
-      //Manage Facility Application External Routes
-      {
-        title: 'Manage Facility Applications',
-        show: true,
-        icon: faBuilding,
-        permission: [PHASE_ONE_AUTHORITIES.VIEW_MIRF],
-        children: [
-          {
-            title: 'View Facility Applications',
-            show: true,
-            externalLink: externalRoutes.MANAGE_FACILITY_APPLICATIONS,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_MIRF]
-          }
-        ]
-      },
-      //MIRF External Routes
-      {
-        title: 'Manage MIRF',
-        show: true,
-        icon: faCopy,
-        permission: [PHASE_ONE_AUTHORITIES.VIEW_MIRF, PHASE_ONE_AUTHORITIES.MIRF_UPLOAD_VIEW, PHASE_ONE_AUTHORITIES.MIRF_SUMMARY_VIEW],
-        children: [
-          {
-            title: 'Upload MIRF',
-            show: true,
-            externalLink: externalRoutes.MANAGE_MIRF.UPLOAD_MIRF,
-            permission: [PHASE_ONE_AUTHORITIES.MIRF_UPLOAD_VIEW]
-          },
-          {
-            title: 'View MIRF Summary',
-            show: true,
-            externalLink: externalRoutes.MANAGE_MIRF.VIEW_MIRF_SUMMARY,
-            permission: [PHASE_ONE_AUTHORITIES.MIRF_SUMMARY_VIEW]
-          },
-          {
-            title: 'MIRF Updates',
-            show: true,
-            externalLink: externalRoutes.MANAGE_MIRF.MIRF_UPDATES,
-            permission: [PHASE_ONE_AUTHORITIES.MIRF_UPLOAD_VIEW]
-          }
-        ]
-      },
-      //User Account Route
-      {
-        title: 'Manage User Accounts',
-        show: true,
-        icon: faCircleUser,
-        permission: [PHASE_ONE_AUTHORITIES.POSTREG_VIEW_LIST_USERACCOUNT, PHASE_ONE_AUTHORITIES.POSTREG_VIEW_USERACCOUNT_DETAILS],
-        externalLink: externalRoutes.USER_ACCOUNTS_FOR_TP
-      },
-      //Calendar route
-      {
-        title: 'Calendar',
-        show: true,
-        icon: faCalendar,
-        permission: [PHASE_ONE_AUTHORITIES.VIEW_CALENDAR],
-        externalLink: externalRoutes.CALENDAR
-      },
-      {
-        title: 'View Metering and Settlement Data',
-        show: true,
-        icon: faFileArchive,
-        permission: [PHASE_ONE_AUTHORITIES.VIEW_DOWNLOAD_METER_STL_DATA],
-        externalLink: externalRoutes.FILE_SUMMARY_FOR_TP
-      },
-      {
-                title: 'View RBCQ',
-                path: NEW_ROUTES.RBCQ_VIEW,
-                show: true,
-                icon: faFileContract,
-                permission: []
-      },
-      //MTN link route
-      {
-        title: 'View MTNs',
-        show: true,
-        icon: faCopy,
-        permission: [PHASE_ONE_AUTHORITIES.VIEW_MARKET_TRADING_NODE, PHASE_ONE_AUTHORITIES.UPDATE_MARKET_TRADING_NODE],
-        externalLink: externalRoutes.MTN_LINK_FOR_MSP
-      },
-      //Prudential requirements for tp routes
-      {
-        title: 'Prudential Requirements',
-        show: true,
-        icon: faAddressBook,
-        permission: [
-          PHASE_ONE_AUTHORITIES.MARGIN_CALL_SUMMARY_CONFIRMATION_VIEW,
-          PHASE_ONE_AUTHORITIES.VIEW_HISTORICAL_DRAWDOWN_SUMMARY,
-          PHASE_ONE_AUTHORITIES.VIEW_FINANCIAL_INFO_PAGE,
-          PHASE_ONE_AUTHORITIES.VIEW_PRUDENTIAL_REQ_SECURITY_DEPOSIT_LIST,
-          PHASE_ONE_AUTHORITIES.VIEW_PRUDENTIAL_REQ_EXEMPTION_LIST,
-          PHASE_ONE_AUTHORITIES.VIEW_PR_SEC_DEP_EMAIL_LIST,
-          PHASE_ONE_AUTHORITIES.VIEW_PR_OUT_BAL_LIST,
-          PHASE_ONE_AUTHORITIES.VIEW_PR_SD_EXPIRING_SENT_NOTIFICATION_LIST,
-          PHASE_ONE_AUTHORITIES.MARGIN_CALL_SUMMARY_VIEW,
-          PHASE_ONE_AUTHORITIES.ADM_VIEW_HOLIDAY_LIST,
-          PHASE_ONE_AUTHORITIES.GENERATE_DRAWDOWN_SUMMARY,
-          PHASE_ONE_AUTHORITIES.CONFIRM_DRAWDOWN_SUMMARY,
-          PHASE_ONE_AUTHORITIES.VIEW_GENERATE_DRAWDOWN_SUMMARY,
-          PHASE_ONE_AUTHORITIES.VIEW_PR_MONITOR_REPORT,
-          PHASE_ONE_AUTHORITIES.VIEW_CONFIRM_DRAWDOWN_SUMMARY,
-          PHASE_ONE_AUTHORITIES.DOWNLOAD_HISTORICAL_DRAWDOWN_SUMMARY,
-          PHASE_ONE_AUTHORITIES.VIEW_MAXIMUM_EXPOSURE_LIST
-        ],
-        children: [
-          //TP ROUTES
-          {
-            title: 'View Margin Call Reports',
-            show: true,
-            externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_TP.VIEW_MARGIN_CALL_REPORTS,
-            permission: [PHASE_ONE_AUTHORITIES.MARGIN_CALL_SUMMARY_CONFIRMATION_VIEW]
-          },
-          {
-            title: 'Financial Information',
-            show: true,
-            externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_TP.FINANCIAL_INFORMATION,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_FINANCIAL_INFO_PAGE]
-          },
-          {
-            title: 'View Drawdown Reports',
-            show: true,
-            externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_TP.VIEW_DRAWDOWN_REPORTS,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_HISTORICAL_DRAWDOWN_SUMMARY]
-          },
-          //PEMC ROUTES
-          {
-            title: 'Security Deposit',
-            show: true,
-            externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_PEMC_USER.SECURITY_DEPOSIT,
-            permission: [
-              PHASE_ONE_AUTHORITIES.VIEW_PRUDENTIAL_REQ_SECURITY_DEPOSIT_LIST,
-              PHASE_ONE_AUTHORITIES.VIEW_PRUDENTIAL_REQ_EXPIRING_SECURITY_DEPOSIT_LIST,
-              PHASE_ONE_AUTHORITIES.VIEW_PR_SD_EXPIRING_SENT_NOTIFICATION_LIST
-            ]
-          },
-          {
-            title: 'Manage PR Exemptions',
-            show: true,
-            externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_PEMC_USER.MANAGE_PR_EXEMPTIONS,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_PRUDENTIAL_REQ_EXEMPTION_LIST]
-          },
-          {
-            title: 'Manage Holiday',
-            show: true,
-            externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_PEMC_USER.MANAGE_HOLIDAY,
-            permission: [PHASE_ONE_AUTHORITIES.ADM_VIEW_HOLIDAY_LIST]
-          },
-          {
-            title: 'Manage Contact List (For Financial Transactions)',
-            show: true,
-            externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_PEMC_USER.MANAGE_CONTACT_LIST_FOR_FINANCIAL_TRANSACTIONS,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_PR_SEC_DEP_EMAIL_LIST]
-          },
-          {
-            title: 'Manage Outstanding Balance',
-            show: true,
-            externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_PEMC_USER.MANAGE_OUTSTANDING_BALANCE,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_PR_OUT_BAL_LIST]
-          },
-          {
-            title: 'Maximum Exposure',
-            show: true,
-            externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_PEMC_USER.MAXIMUM_EXPOSURE,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_MAXIMUM_EXPOSURE_LIST]
-          },
-          {
-            title: 'Manage Margin Calls',
-            show: true,
-            externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_PEMC_USER.MANAGE_MARGIN_CALLS,
-            permission: [PHASE_ONE_AUTHORITIES.MARGIN_CALL_SUMMARY_VIEW]
-          },
-          {
-            title: 'Monitoring Reports',
-            show: true,
-            externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_PEMC_USER.MONITORING_REPORTS,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_PR_MONITOR_REPORT]
-          },
-          {
-            title: 'Extract Historical WESM Bill Information',
-            show: true,
-            externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_PEMC_USER.EXTRACT_HISTORICAL_WESM_BILL_INFORMATION,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_HISTORICAL_WESM_BILL]
-          },
-          {
-            title: 'Manage Drawdown Summary',
-            show: true,
-            externalLink: externalRoutes.PRUDENTIAL_REQUIREMENTS_FOR_PEMC_USER.MANAGE_DRAWDOWN_SUMMARY,
-            permission: [
-              PHASE_ONE_AUTHORITIES.VIEW_GENERATE_DRAWDOWN_SUMMARY,
-              PHASE_ONE_AUTHORITIES.VIEW_CONFIRM_DRAWDOWN_SUMMARY,
-              PHASE_ONE_AUTHORITIES.VIEW_NOTICE_ISSUANCE_DRAWDOWN_SUMMARY,
-              PHASE_ONE_AUTHORITIES.VIEW_HISTORICAL_DRAWDOWN_SUMMARY
-            ]
-          }
-        ]
-      },
-      //Facility Managent Routes
-      {
-        title: 'Facility Management',
-        show: true,
-        icon: faBuildingUn,
-        permission: [
-          PHASE_ONE_AUTHORITIES.VIEW_MARKET_TRADING_NODE,
-          PHASE_ONE_AUTHORITIES.UPDATE_MARKET_TRADING_NODE,
-          PHASE_ONE_AUTHORITIES.VIEW_MIRF,
-          PHASE_ONE_AUTHORITIES.VIEW_FACILITY_LIST,
-          PHASE_ONE_AUTHORITIES.VIEW_FACILITIES_FOR_ACTIVATION,
-          PHASE_ONE_AUTHORITIES.VIEW_FACILITIES_FOR_TRANSFER
-        ],
-        children: [
-          {
-            title: 'Manage Market Trading Nodes',
-            show: true,
-            externalLink: externalRoutes.FACILITY_MANAGEMENT_PEMC_USER.MANAGE_MARKET_TRADING_NODES,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_MARKET_TRADING_NODE, PHASE_ONE_AUTHORITIES.UPDATE_MARKET_TRADING_NODE]
-          },
-          {
-            title: 'Manage Facilities',
-            show: true,
-            externalLink: externalRoutes.FACILITY_MANAGEMENT_PEMC_USER.MANAGE_FACILITIES,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_FACILITY_LIST]
-          },
-          {
-            title: 'Facilities For Activatiton',
-            show: true,
-            externalLink: externalRoutes.FACILITY_MANAGEMENT_PEMC_USER.FACILITIES_FOR_ACTIVATION,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_FACILITIES_FOR_ACTIVATION]
-          },
-          {
-            title: 'Facilities For Transfer',
-            show: true,
-            externalLink: externalRoutes.FACILITY_MANAGEMENT_PEMC_USER.FACILITIES_FOR_TRANSFER,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_FACILITIES_FOR_TRANSFER]
-          },
-          {
-            title: 'MIRF',
-            show: true,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_MIRF],
-            children: [
-              {
-                title: 'View Facility Application',
-                show: true,
-                externalLink: externalRoutes.FACILITY_MANAGEMENT_PEMC_USER.MIRF.VIEW_FACILITY_APPLICATIONS,
-                permission: [PHASE_ONE_AUTHORITIES.VIEW_MIRF]
-              }
-            ]
-          }
-        ]
-      },
-      //MQ Menu Route
-      {
-        title: 'View Submitted Meter Data',
-        show: true,
-        icon: faTachometer,
-        externalLink: externalRoutes.MQ_MENU_FOR_MSP.VIEW_SUBMITTED_METER_DATA,
-        permission: [PHASE_ONE_AUTHORITIES.MQ_VIEW_METERING_QUANTITY]
-      },
-      //MTE Menu Route
-      {
-        title: 'Manage Meter Trouble Reports',
-        show: true,
-        icon: faTachometerAlt,
-        externalLink: externalRoutes.MTR_MENU_FOR_MSP.MANAGE_METER_TROUBLE_REPORTS,
-        permission: [PHASE_TWO_AUTHORITIES.VIEW_MTR]
-      },
-      //BCQ Menu Routes
-      //TODO Finalize permission to this list
-      {
-        title: 'Manage BCQs',
-        show: true,
-        icon: faBinoculars,
-        permission: [
+    this.navItems = [...this.menuConfig.items]
+      .sort((a, b) => this.getTopLevelSortIndex(a.id) - this.getTopLevelSortIndex(b.id))
+      .map((item) => this.mapMenuConfigToNavItem(item, 'angular2'))
+      .filter((item): item is navItems => !!item);
+  }
 
-        ],
-        children: [
-          {
-            title: 'Submit BCQs (as Seller)',
-            show: true,
-            externalLink: externalRoutes.BCQ_MENU_FOR_TP.SUBMIT_BCQ_AS_SELLER,
-            permission: []
-          },
-          {
-            title: 'Confirm (as Buyer) / View BCQs',
-            show: true,
-            externalLink: externalRoutes.BCQ_MENU_FOR_TP.CONFIRM_AS_BUYER_VIEW_BCQ,
-            permission: []
-          },
-          {
-            title: 'BCQ Download Template',
-            show: true,
-            externalLink: externalRoutes.BCQ_MENU_FOR_TP.BCQ_DOWNLOAD_TEMPLATE,
-            permission: []
-          }
-        ]
-      },
-      //Contract Management Routes
-      {
-        title: 'Counterparties and Contract Management',
-        show: true,
-        icon: faContactCard,
-        permission: [
-          PHASE_ONE_AUTHORITIES.VIEW_COUNTERPARTY_LIST,
-          PHASE_ONE_AUTHORITIES.VIEW_CUSTOMER_ENROLLMENT_LIST,
-          PHASE_ONE_AUTHORITIES.VIEW_CUSTOMER_SWITCHING_LIST,
-          PHASE_ONE_AUTHORITIES.MANAGE_SOLR_EVENT,
-          PHASE_ONE_AUTHORITIES.VIEW_COUNTERPARTY_LIST,
-          PHASE_ONE_AUTHORITIES.VIEW_CUSTOMER_ENROLLMENT_LIST,
-          PHASE_ONE_AUTHORITIES.VIEW_CUSTOMER_SWITCHING_LIST
-        ],
-        children: [
-          //PEMC ROUTES
-          {
-            title: 'Manage TP Counterparties',
-            show: true,
-            externalLink: externalRoutes.CONTRACT_MANAGEMENT_FOR_PEMC_USERS.MANAGE_TP_COUNTERPARTIES,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_COUNTERPARTY_LIST]
-          },
-          {
-            title: 'Manage Supply Contracts',
-            show: true,
-            externalLink: externalRoutes.CONTRACT_MANAGEMENT_FOR_PEMC_USERS.MANAGE_SUPPLY_CONTRACTS,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_CUSTOMER_ENROLLMENT_LIST]
-          },
-          {
-            title: 'Manage Customer Switch Request',
-            show: true,
-            externalLink: externalRoutes.CONTRACT_MANAGEMENT_FOR_PEMC_USERS.MANAGE_CUSTOMER_SWITCH_REQUESTS,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_CUSTOMER_SWITCHING_LIST]
-          },
-          {
-            title: 'Manage SOLR Events',
-            show: true,
-            externalLink: externalRoutes.CONTRACT_MANAGEMENT_FOR_PEMC_USERS.MANAGE_SOLR_EVENTS,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_SOLR_EVENT]
-          },
-          //TP ROUTES
-          {
-            title: 'Manage Contestable Management',
-            show: true,
-            externalLink: externalRoutes.CONTRACT_MANAGEMENT_FOR_TP.MANAGE_CONTESTABLE_CUSTOMER,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_INDIRECT_CC_LIST]
-          },
-          {
-            title: 'Manage Indirect Member Counterparties',
-            show: true,
-            externalLink: externalRoutes.CONTRACT_MANAGEMENT_FOR_TP.MANAGE_INDIRECT_MEMBER_COUNTERPARTIES,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_COUNTERPARTY_LIST]
-          },
-          {
-            title: 'Manage Supply Contracts',
-            show: true,
-            externalLink: externalRoutes.CONTRACT_MANAGEMENT_FOR_TP.MANAGE_SUPPLY_CONTRACTS,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_CUSTOMER_ENROLLMENT_LIST]
-          },
-          {
-            title: 'Manage Customer Switch Request',
-            show: true,
-            externalLink: externalRoutes.CONTRACT_MANAGEMENT_FOR_TP.MANAGE_CUSTOMER_SWITCH_REQUEST,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_CUSTOMER_SWITCHING_LIST]
-          },
-          {
-            title: 'SOLR Event Request',
-            show: true,
-            externalLink: externalRoutes.CONTRACT_MANAGEMENT_FOR_TP.SOLR_EVENT_REQUEST,
-            permission: [PHASE_ONE_AUTHORITIES.VIEW_SOLR_EVENT]
-          }
-        ]
-      },
-      //Settlement routes
-      {
-        title: 'Settlement',
-        show: true,
-        icon: faHandHoldingHand,
-        permission: [
-          PHASE_ONE_AUTHORITIES.UPLOAD_BCQ,
-          PHASE_ONE_AUTHORITIES.VIEW_BCQ,
-          PHASE_ONE_AUTHORITIES.BCQ_VIEW_SPECIAL_EVENT,
-          PHASE_ONE_AUTHORITIES.BCQ_VIEW_PROHIBITED,
-          PHASE_TWO_AUTHORITIES.SET_BILLING_ID_CONFIG,
-          PHASE_TWO_AUTHORITIES.SET_BILLING_PERIOD_CONFIG,
-          PHASE_TWO_AUTHORITIES.SET_RESERVE_PROCESS_CONFIG,
-          PHASE_TWO_AUTHORITIES.SET_COST_RECOVERY_MODE,
-          PHASE_TWO_AUTHORITIES.SET_CHARGE_ID_CONFIG,
-          PHASE_TWO_AUTHORITIES.SET_MARKET_FEE_MODE,
-          PHASE_TWO_AUTHORITIES.SET_STL_FILE_LOCATION,
-          PHASE_TWO_AUTHORITIES.SET_MRU_CONFIG,
-          PHASE_TWO_AUTHORITIES.SET_TP_PASSWORD_CONFIG,
-          PHASE_TWO_AUTHORITIES.SET_STL_GEN_CONFIG,
-          PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS,
-          PHASE_TWO_AUTHORITIES.VIEW_ADDTL_COMP,
-          PHASE_TWO_AUTHORITIES.AC_VIEW_AMS_INV_FOR_UPDATE,
-          PHASE_TWO_AUTHORITIES.VIEW_WORKSPACE,
-          PHASE_TWO_AUTHORITIES.APPROVE_STL_TP_WORKLIST,
-          PHASE_TWO_AUTHORITIES.EMF_GENERATE_IW,
-          PHASE_TWO_AUTHORITIES.EMF_CALCULATE,
-          PHASE_TWO_AUTHORITIES.EMF_FINALIZE,
-          PHASE_TWO_AUTHORITIES.EMF_GENERATE_EMF_FILE,
-          PHASE_TWO_AUTHORITIES.UPLOAD_BILLING_STATEMENT,
-          PHASE_TWO_AUTHORITIES.CALC_PENALTY
-        ],
-        children: [
-          //PEMC ROUTES
-          {
-            title: 'Manage BCQs',
-            show: true,
-            permission: [
-              PHASE_ONE_AUTHORITIES.UPLOAD_BCQ,
-              PHASE_ONE_AUTHORITIES.VIEW_BCQ,
-              PHASE_ONE_AUTHORITIES.BCQ_VIEW_SPECIAL_EVENT,
-              PHASE_ONE_AUTHORITIES.BCQ_VIEW_PROHIBITED
-            ],
-            children: [
-              {
-                title: 'Override BCQ',
-                show: true,
-                externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MANAGE_BCQ.OVERRIDE_BCQ,
-                permission: [PHASE_ONE_AUTHORITIES.UPLOAD_BCQ]
-              },
-              {
-                title: 'View BCQs',
-                show: true,
-                externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MANAGE_BCQ.VIEW_BCQ,
-                permission: [PHASE_ONE_AUTHORITIES.VIEW_BCQ]
-              },
-              {
-                title: 'Special Events',
-                show: true,
-                externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MANAGE_BCQ.SPECIAL_EVENTS,
-                permission: [PHASE_ONE_AUTHORITIES.BCQ_VIEW_SPECIAL_EVENT]
-              },
-              {
-                title: 'Manage Prohibited List',
-                show: true,
-                externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MANAGE_BCQ.MANAGE_PROHIBITED_LIST,
-                permission: [PHASE_ONE_AUTHORITIES.BCQ_VIEW_PROHIBITED]
-              }
-            ]
-          },
-          {
-            title: 'Maintenance',
-            show: true,
-            permission: [
-              PHASE_TWO_AUTHORITIES.SET_BILLING_ID_CONFIG,
-              PHASE_TWO_AUTHORITIES.SET_BILLING_PERIOD_CONFIG,
-              PHASE_TWO_AUTHORITIES.SET_RESERVE_PROCESS_CONFIG,
-              PHASE_TWO_AUTHORITIES.SET_COST_RECOVERY_MODE,
-              PHASE_TWO_AUTHORITIES.SET_CHARGE_ID_CONFIG,
-              PHASE_TWO_AUTHORITIES.SET_MARKET_FEE_MODE,
-              PHASE_TWO_AUTHORITIES.SET_STL_FILE_LOCATION,
-              PHASE_TWO_AUTHORITIES.SET_MRU_CONFIG,
-              PHASE_TWO_AUTHORITIES.SET_TP_PASSWORD_CONFIG,
-              PHASE_TWO_AUTHORITIES.SET_STL_GEN_CONFIG
-            ],
-            children: [
-              {
-                title: 'Manage Billing ID Masterlist',
-                show: true,
-                externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MAINTENANCE.MANAGE_BILLING_ID_MASTERLIST,
-                permission: [PHASE_TWO_AUTHORITIES.SET_BILLING_ID_CONFIG]
-              },
-              {
-                title: 'Manage Billing Period',
-                show: true,
-                externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MAINTENANCE.MANAGE_BILLING_PERIOD,
-                permission: [PHASE_TWO_AUTHORITIES.SET_BILLING_PERIOD_CONFIG]
-              },
-              {
-                title: 'Manage Reserve Calculation Configuration',
-                show: true,
-                externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MAINTENANCE.MANAGE_RESERVE_CALCULATION_CONFIGURATION,
-                permission: [
-                  PHASE_TWO_AUTHORITIES.SET_RESERVE_PROCESS_CONFIG,
-                  PHASE_TWO_AUTHORITIES.SET_COST_RECOVERY_MODE
-                ]
-              },
-              {
-                title: 'Manage Charge IDs',
-                show: true,
-                externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MAINTENANCE.MANAGE_CHARGE_IDS,
-                permission: [PHASE_TWO_AUTHORITIES.SET_CHARGE_ID_CONFIG]
-              },
-              {
-                title: 'Manage Market Fee Calculation',
-                show: true,
-                externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MAINTENANCE.MANAGE_MARKET_FEE_CALCULATION,
-                permission: [PHASE_TWO_AUTHORITIES.SET_MARKET_FEE_MODE]
-              },
-              {
-                title: 'Manage MRUs',
-                show: true,
-                externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MAINTENANCE.MANAGE_MRU,
-                permission: [PHASE_TWO_AUTHORITIES.SET_MRU_CONFIG]
-              },
-              {
-                title: 'Manage Output File Location',
-                show: true,
-                externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MAINTENANCE.MANAGE_OUTPUT_FILE_LOCATION,
-                permission: [PHASE_TWO_AUTHORITIES.SET_STL_FILE_LOCATION]
-              },
-              {
-                title: 'Manage Password Prefix For Output Files',
-                show: true,
-                externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MAINTENANCE.MANAGE_PASSWORD_PREFIX_FOR_OUTPUT_FILES,
-                permission: [PHASE_TWO_AUTHORITIES.SET_TP_PASSWORD_CONFIG]
-              },
-              {
-                title: 'General Calculation Configuration',
-                show: true,
-                externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MAINTENANCE.GENERAL_CALCULATION_CONFIGURATION,
-                permission: [PHASE_TWO_AUTHORITIES.SET_STL_GEN_CONFIG]
-              },
-              {
-                title: 'Manage Single Buyer',
-                show: true,
-                externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.MAINTENANCE.MANAGE_SINGLE_BUYER,
-                permission: []
-              }
-            ]
-          },
-          {
-            title: 'Calculate Settlement Amounts',
-            show: true,
-            permission: [
-              PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS,
-              PHASE_TWO_AUTHORITIES.VIEW_ADDTL_COMP,
-              PHASE_TWO_AUTHORITIES.AC_VIEW_AMS_INV_FOR_UPDATE
-            ],
-            children: [
-              {
-                title: 'Calculate Energy Trading Amounts',
-                show: true,
-                externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.CALCULATE_SETTLEMENT_AMOUNTS.CALCULATE_ENERGY_TRADING_AMOUNTS,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
-              },
-              {
-                title: 'Calculate Reserve Trading Amounts',
-                show: true,
-                externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.CALCULATE_SETTLEMENT_AMOUNTS.CALCULATE_RESERVE_TRADING_AMOUNTS,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
-              },
-              {
-                title: 'Calculate Energy Market Fee',
-                show: true,
-                externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.CALCULATE_SETTLEMENT_AMOUNTS.CALCULATE_ENERGY_MARKET_FEE,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
-              },
-              {
-                title: 'Calculate Reserve Market Fee',
-                show: true,
-                externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.CALCULATE_SETTLEMENT_AMOUNTS.CALCULATE_RESERVE_MARKET_FEE,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
-              },
-              {
-                title: 'Manage Additional Compensation Claims',
-                show: true,
-                externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.CALCULATE_SETTLEMENT_AMOUNTS.MANAGE_ADDITIONAL_COMPENSATION_CLAIMS,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_ADDTL_COMP]
-              },
-              {
-                title: 'Update Additional Compensation Invoice',
-                show: true,
-                externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.CALCULATE_SETTLEMENT_AMOUNTS.UPDATE_ADDITIONAL_COMPENSATION_INVOICE,
-                permission: [PHASE_TWO_AUTHORITIES.AC_VIEW_AMS_INV_FOR_UPDATE]
-              },
-            ]
-          },
-          {
-            title: 'Calculate Settlement Amounts v2',
-            show: true,
-            permission: [
-              PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS,
-              PHASE_TWO_AUTHORITIES.VIEW_ADDTL_COMP,
-              PHASE_TWO_AUTHORITIES.AC_VIEW_AMS_INV_FOR_UPDATE,
-              PHASE_TWO_AUTHORITIES.EMF_GENERATE_IW,
-              PHASE_TWO_AUTHORITIES.EMF_CALCULATE,
-              PHASE_TWO_AUTHORITIES.EMF_FINALIZE,
-              PHASE_TWO_AUTHORITIES.EMF_GENERATE_EMF_FILE,
-              PHASE_TWO_AUTHORITIES.UPLOAD_BILLING_STATEMENT,
-              PHASE_TWO_AUTHORITIES.CALC_PENALTY
-            ],
-            children: [
-              {
-                title: 'Calculate Energy Trading Amounts',
-                show: true,
-                path: NEW_ROUTES.TRADING_AMOUNTS_CALCULATION,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
-              },
-              {
-                title: 'Calculate Reserve Trading Amounts',
-                show: true,
-                path: NEW_ROUTES.RESERVE_TRADING_AMOUNTS_CALCULATION,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
-              },
-              {
-                title: 'Calculate Energy Market Fee',
-                show: true,
-                path: NEW_ROUTES.ENERGY_MF,
-                permission: [
-                  PHASE_TWO_AUTHORITIES.EMF_GENERATE_IW,
-                  PHASE_TWO_AUTHORITIES.EMF_CALCULATE,
-                  PHASE_TWO_AUTHORITIES.EMF_FINALIZE,
-                  PHASE_TWO_AUTHORITIES.EMF_GENERATE_EMF_FILE,
-                  PHASE_TWO_AUTHORITIES.UPLOAD_BILLING_STATEMENT,
-                  PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS
-                ]
-              },
-              {
-                title: 'Calculate Reserve Market Fee',
-                show: true,
-                path: NEW_ROUTES.RESERVE_MF,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS]
-              },
-              {
-                title: 'Calculate Financial Penalty',
-                show: true,
-                path: NEW_ROUTES.WESM_PENALTY,
-                permission: [
-                  PHASE_TWO_AUTHORITIES.VIEW_STL_PROCESS,
-                  PHASE_TWO_AUTHORITIES.CALC_PENALTY
-                ]
-              },
-              {
-                title: 'Manage Additional Compensation Claims',
-                show: true,
-                path: NEW_ROUTES.ADDITIONAL_COMPENSATION_LIST,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_ADDTL_COMP]
-              },
-              {
-                title: 'Update Additional Compensation Invoice',
-                show: true,
-                path: NEW_ROUTES.ADDITIONAL_COMPENSATION_INVOICE,
-                permission: [PHASE_TWO_AUTHORITIES.AC_VIEW_AMS_INV_FOR_UPDATE]
-              }
-            ]
-          },
-          {
-            title: 'View Settlement Workspace',
-            show: true,
-            externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.VIEW_SETTLEMENT_WORKSPACE,
-            permission: [PHASE_TWO_AUTHORITIES.VIEW_WORKSPACE]
-          },
-          {
-            title: 'Worklist',
-            show: true,
-            externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.WORKLIST,
-            permission: [PHASE_TWO_AUTHORITIES.APPROVE_STL_TP_WORKLIST]
-          },
-          {
-            title: 'Upload Billing Statement',
-            show: true,
-            externalLink: externalRoutes.SETTLEMENT_MENU_FOR_PEMC_USER.UPLOAD_BILLING_STATEMENT,
-            permission: [PHASE_TWO_AUTHORITIES.UPLOAD_BILLING_STATEMENT]
-          }
-        ]
-      },
-      //METERING ROUTES
-      {
-        title: 'Metering',
-        show: true,
-        icon: faTachometerAverage,
-        permission: [
-          PHASE_TWO_AUTHORITIES.VIEW_IMPORT_METERING_CONFIGURATION,
-          PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SETTLEMENT_METERING_CONFIGURATION,
-          PHASE_TWO_AUTHORITIES.SET_STL_SEIN_CONFIG,
-          PHASE_TWO_AUTHORITIES.SET_VSEIN_MAPPING,
-          PHASE_TWO_AUTHORITIES.SET_MTN_MODEL_CONFIG,
-          PHASE_TWO_AUTHORITIES.SET_MTN_GROUP_SCHED_SCHED,
-          PHASE_TWO_AUTHORITIES.SET_MTN_LOOP_CONFIG,
-          PHASE_TWO_AUTHORITIES.SET_RCOA_CHANNEL_CONFIG,
-          PHASE_TWO_AUTHORITIES.SET_MET_GEN_CONFIG,
-          PHASE_TWO_AUTHORITIES.VIEW_METER_PROCESS,
-          PHASE_TWO_AUTHORITIES.VIEW_MTR,
-          PHASE_ONE_AUTHORITIES.MQ_VIEW_METERING_QUANTITY,
-          PHASE_TWO_AUTHORITIES.VIEW_SHIFTING_ANALYSIS,
-          PHASE_TWO_AUTHORITIES.APPROVE_MET_MP_WORKLIST
-        ],
-        children: [
-          {
-            title: 'Calculations',
-            show: true,
-            externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATIONS,
-            permission: [PHASE_TWO_AUTHORITIES.VIEW_METER_PROCESS]
-          },
-          {
-            title: 'Calculations v2',
-            show: true,
-            path: NEW_ROUTES.METER_PROCESS,
-            permission: [PHASE_TWO_AUTHORITIES.VIEW_METER_PROCESS]
-          },
-          {
-            show: this.hasPermission({ permission: [PHASE_TWO_AUTHORITIES.RUN_MQ_UPLOADER] } as navItems) && this.userData()?.principal.department !== 'MSP',
-            title: LABELS.MQ_UPLOADER,
-            path: NEW_ROUTES.MQ_UPLOADER,
-            permission: [PHASE_TWO_AUTHORITIES.RUN_MQ_UPLOADER]
-          },
-          {
-            show: this.hasPermission({ permission: [PHASE_TWO_AUTHORITIES.RUN_MQ_UPLOADER] } as navItems) && this.userData()?.principal.department !== 'MSP',
-            title: LABELS.METERING_MASTERFILE,
-            path: NEW_ROUTES.METERING_MASTERFILE,
-            permission: [PHASE_TWO_AUTHORITIES.RUN_MQ_UPLOADER]
-          },
-          {
-            show: this.hasPermission({ permission: [PHASE_TWO_AUTHORITIES.RUN_MQ_UPLOADER] } as navItems) && this.userData()?.principal.department !== 'MSP',
-            title: LABELS.METER_DATA_VALIDATION,
-            path: NEW_ROUTES.METER_DATA_VALIDATION,
-            permission: [PHASE_TWO_AUTHORITIES.RUN_MQ_UPLOADER]
-          },
-          {
-            title: 'Meter Streaming Statistics',
-            show: true,
-            externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.METER_STREAMING_STATISTICS,
-            permission: [PHASE_TWO_AUTHORITIES.VIEW_METER_PROCESS]
-          },
-          {
-            title: 'Calculation Maintenance and Configuration',
-            show: true,
-            permission: [
-              PHASE_TWO_AUTHORITIES.VIEW_IMPORT_METERING_CONFIGURATION,
-              PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SETTLEMENT_METERING_CONFIGURATION,
-              PHASE_TWO_AUTHORITIES.SET_STL_SEIN_CONFIG,
-              PHASE_TWO_AUTHORITIES.SET_VSEIN_MAPPING,
-              PHASE_TWO_AUTHORITIES.SET_MTN_MODEL_CONFIG,
-              PHASE_TWO_AUTHORITIES.SET_MTN_GROUP_SCHED_SCHED,
-              PHASE_TWO_AUTHORITIES.SET_MTN_LOOP_CONFIG,
-              PHASE_TWO_AUTHORITIES.SET_RCOA_CHANNEL_CONFIG,
-              PHASE_TWO_AUTHORITIES.SET_MET_GEN_CONFIG
-            ],
-            children: [
-              {
-                title: 'Import Metering Configuration',
-                show: true,
-                externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.IMPORT_METERING_CONFIGURATION,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_IMPORT_METERING_CONFIGURATION]
-              },
-              {
-                title: 'Import Settlement Metering Point Configuration',
-                show: true,
-                externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.IMPORT_SETTLEMENT_METERING_POINT_CONFIGURATION,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SETTLEMENT_METERING_CONFIGURATION]
-              },
-              // {
-              //   title: 'Settlement SEIN Masterlist',
-              //   show: true,
-              //   externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.SETTLEMENT_SEIN_MASTERLIST,
-              //   permission: [PHASE_TWO_AUTHORITIES.SET_STL_SEIN_CONFIG]
-              // },
-              {
-                  title: 'Metering Configuration',
-                  show: true,
-                  externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.METERING_CONFIGURATION,
-                  permission: [
-                    PHASE_TWO_AUTHORITIES.SET_STL_SEIN_CONFIG,
-                    PHASE_TWO_AUTHORITIES.SET_MTN_MODEL_CONFIG
-                  ]
-                },
-
-              {
-                title: 'Historical Factors Maintenance',
-                show: true,
-                externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.HISTORICAL_FACTOR_MAINTENANCE,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_MET_CFG]
-              },
-              {
-                title: 'Virtual SEIN Mapping',
-                show: true,
-                externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.VIRTUAL_SEIN_MAPPING,
-                permission: [PHASE_TWO_AUTHORITIES.SET_VSEIN_MAPPING]
-              },
-              // {
-              //   title: 'MTN Model Configuration',
-              //   show: true,
-              //   externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.MTN_MODEL_CONFIGURATION,
-              //   permission: [PHASE_TWO_AUTHORITIES.SET_MTN_MODEL_CONFIG]
-              // },
-              {
-                title: 'MTN Group and Schedule',
-                show: true,
-                externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.MTN_GROUP_AND_SCHEDULE,
-                permission: [PHASE_TWO_AUTHORITIES.SET_MTN_GROUP_SCHED_SCHED]
-              },
-              {
-                title: 'RCOA Channel Configuration',
-                show: true,
-                externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.RCOA_CHANNEL_CONFIGURATION,
-                permission: [PHASE_TWO_AUTHORITIES.SET_RCOA_CHANNEL_CONFIG]
-              },
-              {
-                title: 'File Location',
-                show: true,
-                externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.FILE_LOCATION,
-                permission: [PHASE_TWO_AUTHORITIES.SET_MET_GEN_CONFIG]
-              },
-              {
-                title: 'Manage Virtual Metering Point',
-                show: true,
-                externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.MANAGE_VIRTUAL_METERING_POINT,
-                permission: [PHASE_ONE_AUTHORITIES.VMP_MAINTENANCE_VIEW]
-              },
-              {
-                title: 'Meter Registry Maintenance',
-                show: true,
-                externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.CALCULATION_MAINTENANCE_AND_CONFIGURATION.METER_REGISTRY_MAINTENANCE,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_MET_CFG]
-              }
-            ]
-          },
-          {
-            title: 'Manage MTR',
-            show: true,
-            externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.MANAGE_MTR,
-            permission: [PHASE_TWO_AUTHORITIES.VIEW_MTR]
-          },
-          {
-            title: 'Worklist',
-            show: true,
-            externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.WORKLIST,
-            permission: [PHASE_TWO_AUTHORITIES.APPROVE_MET_MP_WORKLIST]
-          },
-          {
-            title: 'Data Analysis and Validation',
-            show: true,
-            permission: [PHASE_ONE_AUTHORITIES.MQ_VIEW_METERING_QUANTITY, PHASE_TWO_AUTHORITIES.VIEW_SHIFTING_ANALYSIS],
-            children: [
-              {
-                title: 'View Submitted Meter Data',
-                show: true,
-                externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.DATA_ANALYSIS_AND_VALIDATION.VIEW_SUBMITTED_METER_DATA,
-                permission: [PHASE_ONE_AUTHORITIES.MQ_VIEW_METERING_QUANTITY]
-              },
-              {
-                title: 'RTU Comparison',
-                show: true,
-                externalLink: externalRoutes.METERING_MENU_FOR_PEMC_USER.DATA_ANALYSIS_AND_VALIDATION.RTU_COMPARISON,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_SHIFTING_ANALYSIS]
-              }
-            ]
-          },
-        ]
-      },
-      //Activity log route
-      {
-        title: 'Activity Logs',
-        show: true,
-        icon: faListCheck,
-        permission: [PHASE_TWO_AUTHORITIES.VIEW_ACTIVITY_LOG],
-        externalLink: externalRoutes.ACTIVITY_LOGS
-      },
-      //Job Queue route
-      {
-        title: 'Job Queue',
-        show: true,
-        icon: faRoadCircleCheck,
-        permission: [PHASE_TWO_AUTHORITIES.VIEW_QUEUE],
-        externalLink: externalRoutes.JOB_QUEUE
-      },
-      //Admin External Routes
-      // ADM_MANAGE_MARKET_OPERATORS',
-      //                                           'ADM_ROL_VIEW_ROLE','ADM_PRI_VIEW_PRIVILEGES','ADM_AUD_MANAGE_AUDIT_LOGS',
-      //                                           'ADM_SYS_MANAGE_SYSTEM_CONFIG','ADM_JOB_MANAGE_JOB_SCHEDULER',
-      //                                           'VIEW_IMPORT_SUMMARY','ADM_MANAGE_DATA_EXTRACTION','SET_TOD_GEN_CONFIG',
-      //                                           'MP_MANAGE_WESM_MARKET_PRODUCTS','MP_MANAGE_WESM_MARKET_PRODUCTS', 'MANAGE_SEC'
-      {
-        title: 'Admin',
-        show: true,
-        icon: faUserLarge,
-        permission: [
-          PHASE_ONE_AUTHORITIES.MANAGE_MARKET_OPERATORS,
-          PHASE_ONE_AUTHORITIES.VIEW_ROLE,
-          PHASE_ONE_AUTHORITIES.VIEW_PRIVILEGES,
-          PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS,
-          PHASE_ONE_AUTHORITIES.MANAGE_SYS_CONFIG,
-          PHASE_ONE_AUTHORITIES.MANAGE_JOB_SCHEDULER,
-          PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY,
-          PHASE_ONE_AUTHORITIES.ADM_MANAGE_DATA_EXTRACTION,
-          PHASE_TWO_AUTHORITIES.SET_TOD_GEN_CONFIG,
-          PHASE_ONE_AUTHORITIES.MANAGE_WESM_MARKET_PRODUCTS,
-          PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS,
-          PHASE_ONE_AUTHORITIES.MANAGE_SYS_CONFIG,
-          PHASE_ONE_AUTHORITIES.MANAGE_JOB_SCHEDULER,
-          PHASE_ONE_AUTHORITIES.MANAGE_WESM_MARKET_PRODUCTS,
-          PHASE_ONE_AUTHORITIES.MANAGE_FIELD_SETTINGS,
-          PHASE_ONE_AUTHORITIES.MANAGE_SEC,
-        ],
-        children: [
-          {
-            title: 'MO User Management',
-            show: true,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_MARKET_OPERATORS, PHASE_ONE_AUTHORITIES.VIEW_ROLE, PHASE_ONE_AUTHORITIES.VIEW_PRIVILEGES],
-            children: [
-              {
-                title: 'Manage Market Operator Users',
-                show: true,
-                externalLink: externalRoutes.ADMIN.MO_USER_MANAGEMENT.MANAGE_MARKET_OPERATOR_USERS,
-                permission: [PHASE_ONE_AUTHORITIES.MANAGE_MARKET_OPERATORS]
-              },
-              {
-                title: 'Manage User Roles',
-                show: true,
-                externalLink: externalRoutes.ADMIN.MO_USER_MANAGEMENT.MANAGE_USER_ROLES,
-                permission: [PHASE_ONE_AUTHORITIES.VIEW_ROLE]
-              },
-              {
-                title: 'View Privileges',
-                show: true,
-                externalLink: externalRoutes.ADMIN.MO_USER_MANAGEMENT.VIEW_PRIVILEGES,
-                permission:[PHASE_ONE_AUTHORITIES.VIEW_PRIVILEGES]
-              }
-            ]
-          },
-          {
-            title: 'View Audit Logs',
-            show: true,
-            externalLink: externalRoutes.ADMIN.VIEW_AUDIT_LOGS,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS]
-          },
-          {
-            title: 'View XDF Audit Logs',
-            show: true,
-            externalLink: externalRoutes.ADMIN.VIEW_XDF_AUDIT_LOGS,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_AUDIT_LOGS]
-          },
-          {
-            title: 'System Configuration',
-            show: true,
-            externalLink: externalRoutes.ADMIN.SYSTEM_CONFIGURATION,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_SYS_CONFIG,]
-          },
-          {
-            title: 'Manage Scheduled Jobs',
-            show: true,
-            externalLink: externalRoutes.ADMIN.MANAGE_SCHEDULED_JOBS,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_JOB_SCHEDULER]
-          },
-          {
-            title: 'Data Interface Management',
-            show: true,
-            permission: [
-              PHASE_TWO_AUTHORITIES.SET_TOD_GEN_CONFIG,
-              PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY
-            ],
-            children: [
-              {
-                title: 'Manage Trading Operations Data Interface',
-                show: true,
-                externalLink: externalRoutes.ADMIN.DATA_INTERFACE_MANAGEMENT.MANAGE_TRADING_OPERATIONS_DATA_INTERFACES,
-                permission: [PHASE_TWO_AUTHORITIES.SET_TOD_GEN_CONFIG]
-              },
-              {
-                title: 'Import Trading Operations Data',
-                show: true,
-                externalLink: externalRoutes.ADMIN.DATA_INTERFACE_MANAGEMENT.IMPORT_TRADING_OPERATIONS_DATA,
-                permission: [PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY]
-              },
-              {
-                title: 'Submit RBCQ',
-                path: NEW_ROUTES.RBCQ_SUBMIT,
-                show: true,
-                permission: []
-              },
-              // {
-              //   title: 'View RBCQ',
-              //   path: NEW_ROUTES.RBCQ_VIEW,
-              //   show: true,
-              //   permission: []
-              // },
-              {
-                title: 'Process RBCQ',
-                path: NEW_ROUTES.RBCQ_PROCESS,
-                show: true,
-                permission: [
-                  PHASE_TWO_AUTHORITIES.SET_TOD_GEN_CONFIG,
-                  PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY
-                ],
-              }
-              
-            ]
-          },
-          {
-            title: 'Manage Market Products',
-            show: true,
-            externalLink: externalRoutes.ADMIN.MANAGE_MARKET_PRODUCTS,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_WESM_MARKET_PRODUCTS]
-          },
-          {
-            title: 'Manage Sub Market Products',
-            show: true,
-            externalLink: externalRoutes.ADMIN.MANAGE_SUB_MARKET_PRODUCTS,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_WESM_MARKET_PRODUCTS]
-          },
-          {
-            title: 'Manage Field Settings',
-            show: true,
-            externalLink: externalRoutes.ADMIN.MANAGE_FIELD_SETTINGS,
-            permission: [PHASE_ONE_AUTHORITIES.MANAGE_FIELD_SETTINGS]
-          },
-          {
-            title: 'Manage SEC Parameters',
-            show: true,
-            path: NEW_ROUTES.SEC,
-            permission: [
-              PHASE_ONE_AUTHORITIES.MANAGE_SEC,
-              PHASE_ONE_AUTHORITIES.VIEW_SEC
-            ]
-          }
-        ]
-      },
-
-      // {
-      //   title: 'RBCQ',
-      //   show: true,
-      //   icon: faFileContract,
-      //   permission: [
-
-      //   ],
-      //   children: [
-      //     {
-      //       title: 'Submit RBCQ',
-      //       path: NEW_ROUTES.RBCQ_SUBMIT,
-      //       show: true,
-      //       permission: []
-      //     },
-      //     {
-      //       title: 'View RBCQ',
-      //       path: NEW_ROUTES.RBCQ_VIEW,
-      //       show: true,
-      //       permission: []
-      //     },
-      //     {
-      //       title: 'Process RBCQ',
-      //       path: NEW_ROUTES.RBCQ_PROCESS,
-      //       show: true,
-      //       permission: [
-      //         PHASE_TWO_AUTHORITIES.SET_TOD_GEN_CONFIG,
-      //         PHASE_TWO_AUTHORITIES.VIEW_IMPORT_SUMMARY
-      //       ],
-      //     }
-      //     // {
-      //     //   title: 'BCQ Download Template',
-      //     //   externalLink: externalRoutes.BCQ_MENU_FOR_TP.BCQ_DOWNLOAD_TEMPLATE,
-      //     //   permission: []
-      //     // }
-      //   ]
-      // },
-
-      {
-        title: LABELS.MQ_UPLOADER,
-        show: this.regCategory === 'MSP',
-        icon: faUpload,
-        path: NEW_ROUTES.MSP_MQ_UPLOADER,
-      },
-    ];
-
-    
-
-
-    
-
-    this.navItems = this.navItems.filter(item => this.hasPermission(item)); //for checking
-    this.getNavbarInfo();
+  private getTopLevelSortIndex(id: string): number {
+    const knownIndex = this.topLevelMenuOrderIndex.get(id);
+    return knownIndex !== undefined ? knownIndex : Number.MAX_SAFE_INTEGER;
   }
 
   toggleCollapse(): void {
@@ -1347,17 +178,16 @@ export class NavbarComponent implements OnInit {
 
   getNavbarInfo(): void {
     this.as.getNavbarInfo()
-      .subscribe(res => {
-        if (res) {
-          this.regCategory = res?.registrationCategory;
-          if (this.navItems?.length) {
-            const index = this.navItems?.findIndex(nav => nav.title === LABELS.MQ_UPLOADER);
-            this.navItems[index].show = this.regCategory === 'MSP';
-          } else {
-            this.getMenuItems();
-            const index = this.navItems?.findIndex(nav => nav.title === LABELS.MQ_UPLOADER);
-            this.navItems[index].show = this.regCategory === 'MSP';
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.navbarInfo = res as Record<string, unknown>;
+            this.regCategory = res.registrationCategory;
           }
+          this.getMenuItems();
+        },
+        error: () => {
+          this.getMenuItems();
         }
       });
   }
@@ -1367,6 +197,7 @@ export class NavbarComponent implements OnInit {
   }
 
   navigateTo(item: navItems): void {
+    console.log(item)
     if (item.externalLink && item.externalLink.trim() !== '') {
       window.location.href = item.externalLink;
     } else if (item.path && item.path.trim() !== '') {
@@ -1408,6 +239,378 @@ export class NavbarComponent implements OnInit {
     }
 
     return isAuthorizedAny(user.principal.privileges, item.permission);
+  }
+
+  private mapMenuConfigToNavItem(item: MenuConfigItem, platform: SidebarPlatform): navItems | null {
+    const show = this.isConfigItemVisible(item);
+    if (!show) {
+      return null;
+    }
+
+    const mappedItem = new navItems();
+    mappedItem.title = this.resolveLabel(item);
+    mappedItem.show = true;
+    mappedItem.icon = this.resolveIcon(item.iconKey);
+
+    const permissionAny = this.extractConditionPermissions(item.conditions);
+    mappedItem.permission = permissionAny;
+
+    const target = this.resolveTarget(item, platform);
+    if (target?.kind === 'external' && target.href) {
+      mappedItem.externalLink = target.href;
+    }
+    if (target?.kind === 'internal' && target.to) {
+      mappedItem.path = target.to;
+    }
+
+    if (item.children?.length) {
+      const children = item.children
+        .map((child) => this.mapMenuConfigToNavItem(child, platform))
+        .filter((child): child is navItems => !!child);
+      if (!children.length) {
+        return null;
+      }
+      mappedItem.children = children;
+    }
+
+    const hasNavigationTarget = !!mappedItem.externalLink || !!mappedItem.path;
+    const hasChildren = !!mappedItem.children?.length;
+    if (!hasNavigationTarget && !hasChildren) {
+      return null;
+    }
+
+    return mappedItem;
+  }
+
+  private resolveLabel(item: MenuConfigItem): string {
+    if (item.label) {
+      return item.label;
+    }
+
+    const labelRef = item.labelRef ?? '';
+    if (!labelRef) {
+      return item.id;
+    }
+
+    if (labelRef.startsWith('LABELS.')) {
+      const key = labelRef.replace('LABELS.', '');
+      return (LABELS as Record<string, string>)[key] ?? labelRef;
+    }
+
+    return labelRef;
+  }
+
+  private resolveIcon(iconKey?: string): IconDefinition | undefined {
+    if (!iconKey) {
+      return undefined;
+    }
+    return this.iconMap[iconKey];
+  }
+
+  private resolveTarget(item: MenuConfigItem, platform: SidebarPlatform): MenuTarget | null {
+    const target = item.targets?.[platform] ?? item.targets?.angular2 ?? null;
+    if (!target) {
+      return null;
+    }
+
+    if (target.kind === 'externalRouteRef' && target.ref) {
+      return {
+        kind: 'external',
+        href: this.resolveRefPath('externalRoutes', target.ref)
+      };
+    }
+
+    if (target.kind === 'internalRouteRef' && target.ref) {
+      return {
+        kind: 'internal',
+        to: this.resolveRefPath('NEW_ROUTES', target.ref)
+      };
+    }
+
+    if (target.kind === 'external' && target.href) {
+      return {
+        ...target,
+        href: this.resolveRuntimeUrl(target.href)
+      };
+    }
+
+    if (target.kind === 'internal' && target.to) {
+      return {
+        ...target,
+        to: this.resolveRuntimeUrl(target.to)
+      };
+    }
+
+    return target;
+  }
+
+  private resolveRuntimeUrl(value: string): string {
+    const participantId = this.getNavbarField(['participantId', 'id']);
+    const participantIdToken = participantId !== null && participantId !== undefined
+      ? String(participantId)
+      : '0';
+
+    return value
+      .replace('{PHASE_ONE_URL}', environment.__PHASE_ONE_URL__ || '')
+      .replace('{PHASE_TWO_URL}', environment.__PHASE_TWO_URL__ || '')
+      .replace('{PARTICIPANT_ID}', participantIdToken);
+  }
+
+  private getNavbarField(candidates: string[]): unknown {
+    if (!this.navbarInfo) {
+      return undefined;
+    }
+
+    for (const key of candidates) {
+      if (this.navbarInfo[key] !== undefined && this.navbarInfo[key] !== null) {
+        return this.navbarInfo[key];
+      }
+    }
+
+    return undefined;
+  }
+
+  private resolveRefPath(rootKey: 'externalRoutes' | 'NEW_ROUTES', ref: string): string {
+    const root = this.routeRefContext[rootKey] as Record<string, unknown>;
+    const value = ref.split('.').reduce<unknown>((acc, key) => {
+      if (acc && typeof acc === 'object') {
+        return (acc as Record<string, unknown>)[key];
+      }
+      return undefined;
+    }, root);
+
+    return typeof value === 'string' ? value : '';
+  }
+
+  private isConfigItemVisible(item: MenuConfigItem): boolean {
+    const conditions = item.conditions;
+    if (!conditions || conditions.always) {
+      return true;
+    }
+
+    if (conditions.permissionAny?.length && !this.hasAnyPermissionRefs(conditions.permissionAny)) {
+      return false;
+    }
+
+    if (conditions.predicate && !this.evaluatePredicate(conditions.predicate, conditions.args)) {
+      return false;
+    }
+
+    if (conditions.expression) {
+      return this.evaluateExpression(conditions.expression);
+    }
+
+    return true;
+  }
+
+  private evaluateExpression(node?: MenuExpressionNode): boolean {
+    if (!node) {
+      return true;
+    }
+
+    if (node.all?.length) {
+      return node.all.every((child) => this.evaluateExpression(child));
+    }
+
+    if (node.any?.length) {
+      return node.any.some((child) => this.evaluateExpression(child));
+    }
+
+    if (node.not) {
+      return !this.evaluateExpression(node.not);
+    }
+
+    if (node.permissionAny?.length) {
+      return this.hasAnyPermissionRefs(node.permissionAny);
+    }
+
+    if (node.predicate) {
+      return this.evaluatePredicate(node.predicate, node.args);
+    }
+
+    if (node.always) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private evaluatePredicate(predicate: string, args?: Record<string, unknown>): boolean {
+    const value = typeof args?.['value'] === 'string' ? (args['value'] as string) : '';
+    const user = this.userData();
+    const userFlags = user as CurrentUser & { nonPemcUser?: boolean; internalUser?: boolean };
+
+    switch (predicate) {
+      case 'departmentNot':
+        return user?.principal.department !== value;
+      case 'registrationCategoryIs':
+        return this.regCategory === value;
+      case 'nonPemcUser':
+        if (typeof userFlags?.nonPemcUser === 'boolean') {
+          return userFlags.nonPemcUser;
+        }
+        return !!this.regCategory;
+      case 'internalUser':
+        if (typeof userFlags?.internalUser === 'boolean') {
+          return userFlags.internalUser;
+        }
+        return !this.regCategory;
+      case 'billingIdPresent': {
+        const principal = user?.principal as Record<string, unknown> | undefined;
+        const fromNavbarInfo = this.navbarInfo?.['billingId'] ?? this.navbarInfo?.['billingID'];
+        const fromPrincipal = principal?.['billingId'] ?? principal?.['billingID'];
+        const billingId = fromNavbarInfo ?? fromPrincipal;
+
+        // Preserve existing behavior when billingId is not provided by backend payloads.
+        if (billingId === null || billingId === undefined) {
+          return true;
+        }
+
+        if (typeof billingId === 'string') {
+          return billingId.trim().length > 0;
+        }
+
+        return !!billingId;
+      }
+      case 'participantApproved': {
+        const status = this.getNavbarField(['status', 'participantStatus']);
+        const regCategory = this.regCategory;
+        if (typeof status !== 'string') {
+          return true;
+        }
+
+        return status.toUpperCase() === 'APPROVED' && regCategory !== 'RAG';
+      }
+      case 'membershipDirect': {
+        const membershipType = this.getNavbarField(['membershipType']);
+        if (typeof membershipType !== 'string') {
+          return true;
+        }
+
+        return membershipType.toUpperCase() === 'DIRECT';
+      }
+      case 'participantSupplier': {
+        const regCategory = this.regCategory;
+        if (!regCategory) {
+          return true;
+        }
+
+        return ['RES', 'LRES', 'SOLR', 'RESupplier'].includes(regCategory);
+      }
+      case 'dccIndirect': {
+        const regCategory = this.regCategory;
+        const membershipType = this.getNavbarField(['membershipType']);
+
+        if (!regCategory || typeof membershipType !== 'string') {
+          return false;
+        }
+
+        return regCategory === 'DCC' && membershipType.toUpperCase() === 'INDIRECT';
+      }
+      case 'counterpartyListVisible': {
+        const regCategory = this.regCategory;
+        const membershipType = this.getNavbarField(['membershipType']);
+        const pendingDirectToIndirect = this.getNavbarField(['pendingDirectToIndirect']);
+
+        if (!regCategory || typeof membershipType !== 'string') {
+          return true;
+        }
+
+        const hiddenForDirect = ['DCC', 'EC', 'PBU', 'PDU'].includes(regCategory)
+          && membershipType.toUpperCase() === 'DIRECT';
+
+        if (!hiddenForDirect) {
+          return true;
+        }
+
+        return pendingDirectToIndirect === true;
+      }
+      default:
+        return false;
+    }
+  }
+
+  private hasAnyPermissionRefs(permissionRefs: string[]): boolean {
+    const permissions = permissionRefs
+      .map((permissionRef) => this.resolvePermissionRef(permissionRef))
+      .filter((permission): permission is string => !!permission);
+
+    if (!permissions.length) {
+      return true;
+    }
+
+    return this.hasPermission({ permission: permissions } as navItems);
+  }
+
+  private resolvePermissionRef(permissionRef: string): string | null {
+    // Support universal config keys like VIEW_LIST_OF_REGISTRATION
+    // while keeping backward compatibility with PHASE_* dotted references.
+    if (!permissionRef.includes('.')) {
+      const phaseOneValue = (PHASE_ONE_AUTHORITIES as Record<string, string>)[permissionRef];
+      if (phaseOneValue) {
+        return phaseOneValue;
+      }
+
+      const phaseTwoValue = (PHASE_TWO_AUTHORITIES as Record<string, string>)[permissionRef];
+      if (phaseTwoValue) {
+        return phaseTwoValue;
+      }
+
+      return permissionRef;
+    }
+
+    const [rootKey, ...rest] = permissionRef.split('.');
+    if (!rootKey || !rest.length) {
+      return null;
+    }
+
+    const root = (this.routeRefContext as Record<string, unknown>)[rootKey] as Record<string, unknown>;
+    if (!root) {
+      return null;
+    }
+
+    const value = rest.reduce<unknown>((acc, key) => {
+      if (acc && typeof acc === 'object') {
+        return (acc as Record<string, unknown>)[key];
+      }
+      return undefined;
+    }, root);
+
+    return typeof value === 'string' ? value : null;
+  }
+
+  private extractConditionPermissions(conditions?: MenuConditions): string[] {
+    if (!conditions) {
+      return [];
+    }
+
+    const permissions = new Set<string>();
+    const addPermissions = (refs?: string[]) => {
+      (refs ?? []).forEach((ref) => {
+        const resolved = this.resolvePermissionRef(ref);
+        if (resolved) {
+          permissions.add(resolved);
+        }
+      });
+    };
+
+    addPermissions(conditions.permissionAny);
+
+    const walkExpr = (node?: MenuExpressionNode): void => {
+      if (!node) {
+        return;
+      }
+      addPermissions(node.permissionAny);
+      node.all?.forEach((child) => walkExpr(child));
+      node.any?.forEach((child) => walkExpr(child));
+      if (node.not) {
+        walkExpr(node.not);
+      }
+    };
+
+    walkExpr(conditions.expression);
+
+    return Array.from(permissions);
   }
 
 }

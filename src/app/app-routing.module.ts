@@ -32,12 +32,6 @@ const routes: Routes = [
           import('./modules/settlement/settlement.module')
             .then(m => m.SettlementModule)
       },
-      // {
-      //   path: '',
-      //   canActivateChild: [AuthorizeGuard],
-      //   loadChildren: () =>
-      //     import('./modules/additional-compensation-list/additional-compensation-list.module').then(m => m.AdditionalCompensationListModule)
-      // },
       {
         path: 'metering',
         canActivateChild: [AuthorizeGuard],
