@@ -1,0 +1,86 @@
+<nz-flex nzVertical="true" nzJustify="center" nzAlign="center" class="form-container" nzWrap="wrap">
+    <form [formGroup]="rbcqProcessForm">
+        <div class="form-item">
+            <div class="label-container">
+                <label class="form-label">RBCQ Process Type:</label>
+                <nz-select 
+                    formControlName="processType"
+                    class="select-size"
+                    nzPlaceHolder="Enter Process Type"
+                    [nzOptions]="rbcqProcessType"
+                >
+                </nz-select>
+            </div>
+        </div>
+
+        <div *ngIf="isApFlagSelected()">
+            <div class="form-item">
+                <div class="label-container">
+                    <label class="form-label">Region:</label>
+                    <nz-select
+                        formControlName="region"
+                        class="select-size"
+                        nzPlaceHolder="Select Region"
+                        [nzOptions]="rbcqRegions"
+                    >
+                    </nz-select>
+                </div>
+            </div>
+        </div>
+        
+        
+        <nz-space nzWrap="wrap">
+            <div class="form-item" *nzSpaceItem>
+                <label class="form-label">Trading Date From:</label>
+                <nz-date-picker
+                    formControlName="startDatetime"
+                    class="select-size"
+                    nzPlaceHolder="Select start date "
+                    [nzShowTime]="{ nzFormat: 'HH:mm', nzMinuteStep: 5 }"
+                    nzFormat="yyyy-MM-dd HH:mm"
+                ></nz-date-picker>
+            </div>
+            <div class="form-item" *nzSpaceItem>
+                <label class="form-label">Trading Date To:</label>
+                <nz-date-picker
+                    formControlName="endDatetime"
+                    class="select-size"
+                    nzPlaceHolder="Select end date "
+                    [nzShowTime]="{ nzFormat: 'HH:mm', nzMinuteStep: 5 }"
+                    nzFormat="yyyy-MM-dd HH:mm"
+                ></nz-date-picker>
+            </div>
+        </nz-space>
+
+        <div *ngIf="rbcqProcessForm.errors?.['invalidDateRange'] && (rbcqProcessForm.dirty || rbcqProcessForm.touched)" class="error-message">
+            Trading Date To must be the same or after Trading Date From
+        </div>
+
+        <div *ngIf="rbcqProcessForm.errors?.['invalidMinuteInterval'] && (rbcqProcessForm.dirty || rbcqProcessForm.touched)" class="error-message">
+            Time must be in 5-minute intervals (e.g., 00, 05, 10...)
+        </div>
+
+        
+
+       <!-- <nz-progress
+        *ngIf="isProcessing"
+        [nzPercent]="progressValue"
+        [nzStatus]="progressValue < 100 ? 'active' : 'success'"
+        ></nz-progress>
+       -->
+
+    </form>
+
+<!-- <pre>{{ rbcqProcessForm.value | json }}</pre>
+<pre>Valid: {{ rbcqProcessForm.valid }}</pre>
+<pre>Errors: {{ rbcqProcessForm.errors | json }}</pre> -->
+
+</nz-flex>
+
+ <nz-flex nzGap="large" nzAlign="start" nzJustify="end">
+    <button nz-button nzType="primary" [nzLoading]="isProcessing" [disabled]="rbcqProcessForm.invalid || isProcessing"  (click)="onSubmitRbcqProcess()">Process</button>
+</nz-flex>
+
+
+
+

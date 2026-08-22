@@ -1,14 +1,14 @@
 import { Component, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
+import { externalRoutes, NEW_ROUTES } from '@shared/constants';
+import { CurrentUser, navItems } from '@shared/interfaces';
 import { Router } from '@angular/router';
 import navConfig from '@assets/navigation/navbar-menu.config.json';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faAddressBook, faAddressCard, faBell, faBinoculars, faBuilding, faBuildingUn, faCalendar, faChevronDown, faChevronRight, faCircleUser, faContactCard, faCopy, faFileArchive, faHandHoldingHand, faHome, faListCheck, faRoadCircleCheck, faTachometer, faTachometerAlt, faTachometerAverage, faUpload, faUserLarge } from '@fortawesome/free-solid-svg-icons';
 import { environment } from '../../../../../environments/environment';
-import { externalRoutes, NEW_ROUTES } from '@shared/constants';
 import { PHASE_ONE_AUTHORITIES, PHASE_TWO_AUTHORITIES } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
-import { CurrentUser, navItems } from '@shared/interfaces';
 import { AdminService } from '@shared/services/api';
 import { isAuthorizedAny } from '@shared/validators';
 import { ToastrService } from 'ngx-toastr';
