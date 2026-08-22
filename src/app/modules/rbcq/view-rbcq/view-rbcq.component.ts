@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RbcqService } from '@shared/services/api/rbcq.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -32,7 +32,8 @@ export class ViewRbcqComponent implements OnInit {
   startDate: Date;
   endDate: Date;
 
-  constructor(private rbcqService: RbcqService, private toast: ToastrService) { }
+  private readonly rbcqService = inject(RbcqService);
+  private readonly toast = inject(ToastrService);
 
   ngOnInit(): void {
     this.setDefaults();

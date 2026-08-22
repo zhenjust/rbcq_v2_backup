@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzUploadChangeParam, NzUploadXHRArgs } from 'ng-zorro-antd/upload';
+import { NzUploadXHRArgs } from 'ng-zorro-antd/upload';
 import { faUpload} from '@fortawesome/free-solid-svg-icons';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
@@ -22,16 +22,11 @@ export class RbcqUploadingComponent implements OnInit{
   uploadIcon = faUpload;
 
 
-    constructor(
-    private router: ActivatedRoute,
-    private messageService: NzMessageService,
-    private http: HttpClient ,
-    private toast: ToastrService,
-    private rbcqService : RbcqService
-
-
-    
-  ) {}
+  private readonly router = inject(ActivatedRoute);
+  private readonly messageService = inject(NzMessageService);
+  private readonly http = inject(HttpClient);
+  private readonly toast = inject(ToastrService);
+  private readonly rbcqService = inject(RbcqService);
   
 
   ngOnInit(): void {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { RBCQ_PROCESS_TYPE } from '@shared/constants/rbcq.const'; 
 import { rbcqProcessOptions } from '@shared/interfaces/rbcq.interface'; 
@@ -32,12 +32,10 @@ export class RbcqConfigComponent implements OnInit {
 
     public rbcqProcessForm!: FormGroup;
 
-    constructor(private fb: FormBuilder,
-                private toast: ToastrService,
-                private rbcqService: RbcqService,
-                private dateFormatter: DateFormatterUtilService
-                
-    ) {}
+    private readonly fb = inject(FormBuilder);
+    private readonly toast = inject(ToastrService);
+    private readonly rbcqService = inject(RbcqService);
+    private readonly dateFormatter = inject(DateFormatterUtilService);
 
     ngOnInit(): void {
     this.rbcqProcessForm = this.fb.group(
@@ -161,7 +159,7 @@ dateRangeValidator(group: FormGroup): ValidationErrors | null {
       this.dateFormatter.formatDateTime(endDatetime),
       region
     ).subscribe({
-      next: (_response: string) => {
+      next: () => {
         // Request completed successfully (backend may return job id or message)
         this.isProcessing = false;
         this.toast.success('RBCQ process started.');

@@ -1,10 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { apiPath } from '@shared/constants';
-import { DateFormatterUtilService } from '../utils';
 import { AuthorizationService } from '@core/services/authorization.service';
-import { TableParams, TableDataResult } from '@shared/interfaces/base.interface';
 import { HttpParams } from '@angular/common/http';
 
 @Injectable({
@@ -14,7 +12,8 @@ export class RbcqService {
 
   private readonly BASE_URL = apiPath._RBCQ_PATH_ ;
 
-  constructor(private http: HttpClient, private auth: AuthorizationService) {}
+  private readonly http = inject(HttpClient);
+  private readonly auth = inject(AuthorizationService);
 
 
   uploadCsv(file: File): Observable<string> {
