@@ -82,6 +82,42 @@
       }
     },
     {
+      "id": "view-rbcq",
+      "label": "View RBCQ",
+      "iconKey": "faFileContract",
+      "targets": {
+        "angular2": {
+           "kind": "internal",
+            "to": "rbcq-v2/view"
+        },
+        "angular1": {
+          "kind": "internal",
+            "to": "rbcq-v2/view"
+        },
+        "react": {
+         "kind": "internal",
+            "to": "rbcq-v2/view"
+        }
+      },
+      "conditions": {
+        "expression": {
+          "all": [
+            {
+              "predicate": "nonPemcUser"
+            },
+            {
+              "permissionAny": [
+                "VIEW_DOWNLOAD_METER_STL_DATA"
+              ]
+            },
+            {
+              "predicate": "billingIdPresent"
+            }
+          ]
+        }
+      }
+    },
+    {
       "id": "calendar",
       "label": "View Calendar",
       "iconKey": "faCalendar",
@@ -4323,6 +4359,66 @@
               "conditions": {
                 "permissionAny": [
                   "VIEW_IMPORT_SUMMARY"
+                ]
+              }
+            },
+             {
+              "id": "admin/data-interface-management/submit-rbcq",
+              "label": "Submit RBCQ",
+              "targets": {
+                "angular2": {
+                  "kind": "internal",
+                  "to": "rbcq-v2/submit"
+                },
+                "angular1": {
+                  "kind": "internal",
+                  "to": "rbcq-v2/submit"
+                },
+                "react": {
+                  "kind": "internal",
+                  "to": "rbcq-v2/submit"
+                }
+              }
+            },
+             {
+              "id": "admin/data-interface-management/view-rbcq",
+              "label": "View RBCQ",
+               "targets": {
+                "angular2": {
+                  "kind": "internal",
+                  "to": "rbcq-v2/view"
+                },
+                "angular1": {
+                  "kind": "internal",
+                  "to": "rbcq-v2/view"
+                },
+                "react": {
+                  "kind": "internal",
+                  "to": "rbcq-v2/view"
+                }
+              }
+            },
+             {
+              "id": "admin/data-interface-management/process-rbcq",
+              "label": "Process RBCQ",
+              "targets": {
+                "angular2": {
+                  "kind": "internal",
+                  "to": "rbcq-v2/process"
+                },
+                "angular1": {
+                  "kind": "internal",
+                  "to": "rbcq-v2/process"
+                },
+                "react": {
+                  "kind": "internal",
+                  "to": "rbcq-v2/process"
+                }
+              },
+              "conditions": {
+                "permissionAny": [
+                  "VIEW_IMPORT_SUMMARY",
+                  "SET_TOD_GEN_CONFIG"
                 ]
               }
             }

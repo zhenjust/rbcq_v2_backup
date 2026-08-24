@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import navConfig from '@assets/navigation/navbar-menu.config.json';
 import { AuthorizationService } from '@core/services/authorization.service';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import { faAddressBook, faAddressCard, faBell, faBinoculars, faBuilding, faBuildingUn, faCalendar, faChevronDown, faChevronRight, faCircleUser, faContactCard, faCopy, faFileArchive, faHandHoldingHand, faHome, faListCheck, faRoadCircleCheck, faTachometer, faTachometerAlt, faTachometerAverage, faUpload, faUserLarge } from '@fortawesome/free-solid-svg-icons';
+import { faAddressBook, faAddressCard, faBell, faBinoculars, faBuilding, faBuildingUn, faCalendar, faChevronDown, faChevronRight, faCircleUser, faContactCard, faCopy, faFileArchive,faFileContract, faHandHoldingHand, faHome, faListCheck, faRoadCircleCheck, faTachometer, faTachometerAlt, faTachometerAverage, faUpload, faUserLarge } from '@fortawesome/free-solid-svg-icons';
 import { environment } from '../../../../../environments/environment';
 import { PHASE_ONE_AUTHORITIES, PHASE_TWO_AUTHORITIES } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
@@ -93,6 +93,7 @@ export class NavbarComponent implements OnInit {
     faCircleUser,
     faCalendar,
     faFileArchive,
+    faFileContract,
     faAddressBook,
     faBuildingUn,
     faTachometer,
@@ -116,6 +117,7 @@ export class NavbarComponent implements OnInit {
     'notifications',
     'home',
     'view-metering-and-settlement-data',
+    'view-rbcq',
     'calendar',
     'manage-bcqs',
     'view-submitted-meter-data',
