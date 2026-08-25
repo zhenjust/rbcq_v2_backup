@@ -9,5 +9,5 @@ export const apiPath = {
     __WORKLIST_PATH__: "/worklist",
     __ADMIN_PATH__: "/admin",
     __METERING_PATH__: "/metering",
-    _RBCQ_PATH_: "http://localhost:8080/rbcq"
+    _RBCQ_PATH_: "/rbcq"
 }
