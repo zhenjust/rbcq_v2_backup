@@ -88,7 +88,7 @@
           @let canGenerateFile = showGenerateFile && hasGenerateFilePermission;
           @let canPublish = showPublish;
 
-          @if (!isInProgress && (showUploadBillingStatement || (!isPublished && (canGenerateInputWorkspace || canCalc || canFinalize || canGenerateFile || canPublish)))) {
+          @if (!isInProgress && (showUploadBillingStatement || subRowData?.runAdjustmentEnabled || (!isPublished && (canGenerateInputWorkspace || canCalc || canFinalize || canGenerateFile || canPublish)))) {
             <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu">{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
           }
 
@@ -126,7 +126,7 @@
                   <li nz-menu-item (click)="uploadBillingStatement(row, subRowData)">{{ LABELS.UPLOAD_BILLING_STATEMENT }}</li>
                 }
 
-                @if (isFinalized && isFinal) {
+                @if (subRowData?.runAdjustmentEnabled) {
                   <li nz-menu-item (click)="runAdjusted(subRowData, tableComp)">{{ LABELS.RUN_ADJUSTMENT }}</li>
                 }
 
