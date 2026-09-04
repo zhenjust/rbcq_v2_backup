@@ -14,25 +14,28 @@
         </div>
 
         <div *ngIf="isApFlagSelected()">
-            <div class="form-item">
-                <div class="label-container">
-                    <label class="form-label">Region:</label>
-                    <nz-select
-                        formControlName="region"
-                        class="select-size"
-                        nzPlaceHolder="Select Region"
-                        [nzOptions]="rbcqRegions"
-                    >
-                    </nz-select>
+            <div class="form-item region-item">
+                <label class="form-label">Region:</label>
+
+                <div class="region-checkboxes">
+                    <label
+                        nz-checkbox
+                        *ngFor="let region of rbcqRegions"
+                        [nzChecked]="region.value === RbcqRegion.ALL
+                            ? rbcqProcessForm.get('regions')?.value.length === 3
+                            : rbcqProcessForm.get('regions')?.value.includes(region.value)"
+                        (nzCheckedChange)="onRegionChange(region.value, $event)">
+                        {{ region.label }}
+                    </label>
                 </div>
             </div>
         </div>
-        
-        
+                
         <nz-space nzWrap="wrap">
             <div class="form-item" *nzSpaceItem>
                 <label class="form-label">Trading Date From:</label>
                 <nz-date-picker
+                    [(ngModel)]="startDatetime"
                     formControlName="startDatetime"
                     class="select-size"
                     nzPlaceHolder="Select start date "
@@ -43,6 +46,7 @@
             <div class="form-item" *nzSpaceItem>
                 <label class="form-label">Trading Date To:</label>
                 <nz-date-picker
+                    [(ngModel)]="endDatetime"
                     formControlName="endDatetime"
                     class="select-size"
                     nzPlaceHolder="Select end date "
