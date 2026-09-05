@@ -16,6 +16,7 @@ import { DateFormatterUtilService } from '@shared/services/utils';
 export class RbcqConfigComponent implements OnInit {
 
     public readonly rbcqProcessType: rbcqProcessOptions[] = RBCQ_PROCESS_TYPE;
+    public readonly RbcqRegion = RbcqRegion;
 
     public readonly rbcqRegions = [
       { id: RbcqRegion.ALL, label: 'ALL', value: RbcqRegion.ALL },
@@ -29,6 +30,12 @@ export class RbcqConfigComponent implements OnInit {
   endDatetime: Date | null = null;
   isProcessing = false;
 
+    regionRequiredValidator = (control: any): ValidationErrors | null => {
+    return control.value?.length > 0 ? null : { required: true };
+  };
+
+  
+
 
     public rbcqProcessForm!: FormGroup;
 
@@ -37,33 +44,65 @@ export class RbcqConfigComponent implements OnInit {
     private readonly rbcqService = inject(RbcqService);
     private readonly dateFormatter = inject(DateFormatterUtilService);
 
-    ngOnInit(): void {
-    this.rbcqProcessForm = this.fb.group(
-      {
-        processType: [null, Validators.required],
-        region: [null],
-        startDatetime: [null, Validators.required],
-        endDatetime: [null, Validators.required],
-      },
-        { validators: [this.dateRangeValidator.bind(this), this.minuteIntervalValidator] } 
-    );
+    
 
-    // show/require region when AP FLAG is selected
-    this.rbcqProcessForm.get('processType')?.valueChanges.subscribe((val) => {
-      const regionCtrl = this.rbcqProcessForm.get('region');
-      if (val === RbcqProcessType.AP_FLAG) {
-        regionCtrl?.setValidators([Validators.required]);
-      } else {
-        regionCtrl?.clearValidators();
-        regionCtrl?.setValue(null);
-      }
-      regionCtrl?.updateValueAndValidity();
-    });
-  }
+    ngOnInit(): void {
+  this.rbcqProcessForm = this.fb.group(
+    {
+      regions: [[]],
+      processType: [null, Validators.required],
+      startDatetime: [null, Validators.required],
+      endDatetime: [null, Validators.required],
+    },
+    { validators: [this.dateRangeValidator.bind(this), this.minuteIntervalValidator] }
+  );
+
+  this.rbcqProcessForm.get('processType')?.valueChanges.subscribe((val) => {
+    const regionCtrl = this.rbcqProcessForm.get('regions');
+
+    if (val === RbcqProcessType.AP_FLAG) {
+      regionCtrl?.setValidators([this.regionRequiredValidator]);
+    } else {
+      regionCtrl?.clearValidators();
+      regionCtrl?.setValue([]);
+    }
+
+    regionCtrl?.updateValueAndValidity();
+  });
+
+  this.setDefaults();
+}
 
   isApFlagSelected(): boolean {
     return this.rbcqProcessForm.get('processType')?.value === RbcqProcessType.AP_FLAG;
   }
+
+  onRegionChange(region: RbcqRegion, checked: boolean): void {
+  const control = this.rbcqProcessForm.get('regions');
+  let regions: RbcqRegion[] = [...(control?.value || [])];
+
+  const allRegions = [
+    RbcqRegion.LUZON,
+    RbcqRegion.VISAYAS,
+    RbcqRegion.MINDANAO
+  ];
+
+  if (region === RbcqRegion.ALL) {
+    regions = checked ? [...allRegions] : [];
+  } else {
+    if (checked) {
+      if (!regions.includes(region)) {
+        regions.push(region);
+      }
+    } else {
+      regions = regions.filter(r => r !== region);
+    }
+  }
+
+  control?.setValue(regions);
+  control?.markAsTouched();
+  control?.updateValueAndValidity();
+}
 
 dateRangeValidator(group: FormGroup): ValidationErrors | null {
   const startValue = group.get('startDatetime')?.value;
@@ -144,39 +183,73 @@ dateRangeValidator(group: FormGroup): ValidationErrors | null {
   }
 
   onSubmitRbcqProcess(): void {
-    if (this.rbcqProcessForm.invalid) {
-      this.toast.error('Please fill all required fields.');
-      return;
-    }
-
-  const { processType, region, startDatetime, endDatetime } = this.rbcqProcessForm.value;
-
-    this.isProcessing = true;
-
-    this.rbcqService.submitRbcqProcess(
-      processType,          
-      this.dateFormatter.formatDateTime(startDatetime),
-      this.dateFormatter.formatDateTime(endDatetime),
-      region
-    ).subscribe({
-      next: () => {
-        // Request completed successfully (backend may return job id or message)
-        this.isProcessing = false;
-        this.toast.success('RBCQ process started.');
-      },
-      error: (err) => {
-        console.error('Processing error:', err);
-        const errorMsg = err?.error || 'Failed to process RBCQ.';
-        this.toast.error(errorMsg);
-        this.isProcessing = false;
-      }
-    });
+  // Check if form is invalid
+  if (this.rbcqProcessForm.invalid) {
+    this.toast.error('Please fill all required fields.');
+    return;
   }
 
+  // Get values from the form
+  const {
+    processType,
+    regions,
+    startDatetime,
+    endDatetime
+  } = this.rbcqProcessForm.value;
+
+  console.log('Process Type:', processType);
+  console.log('Regions:', regions);
+  console.log('Start Datetime:', startDatetime);
+  console.log('End Datetime:', endDatetime);
+
+  this.isProcessing = true;
+
+  this.rbcqService.submitRbcqProcess(
+    processType,
+    this.dateFormatter.formatDateTime(startDatetime),
+    this.dateFormatter.formatDateTime(endDatetime),
+    regions
+  ).subscribe({
+    next: (response) => {
+      console.log('RBCQ process response:', response);
+
+      this.isProcessing = false;
+      this.toast.success('RBCQ process started.');
+    },
+
+    error: (err) => {
+      console.error('Processing error:', err);
+
+      const errorMsg =
+        err?.error?.message ||
+        err?.error ||
+        'Failed to process RBCQ.';
+
+      this.toast.error(errorMsg);
+
+      this.isProcessing = false;
+    }
+  });
+}
+
+  
 
   // Removed polling-based progress tracking; replaced by simple request lifecycle loading state.
 
+private setDefaults(): void {
+  const now = new Date();
+  const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+  const start = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 0, 5, 0);
+  const end = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate() + 1, 0, 0, 0);
 
+  this.startDatetime = start;
+  this.endDatetime = end;
+
+  this.rbcqProcessForm.patchValue({
+    startDatetime: start,
+    endDatetime: end
+  });
+}
 
 
 

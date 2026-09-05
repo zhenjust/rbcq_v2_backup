@@ -11,6 +11,7 @@ import { HttpParams } from '@angular/common/http';
 export class RbcqService {
 
   private readonly BASE_URL = apiPath._RBCQ_PATH_ ;
+  // private readonly BASE_URL = 'http://localhost:8080/rbcq';
 
   private readonly http = inject(HttpClient);
   private readonly auth = inject(AuthorizationService);
@@ -29,7 +30,7 @@ export class RbcqService {
   processType: string,
   startDatetime: string,
   endDatetime: string,
-  region?: string
+  regions?: string
 ): Observable<string> {
   const current = (this.auth as any).currentUser ? (this.auth as any).currentUser() : this.auth.identity();
   const payload: any = {
@@ -38,8 +39,8 @@ export class RbcqService {
     endDatetime
   };
 
-  if (region != null) {
-    payload.region = region;
+  if (regions != null) {
+    payload.regions = regions;
   }
 
   if (current?.principal?.username) {

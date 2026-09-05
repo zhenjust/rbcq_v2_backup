@@ -25,3 +25,19 @@
   width: 100%;
 }
 
+.region-item {
+  justify-content: flex-start;
+
+  .form-label {
+    min-width: 0;
+    width: auto;
+    text-align: left;
+    margin-right: 8px;
+  }
+}
+
+.region-checkboxes {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}

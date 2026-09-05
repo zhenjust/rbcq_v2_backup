@@ -12,12 +12,14 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 
 
 @NgModule({
   declarations: [
     BaseComponent,
     RbcqConfigComponent,
+    
   ],
   imports: [
     CommonModule,
@@ -30,7 +32,8 @@ import { NzProgressModule } from 'ng-zorro-antd/progress';
     NzButtonModule,
     FormsModule,
     ReactiveFormsModule,
-    NzProgressModule
+    NzProgressModule,
+    NzCheckboxModule,
   ]
 })
 export class RbcqProcessModule { }
