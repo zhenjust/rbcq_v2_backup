@@ -13,6 +13,8 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 
 
 @NgModule({
@@ -34,6 +36,9 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
     ReactiveFormsModule,
     NzProgressModule,
     NzCheckboxModule,
+    NzTableModule,
+    NzPaginationModule
+    
   ]
 })
 export class RbcqProcessModule { }

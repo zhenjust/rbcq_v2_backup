@@ -7,6 +7,12 @@ import { RbcqService } from '@shared/services/api/rbcq.service';
 import { ToastrService } from 'ngx-toastr';
 import { DateFormatterUtilService } from '@shared/services/utils';
 
+interface FlaggedRow {
+  dispatch_interval: string;
+  region: string;
+  flagged: string;
+}
+
 @Component({
   selector: 'app-rbcq-config',
   standalone: false,
@@ -26,9 +32,23 @@ export class RbcqConfigComponent implements OnInit {
     ];
 
   processType: string = '';
-  startDatetime: Date | null = null;
-  endDatetime: Date | null = null;
+  // startDatetime: Date | null = null;
+  // endDatetime: Date | null = null;
+  startDatetime: Date ;
+  endDatetime: Date ;
   isProcessing = false;
+
+  rows: FlaggedRow[] = [];
+  allRows: FlaggedRow[] = [];
+  loading = false;
+
+
+
+  // Pagination properties
+  currentPage = 1;
+  pageSize = 10;
+  pageSizeOptions = [10, 20, 50, 100];
+  totalItems = 0;
 
     regionRequiredValidator = (control: any): ValidationErrors | null => {
     return control.value?.length > 0 ? null : { required: true };
@@ -152,10 +172,7 @@ dateRangeValidator(group: FormGroup): ValidationErrors | null {
   const start = normalize(startValue);
   const end = normalize(endValue);
 
-  console.log('startValue:', startValue);
-  console.log('endValue:', endValue);
-  console.log('normalized start:', start);
-  console.log('normalized end:', end);
+
 
   // Allow same datetime, only reject if end is earlier
   if (start != null && end != null && end < start) {
@@ -197,10 +214,7 @@ dateRangeValidator(group: FormGroup): ValidationErrors | null {
     endDatetime
   } = this.rbcqProcessForm.value;
 
-  console.log('Process Type:', processType);
-  console.log('Regions:', regions);
-  console.log('Start Datetime:', startDatetime);
-  console.log('End Datetime:', endDatetime);
+
 
   this.isProcessing = true;
 
@@ -231,6 +245,81 @@ dateRangeValidator(group: FormGroup): ValidationErrors | null {
     }
   });
 }
+
+//flagged table methods
+
+loadAPFlag(): void {
+    // validate minute intervals
+    if (!this.isFiveMinuteInterval(this.startDatetime) || !this.isFiveMinuteInterval(this.endDatetime)) {
+      this.toast.error('Start and End minutes must be a 5-minute interval');
+      return;
+    }
+
+    if (this.startDatetime > this.endDatetime) {
+      this.toast.error('Start date must be before End date');
+      return;
+    }
+
+    this.loading = true;
+    const s = this.formatLocal(this.startDatetime);
+    const e = this.formatLocal(this.endDatetime);
+
+    this.rbcqService.getRbcqFlagged(s, e).subscribe({
+      next: data => {
+        this.allRows = data || [];
+        this.totalItems = this.allRows.length;
+        this.currentPage = 1;
+        this.updatePaginatedRows();
+        this.loading = false;
+      },
+      error: () => this.loading = false
+    });
+  }
+
+    private updatePaginatedRows(): void {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.rows = this.allRows.slice(startIndex, endIndex);
+  }
+
+    private formatLocal(d: Date | undefined | null): string {
+    if (!d) return '';
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    const YYYY = d.getFullYear();
+    const MM = pad(d.getMonth() + 1);
+    const DD = pad(d.getDate());
+    const hh = pad(d.getHours());
+    const mm = pad(d.getMinutes());
+    const ss = pad(d.getSeconds());
+    return `${YYYY}-${MM}-${DD}T${hh}:${mm}:${ss}`;
+  }
+
+  private isFiveMinuteInterval(d: Date | undefined | null): boolean {
+    if (!d) return false;
+    const m = d.getMinutes();
+    return m % 5 === 0;
+  }
+
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.updatePaginatedRows();
+  }
+
+    onPageSizeChange(size: number): void {
+    this.pageSize = size;
+    this.currentPage = 1;
+    this.updatePaginatedRows();
+  }
+   clear(): void {
+    this.setDefaults();
+    this.allRows = [];
+    this.rows = [];
+    this.currentPage = 1;
+    this.totalItems = 0;
+  }
+
+  //flagged table methods
 
   
 

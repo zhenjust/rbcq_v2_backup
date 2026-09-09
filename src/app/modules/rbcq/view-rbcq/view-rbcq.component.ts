@@ -101,13 +101,14 @@ export class ViewRbcqComponent implements OnInit {
 
 private setDefaults(): void {
   const now = new Date();
-  // default to yesterday 00:05 and 23:55
   const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
   const start = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 0, 5, 0);
-  const end = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate() + 1, 23, 55, 0);
+  const end = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate() + 1, 0, 0, 0);
   this.startDate = start;
   this.endDate = end;
 }
+
+
 
   private formatLocal(d: Date | undefined | null): string {
     if (!d) return '';

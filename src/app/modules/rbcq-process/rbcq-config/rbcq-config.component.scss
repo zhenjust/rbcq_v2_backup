@@ -41,3 +41,11 @@
   align-items: center;
   gap: 25px;
 }
+
+::ng-deep .zebra-table tbody tr:nth-child(even) {
+  background-color: #f5f5f5;
+}
+
+::ng-deep .zebra-table tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
