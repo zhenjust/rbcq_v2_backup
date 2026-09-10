@@ -10,8 +10,8 @@ import { HttpParams } from '@angular/common/http';
 })
 export class RbcqService {
 
-  // private readonly BASE_URL = apiPath._RBCQ_PATH_ ;
-  private readonly BASE_URL = 'http://localhost:8080/rbcq';
+  private readonly BASE_URL = apiPath._RBCQ_PATH_ ;
+  // private readonly BASE_URL = 'http://localhost:8080/rbcq';
 
   private readonly http = inject(HttpClient);
   private readonly auth = inject(AuthorizationService);
