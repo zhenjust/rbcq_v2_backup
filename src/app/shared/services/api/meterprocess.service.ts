@@ -106,15 +106,17 @@ export class MeterprocessService {
     });
   }
 
-  /**
+    /**
    * Used for Meter Data Validation and Metering Masterfile
    * @param workspaceId
    * @param pipeline
    */
-  public deleteMeteringReport(workspaceId: number, pipeline: string, processType?: string): Observable<null> {
+  public deleteMeteringReport(workspaceId: number, pipeline: string, processType?: string, startDate?: string, endDate?: string): Observable<null> {
     const payload = {
       workspaceId,
-      ...(processType && { processType })
+      ...(processType && { processType }),
+      ...(startDate && { startDate }),
+      ...(endDate && { endDate })
     };
 
     return this.http.post<null>(`${this.MTR_PIPELINE_URL}/report-generation/${pipeline}`, payload);

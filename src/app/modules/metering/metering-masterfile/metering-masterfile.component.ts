@@ -178,17 +178,17 @@ export class MeteringMasterfileComponent implements OnInit {
       });
   }
 
-  delete(data: any): void {
+    delete(data: any): void {
     this.modalService.confirm({
       nzTitle: `${LABELS.DELETE} ${LABELS.METERING_MASTERFILE}`,
       nzCentered: true,
       nzContent: MESSAGES.CONFIRM_DELETE_ITEM(LABELS.METERING_MASTERFILE),
       nzOnOk: () => {
         const id = data.pipelineRuns[0].workspaceId;
-        const processType = data.parameters?.processType;
+        const { processType, startDate, endDate } = data.parameters ?? {};
 
         data.loading = true;
-        this.meterService.deleteMeteringReport(id, 'mmf-delete', processType)
+        this.meterService.deleteMeteringReport(id, 'mmf-delete', processType, startDate, endDate)
           .pipe(
             takeUntilDestroyed(this.destroyRef$),
             finalize(() => data.loading = false)
