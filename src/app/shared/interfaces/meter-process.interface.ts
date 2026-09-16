@@ -176,7 +176,7 @@ export interface ReportDownloadParams {
 export interface DownloadMmfParams {
   workspaceId: number;
   processType: string;
-  endDate: string;
+  startDate: string;
   billingPeriod: string;
 }
 
