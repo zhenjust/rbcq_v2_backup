@@ -1,8 +1,8 @@
-import {inject, Pipe, PipeTransform} from '@angular/core';
-import {AuthorizationService} from '@core/services/authorization.service';
-import {PHASE_TWO_AUTHORITIES, SettlementStatus} from '@shared/constants';
-import {MeterProcessTypes, settlementSearchNames} from '@shared/enums';
-import {JobSelect, pipeline, settlementPipeline} from '@shared/interfaces';
+import { inject, Pipe, PipeTransform } from '@angular/core';
+import { AuthorizationService } from '@core/services/authorization.service';
+import { PHASE_TWO_AUTHORITIES, SettlementStatus } from '@shared/constants';
+import { MeterProcessTypes, settlementSearchNames } from '@shared/enums';
+import { JobSelect, pipeline, settlementPipeline } from '@shared/interfaces';
 
 @Pipe({
   name: 'stlActions',
@@ -24,6 +24,11 @@ export class SettlementActionsPipe implements PipeTransform {
 
         if (value === 'cancelRun') {
           action.show = status.startsWith('In-Progress');
+          return action;
+        }
+
+        if (value === 'downloadSkipLogs') {
+          action.show = true;
           return action;
         }
 

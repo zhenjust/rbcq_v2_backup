@@ -1,44 +1,21 @@
-import {
-  Component,
-  computed,
-  DestroyRef,
-  effect,
-  inject,
-  OnDestroy,
-  OnInit,
-  signal,
-  TemplateRef,
-  ViewChild
-} from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, computed, DestroyRef, effect, inject, OnDestroy, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Data } from '@angular/router';
-import { BehaviorSubject, finalize, exhaustMap, merge, Observable, Subject, Subscription, switchMap, timer } from 'rxjs';
-import {
-  JobSelect,
-  PublishSettlement,
-  settlementParams,
-  settlementPipeline,
-  TableColumn,
-  TPL_TABLE_COLUMN
-} from '@shared/interfaces';
-import { RunSettlementService } from '@shared/services/settlement';
-import { ToastrService } from 'ngx-toastr';
-import { MeterProcessTypes } from '@shared/enums';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { isAfter, isBefore, setHours, startOfDay, subDays } from 'date-fns';
-import { SettlementService } from '@shared/services/api';
+import { ConfirmWithContentComponent } from '@shared/components/confirm-with-content/confirm-with-content.component';
+import { BaseTableItem, modalConfig, SettlementJobActions, SettlementJobSubActions } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
-import { DatePipe } from '@angular/common';
-import {
-  BaseTableItem,
-  modalConfig,
-  SettlementJobActions,
-  SettlementJobSubActions
-} from '@shared/constants';
+import { MeterProcessTypes } from '@shared/enums';
+import { JobSelect, PublishSettlement, settlementParams, settlementPipeline, TableColumn, TPL_TABLE_COLUMN } from '@shared/interfaces';
+import { SettlementService } from '@shared/services/api';
+import { RunSettlementService } from '@shared/services/settlement';
 import { SearchListBase } from '@shared/services/utils/list.util.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ConfirmWithContentComponent } from '@shared/components/confirm-with-content/confirm-with-content.component';
 import { StlUtilitiesService } from '@shared/services/utils/stl-actions.util.service';
+import { isAfter, isBefore, setHours, startOfDay, subDays } from 'date-fns';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { ToastrService } from 'ngx-toastr';
+import { BehaviorSubject, exhaustMap, finalize, merge, Observable, Subject, Subscription, switchMap, timer } from 'rxjs';
 
 @Component({
   selector: 'app-table',
@@ -276,8 +253,8 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
 
       ['energyTradingAmounts-publish']: () => this.handlePublishAction('Energy Trading Amounts Calculation', row),
       ['reserveTradingAmounts-publish']: () => this.handlePublishAction('Reserve Trading Amounts Calculation', row),
-      ['sendNotification']: () => this.stlUtil.sendNotification(row, () => this.reload$.next())
-
+      ['sendNotification']: () => this.stlUtil.sendNotification(row, () => this.reload$.next()),
+      ['downloadSkipLogs']: () => this.stlUtil.downloadSkipLogs(row)
     };
 
     actions[action]();
