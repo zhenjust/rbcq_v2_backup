@@ -87,26 +87,85 @@
     nz-button
     nzType="primary"
     [nzLoading]="isProcessing"
-    [disabled]="rbcqProcessForm.invalid || isProcessing"
+    [disabled]="
+      rbcqProcessForm.invalid ||
+      isProcessing ||
+      (isReserveAPSelected() && rows.length === 0)
+    "
     (click)="onSubmitRbcqProcess()">
     Process
   </button>
 
   <button
-    *ngIf="isApFlagSelected()"
+    *ngIf="isApFlagSelected() || isReserveAPSelected()"
     nz-button
     nzType="primary"
-    (click)="loadAPFlag()">
-    View Flagged RBCQ
+    (click)="viewFlag()">
+    View MI Intervals
   </button>
 
 </nz-flex>
 
+<div class="filter-container" *ngIf="isApFlagSelected() || isReserveAPSelected()">
 
-<div *ngIf="isApFlagSelected()">
+  <button
+    nz-button
+    nzType="default"
+    (click)="showFilters = !showFilters">
+    Filter
+  </button>
+
+  <div *ngIf="showFilters" class="filter-options">
+
+    <nz-select
+      [(ngModel)]="selectedRegion"
+      (ngModelChange)="applyFilters()"
+      nzPlaceHolder="Filter by Region"
+      style="width: 150px">
+      <nz-option nzValue="" nzLabel="All Regions"></nz-option>
+      <nz-option nzValue="LUZON" nzLabel="LUZON"></nz-option>
+      <nz-option nzValue="VISAYAS" nzLabel="VISAYAS"></nz-option>
+      <nz-option nzValue="MINDANAO" nzLabel="MINDANAO"></nz-option>
+    </nz-select>
+
+    <nz-select
+      [(ngModel)]="selectedFlag"
+      (ngModelChange)="applyFilters()"
+      nzPlaceHolder="Filter by Flag"
+      style="width: 150px"
+      [nzDisabled]="isReserveAPSelected()"
+    >
+      <nz-option nzValue="" nzLabel="All Flags"></nz-option>
+      <nz-option nzValue="Y" nzLabel="Y"></nz-option>
+      <nz-option nzValue="N" nzLabel="N"></nz-option>
+    </nz-select>
+
+    <button
+      nz-button
+      nzType="default"
+      (click)="clearFilters()">
+      Clear
+    </button>
+
+  </div>
+
+</div>
+
+
+<div *ngIf="isApFlagSelected() || isReserveAPSelected()">
   <nz-table [nzData]="rows" nzBordered [nzLoading]="loading" [nzShowPagination]="false" class="zebra-table" [nzScroll]="{ y: '400px' }">
     <thead>
       <tr>
+
+        <th *ngIf="isReserveAPSelected()">
+          <label
+            nz-checkbox
+            [nzChecked]="selectAll"
+            (nzCheckedChange)="toggleSelectAll($event)">
+          </label>
+        </th>
+
+
         <th>Dispatch Interval</th>
         <th>Region</th>
         <th>Flag</th>
@@ -114,6 +173,13 @@
     </thead>
     <tbody>
       <tr *ngFor="let row of rows">
+        <td *ngIf="isReserveAPSelected()">
+          <label
+            nz-checkbox
+            [nzChecked]="selectedRows.includes(row)"
+            (nzCheckedChange)="toggleRowSelection(row, $event)">
+          </label>
+        </td>
         <td>{{ row.dispatchInterval | date:'yyyy-MM-dd HH:mm' }}</td>
         <td>{{ row.region }}</td>
         <td>{{ row.flag }}</td>
@@ -129,6 +195,9 @@
         <nz-option *ngFor="let size of pageSizeOptions" [nzValue]="size" [nzLabel]="size + ' rows'"></nz-option>
       </nz-select>
       <span>Total: {{ totalItems }} records</span>
+      <span *ngIf="isReserveAPSelected()">
+        Selected: {{ selectedRows.length }}
+      </span>
     </div>
 
  <nz-pagination
