@@ -13,7 +13,7 @@ import { MeterProcessTypes } from '@shared/enums';
 import { DownloadUtilService } from '@shared/services/utils';
 import { ToastrService } from 'ngx-toastr';
 import { MESSAGES } from '@shared/constants/messages.const';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -164,7 +164,8 @@ export class MeteringMasterfileComponent implements OnInit {
     const { workspaceId } = data.pipelineRuns[0];
     const { startDate, endDate, processType } = data.parameters;
     const billingPeriod = `${startDate} - ${endDate}`;
-    const params: DownloadMmfParams = { workspaceId, endDate, processType, billingPeriod };
+    const formattedStartDate = format(parseISO(startDate), 'yyyyMMdd');
+    const params: DownloadMmfParams = { workspaceId, startDate: formattedStartDate, endDate, processType, billingPeriod };
 
     data.loading = true;
     this.meterService.downloadMeteringReport(params, 'mmf')

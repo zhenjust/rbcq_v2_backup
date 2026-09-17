@@ -49,7 +49,7 @@
 
 <!-- Column Templates -->
 <ng-template #fileTpl let-d="allData">
-  {{ `Metering_Masterfile_${d.parameters.endDate | date: 'yyyy_MM_dd'}_${d.parameters.processType}.xlsx` }}
+  {{ `Metering_Masterfile_${d.parameters.startDate | date: 'yyyyMMdd'}_${d.parameters.processType}.xlsx` }}
 </ng-template>
 
 <ng-template #bpTpl let-allData="allData">

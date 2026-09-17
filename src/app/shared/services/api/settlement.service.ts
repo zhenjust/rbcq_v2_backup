@@ -1,11 +1,13 @@
 import { HttpClient, HttpEvent } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { ParamsUtilService } from '../utils';
+import { apiPath } from '@shared/constants';
+import { MeterProcessTypes } from '@shared/enums';
 import { BaseResponse, EnergyTradingAmounts, PublishedBillingPeriods, PublishSettlement, ReferenceOption1, SendNotice, SettlementJob, SettlementJobParams, settlementParams, settlementTableDate, TableParams } from '@shared/interfaces';
 import { Observable } from 'rxjs';
-import { MeterProcessTypes } from '@shared/enums';
-import { apiPath } from '@shared/constants';
+
 import { environment } from 'environments/environment';
+
+import { ParamsUtilService } from '../utils';
 
 @Injectable({
   providedIn: 'root'
@@ -116,6 +118,9 @@ export class SettlementService {
     return this.http.get<{ status: string }>(`${this.STL}/send-notice/status?workspaceId=${id}`)
   }
 
+  public downloadSkipLogs(payload: { workspaceId: number, processType: string, calcType: string, tradingDate?: string | null, billingMonth?: string | null }): Observable<any> {
+    return this.http.post<any>(`${this.STL}/report-generation/skiplogs-generate`, payload);
+  }
 
 }
 

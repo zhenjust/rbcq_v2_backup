@@ -1,13 +1,17 @@
+import { HttpEventType } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { AmsComponent } from '@modules/settlement/shared/ams/ams.component';
+import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
 import { SendNotificationComponent } from '@shared/components/send-notification/send-notification.component';
 import { LABELS } from '@shared/constants/labels.const';
 import { PublishSettlement, settlementPipeline } from '@shared/interfaces';
+import { DownloadUtilService } from '@shared/services/utils';
+import { format } from 'date-fns';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { SettlementService } from '../api';
-import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
 import { ToastrService } from 'ngx-toastr';
+import { filter } from 'rxjs';
 
+import { SettlementService } from '../api';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +22,7 @@ export class StlUtilitiesService {
 
   private readonly modal = inject(NzModalService);
   private readonly stlService = inject(SettlementService);
+  private readonly downloadService = inject(DownloadUtilService);
   private readonly toastr = inject(ToastrService);
 
   triggerAllocModal(action: string, row: any, callback: () => void): void {
@@ -72,6 +77,40 @@ export class StlUtilitiesService {
         callback();
       }
     });
+  }
+
+  getCalcTypes(name: string): string {
+    switch (name) {
+      case 'energyTradingAmounts':
+        return 'ETA';
+      case 'reserveTradingAmounts':
+        return 'RTA';
+      case 'reserveMarketFee':
+        return 'RMF';
+      case 'energyMarketFee':
+        return 'EMF';
+      default:
+        return '';
+    }
+  }
+
+  downloadSkipLogs(rowData: any): void {
+    const payload = {
+      workspaceId: rowData.id,
+      processType: rowData.processType,
+      calcType: this.getCalcTypes(rowData.name),
+      tradingDate: rowData?.tradingDate ?? null,
+      billingMonth: rowData.billingEndDate ? format(new Date(rowData.billingEndDate), 'yyyy-MM') : null
+    };
+
+    this.stlService.downloadSkipLogs(payload)
+      .pipe(
+        filter(res => res.type === HttpEventType.Response)
+      )
+      .subscribe(res => {
+        console.log(res)
+        this.downloadService.handleDownloadedFile(res);
+      });
   }
 
   publish(payload: PublishSettlement, title: string, message: string, descriptions: any[], callback?: () => void): void {

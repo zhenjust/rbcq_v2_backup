@@ -1,5 +1,6 @@
 import { MDV, pricingConditions, settlementProcessTypes, settlementSearchNames } from "@shared/enums";
 import { JobSelect, settlementJobInstanceOptions, TableColumn } from "@shared/interfaces";
+
 import { LABELS } from './labels.const';
 
 export const FULL_SETTLEMENT_OPTIONS: settlementJobInstanceOptions[] = [
@@ -61,6 +62,10 @@ export const SettlementJobActions: JobSelect[] = [
 
   { label: LABELS.SEND_NOTIFICATION, value: 'sendNotification', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
   { label: LABELS.SEND_NOTIFICATION, value: 'sendNotification', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
+
+  { label: LABELS.DOWNLOAD_SKIP_LOGS, value: 'downloadSkipLogs', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
+  { label: LABELS.DOWNLOAD_SKIP_LOGS, value: 'downloadSkipLogs', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
+
 
   /**
    * IN_PROGRESS
