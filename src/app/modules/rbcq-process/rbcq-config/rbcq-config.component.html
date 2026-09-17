@@ -104,6 +104,17 @@
     View MI Intervals
   </button>
 
+  <button
+    *ngIf=" isReserveAPSelected()"
+    nz-button
+    nzType="primary" [disabled]="
+      isProcessing ||
+      (isReserveAPSelected() && rows.length === 0)
+    "
+    (click)="downloadASIE()">
+    Import to CSV
+  </button>
+
 </nz-flex>
 
 <div class="filter-container" *ngIf="isApFlagSelected() || isReserveAPSelected()">
@@ -157,13 +168,13 @@
     <thead>
       <tr>
 
-        <th *ngIf="isReserveAPSelected()">
+        <!-- <th *ngIf="isReserveAPSelected()">
           <label
             nz-checkbox
             [nzChecked]="selectAll"
             (nzCheckedChange)="toggleSelectAll($event)">
           </label>
-        </th>
+        </th> -->
 
 
         <th>Dispatch Interval</th>
@@ -173,13 +184,13 @@
     </thead>
     <tbody>
       <tr *ngFor="let row of rows">
-        <td *ngIf="isReserveAPSelected()">
+        <!-- <td *ngIf="isReserveAPSelected()">
           <label
             nz-checkbox
             [nzChecked]="selectedRows.includes(row)"
             (nzCheckedChange)="toggleRowSelection(row, $event)">
           </label>
-        </td>
+        </td> -->
         <td>{{ row.dispatchInterval | date:'yyyy-MM-dd HH:mm' }}</td>
         <td>{{ row.region }}</td>
         <td>{{ row.flag }}</td>
