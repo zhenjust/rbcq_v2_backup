@@ -87,46 +87,4 @@ export class RbcqService {
 
     return this.http.get<any[]>(`${this.BASE_URL}/getFlaggedData`, { params });
   }
-
-
-  //  downloadASIE(
-  //     startDatetime: string,
-  //     endDatetime: string
-  //   ) {
-  //     let params = new HttpParams()
-  //       .set('startDatetime', startDatetime)
-  //       .set('endDatetime', endDatetime);
-
-  //     return this.http.post(
-  //       `${this.BASE_URL}/download-asie`,
-  //       null,
-  //       {
-  //         params,
-  //         responseType: 'blob',
-  //         observe: 'response'
-  //       }
-  //     );
-  //   }
-
-  downloadASIE(startDatetime: string, endDatetime: string) {
-    let params = new HttpParams();
-
-    if (startDatetime) {
-      params = params.set('startDatetime', startDatetime);
-    }
-
-    if (endDatetime) {
-      params = params.set('endDatetime', endDatetime);
-    }
-
-    return this.http.post(
-      `${this.BASE_URL}/download-asie`,
-      null,
-      {
-        params,
-        responseType: 'blob',
-        observe: 'response'
-      }
-    );
-  }
 }

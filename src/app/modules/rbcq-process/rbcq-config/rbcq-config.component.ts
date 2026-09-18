@@ -376,33 +376,6 @@ private processRbcq(): void {
     });
   }
 
-  downloadASIE() {
-  const startDatetime = this.rbcqProcessForm.get('startDatetime')?.value;
-  const endDatetime = this.rbcqProcessForm.get('endDatetime')?.value;
-
-  const s = this.formatLocal(startDatetime);
-  const e = this.formatLocal(endDatetime);
-
-  this.rbcqService.downloadASIE(s, e)
-    .subscribe(response => {
-
-      const blob = new Blob(
-        [response.body!],
-        { type: 'text/csv' }
-      );
-
-      const url = window.URL.createObjectURL(blob);
-
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `ASIE_${s.substring(0, 10)}_${e.substring(0, 10)}.csv`;
-
-      a.click();
-
-      window.URL.revokeObjectURL(url);
-    });
-}
-
   // ==================== TABLE FILTERS ====================
 
   applyFilters(): void {
