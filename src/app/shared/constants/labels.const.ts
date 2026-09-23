@@ -238,4 +238,5 @@ export const LABELS = {
 
   BILLING_ID_ENTRY: 'Billing ID Entry',
   DOWNLOAD_SKIP_LOGS: 'Download Skip Logs',
+  FILES: 'Files',
 }

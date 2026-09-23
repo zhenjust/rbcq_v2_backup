@@ -1,27 +1,20 @@
 import { Component, DestroyRef, effect, inject, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { PHASE_TWO_AUTHORITIES, WESM_PENALTY_STATUS, WESM_PENALTY_TYPE } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
-import {
-  meterProcessBillingPeriod,
-  TPL_TABLE_COLUMN,
-  TableAction,
-  meterProcessPipelineGroup,
-  meterProcessPipeline,
-  PublishSettlement,
-  settlementPipeline
-} from '@shared/interfaces';
+import { MESSAGES } from '@shared/constants/messages.const';
+import { meterProcessBillingPeriod, meterProcessPipeline, meterProcessPipelineGroup, PublishSettlement, settlementPipeline, TableAction, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { MeterprocessService, SettlementService } from '@shared/services/api';
+import { StlUtilitiesService } from '@shared/services/utils/stl-actions.util.service';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
-import { BehaviorSubject, exhaustMap, finalize, merge, Observable, of, Subject, switchMap, timer } from 'rxjs';
-import { PenaltyGenerateIwsComponent } from './penalty-generate-iws/penalty-generate-iws.component';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MESSAGES } from '@shared/constants/messages.const';
-import { ToastrService } from 'ngx-toastr';
-import { StlUtilitiesService } from '@shared/services/utils/stl-actions.util.service';
 import { NgxPermissionsService } from 'ngx-permissions';
+import { ToastrService } from 'ngx-toastr';
+import { BehaviorSubject, exhaustMap, finalize, merge, Observable, of, Subject, switchMap, timer } from 'rxjs';
+
+import { PenaltyGenerateIwsComponent } from './penalty-generate-iws/penalty-generate-iws.component';
 
 @Component({
   selector: 'app-wesm-penalty',
@@ -82,6 +75,14 @@ export class WesmPenaltyComponent implements OnInit {
     ['penalty-finalizeRefund']: {
       message: MESSAGES.CONFIRM_SETTLEMENT_MSG('Finalize Financial Penalty - Refund'),
       modalTitle: `${LABELS.FINALIZE} ${LABELS.REFUND}`
+    },
+    ['penalty-generateFiles']: {
+      message: MESSAGES.CONFIRM_SETTLEMENT_MSG('Generate Financial Penalty Files'),
+      modalTitle: `${LABELS.GENERATE} ${LABELS.FILES}`
+    },
+    ['penalty-generateFilesRefund']: {
+      message: MESSAGES.CONFIRM_SETTLEMENT_MSG('Generate Financial Penalty Files - Refund'),
+      modalTitle: `${LABELS.GENERATE} ${LABELS.FILES}`
     },
   }
 
@@ -254,7 +255,7 @@ export class WesmPenaltyComponent implements OnInit {
 
   isFinalized(rowData: meterProcessPipelineGroup): boolean {
     const isRefund = rowData.penaltyHeaders?.[0]?.type === 'REFUND';
-    return rowData.pipelines?.some((p: meterProcessPipeline) => p.name === `penalty-finalize${isRefund ? 'Refund' : ''}` && p.status === 'Completed');
+    return rowData.pipelines?.some((p: meterProcessPipeline) => p.name === `penalty-finalize${isRefund ? 'Refund' : ''}` && ['Completed', 'Succeeded'].includes(p.status));
   }
 
   hideAction(rowData: meterProcessPipelineGroup, labelName: string): boolean {
@@ -299,6 +300,19 @@ export class WesmPenaltyComponent implements OnInit {
           return this.isFinalized(row) || this.hideAction(row, `penalty-calculate${isRefund ? 'Refund' : ''}`)
         },
       },
+      {
+        label: LABELS.GENERATE,
+        value: 'generateFiles',
+        click: () => {
+          const isPenalty = row.penaltyHeaders?.[0]?.type === 'PENALTY';
+          this.triggerAction(`penalty-generateFiles${isPenalty ? '' : 'Refund'}`, row);
+        },
+        hidden: () => {
+          const isRefund = row.pipelines?.find(p => p.name === 'penalty-calculateRefund');
+          return row.published || this.hideAction(row, `penalty-finalize${isRefund ? 'Refund' : ''}`)
+        },
+      },
+
       {
         label: LABELS.PUBLISH,
         value: 'publish',
