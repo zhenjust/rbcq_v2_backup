@@ -39,8 +39,8 @@ export class SettlementActionsPipe implements PipeTransform {
          * Show actions when status is inprogress (for Gen IWS and Calc TA)
          */
 
-        // if (status.startsWith('In-Progress') && this.GEN_IWS_CALC_TA_STATUSES.every(stat => !status.includes(stat))) {
-        if (status.startsWith('In-Progress')) {
+        if (status.startsWith('In-Progress') && this.GEN_IWS_CALC_TA_STATUSES.every(stat => !status.includes(stat))) {
+        // if (status.startsWith('In-Progress')) {
           action.show = false;
           return action;
         }
