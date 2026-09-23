@@ -27,11 +27,6 @@ export class SettlementActionsPipe implements PipeTransform {
           return action;
         }
 
-        if (value === 'downloadSkipLogs') {
-          action.show = true;
-          return action;
-        }
-
         const hasFinalized = pipelines.some(
           p => (p.name === 'energyTradingAmounts-finalize' || p.name === 'reserveTradingAmounts-finalize') && this.completedStatus.includes(p.status)
         );
@@ -44,10 +39,19 @@ export class SettlementActionsPipe implements PipeTransform {
          * Show actions when status is inprogress (for Gen IWS and Calc TA)
          */
 
-        if (status.startsWith('In-Progress') && this.GEN_IWS_CALC_TA_STATUSES.every(stat => !status.includes(stat))) {
+        // if (status.startsWith('In-Progress') && this.GEN_IWS_CALC_TA_STATUSES.every(stat => !status.includes(stat))) {
+        if (status.startsWith('In-Progress')) {
           action.show = false;
           return action;
         }
+
+        if (value === 'downloadSkipLogs') {
+          action.show = pipelines.some(
+            p => (p.name === 'energyTradingAmounts-generateInputWorkspace' || p.name === 'reserveTradingAmounts-generateInputWorkspace') && this.completedStatus.includes(p.status)
+          );
+          return action;
+        }
+
 
         if (status.startsWith('In-Progress') && this.GEN_IWS_CALC_TA_STATUSES.some(stat => status.includes(stat)) && this.GEN_IWS_CALC_TA_NAMES.includes(value) ) {
           action.show = true;
