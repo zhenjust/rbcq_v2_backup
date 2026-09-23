@@ -253,8 +253,8 @@ export class WesmPenaltyComponent implements OnInit {
       });
   }
 
-  isFinalized(rowData: meterProcessPipelineGroup): boolean {
-    const isRefund = rowData.penaltyHeaders?.[0]?.type === 'REFUND';
+   isFinalized(rowData: meterProcessPipelineGroup): boolean {
+    const isRefund = rowData.pipelines.some(({ name, status }) => name === 'penalty-finalizeRefund' && ['Completed', 'Succeeded'].includes(status));
     return rowData.pipelines?.some((p: meterProcessPipeline) => p.name === `penalty-finalize${isRefund ? 'Refund' : ''}` && ['Completed', 'Succeeded'].includes(p.status));
   }
 
