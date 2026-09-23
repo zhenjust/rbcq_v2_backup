@@ -5,7 +5,7 @@ import { PaginatedTableComponent } from '@shared/components/paginated-table/pagi
 import { PHASE_TWO_AUTHORITIES, WESM_PENALTY_STATUS, WESM_PENALTY_TYPE } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
-import { meterProcessBillingPeriod, meterProcessPipeline, meterProcessPipelineGroup, PublishSettlement, settlementPipeline, TableAction, TPL_TABLE_COLUMN } from '@shared/interfaces';
+import { meterProcessBillingPeriod, meterProcessPipeline, meterProcessPipelineGroup, settlementPipeline, TableAction, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { MeterprocessService, SettlementService } from '@shared/services/api';
 import { StlUtilitiesService } from '@shared/services/utils/stl-actions.util.service';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -83,6 +83,14 @@ export class WesmPenaltyComponent implements OnInit {
     ['penalty-generateFilesRefund']: {
       message: MESSAGES.CONFIRM_SETTLEMENT_MSG('Generate Financial Penalty Files - Refund'),
       modalTitle: `${LABELS.GENERATE} ${LABELS.FILES}`
+    },
+    ['penalty-publish']: {
+      message: MESSAGES.CONFIRM_PUBLISH_ITEM(LABELS.PENALTY_REPORT.toLowerCase()),
+      modalTitle: LABELS.PUBLISH_PENALTY_REPORT
+    },
+    ['penalty-publishRefund']: {
+      message: MESSAGES.CONFIRM_PUBLISH_ITEM(LABELS.PENALTY_REPORT.toLowerCase()),
+      modalTitle: LABELS.PUBLISH_PENALTY_REPORT
     },
   }
 
@@ -316,34 +324,16 @@ export class WesmPenaltyComponent implements OnInit {
       {
         label: LABELS.PUBLISH,
         value: 'publish',
-        click: () => this.handlePublish(row),
+        click: () => {
+          const isRefund = row.pipelines?.find(p => p.name === 'penalty-calculateRefund');
+          this.triggerAction(`penalty-publish${isRefund ? 'Refund' : ''}`, row);
+        },
         hidden: () => {
           const isRefund = row.pipelines?.find(p => p.name === 'penalty-calculateRefund');
-          return this.hideAction(row, `penalty-finalize${isRefund ? 'Refund' : ''}`)
+          return this.hideAction(row, `penalty-generateFiles${isRefund ? 'Refund' : ''}`)
         },
       }
     ];
-  }
-
-  handlePublish(rowData: meterProcessPipelineGroup): void {
-    const payload: PublishSettlement = {
-      pipelineGroupId: rowData.id,
-      stlGroupId: rowData.id,
-      jobExecutionId: rowData.id,
-      functionName: 'Financial Penalty Calculation',
-      billingPeriod: rowData.billingPeriod
-    };
-
-    const title = LABELS.PUBLISH_PENALTY_REPORT;
-    const message = MESSAGES.CONFIRM_PUBLISH_ITEM(LABELS.PENALTY_REPORT.toLowerCase());
-    const descriptions = [
-      {
-        label: LABELS.BILLING_PERIOD,
-        value: `${rowData.billingStartDate} to ${rowData.billingEndDate}`
-      },
-    ];
-
-    this.stlUtil.publish(payload, title, message, descriptions, () => this.reload$.next());
   }
 
   onCancel(): void {
