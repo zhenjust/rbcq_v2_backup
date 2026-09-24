@@ -1,27 +1,20 @@
 import { Component, DestroyRef, effect, inject, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { PHASE_TWO_AUTHORITIES, WESM_PENALTY_STATUS, WESM_PENALTY_TYPE } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
-import {
-  meterProcessBillingPeriod,
-  TPL_TABLE_COLUMN,
-  TableAction,
-  meterProcessPipelineGroup,
-  meterProcessPipeline,
-  PublishSettlement,
-  settlementPipeline
-} from '@shared/interfaces';
+import { MESSAGES } from '@shared/constants/messages.const';
+import { meterProcessBillingPeriod, meterProcessPipeline, meterProcessPipelineGroup, settlementPipeline, TableAction, TPL_TABLE_COLUMN } from '@shared/interfaces';
 import { MeterprocessService, SettlementService } from '@shared/services/api';
+import { StlUtilitiesService } from '@shared/services/utils/stl-actions.util.service';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectOptionInterface } from 'ng-zorro-antd/select';
-import { BehaviorSubject, exhaustMap, finalize, merge, Observable, of, Subject, switchMap, timer } from 'rxjs';
-import { PenaltyGenerateIwsComponent } from './penalty-generate-iws/penalty-generate-iws.component';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MESSAGES } from '@shared/constants/messages.const';
-import { ToastrService } from 'ngx-toastr';
-import { StlUtilitiesService } from '@shared/services/utils/stl-actions.util.service';
 import { NgxPermissionsService } from 'ngx-permissions';
+import { ToastrService } from 'ngx-toastr';
+import { BehaviorSubject, exhaustMap, finalize, merge, Observable, of, Subject, switchMap, timer } from 'rxjs';
+
+import { PenaltyGenerateIwsComponent } from './penalty-generate-iws/penalty-generate-iws.component';
 
 @Component({
   selector: 'app-wesm-penalty',
@@ -82,6 +75,22 @@ export class WesmPenaltyComponent implements OnInit {
     ['penalty-finalizeRefund']: {
       message: MESSAGES.CONFIRM_SETTLEMENT_MSG('Finalize Financial Penalty - Refund'),
       modalTitle: `${LABELS.FINALIZE} ${LABELS.REFUND}`
+    },
+    ['penalty-generateFiles']: {
+      message: MESSAGES.CONFIRM_SETTLEMENT_MSG('Generate Financial Penalty Files'),
+      modalTitle: `${LABELS.GENERATE} ${LABELS.FILES}`
+    },
+    ['penalty-generateFilesRefund']: {
+      message: MESSAGES.CONFIRM_SETTLEMENT_MSG('Generate Financial Penalty Files - Refund'),
+      modalTitle: `${LABELS.GENERATE} ${LABELS.FILES}`
+    },
+    ['penalty-publish']: {
+      message: MESSAGES.CONFIRM_PUBLISH_ITEM(LABELS.PENALTY_REPORT.toLowerCase()),
+      modalTitle: LABELS.PUBLISH_PENALTY_REPORT
+    },
+    ['penalty-publishRefund']: {
+      message: MESSAGES.CONFIRM_PUBLISH_ITEM(LABELS.PENALTY_REPORT.toLowerCase()),
+      modalTitle: LABELS.PUBLISH_PENALTY_REPORT
     },
   }
 
@@ -252,9 +261,9 @@ export class WesmPenaltyComponent implements OnInit {
       });
   }
 
-  isFinalized(rowData: meterProcessPipelineGroup): boolean {
-    const isRefund = rowData.penaltyHeaders?.[0]?.type === 'REFUND';
-    return rowData.pipelines?.some((p: meterProcessPipeline) => p.name === `penalty-finalize${isRefund ? 'Refund' : ''}` && p.status === 'Completed');
+   isFinalized(rowData: meterProcessPipelineGroup): boolean {
+    const isRefund = rowData.pipelines.some(({ name, status }) => name === 'penalty-finalizeRefund' && ['Completed', 'Succeeded'].includes(status));
+    return rowData.pipelines?.some((p: meterProcessPipeline) => p.name === `penalty-finalize${isRefund ? 'Refund' : ''}` && ['Completed', 'Succeeded'].includes(p.status));
   }
 
   hideAction(rowData: meterProcessPipelineGroup, labelName: string): boolean {
@@ -300,36 +309,31 @@ export class WesmPenaltyComponent implements OnInit {
         },
       },
       {
-        label: LABELS.PUBLISH,
-        value: 'publish',
-        click: () => this.handlePublish(row),
+        label: LABELS.GENERATE,
+        value: 'generateFiles',
+        click: () => {
+          const isPenalty = row.penaltyHeaders?.[0]?.type === 'PENALTY';
+          this.triggerAction(`penalty-generateFiles${isPenalty ? '' : 'Refund'}`, row);
+        },
         hidden: () => {
           const isRefund = row.pipelines?.find(p => p.name === 'penalty-calculateRefund');
-          return this.hideAction(row, `penalty-finalize${isRefund ? 'Refund' : ''}`)
+          return row.published || this.hideAction(row, `penalty-finalize${isRefund ? 'Refund' : ''}`)
+        },
+      },
+
+      {
+        label: LABELS.PUBLISH,
+        value: 'publish',
+        click: () => {
+          const isRefund = row.pipelines?.find(p => p.name === 'penalty-calculateRefund');
+          this.triggerAction(`penalty-publish${isRefund ? 'Refund' : ''}`, row);
+        },
+        hidden: () => {
+          const isRefund = row.pipelines?.find(p => p.name === 'penalty-calculateRefund');
+          return this.hideAction(row, `penalty-generateFiles${isRefund ? 'Refund' : ''}`)
         },
       }
     ];
-  }
-
-  handlePublish(rowData: meterProcessPipelineGroup): void {
-    const payload: PublishSettlement = {
-      pipelineGroupId: rowData.id,
-      stlGroupId: rowData.id,
-      jobExecutionId: rowData.id,
-      functionName: 'Financial Penalty Calculation',
-      billingPeriod: rowData.billingPeriod
-    };
-
-    const title = LABELS.PUBLISH_PENALTY_REPORT;
-    const message = MESSAGES.CONFIRM_PUBLISH_ITEM(LABELS.PENALTY_REPORT.toLowerCase());
-    const descriptions = [
-      {
-        label: LABELS.BILLING_PERIOD,
-        value: `${rowData.billingStartDate} to ${rowData.billingEndDate}`
-      },
-    ];
-
-    this.stlUtil.publish(payload, title, message, descriptions, () => this.reload$.next());
   }
 
   onCancel(): void {
