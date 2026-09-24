@@ -2,7 +2,7 @@
     <form [formGroup]="rbcqProcessForm">
         <div class="form-item">
             <div class="label-container">
-                <label class="form-label">RBCQ Process Type:</label>
+                <label class="form-label">Process Type:</label>
                 <nz-select 
                     formControlName="processType"
                     class="select-size"
@@ -157,13 +157,13 @@
     <thead>
       <tr>
 
-        <th *ngIf="isReserveAPSelected()">
+        <!-- <th *ngIf="isReserveAPSelected()">
           <label
             nz-checkbox
             [nzChecked]="selectAll"
             (nzCheckedChange)="toggleSelectAll($event)">
           </label>
-        </th>
+        </th> -->
 
 
         <th>Dispatch Interval</th>
@@ -173,13 +173,13 @@
     </thead>
     <tbody>
       <tr *ngFor="let row of rows">
-        <td *ngIf="isReserveAPSelected()">
+        <!-- <td *ngIf="isReserveAPSelected()">
           <label
             nz-checkbox
             [nzChecked]="selectedRows.includes(row)"
             (nzCheckedChange)="toggleRowSelection(row, $event)">
           </label>
-        </td>
+        </td> -->
         <td>{{ row.dispatchInterval | date:'yyyy-MM-dd HH:mm' }}</td>
         <td>{{ row.region }}</td>
         <td>{{ row.flag }}</td>

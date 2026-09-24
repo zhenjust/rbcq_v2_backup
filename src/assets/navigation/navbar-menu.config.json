@@ -4400,7 +4400,7 @@
             },
              {
               "id": "admin/data-interface-management/process-rbcq",
-              "label": "Process RBCQ",
+              "label": "Trading Operation Data Process",
               "targets": {
                 "angular2": {
                   "kind": "internal",
