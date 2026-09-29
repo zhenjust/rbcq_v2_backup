@@ -40,7 +40,6 @@ export class SettlementActionsPipe implements PipeTransform {
          */
 
         if (status.startsWith('In-Progress') && this.GEN_IWS_CALC_TA_STATUSES.every(stat => !status.includes(stat))) {
-        // if (status.startsWith('In-Progress')) {
           action.show = false;
           return action;
         }
@@ -52,8 +51,12 @@ export class SettlementActionsPipe implements PipeTransform {
           return action;
         }
 
+        if (status.startsWith('In-Progress') && ['Generate Input Workspace', 'Generate Reserve Input Workspace'].some(stat => status.includes(stat)) && ['energyTradingAmounts-calculateTradingAmount', 'reserveTradingAmounts-calculateTradingAmount'].includes(value)) {
+          action = this.handleCalculateTA(action, pipelines, isSettlementModules);
+          return action;
+        }
 
-        if (status.startsWith('In-Progress') && this.GEN_IWS_CALC_TA_STATUSES.some(stat => status.includes(stat)) && this.GEN_IWS_CALC_TA_NAMES.includes(value) ) {
+        if (status.startsWith('In-Progress') && ['Settlement Calculation', 'Reserve Settlement Calculation'].some(stat => status.includes(stat)) && this.GEN_IWS_CALC_TA_NAMES.includes(value)) {
           action.show = true;
           return action;
         }
