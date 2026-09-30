@@ -32,8 +32,10 @@
                     @let align = column?.align || 'left';
                     <td [nzAlign]="align">
                         @if (column.key === 'actions') {
-                            @let actions = settlementJobActions | stlActions: data : searchName;
-                            @if (actions?.length) {
+                          @let actions = settlementJobActions | stlActions: data : searchName;
+                          @if (data.processType === 'ADJUSTED' && !data.hasFinalizedFinal) {
+                            <div></div>
+                          } @else if (actions?.length) {
                                 <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="menu" nzBlock>{{ LABELS.SELECT_ACTION }} <nz-icon nzType="down" /></button>
                                 <nz-dropdown-menu #menu="nzDropdownMenu">
                                     <ul nz-menu nzSelectable>
