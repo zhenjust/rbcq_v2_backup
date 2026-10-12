@@ -4,7 +4,7 @@ import { AmsComponent } from '@modules/settlement/shared/ams/ams.component';
 import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
 import { SendNotificationComponent } from '@shared/components/send-notification/send-notification.component';
 import { LABELS } from '@shared/constants/labels.const';
-import { PublishSettlement, settlementPipeline } from '@shared/interfaces';
+import { meterProcessPipelineGroup, PublishSettlement, settlementPipeline } from '@shared/interfaces';
 import { DownloadUtilService } from '@shared/services/utils';
 import { format } from 'date-fns';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -53,9 +53,9 @@ export class StlUtilitiesService {
     })
   }
 
-  sendNotification(rowData: any, callback: () => void): void {
+  sendNotification(rowData: settlementPipeline | meterProcessPipelineGroup, callback: () => void): void {
     const findParams = rowData.pipelines
-      .find((pipeline: settlementPipeline) => pipeline?.parameters?.dueDate && ['Completed', 'Succeeded'].includes(pipeline.status));
+      .find((pipeline) => pipeline?.parameters?.dueDate && ['Completed', 'Succeeded'].includes(pipeline.status));
 
     const dueDateTable = [
       { dueDate: findParams?.parameters?.dueDate || null, status: '' }
@@ -94,24 +94,38 @@ export class StlUtilitiesService {
     }
   }
 
-  downloadSkipLogs(rowData: any): void {
+  generateSkipLogs(action: string, rowData: settlementPipeline): void {
     const payload = {
       workspaceId: rowData.id,
-      processType: rowData.processType,
-      calcType: this.getCalcTypes(rowData.name),
+      calcType: this.getCalcTypes(action.split('-')[0]),
       tradingDate: rowData?.tradingDate ?? null,
-      billingMonth: rowData.billingEndDate ? format(new Date(rowData.billingEndDate), 'yyyy-MM') : null
+      pipelineName: action,
+      parameters: {
+        processType: rowData.processType,
+        billingStartDate: rowData.billingStartDate,
+        billingEndDate: rowData.billingEndDate,
+      },
+      billingMonth: rowData.billingEndDate ? format(new Date(rowData.billingEndDate), 'yyyy-MM') : null,
     };
 
-    this.stlService.downloadSkipLogs(payload)
-      .pipe(
-        filter(res => res.type === HttpEventType.Response)
-      )
+    this.stlService.generateSkipLogs(payload)
+      .pipe(filter(res => res.type === HttpEventType.Response))
       .subscribe(res => {
-        console.log(res)
         this.downloadService.handleDownloadedFile(res);
       });
   }
+
+  downloadSkipLogs(rowData: settlementPipeline): void {
+    const pipeline = rowData.pipelines.find(p => p.name === 'energyTradingAmounts-generateSkipLogs' || p.name === 'reserveTradingAmounts-generateSkipLogs' && p.status === 'Completed');
+    const pipelineRun = pipeline?.pipelineRuns[0];
+
+    this.stlService.downloadSkipLogs(pipelineRun?.workspaceId ?? 0, pipelineRun?.fileName ?? '')
+      .pipe(filter(res => res.type === HttpEventType.Response))
+      .subscribe(res => {
+        this.downloadService.handleDownloadedFile(res);
+      });
+  }
+
 
   publish(payload: PublishSettlement, title: string, message: string, descriptions: any[], callback?: () => void): void {
     const nzData = {

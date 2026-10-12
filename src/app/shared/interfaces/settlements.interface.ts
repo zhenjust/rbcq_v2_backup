@@ -55,6 +55,12 @@ export interface pipeline {
     pipelineRuns: PipelineRun[];
     currentDownloadedFile?: string | null;
     currentDownloadedPercentage?: number | null;
+    parameters?: {
+      dueDate?: string;
+      allocDate?: string;
+      remarks?: string;
+    }
+
 }
 
 export interface settlementTableDate {
@@ -146,6 +152,7 @@ export interface PipelineRun {
     runEnd?: string;
     duration: string;
     workspaceId: number;
+    fileName?: string;
 }
 
 export interface SettlementJob {

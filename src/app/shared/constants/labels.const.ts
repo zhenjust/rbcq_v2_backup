@@ -237,6 +237,7 @@ export const LABELS = {
   BILLING_END_DATE: 'Billing End Date',
 
   BILLING_ID_ENTRY: 'Billing ID Entry',
+  GENERATE_SKIP_LOGS: 'Generate Skip Logs',
   DOWNLOAD_SKIP_LOGS: 'Download Skip Logs',
   FILES: 'Files',
 }

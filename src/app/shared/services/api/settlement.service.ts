@@ -15,13 +15,13 @@ import { ParamsUtilService } from '../utils';
 export class SettlementService {
 
   private API_URL: string = '/stl-data-pipeline/job';
+  private SETTLEMENT: string = '/settlement';
   private BILLING_ID: string = '/settlement/addtl-comp/billing-id-list';
   private REG = `/reg/stl-meter-file`;
   private GRP_API_URL: string = '/stl-data-pipeline/job/group';
   private ADDTL_COMP: string = '/settlement/addtl-comp';
   private BILLING_STATEMENT: string = '/settlement/billing-statement';
   private STL: string = '/stl-data-pipeline';
-  private ADMIN: string = '/admin';
 
   protected baseEndpoint = environment.__API_URL__ + apiPath.__ADMIN_PATH__;
   private paramUtil = inject(ParamsUtilService);
@@ -118,9 +118,14 @@ export class SettlementService {
     return this.http.get<{ status: string }>(`${this.STL}/send-notice/status?workspaceId=${id}`)
   }
 
-  public downloadSkipLogs(payload: { workspaceId: number, processType: string, calcType: string, tradingDate?: string | null, billingMonth?: string | null }): Observable<any> {
+  public generateSkipLogs(payload: { workspaceId: number, parameters: { processType: string, billingStartDate?: string | null, billingEndDate?: string | null }, calcType: string, tradingDate?: string | null, billingMonth?: string | null }): Observable<any> {
     return this.http.post<any>(`${this.STL}/report-generation/skiplogs-generate`, payload);
   }
+
+  public downloadSkipLogs(workspaceId: number, fileName: string): Observable<HttpEvent<Blob>> {
+    return this.http.get(`${this.SETTLEMENT}/skip-logs/download?workspaceId=${workspaceId}&fileName=${fileName}`, { responseType: 'blob', observe: 'events', reportProgress: true });
+  }
+
 
 }
 

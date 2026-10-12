@@ -63,8 +63,11 @@ export const SettlementJobActions: JobSelect[] = [
   { label: LABELS.SEND_NOTIFICATION, value: 'sendNotification', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
   { label: LABELS.SEND_NOTIFICATION, value: 'sendNotification', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
 
-  { label: LABELS.DOWNLOAD_SKIP_LOGS, value: 'downloadSkipLogs', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
-  { label: LABELS.DOWNLOAD_SKIP_LOGS, value: 'downloadSkipLogs', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
+  { label: LABELS.GENERATE_SKIP_LOGS, value: 'reserveTradingAmounts-generateSkipLogs', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
+  { label: LABELS.GENERATE_SKIP_LOGS, value: 'energyTradingAmounts-generateSkipLogs', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
+
+  { label: LABELS.DOWNLOAD_SKIP_LOGS, value: 'reserveTradingAmounts-downloadSkipLogs', type: settlementSearchNames.RESERVE_TRADING_AMOUNTS },
+  { label: LABELS.DOWNLOAD_SKIP_LOGS, value: 'energyTradingAmounts-downloadSkipLogs', type: settlementSearchNames.ENERGY_TRADING_AMOUNTS },
 
 
   /**

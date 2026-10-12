@@ -77,6 +77,7 @@ export interface meterProcessParameters {
     billingPeriod?: string
     billingPeriodName?: string
     adjNo?: number
+    dueDate?: string
 }
 
 export interface meterProcessPipelineRuns {
@@ -120,7 +121,7 @@ export interface meterProcessPipelineGroup {
     adjNo?: number
     pipelines: meterProcessPipeline[]
     penaltyHeaders?: meterProcessPenaltyHeader[]
-    published?: boolean
+    published?: boolean;
 }
 
 export interface meterProcessTable {

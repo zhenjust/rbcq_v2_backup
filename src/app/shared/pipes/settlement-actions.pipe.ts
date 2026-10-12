@@ -44,9 +44,16 @@ export class SettlementActionsPipe implements PipeTransform {
           return action;
         }
 
-        if (value === 'downloadSkipLogs') {
+        if (value === 'energyTradingAmounts-generateSkipLogs' || value === 'reserveTradingAmounts-generateSkipLogs') {
           action.show = pipelines.some(
             p => (p.name === 'energyTradingAmounts-generateInputWorkspace' || p.name === 'reserveTradingAmounts-generateInputWorkspace') && this.completedStatus.includes(p.status)
+          );
+          return action;
+        }
+
+        if (value === 'energyTradingAmounts-downloadSkipLogs' || value === 'reserveTradingAmounts-downloadSkipLogs') {
+          action.show = pipelines.some(
+            p => (p.name === 'energyTradingAmounts-generateSkipLogs' || p.name === 'reserveTradingAmounts-generateSkipLogs') && this.completedStatus.includes(p.status)
           );
           return action;
         }
