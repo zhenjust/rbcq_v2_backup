@@ -24,6 +24,7 @@ export interface settlementParams {
 export interface settlementPipeline {
     id: number;
     name: string
+    groupId: string
     adjNo: string
     processType: MeterProcessTypes
     tradingDate: string

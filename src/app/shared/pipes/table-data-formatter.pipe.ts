@@ -12,8 +12,8 @@ export class SettlementTableFormatterPipe implements PipeTransform {
 
   transform(data: settlementPipeline, column: TableColumn): string {
     switch (column.key) {
-      case 'workspaceId':
-        return data.id.toString();
+      case 'groupId':
+        return data.groupId.toString();
       case 'runDatetime':
         return this.dfs.formatDateTime(data.runDatetime);
       case 'processType':

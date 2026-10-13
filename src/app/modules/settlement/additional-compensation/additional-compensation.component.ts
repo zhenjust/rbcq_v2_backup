@@ -141,19 +141,6 @@ export class AdditionalCompensationComponent implements OnInit {
             this.firstLoad.set(false);
           })
         )
-        // return this.settlementService.search(
-        //   this.filters,
-        //   groupName,
-        //   this.paginatedTable?.tableParams
-        // ).pipe(
-        //   takeUntilDestroyed(this.destroyRef$),
-        //   finalize(() => {
-        //     if (this.paginatedTable) {
-        //       this.paginatedTable.loading = false;
-        //     }
-        //     this.firstLoad.set(false);
-        //   })
-        // )
       })
     );
   }
@@ -393,11 +380,10 @@ export class AdditionalCompensationComponent implements OnInit {
 
 const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.TRADING_DATE]: { label: LABELS.TRADING_DATE, propName: 'billingStartDate', width: '150px', type: 'template' },
-  [LABELS.WORKSPACE_ID]: { label: LABELS.WORKSPACE_ID, propName: 'id', width: '100px' },
+  [LABELS.GROUP_ID]: { label: LABELS.GROUP_ID, propName: 'groupId', width: '100px' },
   [LABELS.PRICING_CONDITION]: { label: LABELS.PRICING_CONDITION, propName: 'pricingCondition', width: '100px', align: 'center' },
   [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', width: '200px', align: 'center' },
   [LABELS.PUBLISHED]: { label: LABELS.PUBLISHED, propName: 'published', type: 'boolean', align: 'center' }
-  // [LABELS.PROGRESS]: { label: LABELS.PROGRESS, propName: 'status', width: '100px', align: 'center', type: 'template' },
 }
 
 const claimTableCols: Record<string, TPL_TABLE_COLUMN> = {

@@ -352,7 +352,7 @@ export class WesmPenaltyComponent implements OnInit {
 
 const tableColumns: Record<string, TPL_TABLE_COLUMN> = {
   [LABELS.BILLING_PERIOD_TRADING_DATE]: { label: LABELS.BILLING_PERIOD_TRADING_DATE, propName: 'parameters', type: 'template' },
-  [LABELS.WORKSPACE_ID]: { label: LABELS.WORKSPACE_ID, propName: 'id', width: '120px', align: 'center' },
+  [LABELS.GROUP_ID]: { label: LABELS.GROUP_ID, propName: 'groupId', width: '120px', align: 'left' },
   [LABELS.STATUS]: { label: LABELS.STATUS, propName: 'status', width: '250px', align: 'center' },
   [LABELS.PUBLISHED]: { label: LABELS.PUBLISHED, propName: 'published', type: 'boolean', align: 'center' }
 }
