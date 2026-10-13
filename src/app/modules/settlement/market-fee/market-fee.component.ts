@@ -2,6 +2,7 @@ import {Component, DestroyRef, effect, inject, OnInit, signal, TemplateRef, View
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {PaginatedTableComponent} from '@shared/components/paginated-table/paginated-table.component';
+import { DownloadProgressComponent } from '@shared/components/download-progress/download-progress.component';
 import {LABELS} from '@shared/constants/labels.const';
 import {PipelineTableColumns} from '@shared/constants/pipelines.const';
 import {meterProcessBillingPeriod, PublishSettlement, TPL_TABLE_COLUMN} from '@shared/interfaces';
@@ -32,7 +33,7 @@ export class MarketFeeComponent  implements OnInit {
   @ViewChild('paginatedTable') paginatedTable!: PaginatedTableComponent<any>;
   @ViewChild('bpTpl', { static: true }) bpTpl!: TemplateRef<HTMLElement>;
   @ViewChild('tagTpl', { static: true }) tagTpl!: TemplateRef<HTMLElement>;
-  @ViewChild('downloadTpl', { static: false }) downloadTpl!: TemplateRef<void>;
+  @ViewChild(DownloadProgressComponent) downloadProgress!: DownloadProgressComponent;
 
   private readonly formBuilder = inject(FormBuilder);
   private readonly settlementService = inject(SettlementService);
@@ -334,13 +335,13 @@ export class MarketFeeComponent  implements OnInit {
     const pipelineName = this.pipelineName;
     const filename = `${pipelineName}-${subRowData.id}-${this.dfs.formatDate(subRowData.lastModifiedDatetime, 'yyyyMMddHHmmss')}.zip`;
 
-    this.du.startDownload(subRowData, this.downloadTpl);
+    this.du.startDownload(subRowData, this.downloadProgress.downloadTpl);
 
     this.settlementService.downloadBillingStatementZip(allData.id, subRowData.id, allData.processType)
       .pipe(takeUntilDestroyed(this.destroyRef$))
       .subscribe({
         next: (response) => {
-          this.du.processDownloadEvent(response, subRowData, this.downloadTpl, filename, MESSAGES.SUCCESS_DOWNLOAD_ITEM(`billing statement for ${subRowData.id}`));
+          this.du.processDownloadEvent(response, subRowData, this.downloadProgress.downloadTpl, filename, MESSAGES.SUCCESS_DOWNLOAD_ITEM(`billing statement for ${subRowData.id}`));
         },
         error: () => {
           this.du.clearProgress(subRowData.id);

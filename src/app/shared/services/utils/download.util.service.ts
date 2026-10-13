@@ -39,13 +39,13 @@ export class DownloadUtilService {
     const config: NzNotificationDataOptions = {
       nzPlacement: 'bottomRight',
       nzDuration: 0,
-      nzKey: pipeline.id.toString(),
+      nzKey: (pipeline?.groupId ?? pipeline.id)?.toString(),
       nzCloseIcon: '',
       nzClass: 'notif-progress',
       nzData: {
         size: pipeline.currentDownloadedFile,
         percentage: pipeline.currentDownloadedPercentage,
-        id: pipeline.id
+        id: pipeline?.groupId ?? pipeline.id
       },
       nzStyle: {
         padding: '0px'
@@ -141,18 +141,19 @@ export class DownloadUtilService {
   }
 
   startDownload(pipeline: any, downloadTpl: TemplateRef<void>): void {
-    this.addDownloading(pipeline.id);
+    this.addDownloading(pipeline?.groupId ??pipeline.id);
 
+    console.log({pipeline})
     const config: NzNotificationDataOptions = {
       nzPlacement: 'bottomRight',
       nzDuration: 0,
-      nzKey: pipeline.id.toString(),
+      nzKey: pipeline?.groupId?.toString() ?? pipeline.id?.toString(),
       nzCloseIcon: '',
       nzClass: 'notif-progress',
       nzData: {
         size: 'Preparing...',
         percentage: undefined,
-        id: pipeline.id
+        id: pipeline?.groupId ?? pipeline.id
       },
       nzStyle: {
         padding: '0px'

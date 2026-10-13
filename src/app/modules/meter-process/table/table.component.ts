@@ -15,6 +15,7 @@ import { BehaviorSubject, EMPTY, merge, Observable, Subject, timer } from 'rxjs'
 import { exhaustMap, finalize, switchMap } from 'rxjs/operators';
 
 import { ConsolidateComponent } from '../consolidate/consolidate.component';
+import { DownloadProgressComponent } from '@shared/components/download-progress/download-progress.component';
 
 interface tableColumn {
   name: string;
@@ -52,7 +53,7 @@ export class TableComponent implements OnInit {
   };
 
   @ViewChild('runJobs', { static: true }) runJobs!: TemplateRef<void>;
-  @ViewChild('downloadTpl', { static: false }) downloadTpl!: TemplateRef<void>;
+  @ViewChild(DownloadProgressComponent) downloadProgress!: DownloadProgressComponent;
 
   meterProcessStatus = MeterProcessStatus;
   meterDataPipelines = MeterDataPipelineName;
@@ -303,7 +304,7 @@ export class TableComponent implements OnInit {
     const user = this.as.currentUser()?.principal.username ?? '';
     const filename = `${processType}_MeteringData_${formattedTradingDate}_${runDate}.zip`;
 
-    this.du.startDownload(pipeline, this.downloadTpl);
+    this.du.startDownload(pipeline, this.downloadProgress.downloadTpl);
 
     const params = {
       version: String(id),
@@ -318,7 +319,7 @@ export class TableComponent implements OnInit {
     this.mpa.downloadReport(params)
       .subscribe({
         next: (response) => {
-          this.du.processDownloadEvent(response, pipeline, this.downloadTpl, filename, MESSAGES.SUCCESS_DOWNLOAD_ITEM(`report for ${pipeline.id}`));
+          this.du.processDownloadEvent(response, pipeline, this.downloadProgress.downloadTpl, filename, MESSAGES.SUCCESS_DOWNLOAD_ITEM(`report for ${pipeline.id}`));
         },
         error: () => {
           this.du.clearProgress(id);

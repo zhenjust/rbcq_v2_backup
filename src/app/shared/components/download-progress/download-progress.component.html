@@ -1,0 +1,8 @@
+<ng-template #downloadTpl let-data="data">
+  <div class="d-flex progress-bar text-left flex-column" [style.--percent]="data.percentage || 0">
+    <p class="mb-0 text-left">
+      {{ (data.percentage !== undefined || data.size !== 'Preparing...') ? downloadMessage() : preparingMessage() }} {{ data?.groupId ?? data.id }}
+    </p>
+    <p class="mb-0 text-left text-muted">{{ data.size }} {{ data.percentage !== undefined ? '(' + data.percentage + '%)' : '' }}</p>
+  </div>
+</ng-template>

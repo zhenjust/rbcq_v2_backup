@@ -3,6 +3,7 @@ import { Component, computed, DestroyRef, effect, inject, OnDestroy, OnInit, sig
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Data } from '@angular/router';
 import { ConfirmWithContentComponent } from '@shared/components/confirm-with-content/confirm-with-content.component';
+import { DownloadProgressComponent } from '@shared/components/download-progress/download-progress.component';
 import { BaseTableItem, modalConfig, SettlementJobActions, SettlementJobSubActions } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
@@ -30,6 +31,7 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
   @ViewChild('statusTpl', { static: true }) statusTpl!: TemplateRef<HTMLElement>;
   @ViewChild('nameTpl', { static: true }) nameTpl!: TemplateRef<HTMLElement>;
   @ViewChild('dateTpl') dateTpl!: TemplateRef<HTMLElement>;
+  @ViewChild(DownloadProgressComponent) downloadProgress!: DownloadProgressComponent;
 
   private readonly destroy$ = new Subject<void>();
   private readonly runSettlements = inject(RunSettlementService);
@@ -256,8 +258,8 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       ['sendNotification']: () => this.stlUtil.sendNotification(row, () => this.reload$.next()),
       ['energyTradingAmounts-generateSkipLogs']: () => this.stlUtil.generateSkipLogs(action, row),
       ['reserveTradingAmounts-generateSkipLogs']: () => this.stlUtil.generateSkipLogs(action, row),
-      ['energyTradingAmounts-downloadSkipLogs']: () => this.stlUtil.downloadSkipLogs(row),
-      ['reserveTradingAmounts-downloadSkipLogs']: () => this.stlUtil.downloadSkipLogs(row)
+      ['energyTradingAmounts-downloadSkipLogs']: () => this.stlUtil.downloadSkipLogs(row, this.downloadProgress.downloadTpl),
+      ['reserveTradingAmounts-downloadSkipLogs']: () => this.stlUtil.downloadSkipLogs(row, this.downloadProgress.downloadTpl)
 
     };
 

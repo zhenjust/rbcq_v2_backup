@@ -79,6 +79,11 @@
     </tbody>
 </nz-table>
 
+<app-download-progress
+  [downloadMessage]="LABELS.DOWNLOADING_SKIP_LOGS_FOR_GROUP"
+  [preparingMessage]="LABELS.PREPARING_SKIP_LOGS_FOR_GROUP">
+</app-download-progress>
+
 <ng-template #dateRangeSelection let-actionMessage="actionMessage" let-tradingDate="tradingDate" let-processType="processType">
     @if (processType === processTypes.DAILY) {
         <nz-result

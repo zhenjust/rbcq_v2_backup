@@ -40,6 +40,7 @@ import { QuillModule } from 'ngx-quill';
 
 import { ConfirmWithContentComponent } from './components/confirm-with-content/confirm-with-content.component';
 import { ConfirmWithDescComponent } from './components/confirm-with-desc/confirm-with-desc.component';
+import { DownloadProgressComponent } from './components/download-progress/download-progress.component';
 import { DateRangePickerComponent } from './components/date-range-picker/date-range-picker.component';
 import { DateTimePickerComponent } from './components/date-time-picker/date-time-picker.component';
 import { PaginatedTableComponent } from './components/paginated-table/paginated-table.component';
@@ -58,6 +59,20 @@ const ngZorroConfig: NzConfig = {
   notification: { nzDuration: 300, nzMaxStack: 3, nzTop: '150px' }
 };
 
+const icons = [
+  ReloadOutline,
+  PlusSquareOutline,
+  MinusSquareOutline,
+  DownOutline,
+  DeleteOutline,
+  CalendarOutline,
+  ClockCircleOutline,
+  CloseCircleOutline,
+  EyeInvisibleOutline,
+  EyeOutline,
+  UploadOutline
+];
+
 const NgZorroModules = [
   NzInputNumberModule,
   NzTableModule,
@@ -68,19 +83,7 @@ const NgZorroModules = [
   NzProgressModule,
   NzFormModule,
   NzDropDownModule,
-  NzIconModule.forChild([
-    ReloadOutline,
-    PlusSquareOutline,
-    MinusSquareOutline,
-    DownOutline,
-    DeleteOutline,
-    CalendarOutline,
-    ClockCircleOutline,
-    CloseCircleOutline,
-    EyeInvisibleOutline,
-    EyeOutline,
-    UploadOutline
-  ]),
+  NzIconModule.forChild(icons),
   NzCardModule,
   NzTagModule,
   NzTabsModule,
@@ -131,7 +134,8 @@ const Pipes = [
     UploadBillingStatementComponent,
     UploadSummaryComponent,
     SendNotificationComponent,
-    ProgressBarComponent
+    ProgressBarComponent,
+    DownloadProgressComponent,
   ],
   imports: [
     CommonModule,
@@ -150,6 +154,7 @@ const Pipes = [
     TemplateTableComponent,
     NgZorroModules,
     ConfirmWithDescComponent,
+    DownloadProgressComponent,
     PaginatedTableComponent,
     ReactiveFormsModule,
     RxReactiveFormsModule,

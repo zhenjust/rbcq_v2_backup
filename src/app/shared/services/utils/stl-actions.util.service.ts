@@ -1,9 +1,11 @@
 import { HttpEventType } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { DestroyRef, inject, Injectable, TemplateRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AmsComponent } from '@modules/settlement/shared/ams/ams.component';
 import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
 import { SendNotificationComponent } from '@shared/components/send-notification/send-notification.component';
 import { LABELS } from '@shared/constants/labels.const';
+import { MESSAGES } from '@shared/constants/messages.const';
 import { meterProcessPipelineGroup, PublishSettlement, settlementPipeline } from '@shared/interfaces';
 import { DownloadUtilService } from '@shared/services/utils';
 import { format } from 'date-fns';
@@ -24,6 +26,7 @@ export class StlUtilitiesService {
   private readonly stlService = inject(SettlementService);
   private readonly downloadService = inject(DownloadUtilService);
   private readonly toastr = inject(ToastrService);
+  private readonly destroyRef = inject(DestroyRef);
 
   triggerAllocModal(action: string, row: any, callback: () => void): void {
     const modal = this.modal.create({
@@ -110,19 +113,36 @@ export class StlUtilitiesService {
 
     this.stlService.generateSkipLogs(payload)
       .pipe(filter(res => res.type === HttpEventType.Response))
-      .subscribe(res => {
-        this.downloadService.handleDownloadedFile(res);
-      });
+      .subscribe(() => {});
   }
 
-  downloadSkipLogs(rowData: settlementPipeline): void {
-    const pipeline = rowData.pipelines.find(p => p.name === 'energyTradingAmounts-generateSkipLogs' || p.name === 'reserveTradingAmounts-generateSkipLogs' && p.status === 'Completed');
-    const pipelineRun = pipeline?.pipelineRuns[0];
+  downloadSkipLogs(rowData: settlementPipeline, downloadTpl: TemplateRef<void>): void {
+    const pipeline = rowData.pipelines.find(p =>
+      p.name === 'energyTradingAmounts-generateSkipLogs' ||
+      p.name === 'reserveTradingAmounts-generateSkipLogs' &&
+      p.status === 'Completed');
 
-    this.stlService.downloadSkipLogs(pipelineRun?.workspaceId ?? 0, pipelineRun?.fileName ?? '')
-      .pipe(filter(res => res.type === HttpEventType.Response))
-      .subscribe(res => {
-        this.downloadService.handleDownloadedFile(res);
+    const pipelineRun = pipeline?.pipelineRuns[0];
+    const workspaceId = pipelineRun?.workspaceId ?? 0;
+    const downloadPipeline = { id: workspaceId, groupId: rowData.groupId };
+
+    this.downloadService.startDownload(downloadPipeline, downloadTpl);
+
+    this.stlService.downloadSkipLogs(workspaceId, pipelineRun?.fileName ?? '')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.downloadService.processDownloadEvent(
+            response,
+            downloadPipeline,
+            downloadTpl,
+            pipelineRun?.fileName ?? '',
+            MESSAGES.SUCCESS_DOWNLOAD_ITEM(`skip logs for ${rowData.groupId}`)
+          );
+        },
+        error: () => {
+          this.downloadService.clearProgress(workspaceId);
+        }
       });
   }
 
