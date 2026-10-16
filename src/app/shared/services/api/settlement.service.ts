@@ -123,7 +123,7 @@ export class SettlementService {
   }
 
   public downloadSkipLogs(groupId: string, fileName: string): Observable<HttpEvent<Blob>> {
-    return this.http.get(`${this.SETTLEMENT}/skip-logs/download?groupId=${groupId}&fileName=${fileName}`, { responseType: 'blob', observe: 'events', reportProgress: true });
+    return this.http.get(`${this.SETTLEMENT}/skip-logs/download?workspaceId=${groupId}&fileName=${fileName}`, { responseType: 'blob', observe: 'events', reportProgress: true });
   }
 
 
