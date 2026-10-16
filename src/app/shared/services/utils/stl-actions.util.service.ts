@@ -120,7 +120,7 @@ export class StlUtilitiesService {
       .subscribe(() => {});
   }
 
-  downloadSkipLogs(rowData: settlementPipeline, downloadTpl: TemplateRef<void>, billingId?: string): void {
+  downloadSkipLogs(rowData: settlementPipeline, downloadTpl: TemplateRef<void>, billingId?: string, onComplete?: () => void): void {
     const pipeline = rowData.pipelines.find(p =>
       [
         'energyTradingAmounts-generateSkipLogs',
@@ -146,9 +146,12 @@ export class StlUtilitiesService {
             pipelineRun?.fileName ?? '',
             MESSAGES.SUCCESS_DOWNLOAD_ITEM(`skip logs for ${rowData.groupId}`)
           );
+          if (response.type === HttpEventType.Response) {
+            onComplete?.();
+          }
         },
         error: () => {
-          this.downloadService.clearProgress(workspaceId);
+          this.downloadService.clearProgress(rowData.groupId);
         }
       });
   }

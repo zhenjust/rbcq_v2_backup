@@ -91,7 +91,7 @@
                     </li>
                   }
                   @if (canDownloadSkipLogs) {
-                    <li nz-menu-item (click)="stlUtil.downloadSkipLogs(row, downloadProgress.downloadTpl, subRow.billingId)">
+                    <li nz-menu-item (click)="downloadSkipLogs(row, subRow.billingId)">
                       {{ LABELS.DOWNLOAD_SKIP_LOGS }}
                     </li>
                   }
@@ -108,7 +108,7 @@
                   {{ LABELS.GENERATE_SKIP_LOGS }}
                 </button>
               } @else if (canDownloadSkipLogs) {
-                <button nz-button nzType="link" (click)="stlUtil.downloadSkipLogs(row, downloadProgress.downloadTpl, subRow.billingId)">
+                <button nz-button nzType="link" (click)="downloadSkipLogs(row, subRow.billingId)">
                   {{ LABELS.DOWNLOAD_SKIP_LOGS }}
                 </button>
               } @else if (canDeleteBillingId) {

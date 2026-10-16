@@ -339,6 +339,10 @@ export class AdditionalCompensationComponent implements OnInit {
     this.reload$.next();
   }
 
+  downloadSkipLogs(rowData: any, billingId: string): void {
+    this.stlUtil.downloadSkipLogs(rowData, this.downloadProgress.downloadTpl, billingId, () => this.reloadTable());
+  }
+
   runJob(pipelineName: string, rowData: any, title: string): void {
     this.modalService.confirm({
       ...modalConfig,

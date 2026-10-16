@@ -16,6 +16,10 @@ export class DownloadUtilService {
 
   public downloadingReports = new Set<number | string>();
 
+  private getDownloadId(pipeline: any): number | string {
+    return pipeline?.groupId ?? pipeline.id;
+  }
+
   formatFileSize(bytes: number): string {
     if (bytes === 0) {
       return '0 Bytes';
@@ -39,7 +43,7 @@ export class DownloadUtilService {
     const config: NzNotificationDataOptions = {
       nzPlacement: 'bottomRight',
       nzDuration: 0,
-      nzKey: (pipeline?.groupId ?? pipeline.id)?.toString(),
+      nzKey: this.getDownloadId(pipeline).toString(),
       nzCloseIcon: '',
       nzClass: 'notif-progress',
       nzData: {
@@ -95,12 +99,14 @@ export class DownloadUtilService {
   }
 
   handleDownloadReport(response: any, pipeline: any, fileName: string, successMessage?: string): void {
-    this.ns.remove(pipeline.id.toString());
+    const downloadId = this.getDownloadId(pipeline);
+
+    this.ns.remove(downloadId.toString());
     pipeline.currentDownloadedFile = null;
     pipeline.currentDownloadedPercentage = null;
 
     const actualFileName = this.handleDownloadedFile(response, fileName);
-    this.downloadingReports.delete(pipeline.id);
+    this.downloadingReports.delete(downloadId);
 
     if (successMessage) {
       const extension = actualFileName.split('.').pop()?.toLowerCase();
@@ -141,19 +147,21 @@ export class DownloadUtilService {
   }
 
   startDownload(pipeline: any, downloadTpl: TemplateRef<void>): void {
-    this.addDownloading(pipeline?.groupId ??pipeline.id);
+    const downloadId = this.getDownloadId(pipeline);
+
+    this.addDownloading(downloadId);
 
     console.log({pipeline})
     const config: NzNotificationDataOptions = {
       nzPlacement: 'bottomRight',
       nzDuration: 0,
-      nzKey: pipeline?.groupId?.toString() ?? pipeline.id?.toString(),
+      nzKey: downloadId.toString(),
       nzCloseIcon: '',
       nzClass: 'notif-progress',
       nzData: {
         size: 'Preparing...',
         percentage: undefined,
-        id: pipeline?.groupId ?? pipeline.id
+        id: downloadId
       },
       nzStyle: {
         padding: '0px'
