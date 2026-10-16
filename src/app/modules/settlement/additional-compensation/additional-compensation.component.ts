@@ -2,6 +2,7 @@ import { Component, DestroyRef, effect, inject, OnInit, signal, TemplateRef, Vie
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
+import { DownloadProgressComponent } from '@shared/components/download-progress/download-progress.component';
 import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
 import { modalConfig, PHASE_TWO_AUTHORITIES } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
@@ -33,6 +34,7 @@ export class AdditionalCompensationComponent implements OnInit {
   @ViewChild('progressTpl', { static: true }) progressTpl!: TemplateRef<HTMLElement>;
   @ViewChild('tagTpl', { static: true }) tagTpl!: TemplateRef<HTMLElement>;
   @ViewChild('datetimeTpl', { static: true }) datetimeTpl!: TemplateRef<HTMLElement>;
+  @ViewChild(DownloadProgressComponent) downloadProgress!: DownloadProgressComponent;
 
   private readonly formBuilder = inject(FormBuilder);
   private readonly settlementService = inject(SettlementService);
@@ -232,6 +234,7 @@ export class AdditionalCompensationComponent implements OnInit {
     { label: LABELS.CALCULATE_TRANSACTION_ALLOCATION, hidden: () => {
       return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.AC_TRANS_ALLOC, 'additionalCompensation-finalize', rowData) || rowData?.published
     }, click: () => this.stlUtil.triggerAllocModal('additionalCompensation-calculateTransAlloc', rowData, () => this.reloadTable() )},
+
 
     { label: LABELS.GENERATE_FILES, hidden: () => {
       return this.isPipelineComplete(PHASE_TWO_AUTHORITIES.AC_GENERATE_FILES, 'additionalCompensation-finalize', rowData) || rowData?.published
