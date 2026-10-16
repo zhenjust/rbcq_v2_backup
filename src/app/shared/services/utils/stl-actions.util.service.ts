@@ -135,7 +135,7 @@ export class StlUtilitiesService {
 
     this.downloadService.startDownload(downloadPipeline, downloadTpl);
 
-    this.stlService.downloadSkipLogs(workspaceId, pipelineRun?.fileName ?? '')
+    this.stlService.downloadSkipLogs(rowData.groupId, pipelineRun?.fileName ?? '')
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {

@@ -108,7 +108,7 @@
                   {{ LABELS.GENERATE_SKIP_LOGS }}
                 </button>
               } @else if (canDownloadSkipLogs) {
-                <button nz-button nzType="link" (click)="stlUtil.downloadSkipLogs(row, downloadProgress.downloadTpl)">
+                <button nz-button nzType="link" (click)="stlUtil.downloadSkipLogs(row, downloadProgress.downloadTpl, subRow.billingId)">
                   {{ LABELS.DOWNLOAD_SKIP_LOGS }}
                 </button>
               } @else if (canDeleteBillingId) {

@@ -122,8 +122,8 @@ export class SettlementService {
     return this.http.post<any>(`${this.STL}/report-generation/skiplogs-generate`, payload);
   }
 
-  public downloadSkipLogs(workspaceId: number, fileName: string): Observable<HttpEvent<Blob>> {
-    return this.http.get(`${this.SETTLEMENT}/skip-logs/download?workspaceId=${workspaceId}&fileName=${fileName}`, { responseType: 'blob', observe: 'events', reportProgress: true });
+  public downloadSkipLogs(groupId: string, fileName: string): Observable<HttpEvent<Blob>> {
+    return this.http.get(`${this.SETTLEMENT}/skip-logs/download?groupId=${groupId}&fileName=${fileName}`, { responseType: 'blob', observe: 'events', reportProgress: true });
   }
 
 
