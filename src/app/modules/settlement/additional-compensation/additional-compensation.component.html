@@ -74,13 +74,49 @@
               <app-progress-bar></app-progress-bar>
             </div>
           } @else {
-            <div *ngxPermissionsOnly="[ PERM.RUN_ADDTL_COMP ]">
-              @if (!(row?.pipelines | hasFinalizedPipeline)) {
-              <button nz-button nzType="link" nzDanger (click)="deleteBillingId(row, subRow)">
-                {{ LABELS.DELETE }}
+            @let canGenerateSkipLogs = !isPipelineComplete(PERM.AC_TRANS_ALLOC, 'additionalCompensation', row);
+            @let canDownloadSkipLogs = !isPipelineComplete(PERM.AC_CALC_GMR_VAT, 'additionalCompensation-generateSkipLogs', row);
+            @let canDeleteBillingId = currentPermissions().includes(PERM.RUN_ADDTL_COMP) && !(row?.pipelines | hasFinalizedPipeline);
+            @let actionCount = (canGenerateSkipLogs ? 1 : 0) + (canDownloadSkipLogs ? 1 : 0) + (canDeleteBillingId ? 1 : 0);
+
+            @if (actionCount > 1) {
+              <button nz-button nz-dropdown nzTrigger="click" nzPlacement="bottomRight" nzArrow [nzDropdownMenu]="billingActionsMenu">
+                {{ LABELS.ACTIONS }} <nz-icon nzType="down" />
               </button>
+              <nz-dropdown-menu #billingActionsMenu="nzDropdownMenu">
+                <ul nz-menu nzSelectable>
+                  @if (canGenerateSkipLogs) {
+                    <li nz-menu-item (click)="stlUtil.generateSkipLogs('additionalCompensation-generateSkipLogs', row, subRow.billingId)">
+                      {{ LABELS.GENERATE_SKIP_LOGS }}
+                    </li>
+                  }
+                  @if (canDownloadSkipLogs) {
+                    <li nz-menu-item (click)="downloadSkipLogs(row, subRow.billingId)">
+                      {{ LABELS.DOWNLOAD_SKIP_LOGS }}
+                    </li>
+                  }
+                  @if (canDeleteBillingId) {
+                    <li nz-menu-item nzDanger (click)="deleteBillingId(row, subRow)">
+                      {{ LABELS.DELETE }}
+                    </li>
+                  }
+                </ul>
+              </nz-dropdown-menu>
+            } @else if (actionCount === 1) {
+              @if (canGenerateSkipLogs) {
+                <button nz-button nzType="link" (click)="stlUtil.generateSkipLogs('additionalCompensation-generateSkipLogs', row)">
+                  {{ LABELS.GENERATE_SKIP_LOGS }}
+                </button>
+              } @else if (canDownloadSkipLogs) {
+                <button nz-button nzType="link" (click)="downloadSkipLogs(row, subRow.billingId)">
+                  {{ LABELS.DOWNLOAD_SKIP_LOGS }}
+                </button>
+              } @else if (canDeleteBillingId) {
+                <button nz-button nzType="link" nzDanger (click)="deleteBillingId(row, subRow)">
+                  {{ LABELS.DELETE }}
+                </button>
               }
-            </div>
+            }
           }
         </ng-template>
 
@@ -92,6 +128,11 @@
     </div>
   </ng-template>
 </nz-card>
+
+<app-download-progress
+  [downloadMessage]="LABELS.DOWNLOADING_SKIP_LOGS_FOR_GROUP"
+  [preparingMessage]="LABELS.PREPARING_SKIP_LOGS_FOR_GROUP">
+</app-download-progress>
 
 <!-- Column Templates -->
 <ng-template #bpTpl let-allData="allData">

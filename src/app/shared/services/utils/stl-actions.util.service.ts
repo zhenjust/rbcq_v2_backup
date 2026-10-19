@@ -92,17 +92,21 @@ export class StlUtilitiesService {
         return 'RMF';
       case 'energyMarketFee':
         return 'EMF';
+      case 'additionalCompensation':
+        return 'AC';
       default:
         return '';
     }
   }
 
-  generateSkipLogs(action: string, rowData: settlementPipeline): void {
+  generateSkipLogs(action: string, rowData: settlementPipeline, billingId?: string): void {
     const payload = {
       workspaceId: rowData.id,
       calcType: this.getCalcTypes(action.split('-')[0]),
       tradingDate: rowData?.tradingDate ?? null,
       pipelineName: action,
+      groupId: rowData.groupId,
+      billingId: billingId ?? null,
       parameters: {
         processType: rowData.processType,
         billingStartDate: rowData.billingStartDate,
@@ -116,19 +120,22 @@ export class StlUtilitiesService {
       .subscribe(() => {});
   }
 
-  downloadSkipLogs(rowData: settlementPipeline, downloadTpl: TemplateRef<void>): void {
+  downloadSkipLogs(rowData: settlementPipeline, downloadTpl: TemplateRef<void>, billingId?: string, onComplete?: () => void): void {
     const pipeline = rowData.pipelines.find(p =>
-      p.name === 'energyTradingAmounts-generateSkipLogs' ||
-      p.name === 'reserveTradingAmounts-generateSkipLogs' &&
-      p.status === 'Completed');
+      [
+        'energyTradingAmounts-generateSkipLogs',
+        'reserveTradingAmounts-generateSkipLogs',
+        'additionalCompensation-generateSkipLogs',
+      ].includes(p.name) &&
+      ['Completed', 'Succeeded'].includes(p.status));
 
     const pipelineRun = pipeline?.pipelineRuns[0];
     const workspaceId = pipelineRun?.workspaceId ?? 0;
-    const downloadPipeline = { id: workspaceId, groupId: rowData.groupId };
+    const downloadPipeline = { id: workspaceId, groupId: rowData.groupId, billingId: billingId ?? null };
 
     this.downloadService.startDownload(downloadPipeline, downloadTpl);
 
-    this.stlService.downloadSkipLogs(workspaceId, pipelineRun?.fileName ?? '')
+    this.stlService.downloadSkipLogs(rowData.groupId, pipelineRun?.fileName ?? '')
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
@@ -139,9 +146,12 @@ export class StlUtilitiesService {
             pipelineRun?.fileName ?? '',
             MESSAGES.SUCCESS_DOWNLOAD_ITEM(`skip logs for ${rowData.groupId}`)
           );
+          if (response.type === HttpEventType.Response) {
+            onComplete?.();
+          }
         },
         error: () => {
-          this.downloadService.clearProgress(workspaceId);
+          this.downloadService.clearProgress(rowData.groupId);
         }
       });
   }
