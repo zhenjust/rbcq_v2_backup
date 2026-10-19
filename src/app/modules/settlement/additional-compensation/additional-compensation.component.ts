@@ -339,6 +339,10 @@ export class AdditionalCompensationComponent implements OnInit {
     this.reload$.next();
   }
 
+  generateSkipLogs(rowData: any, billingId: string): void {
+    this.stlUtil.generateSkipLogs('additionalCompensation-generateSkipLogs', rowData, billingId, () => this.reloadTable());
+  }
+
   downloadSkipLogs(rowData: any, billingId: string): void {
     this.stlUtil.downloadSkipLogs(rowData, this.downloadProgress.downloadTpl, billingId, () => this.reloadTable());
   }

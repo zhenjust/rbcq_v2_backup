@@ -37,6 +37,7 @@ export const MESSAGES = {
   SUCCESS_DELETE_ITEM: (item: string) => `Successfully deleted ${item}.`,
   SUCCESS_SAVE_ITEM: (item: string) => `Successfully saved ${item}.`,
   SUCCESS_FILE_ITEM: (item: string) => `Successfully filed ${item}.`,
+  SUCCESS_GENERATE_ITEM: (item: string) => `Successfully generated ${item}.`,
 
   CONFIRM_CONSOLIDATE_ITEMS: (item: string) => `Do you want to consolidate the selected ${item}?`,
   CONFIRM_DELETE_ITEM: (item: string) => `Do you want to delete the selected ${item}?`,

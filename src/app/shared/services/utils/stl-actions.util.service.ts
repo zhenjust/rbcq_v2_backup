@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AmsComponent } from '@modules/settlement/shared/ams/ams.component';
 import { ConfirmWithDescComponent } from '@shared/components/confirm-with-desc/confirm-with-desc.component';
 import { SendNotificationComponent } from '@shared/components/send-notification/send-notification.component';
+import { modalConfig } from '@shared/constants';
 import { LABELS } from '@shared/constants/labels.const';
 import { MESSAGES } from '@shared/constants/messages.const';
 import { meterProcessPipelineGroup, PublishSettlement, settlementPipeline } from '@shared/interfaces';
@@ -11,7 +12,6 @@ import { DownloadUtilService } from '@shared/services/utils';
 import { format } from 'date-fns';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { ToastrService } from 'ngx-toastr';
-import { filter } from 'rxjs';
 
 import { SettlementService } from '../api';
 
@@ -99,7 +99,7 @@ export class StlUtilitiesService {
     }
   }
 
-  generateSkipLogs(action: string, rowData: settlementPipeline, billingId?: string): void {
+  generateSkipLogs(action: string, rowData: settlementPipeline, billingId?: string, onComplete?: () => void): void {
     const payload = {
       workspaceId: rowData.id,
       calcType: this.getCalcTypes(action.split('-')[0]),
@@ -115,9 +115,18 @@ export class StlUtilitiesService {
       billingMonth: rowData.billingEndDate ? format(new Date(rowData.billingEndDate), 'yyyy-MM') : null,
     };
 
-    this.stlService.generateSkipLogs(payload)
-      .pipe(filter(res => res.type === HttpEventType.Response))
-      .subscribe(() => {});
+    this.modal.confirm({
+      ...modalConfig,
+      nzTitle: LABELS.GENERATE_SKIP_LOGS,
+      nzContent: MESSAGES.CONFIRM_ACTION,
+      nzOnOk: () => {
+        this.stlService.generateSkipLogs(payload)
+          .subscribe(() => {
+            this.toastr.success(MESSAGES.SUCCESS_GENERATE_ITEM(`skip logs.`));
+            onComplete?.();
+          });
+      }
+    });
   }
 
   downloadSkipLogs(rowData: settlementPipeline, downloadTpl: TemplateRef<void>, billingId?: string, onComplete?: () => void): void {

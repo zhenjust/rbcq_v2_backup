@@ -86,7 +86,7 @@
               <nz-dropdown-menu #billingActionsMenu="nzDropdownMenu">
                 <ul nz-menu nzSelectable>
                   @if (canGenerateSkipLogs) {
-                    <li nz-menu-item (click)="stlUtil.generateSkipLogs('additionalCompensation-generateSkipLogs', row, subRow.billingId)">
+                    <li nz-menu-item (click)="generateSkipLogs(row, subRow.billingId)">
                       {{ LABELS.GENERATE_SKIP_LOGS }}
                     </li>
                   }
@@ -104,7 +104,7 @@
               </nz-dropdown-menu>
             } @else if (actionCount === 1) {
               @if (canGenerateSkipLogs) {
-                <button nz-button nzType="link" (click)="stlUtil.generateSkipLogs('additionalCompensation-generateSkipLogs', row)">
+                <button nz-button nzType="link" (click)="generateSkipLogs(row, subRow.billingId)">
                   {{ LABELS.GENERATE_SKIP_LOGS }}
                 </button>
               } @else if (canDownloadSkipLogs) {
