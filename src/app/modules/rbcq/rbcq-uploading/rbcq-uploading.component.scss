@@ -1,0 +1,39 @@
+
+.upload-history {
+  margin-top: 24px;
+}
+
+
+.upload-history {
+  margin-top: 24px;
+}
+
+.upload-details {
+  padding: 12px;
+  background: #fafafa;
+}
+
+.upload-details table {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.upload-logs {
+  margin-top: 12px;
+}
+
+.upload-logs pre {
+  max-height: 300px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  padding: 12px;
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}

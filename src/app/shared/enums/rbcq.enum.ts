@@ -3,7 +3,8 @@ export enum RbcqProcessType {
     FINALIZE = 'FINALIZE',
     AP_FLAG = 'AP_FLAG',
     ASIE_RESERVE = 'ASIE_RESERVE',
-    ASIE_RESERVE_AP = 'ASIE_RESERVE_AP'
+    ASIE_RESERVE_AP = 'ASIE_RESERVE_AP',
+    ASIE_CENTRAL = 'ASIE_CENTRAL'
 }
 
 export enum RbcqRegion {

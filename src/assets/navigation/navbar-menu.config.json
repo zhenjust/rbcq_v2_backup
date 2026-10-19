@@ -81,24 +81,11 @@
         }
       }
     },
-    {
-      "id": "view-rbcq",
-      "label": "View RBCQ",
-      "iconKey": "faFileContract",
-      "targets": {
-        "angular2": {
-           "kind": "internal",
-            "to": "rbcq-v2/view"
-        },
-        "angular1": {
-          "kind": "internal",
-            "to": "rbcq-v2/view"
-        },
-        "react": {
-         "kind": "internal",
-            "to": "rbcq-v2/view"
-        }
-      },
+   
+     {
+      "id": "so-rbcq",
+      "label": "SO RBCQ",
+      "iconKey": "faBinoculars",
       "conditions": {
         "expression": {
           "all": [
@@ -115,7 +102,109 @@
             }
           ]
         }
+      },
+      "children": [
+        {
+          "id": "so-view-rbcq",
+          "label": "View RBCQ",
+           "targets": {
+        "angular2": {
+           "kind": "internal",
+            "to": "rbcq-v2/view"
+        },
+        "angular1": {
+          "kind": "internal",
+            "to": "rbcq-v2/view"
+        },
+        "react": {
+         "kind": "internal",
+            "to": "rbcq-v2/view"
+        }
+      },
+          "conditions": {
+        "expression": {
+          "all": [
+            {
+              "predicate": "nonPemcUser"
+            },
+            {
+              "permissionAny": [
+                "VIEW_DOWNLOAD_METER_STL_DATA"
+              ]
+            },
+            {
+              "predicate": "billingIdPresent"
+            }
+          ]
+        }
       }
+        },
+        {
+          "id": "so-submit-rbcq",
+           "label": "Submit RBCQ",
+              "targets": {
+                "angular2": {
+                  "kind": "internal",
+                  "to": "rbcq-v2/submit"
+                },
+                "angular1": {
+                  "kind": "internal",
+                  "to": "rbcq-v2/submit"
+                },
+                "react": {
+                  "kind": "internal",
+                  "to": "rbcq-v2/submit"
+                }
+            },
+            "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "nonPemcUser"
+                },
+                {
+                  "permissionAny": [
+                    "VIEW_DOWNLOAD_METER_STL_DATA"
+                  ]
+                },
+                {
+                  "predicate": "billingIdPresent"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "manage-bcqs/bcq-download-template",
+          "label": "BCQ Download Template",
+          "targets": {
+            "angular2": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/bcq/download/template"
+            },
+            "angular1": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/bcq/download/template"
+            },
+            "react": {
+              "kind": "external",
+              "href": "{PHASE_ONE_URL}/#/bcq/download/template"
+            }
+          },
+          "conditions": {
+            "expression": {
+              "all": [
+                {
+                  "predicate": "internalUser"
+                },
+                {
+                  "predicate": "nonPemcUser"
+                }
+              ]
+            }
+          }
+        }
+      ]
     },
     {
       "id": "calendar",
@@ -267,6 +356,7 @@
         }
       ]
     },
+  
     {
       "id": "view-submitted-meter-data",
       "label": "View Submitted Meter Data",

@@ -2,15 +2,164 @@
   nzType="drag"
   [nzMultiple]="true"
   [nzCustomRequest]="uploadRbcq"
-  nzName="file" 
+  nzName="file"
   [nzShowUploadList]="{ showDownloadIcon: false }"
-  
 >
   <p class="fas fa-cloud-upload-alt fa-2x">
     <fa-icon [icon]="uploadIcon" size="2x"></fa-icon>
   </p>
-  <p class="ant-upload-text">Click or drag file to this area to upload</p>
+
+  <p class="ant-upload-text">
+    Click or drag file to this area to upload
+  </p>
+
   <p class="ant-upload-hint">
-    Support for a single or bulk upload. Strictly prohibit uploading company data or other banned files
+    Support for a single or bulk upload. Strictly prohibit uploading
+    company data or other banned files
   </p>
 </nz-upload>
+
+<!-- Upload History -->
+<div class="upload-history">
+  <div class="history-header">
+    <h3>Upload History</h3>
+  </div>
+
+  <nz-table
+    #uploadTable
+    [nzData]="uploadHistory"
+    [nzLoading]="loading"
+    [nzFrontPagination]="false"
+    [nzShowPagination]="false"
+    [nzTotal]="totalItems"
+    nzSize="middle"
+    [nzScroll]="{ x: '1200px' }"
+  >
+    <thead>
+      <tr>
+        <th nzWidth="300px">File Name</th>
+        <th nzWidth="180px">File Date</th>
+        <th nzWidth="200px">Published Date</th>
+        <th nzWidth="180px">Published By</th>
+        <th nzWidth="120px">Type</th>
+        <th nzWidth="250px">Remarks</th>
+        <th nzWidth="200px">Status</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <ng-container *ngFor="let item of uploadTable.data">
+
+        <!-- Main Row -->
+        <tr>
+          <td>{{ item.file_name || '-' }}</td>
+
+          <td>
+            {{
+              item.file_date
+                ? (item.file_date | date: 'yyyy-MM-dd HH:mm:ss')
+                : '-'
+            }}
+          </td>
+
+          <td>
+            {{
+              item.publish_date
+                ? (item.publish_date | date: 'yyyy-MM-dd HH:mm:ss')
+                : '-'
+            }}
+          </td>
+
+          <td>{{ item.published_by || '-' }}</td>
+
+          <td>{{ item.type || '-' }}</td>
+
+          <!-- Remarks with Expand/Collapse Icon -->
+          <td>
+            <div
+              style="
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
+              "
+            >
+              <button
+                *ngIf="item.remarks"
+                type="button"
+                (click)="item.expanded = !item.expanded"
+                [attr.aria-label]="item.expanded ? 'Collapse remarks' : 'Expand remarks'"
+                style="
+                  border: none;
+                  background: transparent;
+                  padding: 0;
+                  cursor: pointer;
+                  color: #1890ff;
+                  font-size: 16px;
+                  flex-shrink: 0;
+                "
+              >
+                <i
+                  nz-icon
+                  [nzType]="item.expanded ? 'minus-square' : 'plus-square'"
+                ></i>
+              </button>
+
+              <span>
+                {{
+                  item.remarks
+                    ? (
+                        item.remarks.length > 30
+                          ? (item.remarks | slice:0:30) + '...'
+                          : item.remarks
+                      )
+                    : '-'
+                }}
+              </span>
+            </div>
+          </td>
+
+          <td>{{ item.status || '-' }}</td>
+        </tr>
+
+        <!-- Expanded Remarks Row -->
+        <tr *ngIf="item.expanded">
+          <td colspan="7">
+            <div style="padding: 10px;">
+              <strong>Full Remarks:</strong>
+
+              <p
+                style="
+                  white-space: pre-wrap;
+                  overflow-wrap: anywhere;
+                  margin-top: 8px;
+                  margin-bottom: 0;
+                "
+              >
+                {{ item.remarks || '-' }}
+              </p>
+            </div>
+          </td>
+        </tr>
+
+      </ng-container>
+    </tbody>
+  </nz-table>
+
+  <!-- Server-side Pagination -->
+  <div class="pagination-container">
+    <nz-pagination
+      [(nzPageIndex)]="currentPage"
+      [(nzPageSize)]="pageSize"
+      [nzTotal]="totalItems"
+      [nzPageSizeOptions]="pageSizeOptions"
+      [nzShowSizeChanger]="true"
+      [nzShowTotal]="rangeTemplate"
+      (nzPageIndexChange)="getHistory()"
+      (nzPageSizeChange)="currentPage = 1; getHistory()"
+    ></nz-pagination>
+
+    <ng-template #rangeTemplate let-total>
+      Total {{ total }} records
+    </ng-template>
+  </div>
+</div>

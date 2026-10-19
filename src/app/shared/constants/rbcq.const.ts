@@ -6,6 +6,7 @@ export const RBCQ_PROCESS_TYPE: rbcqProcessOptions[] = [
     {id: RbcqProcessType.FINALIZE, label: 'Finalize RBCQ', value: RbcqProcessType.FINALIZE},
     {id: RbcqProcessType.AP_FLAG, label: 'AP Flag', value: RbcqProcessType.AP_FLAG},
     {id: RbcqProcessType.ASIE_RESERVE, label: 'ASIE Reserve', value: RbcqProcessType.ASIE_RESERVE},
+    {id: RbcqProcessType.ASIE_CENTRAL, label: 'ASIE Central Scheduling', value: RbcqProcessType.ASIE_CENTRAL},
     {id: RbcqProcessType.ASIE_RESERVE_AP, label: 'ASIE Reserve AP', value: RbcqProcessType.ASIE_RESERVE_AP}
  
 ]
