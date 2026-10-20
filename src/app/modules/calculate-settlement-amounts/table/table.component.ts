@@ -256,8 +256,8 @@ export class TableComponent extends SearchListBase implements OnInit, OnDestroy 
       ['energyTradingAmounts-publish']: () => this.handlePublishAction('Energy Trading Amounts Calculation', row),
       ['reserveTradingAmounts-publish']: () => this.handlePublishAction('Reserve Trading Amounts Calculation', row),
       ['sendNotification']: () => this.stlUtil.sendNotification(row, () => this.reload$.next()),
-      ['energyTradingAmounts-generateSkipLogs']: () => this.stlUtil.generateSkipLogs(action, row),
-      ['reserveTradingAmounts-generateSkipLogs']: () => this.stlUtil.generateSkipLogs(action, row),
+      ['energyTradingAmounts-generateSkipLogs']: () => this.stlUtil.generateSkipLogs(action, row, undefined, () => this.reload$.next()),
+      ['reserveTradingAmounts-generateSkipLogs']: () => this.stlUtil.generateSkipLogs(action, row, undefined, () => this.reload$.next()),
       ['energyTradingAmounts-downloadSkipLogs']: () => this.stlUtil.downloadSkipLogs(row, this.downloadProgress.downloadTpl),
       ['reserveTradingAmounts-downloadSkipLogs']: () => this.stlUtil.downloadSkipLogs(row, this.downloadProgress.downloadTpl)
 
